@@ -4,22 +4,6 @@ module LocationNotificationJobs
 
   class LocationNotificationJob < ApplicationJob
     queue_as :notifications
-    sidekiq_options retry: false
-    around_enqueue do |_job, block|
-      # Check Sidekiq API and see if this job is already running/enqueued
-      already_enqueued = false
-      Sidekiq::Queue.new("notifications").each do |j|
-        if j.args[0]["job_class"] == self.class.name
-          already_enqueued = true
-        end
-      end
-      Sidekiq::WorkSet.new.each do |process_id, thread_id, work|
-        if JSON.parse(work["payload"])["args"][0]["job_class"] == self.class.name
-          already_enqueued = true
-        end
-      end
-      block.call unless already_enqueued
-    end
 
     def location_info(location, as_org=nil)
       state = location.state_geospace
