@@ -33,7 +33,7 @@ const radarUtilities = (function() {
       } else if (typeof elementId !== 'string') {
         error = 'elementId type is wrong';
         return false;
-      } else if (typeof clientId !== 'number') {
+      } else if (isNaN(Number(clientId))) {
         error = 'clientId type is wrong';
         return false;
       }
