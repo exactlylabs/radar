@@ -53,7 +53,7 @@ module ClientApi
 
         # Coordinates for middle of USA for development
         return render json: [39.50, -98.35] if ENV['RAILS_ENV'] == 'development'
-        coordinates = GeoTools::CustomGeocoder.search_ip(ip)
+        coordinates = GeoTools::CustomGeocoder.search_ip(request.remote_ip)
         if coordinates
           return render json: coordinates
         end
