@@ -600,9 +600,10 @@ div[data-dashboard-time-filter-target="monthYear"] {
   align-items: center;
   justify-content: flex-start;
   gap: .5rem;
-  padding-bottom: 1rem;
-  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  flex-wrap: nowrap;
   flex-grow: 1;
+  overflow-x: auto;
 }
 
 .dashboard--outages-filter {
