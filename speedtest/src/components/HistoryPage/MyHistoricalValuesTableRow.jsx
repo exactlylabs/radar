@@ -138,13 +138,6 @@ const MyHistoricalValuesTableRow = ({
 
   const openInfoModal = () => openMeasurementInfoModal(measurement);
 
-  const getAddress = () => {
-    if(!measurement.city && !measurement.state) return 'Unavailable';
-    if(!measurement.city) return measurement.state;
-    if(!measurement.state) return measurement.city;
-    return `${measurement.city}, ${measurement.state}`
-  }
-
   return (
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
       <div style={networkTypeColumStyle}>
@@ -178,7 +171,7 @@ const MyHistoricalValuesTableRow = ({
       {
         (!isSmallSizeScreen && !isMediumSizeScreen) &&
         <div style={locationColumnStyle}>
-          <p className={'speedtest--p'} style={ellipsisStyle}>{getAddress()}</p>
+          <p className={'speedtest--p'} style={ellipsisStyle}>{measurement.address}</p>
         </div>
       }
       {
