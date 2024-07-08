@@ -1,5 +1,8 @@
 @import "./shared/colors.scss";
 @import "./required_importants";
+@import "./shared/buttons.scss";
+@import "./shared/misc.scss";
+
 
 .dashboard--content-container {
   height: 100%;
@@ -1102,8 +1105,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.125rem;
-  border-right: rgba(227, 227, 232, 0.15) solid 1px;
 }
 
 .dashboard--download-data-text {
@@ -1114,8 +1115,56 @@ div[data-dashboard-time-filter-target="monthYear"] {
   margin: 0;
 }
 
-.dashboard--download-data-more-options-container {
-  padding: 0 10px;
-  background-color: #0d8ddc;
-  height: 100%;
+.dashboard--download-data-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.dashboard--download-data-button {
+  @extend .custom-button;
+  border-radius: 6px 0 0 6px;
+  border-right: rgba(227, 227, 232, 0.15) solid 0.5px;
+}
+
+.dashboard--download-more-options-button {
+  @extend .custom-button;
+  border-radius: 0 6px 6px 0;
+  border-right: rgba(227, 227, 232, 0.15) solid 0.5px;
+  padding: .75rem 10px;
+}
+
+.dashboard--download-vertical-divider {
+  border-right: rgba(227, 227, 232, 0.15) solid 1px;
+}
+
+.dashboard--download-more-options-menu {
+  min-width: 130px;
+  border-radius: 6px;
+  padding: 0.25rem;
+  position: absolute;
+  right: 80px;
+  top: 90px;
+  z-index: 15;
+  background-color: white;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.dashboard--download-option-button {
+  border-radius: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-variation-settings: 'wght' $bold;
+  color: $dark-gray;
+  padding: 8px 14px 8px 10px;
 }
