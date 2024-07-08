@@ -37,6 +37,7 @@
   box-shadow: 0 2px 8px -2px $widget--box-shadow;
   overflow-x: hidden;
   min-height: 300px;
+  min-width: 250px;
   max-width: 100%;
   height: -webkit-fill-available;
   height: -moz-available;
@@ -56,6 +57,8 @@
   }
 
   &:not([data-widget-type="locations_map"]) {
+    max-height: 350px;
+
     .widgets--widget-content {
       height: calc(100% - 4.5rem);
     }
