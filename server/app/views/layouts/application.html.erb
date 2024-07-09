@@ -96,7 +96,7 @@
                locals: { turbo_frame_tag_id: "notifications_modal" }
     %>
     <% if flash[:alert].present? %>
-      <%= render partial: "application/notice_alert", locals: {notice: flash[:alert]} %>
+      <%= render partial: "application/notice_alert", locals: {notice: flash[:alert], type: 'error'} %>
     <% end %>
     <%= render partial: "application/notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
     <%= render partial: "application/components/alerts/empty_notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
