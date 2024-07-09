@@ -53,7 +53,7 @@ include Recents
   after_validation :custom_geocode, if: Proc.new { new_record? || address_changed? || latitude_changed? || longitude_changed? }
   after_save_commit :link_to_geospaces
   after_commit :send_notifications
-  after_save :recalculate_averages!, if: :saved_change_to_account_id?
+  after_save :handle_account_change, if: :saved_change_to_account_id?
 
   default_scope { where(deleted_at: nil) }
   scope :with_deleted, -> { unscope(where: :deleted_at) }
@@ -168,6 +168,15 @@ include Recents
         location_id: self.id
       }])
     )
+  end
+
+  def handle_account_change
+    reassign_pods
+    recalculate_averages!
+  end
+
+  def reassign_pods
+    self.clients.update_all(account_id: self.account_id)
   end
 
   def recalculate_averages!

@@ -201,7 +201,6 @@ class LocationsController < ApplicationController
       wants_to_move_tests = params[:wants_to_move_tests] == "true"
       @locations.each do |location|
         old_account = location.account
-        location.clients.update_all(account_id: account.id)
         location.update(account_id: account.id)
         if wants_to_move_tests
           location.record_event(
