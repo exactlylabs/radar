@@ -912,14 +912,22 @@ class ClientsController < ApplicationController
       @client.location = nil
     when PodsHelper::PodAssignmentType::ExistingNetwork
       is_existing_network_in_current_account = policy_scope(Location).where(id: network_id).exists?
-      if is_existing_network_in_current_account
-        existing_network = policy_scope(Location).find(network_id)
+
+      # When changing an account, the network dropdown shows all networks for that account + empty option
+      # so technically the network could be none, so we need to treat that case specifically
+      if network_id.present?
+        if is_existing_network_in_current_account
+          existing_network = policy_scope(Location).find(network_id)
+        else
+          existing_network = Location.where(id: network_id, account_id: account.id).first
+        end
+        raise 'Invalid network assignment' if existing_network.nil?
+        @client.account = existing_network.account if existing_network.account.id != @client.account.id
+        @client.location = existing_network
       else
-        existing_network = Location.where(id: network_id, account_id: account.id).first
+        @client.location = nil
+        @client.account = account
       end
-      raise 'Invalid network assignment' if existing_network.nil?
-      @client.account = existing_network.account if existing_network.account.id != @client.account.id
-      @client.location = existing_network
     when PodsHelper::PodAssignmentType::NewNetwork
       @location = Location.new(location_params)
       @location.user = current_user
