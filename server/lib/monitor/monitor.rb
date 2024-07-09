@@ -30,7 +30,7 @@ module HealthMonitor
         REDIS.set(redis_key, Time.now)
     end
 
-    private 
+    private
 
     def url
         ENV["HEALTHCHECK_URL"] || "https://radar.exactlylabs.com/health"
@@ -67,4 +67,11 @@ module HealthMonitor
         end
     end
 
+    ##
+    # Send a GET request to Betterstack's Heartbeat monitor, to notify the cron job is active
+    #
+    def send_cronjob_heartbeat(key)
+      uri = URI("https://uptime.betterstack.com/api/v1/heartbeat/#{key}")
+      Net::HTTP.get_response(uri)
+    end
 end
