@@ -24,7 +24,7 @@ File.open Rails.root.join("lib", "geotools", "files", "as-org2info.jsonl") do |f
         name: row["name"],
         asn: row["asn"],
         autonomous_system_org_id: orgs[row["organizationId"]],
-        opaque_id: row["opaqueId"],
+        source_internal_id: row["opaqueId"],
         source: row["source"],
         source_file_timestamp: version,
         created_at: Time.now,
