@@ -71,6 +71,7 @@ module HealthMonitor
     # Send a GET request to Betterstack's Heartbeat monitor, to notify the cron job is active
     #
     def send_cronjob_heartbeat(key)
+      return if key.empty?
       uri = URI("https://uptime.betterstack.com/api/v1/heartbeat/#{key}")
       Net::HTTP.get_response(uri)
     end
