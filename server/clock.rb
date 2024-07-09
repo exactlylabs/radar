@@ -8,6 +8,7 @@ scheduler.every '5s', overlap: false do
       Client.update_outdated_online!
       Location.update_online_status!
       Client.resend_missed_test_requests!
+      Rails.application.send_cronjob_heartbeat("WeBSSynbt69rbruQXhEyWWVd")
     end
   rescue => e
     Sentry.capture_exception(e)
@@ -20,7 +21,13 @@ scheduler.every '3s', overlap: false do
 end
 
 scheduler.every '15s', overlap: false do
-  Client.request_scheduled_tests!
+  begin
+    Client.request_scheduled_tests!
+    Rails.application.send_cronjob_heartbeat("LMZAerCdkZiuZrcjPDVbVpMh")
+  rescue => e
+    Sentry.capture_exception(e)
+    raise e
+  end
 end
 
 scheduler.every '1h', overlap: false do
@@ -32,6 +39,7 @@ scheduler.every '1h', overlap: false do
   end
 end
 
+
 scheduler.every '5m', overlap: false do
   begin
     FillClientCountProjection.perform_later
@@ -40,6 +48,7 @@ scheduler.every '5m', overlap: false do
     raise e
   end
 end
+
 
 scheduler.every '5m', overlap: false do
   begin
