@@ -8,7 +8,7 @@ scheduler.every '5s', overlap: false do
       Client.update_outdated_online!
       Location.update_online_status!
       Client.resend_missed_test_requests!
-      Rails.application.send_cronjob_heartbeat("WeBSSynbt69rbruQXhEyWWVd")
+      Rails.application.send_cronjob_heartbeat("WeBSSynbt69rbruQXhEyWWVd") if Rails.env.production?
     end
   rescue => e
     Sentry.capture_exception(e)
@@ -23,7 +23,7 @@ end
 scheduler.every '15s', overlap: false do
   begin
     Client.request_scheduled_tests!
-    Rails.application.send_cronjob_heartbeat("LMZAerCdkZiuZrcjPDVbVpMh")
+    Rails.application.send_cronjob_heartbeat("LMZAerCdkZiuZrcjPDVbVpMh") if Rails.env.production?
   rescue => e
     Sentry.capture_exception(e)
     raise e
