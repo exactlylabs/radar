@@ -73,7 +73,7 @@ class Client < ApplicationRecord
   after_save :update_versions, if: :saved_change_to_update_group_id?
   after_save :update_location_status, if: :saved_change_to_location_id? || :saved_change_to_online?
 
-  before_save :recalculate_averages, if: :location_id_changed? || :account_id_changed?
+  before_save :handle_network_or_account_changed, if: :location_id_changed? || :account_id_changed?
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, lambda {
@@ -761,6 +761,17 @@ class Client < ApplicationRecord
         client_id: self.id
       }])
     )
+  end
+
+  def handle_network_or_account_changed
+    check_mismatching_account_and_location
+    recalculate_averages
+  end
+
+  def check_mismatching_account_and_location
+    if self.location.present? && self.location.account != self.account
+      self.account = self.location.account
+    end
   end
 
   def recalculate_averages!
