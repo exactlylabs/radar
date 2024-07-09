@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.bigint "autonomous_system_org_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "opaque_id"
+    t.string "source_internal_id"
     t.string "source"
     t.datetime "source_file_timestamp"
     t.index ["asn"], name: "index_autonomous_systems_on_asn", unique: true
@@ -686,6 +686,8 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.integer "service_satisfaction"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "delivered_at"
+    t.boolean "step_2_completed", default: false
   end
 
   create_table "recent_searches", force: :cascade do |t|
