@@ -76,17 +76,16 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "Test_update_When_given_an_invalid_network_assignment_type_Expect_a_not_found_raise" do
-    exception = assert_raise RuntimeError do
-      params = {
-        account_id: accounts(:root).id,
-        network_id: locations(:online1).id,
-        network_assignment_type: "1nv4l1d1D",
-        categories: [categories(:category1).id],
-      }
-      put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    end
-    assert_equal 'Invalid network assignment type', exception.message
+  test "Test_update_When_given_an_invalid_network_assignment_type_Expect_a_422" do
+    params = {
+      account_id: accounts(:root).id,
+      network_id: locations(:online1).id,
+      network_assignment_type: "1nv4l1d1D",
+      categories: [categories(:category1).id],
+      location: { name: "New Location" }
+    }
+    put(client_path(clients(:pod1).unix_user), params: params, as: :html)
+    assert_response :unprocessable_entity
   end
 
   test "Test_update_When_given_no_network_assignment_type_Expect_pod_to_get_updated_correctly" do
@@ -95,9 +94,10 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       network_id: locations(:online1).id, # I can send nil but want to really check if it's being set as empty
       network_assignment_type: PodsHelper::PodAssignmentType::NoNetwork,
       categories: [categories(:category1).id],
+      location: { name: "New Location" }
     }
     put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    assert_response :see_other
+    assert_response :redirect
     updated_pod = clients(:pod1).reload
     assert_nil updated_pod.location
     assert_equal updated_pod.account.id, accounts(:root).id
@@ -110,9 +110,10 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       network_id: locations(:online1).id,
       network_assignment_type: PodsHelper::PodAssignmentType::ExistingNetwork,
       categories: [categories(:category1).id],
+      location: { name: "New Location" }
     }
     put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    assert_response :see_other
+    assert_response :redirect
     updated_pod = clients(:pod1).reload
     assert_equal updated_pod.location.id, locations(:online1).id
     assert_equal updated_pod.account.id, accounts(:root).id
@@ -125,9 +126,10 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       network_id: locations(:different_account).id,
       network_assignment_type: PodsHelper::PodAssignmentType::ExistingNetwork,
       categories: [categories(:category1).id],
+      location: { name: "New Location" }
     }
     put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    assert_response :see_other
+    assert_response :redirect
     updated_pod = clients(:pod1).reload
     assert_equal updated_pod.location.id, locations(:different_account).id
     assert_equal updated_pod.account.id, accounts(:superaccount).id
@@ -152,7 +154,7 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       }
     }
     put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    assert_response :see_other
+    assert_response :redirect
     updated_pod = clients(:pod1).reload
     new_network = Location.find_by(name: "New Location")
     assert_equal updated_pod.location.id, new_network.id
@@ -171,9 +173,10 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       account_id: accounts(:root).id,
       network_assignment_type: PodsHelper::PodAssignmentType::NoNetwork,
       update_group_id: update_groups(:main).id,
+      location: { name: "New Location" }
     }
     put(client_path(clients(:pod1).unix_user), params: params, as: :html)
-    assert_response :see_other
+    assert_response :redirect
     updated_pod = clients(:pod1).reload
     assert_equal updated_pod.update_group.id, update_groups(:main).id
     assert_equal updated_pod.account.id, accounts(:root).id
