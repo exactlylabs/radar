@@ -11,9 +11,6 @@
         },
         "clock": {
             "quantity": 1
-        },
-        "clock_monitor": {
-            "quantity": 1
         }
     },
     "healthchecks": {
