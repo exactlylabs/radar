@@ -15,7 +15,7 @@
     <%= form.hidden_field :account_id, value: @destination_account.id %>
     <%= form.hidden_field :network_id, value: @destination_network_id %>
     <%= form.hidden_field :network_assignment_type, value: @network_assignment_type %>
-    <%= form.hidden_field :location_params, value: @location_params %>
+    <%= form.hidden_field :location, value: @location_params.to_json %>
     <%= form.hidden_field :categories, value: @categories %>
     <%= form.hidden_field :onboarding, value: @onboarding %>
 

@@ -1,11 +1,17 @@
-<%= turbo_stream.replace @client do %>
-  <%= render partial: 'clients/client', locals: { client: @client } %>
-<% end %>
+<% if flash[:alert].present? %>
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: "application/notice_alert", locals: {notice: flash[:alert], type: 'error'} %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace @client do %>
+    <%= render partial: 'clients/client', locals: { client: @client } %>
+  <% end %>
 
-<%= turbo_stream.replace "client-details" do %>
-  <%= render partial: 'clients/client_details', locals: { client: @client } %>
-<% end %>
+  <%= turbo_stream.replace "client-details" do %>
+    <%= render partial: 'clients/client_details', locals: { client: @client } %>
+  <% end %>
 
-<%= turbo_stream.replace @client do %>
-  <%= render partial: "clients_table_row", locals: { client: @client, selected: false } %>
+  <%= turbo_stream.replace @client do %>
+    <%= render partial: "clients_table_row", locals: { client: @client, selected: false } %>
+  <% end %>
 <% end %>

@@ -329,26 +329,26 @@ class ClientsController < ApplicationController
   def update
     account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
     @client.account = account if account.present? && account.id != @client.account.id
-    assign_pod_to_network(account, params[:network_id], params[:network_assignment_type], params[:categories])
+    begin
+      assign_pod_to_network(account, params[:network_id], params[:network_assignment_type], params[:categories])
+    rescue => e
+      @notice = e.message
+    end
 
-    if params[:update_group_id]
+    if !@notice && params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
       @client.update_group = update_group
     end
 
     respond_to do |format|
-      if @client.save!
+      if !@notice && @client.save!
         set_new_account(@client.account) if @client.account != current_account && !current_account.is_all_accounts?
-
-        if FeatureFlagHelper.is_available('networks', current_user)
-          format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
-        else
-          format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
-        end
-
+        format.html { redirect_back fallback_location: root_path, notice: "Pod was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(client.unix_user) }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        flash[:alert] = @notice
+        format.turbo_stream
+        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity }
         format.json { render json: client.errors, status: :unprocessable_entity }
       end
     end
@@ -700,7 +700,10 @@ class ClientsController < ApplicationController
     @destination_account = policy_scope(Account).find(params[:account_id])
     @network_assignment_type = params[:network_assignment_type]
     @destination_network_id = params[:network_id]
-    @location_params = params[:location_params]
+    location_information = JSON.parse(params[:location].to_s)
+    @location_params = ActionController::Parameters.new({ location: location_information })
+                                                   .require(:location)
+                                                   .permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location, :account_id)
     @categories = params[:categories]
     add_pods_to_account_and_network
   end
@@ -708,13 +711,17 @@ class ClientsController < ApplicationController
   def claim_new_pod
     account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
     @client.account = account if account.present? && account.id != @client.account.id
-    assign_pod_to_network(account, params[:location_id], params[:network_assignment_type], params[:categories], location_params)
+    begin
+      assign_pod_to_network(account, params[:location_id], params[:network_assignment_type], params[:categories])
+    rescue => e
+      error = e.message
+    end
     if FeatureFlagHelper.is_available('networks', current_user)
       @onboarding = params[:onboarding].present?
       @locations = policy_scope(Location)
     end
     respond_to do |format|
-      if @client.save!
+      if !error && @client.save!
         format.turbo_stream
       else
         format.html { redirect_back fallback_location: root_path, notice: there_has_been_an_error('adding your new pod') }
@@ -907,6 +914,7 @@ class ClientsController < ApplicationController
   def assign_pod_to_network(account, network_id, pod_assignment_type, categories)
     @client.user = current_user if @client.user.nil?
     @previous_location = @client.location
+    @location_params ||= location_params
     case pod_assignment_type
     when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
@@ -929,16 +937,23 @@ class ClientsController < ApplicationController
         @client.account = account
       end
     when PodsHelper::PodAssignmentType::NewNetwork
-      @location = Location.new(location_params)
-      @location.user = current_user
-      if account.present?
-        @location.account = account
-      else
-        @location.account = @client.account
+      begin
+        Client.transaction do
+          @location = Location.new(@location_params)
+          @location.user = current_user
+          if account.present?
+            @location.account = account
+          else
+            @location.account = @client.account
+          end
+          @location.clients << @client
+          @location.save!
+          @location.categories << policy_scope(Category).where(id: categories.split(",")) if categories.present?
+          @client.location = @location
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        raise e.message
       end
-      @location.save!
-      @location.categories << policy_scope(Category).where(id: categories.split(",")) if categories.present?
-      @client.location = @location
     else
       raise 'Invalid network assignment type'
     end
@@ -952,11 +967,8 @@ class ClientsController < ApplicationController
   end
 
   def add_pods_to_account_and_network
-    if FeatureFlagHelper.is_available('networks', current_user)
-      @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
-      @locations = policy_scope(Location)
-    end
-
+    @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
+    @locations = policy_scope(Location)
     @clients = []
     begin
       Client.transaction do
@@ -967,10 +979,10 @@ class ClientsController < ApplicationController
           @clients.append(@client)
         end
       end
-      @notice = @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
+      @notice ||= @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
     rescue Exception => e
       Sentry.capture_exception(e)
-      @notice = there_has_been_an_error('adding your new pod')
+      @notice ||= there_has_been_an_error('adding your new pod')
     end
   end
 end
