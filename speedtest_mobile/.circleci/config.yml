@@ -1,10 +1,11 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@2.1.2
-  flutter: circleci/flutter@2.0.2
-  gcp-cli: circleci/gcp-cli@2.4.1
-  ruby: circleci/ruby@2.0.1
+  android: circleci/android@2.5.0
+  flutter: circleci/flutter@2.0.4
+  aws-s3: circleci/aws-s3@4.0.0
+  aws-cli: circleci/aws-cli@4.0
+  ruby: circleci/ruby@2.1.3
   macos: circleci/macos@2
 
 commands:
@@ -33,6 +34,14 @@ commands:
       - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_staging.p12
       - run: echo ${ANTHC_FLUTTER_IOS_DISTRIBUTION_CERT} | base64 -d > /tmp/distribution_prod.cer
       - run: echo ${ANTHC_FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_prod.p12
+
+  setup_backblaze_client:
+    steps:
+      - run: curl -o b2 https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+      - run: chmod +x b2
+      - run: mv b2 /usr/bin/b2
+      - run: b2 account authorize ${BACKBLAZE_ACCESS_KEY} ${BACKBLAZE_SECRET_KEY}
+
 
 jobs:
   generate_build_number:
@@ -80,14 +89,16 @@ jobs:
             - android/*
 
   upload-android:
-    executor: gcp-cli/google
+    docker:
+      - image: 'cimg/base:edge'
     steps:
       - attach_workspace:
           at: ~/workspace
-      - gcp-cli/initialize:
-          gcloud-service-key: FLUTTER_STORAGE_UPLOAD_GCP_CRED
-          google-project-id: TTAC_PROD_PROJECT_ID
-      - run: gsutil cp -r ~/workspace/android/* gs://${FLUTTER_FLAVORS_BUCKET_NAME}/android
+      - setup_backblaze_client
+      - run: |
+          for file in $(find ~/worspace/android -type f); do
+            b2 file upload radar-mobile-distributions $file $file
+          done
 
   release-android:
     working_directory: ~/project
@@ -154,14 +165,16 @@ jobs:
             - ios/*
 
   upload-ios:
-    executor: gcp-cli/google
+    docker:
+      - image: 'cimg/base:edge'
     steps:
       - attach_workspace:
           at: ~/workspace
-      - gcp-cli/initialize:
-          gcloud-service-key: FLUTTER_STORAGE_UPLOAD_GCP_CRED
-          google-project-id: TTAC_PROD_PROJECT_ID
-      - run: gsutil cp -r ~/workspace/ios/* gs://${FLUTTER_FLAVORS_BUCKET_NAME}/ios
+      - setup_backblaze_client
+      - run: |
+          for file in $(find ~/worspace/ios -type f); do
+            b2 file upload radar-mobile-distributions $file $file
+          done
 
   release-ios:
     working_directory: ~/project
