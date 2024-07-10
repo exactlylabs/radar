@@ -1,4 +1,4 @@
-package gcpdatastore
+package gcpstorage
 
 import (
 	"context"
@@ -35,8 +35,7 @@ func NewUploader(bucket *gcpstorage.BucketHandle) *Uploader {
 	}
 }
 
-func (u *Uploader) Upload(src io.ReadCloser, dst string) {
-	ctx := context.Background()
+func (u *Uploader) Upload(ctx context.Context, src io.ReadCloser, dst string) {
 	u.uploadCh <- &uploadData{
 		writer: u.bucket.Object(dst).NewWriter(ctx),
 		reader: src,

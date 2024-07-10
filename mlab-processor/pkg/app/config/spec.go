@@ -13,10 +13,15 @@ type ProcessorConfig struct {
 	Ipv6DBPath       string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
 	AsnIpv4DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
 	AsnIpv6DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
-	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/20221001.as-org2info.jsonl"`
-	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_2022_us_state.zip;US_COUNTIES:./input/tl_2022_us_county.zip;US_AIANNH:./input/tl_2022_us_aiannh.zip;ZIP_CODES:./input/tl_2022_us_zcta520.zip"`
+	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/as-org2info.jsonl"`
+	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_us_state.zip;US_COUNTIES:./input/tl_us_county.zip;US_AIANNH:./input/tl_us_aiannh.zip;ZIP_CODES:./input/tl_us_zcta520.zip"`
 	TractsShapeDir   string `config:"TRACTS_SHAPE_DIR,default=./input/tracts"`
+	StorageType      string `config:"STORAGE_TYPE,default=local"` // Accepts local, gcs, s3
 	UploadBucketName string `config:"UPLOAD_BUCKET_NAME,default=mlab-processed-data"`
+	S3AccessKey      string `config:"S3_ACCESS_KEY"`
+	S3SecretKey      string `config:"S3_SECRET_KEY"`
+	S3Endpoint       string `config:"S3_ENDPOINT"`
+	S3Region         string `config:"S3_REGION"`
 }
 
 var cachedConfig *ProcessorConfig

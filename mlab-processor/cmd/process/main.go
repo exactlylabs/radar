@@ -16,14 +16,8 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
-
-	gcpstorage "cloud.google.com/go/storage"
-	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/gcpdatastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
-
-// How to encode/store the data
-var dsProvider = flavors.AvroLocalDataStoreFactory
 
 var yesterday = time.Now().Add(-24 * time.Hour).Round(24 * time.Hour)
 
@@ -32,7 +26,7 @@ var startPtr = flag.String("start", "2019-05-13", "First date to run pipeline fr
 var endPtr = flag.String("end", yesterday.Format("2006-01-02"), "Last date to run pipeline from (inclusive). If empty, set to yesterday")
 var rerunPtr = flag.Bool("rerun", false, "Ignore previously collected data and force reprocessing")
 var debug = flag.Bool("debug", false, "Print some debugging information")
-var upload = flag.Bool("upload", false, "Set to upload generated files to cloud storage")
+var storageType = flag.String("storage", "local", "Storage type to store the files (local, gcs, b2)")
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
@@ -64,17 +58,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *upload {
-		log.Println("Using AvroStorageDataStoreFactory as Provider")
-		ctx := context.Background()
-		cli, err := gcpstorage.NewClient(ctx)
-		if err != nil {
-			panic(err)
-		}
-		bucket := cli.Bucket(config.GetConfig().UploadBucketName)
-		uploader := gcpdatastore.NewUploader(bucket)
-		defer uploader.Close()
-		dsProvider = flavors.NewAvroStorageDataStoreFactory(uploader)
+	conf := config.GetConfig()
+	storage, err := flavors.GetStorageFromConfig(context.Background(), conf)
+	if err != nil {
+		log.Fatalf("Error getting storage: %v", err)
 	}
 
 	dateRange := helpers.DateRange(start, end)
@@ -101,6 +88,8 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
+	dsProvider := flavors.NewAvroStorageDataStoreFactory(storage)
 	pipeline.RunPipeline(dsProvider, dateRange, pipelineStr, *rerunPtr)
 
 	if *debug {
