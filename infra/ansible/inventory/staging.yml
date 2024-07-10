@@ -4,6 +4,7 @@ managers:
       swarm_default_addr_pool: 10.0.0.0/16 # Be careful to not conflict with the VPC subnet
       labels:
         network: aws
+        redis: "true"
 
 workers:
   hosts:
