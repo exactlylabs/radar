@@ -41,8 +41,8 @@ func processDate(readers []io.ReadCloser, startTime time.Time, s storages.Ingest
 	return nil
 }
 
-func Ingest(ctx context.Context, s storages.IngestorAppStorages, bucketName string, start, end time.Time, summarize bool) error {
-	it, err := Fetch(bucketName, []string{"ipgeocode", "reversegeocode"}, start, end)
+func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage, start, end time.Time, summarize bool) error {
+	it, err := Fetch(storage, []string{"ipgeocode", "reversegeocode"}, start, end)
 	if err != nil {
 		return err
 	}

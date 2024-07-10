@@ -19,6 +19,10 @@ type Config struct {
 	DBPortStr                 string `config:"DB_PORT"`
 	DBSecureTLSStr            string `config:"DB_SECURE_TLS"`
 	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
+	S3AccessKey               string `config:"S3_ACCESS_KEY"`
+	S3SecretKey               string `config:"S3_SECRET_KEY"`
+	S3Endpoint                string `config:"S3_ENDPOINT"`
+	S3Region                  string `config:"S3_REGION"`
 	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
 	ClickhouseStorageNWorkers string `config:"CLICKHOUSE_STORAGE_NWORKERS"`
 	UseCacheStr               string `config:"USE_CACHE"`

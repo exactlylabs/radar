@@ -18,11 +18,15 @@ services:
       - TRACING_EXPORTER=aws
       - TZ=UTC
     secrets:
-      - source: MAPPING_DB_PASSWORD
+      - source: CLICKHOUSE_PASSWORD
         target: DB_PASSWORD
 
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == aws
+
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.mapping-api-app.rule=Host(`api.mapping.staging.radartoolkit.com`)"
@@ -52,6 +56,8 @@ services:
       mode: replicated-job
       replicas: 1
       placement:
+        constraints:
+          - node.labels.network == aws
         max_replicas_per_node: 1
 
 networks:
@@ -67,5 +73,5 @@ volumes:
       device: ":/mnt/nfs/mapping-api/geos"
 
 secrets:
-  MAPPING_DB_PASSWORD:
+  CLICKHOUSE_PASSWORD:
     external: true

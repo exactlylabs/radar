@@ -15,10 +15,11 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/s3storage"
 	"github.com/joho/godotenv"
 )
 
-func runInsertions(ctx context.Context, s storages.IngestorAppStorages) {
+func runInsertions(ctx context.Context, s storages.IngestorAppStorages, storage ingestor.Storage) {
 	if err := s.MeasurementStorage.Open(); err != nil {
 		panic(err)
 	}
@@ -35,7 +36,7 @@ func runInsertions(ctx context.Context, s storages.IngestorAppStorages) {
 	endTime := time.Now().Truncate(time.Hour * 24)
 	start := time.Now()
 	log.Printf("Requesting insertions from %v to %v\n", measStartTime, endTime)
-	err = ingestor.Ingest(ctx, s, config.GetConfig().FilesBucketName, *measStartTime, endTime, true)
+	err = ingestor.Ingest(ctx, s, storage, *measStartTime, endTime, true)
 	if err != nil {
 		panic(err)
 	}
@@ -74,6 +75,18 @@ func main() {
 	db := clickhousestorages.DB(conf, nWorkers)
 	defer db.Close()
 	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers, false)
+
+	storage, err := s3storage.New(
+		conf.FilesBucketName,
+		conf.S3AccessKey,
+		conf.S3SecretKey,
+		conf.S3Endpoint,
+		conf.S3Region,
+	)
+	if err != nil {
+		panic(err)
+	}
+
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {
@@ -81,7 +94,7 @@ func main() {
 		case <-ctx.Done():
 			return
 		case <-timer.C:
-			runInsertions(ctx, s)
+			runInsertions(ctx, s, storage)
 			timer.Reset(time.Hour)
 		}
 	}
