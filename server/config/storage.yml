@@ -13,6 +13,7 @@ backblaze:
   secret_access_key: <%= ENV["BUCKET_SECRET_KEY"] %>
   endpoint: https://s3.us-west-004.backblazeb2.com
   bucket: <%= ENV["BUCKET_NAME"] %>
+  region: "us-west-004"
 
 # Remember not to checkin your GCS keyfile to a repository
 google:
