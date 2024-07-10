@@ -21,6 +21,12 @@ google:
   credentials: <%= Rails.root.join("gcs.keyfile") %>
   bucket: <%= ENV["GOOGLE_BUCKET_NAME"] %>
 
+google_migration:
+  service: Mirror
+  primary: google
+  mirrors:
+    - backblaze
+
 # Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
 # microsoft:
 #   service: AzureStorage
