@@ -1,0 +1,30 @@
+services:
+  api:
+    image: registry.staging.radartoolkit.com/fipsgeocoder:latest
+    environment:
+      - COUNTIES_SHAPE_PATH=/app/files/tl_us_county.zip
+      - STATES_SHAPE_PATH=/app/files/tl_us_state.zip
+    command: "sleep infinity"
+    networks:
+      - public
+    volumes:
+      - shapefiles:/app/files
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == aws
+
+
+networks:
+  public:
+    driver: overlay
+    attachable: true
+
+volumes:
+  shapefiles:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.staging.radartoolkit.com,rw
+      device: ":/mnt/nfs/mlab-processor/files"
