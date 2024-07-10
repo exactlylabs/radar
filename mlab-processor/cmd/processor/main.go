@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	gcpstorage "cloud.google.com/go/storage"
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher"
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
@@ -13,7 +12,6 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
-	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/gcpdatastore"
 )
 
 var pipelineStr = []string{
@@ -25,14 +23,13 @@ var pipelineStr = []string{
 
 func main() {
 	ctx := helpers.InterruptSignalContext()
-	cli, err := gcpstorage.NewClient(ctx)
+
+	conf := config.GetConfig()
+	storage, err := flavors.GetStorageFromConfig(ctx, conf)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error getting storage: %v", err)
 	}
-	bucket := cli.Bucket(config.GetConfig().UploadBucketName)
-	uploader := gcpdatastore.NewUploader(bucket)
-	defer uploader.Close()
-	dsProvider := flavors.NewAvroStorageDataStoreFactory(uploader)
+	dsProvider := flavors.NewAvroStorageDataStoreFactory(storage)
 	log.Println("Starting Processor Service")
 
 	startTime, _ := time.Parse("2006-01-02", config.GetConfig().EarliestDate)
