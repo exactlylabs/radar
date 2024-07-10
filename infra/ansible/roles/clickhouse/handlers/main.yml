@@ -1,0 +1,7 @@
+# Took from https://github.com/AlexeySetevoi/ansible-clickhouse/blob/master/handlers/main.yml
+---
+# handlers file for clickhouse
+- name: "Restart Clickhouse Service"
+  set_fact:
+    clickhouse_service_ensure: "restarted"
+  listen: 'restart-ch'
