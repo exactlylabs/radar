@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1.2
+
+FROM --platform=${BUILDPLATFORM} golang:1.18.2-alpine3.15 as builder
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+
+WORKDIR /go/src/github.com/exactlylabs/mlab-mapping/backend
+
+RUN apk add git gcc g++
+
+COPY go.mod go.sum ./
+RUN go get ./...
+
+COPY .  ./
+
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o mlab-ingestor ./cmd/ingestor_service/main.go
+
+#---------------------------------------------------------#
+FROM --platform=${TARGETPLATFORM} alpine:3.14.0
+
+WORKDIR /app
+RUN apk add --no-cache tzdata
+# Copy the binary
+COPY --from=builder /go/src/github.com/exactlylabs/mlab-mapping/backend/mlab-ingestor ./
+COPY --from=builder /go/src/github.com/exactlylabs/mlab-mapping/backend/scripts/docker-entrypoint ./
+
+RUN chmod +x docker-entrypoint
+RUN chmod +x mlab-ingestor
+
+EXPOSE 5000
+
+ENTRYPOINT ["./docker-entrypoint"]
+CMD ["./mlab-ingestor"]

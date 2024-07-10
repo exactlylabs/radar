@@ -11,6 +11,7 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/s3storage"
 	"github.com/joho/godotenv"
 )
 
@@ -36,7 +37,17 @@ func main() {
 	defer db.Close()
 	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers, *truncate)
 	t := time.Now()
-	err := ingestor.Ingest(context.Background(), s, config.GetConfig().FilesBucketName, start, final, *updateViews)
+	storage, err := s3storage.New(
+		conf.FilesBucketName,
+		conf.S3AccessKey,
+		conf.S3SecretKey,
+		conf.S3Endpoint,
+		conf.S3Region,
+	)
+	if err != nil {
+		panic(err)
+	}
+	err = ingestor.Ingest(context.Background(), s, storage, start, final, *updateViews)
 	if err != nil {
 		panic(err)
 	}

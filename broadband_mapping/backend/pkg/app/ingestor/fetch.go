@@ -7,14 +7,13 @@ import (
 	"log"
 	"time"
 
-	gcpstorage "cloud.google.com/go/storage"
-	"google.golang.org/api/iterator"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type ItemIterator struct {
-	names  [][]string
-	bucket *gcpstorage.BucketHandle
-	index  int
+	names   [][]string
+	storage Storage
+	index   int
 }
 
 func (it *ItemIterator) Next() ([]io.ReadCloser, error) {
@@ -25,7 +24,7 @@ func (it *ItemIterator) Next() ([]io.ReadCloser, error) {
 	readers := make([]io.ReadCloser, 0)
 	log.Println("Reading", it.names[it.index])
 	for _, path := range it.names[it.index] {
-		r, err := it.bucket.Object(path).NewReader(ctx)
+		r, err := it.storage.Read(ctx, path)
 		if err != nil {
 			return nil, fmt.Errorf("fetch.ItemIterator#PreFetch NewReader: %w", err)
 		}
@@ -37,13 +36,9 @@ func (it *ItemIterator) Next() ([]io.ReadCloser, error) {
 }
 
 // Fetch avro files, returning an iterator of files or nil in case no files are found
-func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIterator, error) {
+func Fetch(storage Storage, directories []string, start, end time.Time) (*ItemIterator, error) {
 	ctx := context.Background()
-	client, err := gcpstorage.NewClient(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("ingestor.Fetch NewClient: %w", err)
-	}
-	log.Printf("Fetching files to download for bucket %v\n from %v to %v", bucket, start, end)
+	log.Printf("Fetching files to download for storage %v\n from %v to %v", storage, start, end)
 	names := make([][]string, 0)
 	// Iterate through dates and add them to be added into the database
 	for date := start.Truncate(time.Hour * 24); date.Before(end); date = date.AddDate(0, 0, 1) {
@@ -54,15 +49,10 @@ func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIter
 			if directory != "" {
 				prefix = fmt.Sprintf("%s/%s", directory, prefix)
 			}
-			iter := client.Bucket(bucket).Objects(ctx, &gcpstorage.Query{Prefix: prefix})
-			for item, err := iter.Next(); item != nil || err != nil; item, err = iter.Next() {
-				if err != nil && err == iterator.Done {
-					break
-
-				} else if err != nil {
-					return nil, fmt.Errorf("ingestor.Fetch Next: %w", err)
-				}
-				dateNames = append(dateNames, item.Name)
+			var err error
+			dateNames, err = storage.List(ctx, prefix)
+			if err != nil {
+				return nil, errors.W(err)
 			}
 		}
 		if len(dateNames) == len(directories) {
@@ -73,7 +63,7 @@ func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIter
 		return nil, nil
 	}
 	return &ItemIterator{
-		names:  names,
-		bucket: client.Bucket(bucket),
+		names:   names,
+		storage: storage,
 	}, nil
 }
