@@ -1,0 +1,8 @@
+
+
+clickhousedb:
+  hosts:
+    db.mapping.radartoolkit.com:
+  vars:
+    db_name: mlab-mapping
+
