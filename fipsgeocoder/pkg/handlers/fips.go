@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/exactlylabs/mlab-processor/pkg/services/geo"
@@ -84,9 +85,19 @@ const (
 	COUNTIES_NS = "US_COUNTIES"
 )
 
-func loadShape(namespace, filepath string) {
+func loadShape(namespace, filePath string) {
 	// open a shapefile for reading
-	shape, err := shp.Open(filepath)
+
+	var err error
+	var shape shp.SequentialReader
+	if filepath.Ext(filePath) == ".shp" {
+		shape, err = shp.Open(filePath)
+	} else if filepath.Ext(filePath) == ".zip" {
+		shape, err = shp.OpenZip(filePath)
+	} else {
+		panic(fmt.Errorf("unsupported file type: %s", filePath))
+	}
+
 	if err != nil {
 		panic(fmt.Errorf("geocoder.initIndex err: %w", err))
 	}
@@ -97,14 +108,14 @@ func loadShape(namespace, filepath string) {
 
 	// loop through all features in the shapefile
 	for shape.Next() {
-		n, p := shape.Shape()
+		_, p := shape.Shape()
 
 		poly := p.(*shp.Polygon)
 
 		var geoid string
 		for k, f := range fields {
 			if f.String() == "GEOID" {
-				geoid = shape.ReadAttribute(n, k)
+				geoid = shape.Attribute(k)
 				break
 			}
 		}
