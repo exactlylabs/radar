@@ -24,36 +24,36 @@ transforms:
 
 
 sinks:
-  # docker_logs_sink:
-  #   type: "aws_cloudwatch_logs"
-  #   inputs: ["docker_logs"]
-  #   compression: "gzip"
-  #   encoding:
-  #     codec: "json"
-  #   region: "us-east-2"
-  #   group_name: "/vector/docker-logs"
-  #   stream_name: {{ "\"{{ host }}\"" }}
-  #   auth:
-  #     access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-  #     secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
-  #   healthcheck: false
-
-  # traefik_access_sink:
-  #   type: "aws_cloudwatch_logs"
-  #   inputs: ["traefik_logs_decode"]
-  #   compression: "gzip"
-  #   encoding:
-  #     codec: "json"
-  #   region: "us-east-2"
-  #   group_name: "/vector/traefik"
-  #   stream_name: {{ "\"{{ host }}\"" }}
-  #   auth:
-  #     access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-  #     secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
-  #   healthcheck: false
-
-  debug:
-    type: "console"
-    inputs: ["traefik_logs"]
+  docker_logs_sink:
+    type: "aws_cloudwatch_logs"
+    inputs: ["docker_logs"]
+    compression: "gzip"
     encoding:
-      codec: "text"
+      codec: "json"
+    region: "us-east-2"
+    group_name: "/vector/docker-logs"
+    stream_name: {{ "\"{{ host }}\"" }}
+    auth:
+      access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
+      secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+    healthcheck: false
+
+  traefik_access_sink:
+    type: "aws_cloudwatch_logs"
+    inputs: ["traefik_logs_decode"]
+    compression: "gzip"
+    encoding:
+      codec: "json"
+    region: "us-east-2"
+    group_name: "/vector/traefik"
+    stream_name: {{ "\"{{ host }}\"" }}
+    auth:
+      access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
+      secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+    healthcheck: false
+
+  # debug:
+  #   type: "console"
+  #   inputs: ["traefik_logs"]
+  #   encoding:
+  #     codec: "text"
