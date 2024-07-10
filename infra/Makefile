@@ -35,3 +35,7 @@ setup-postgres:
 .PHONY: setup-redis
 setup-redis:
 	make -C ./ansible setup-redis ENVIRONMENT=$(ENVIRONMENT)
+
+.PHONY: setup-clickhouse
+setup-clickhouse:
+	make -C ./ansible setup-clickhouse ENVIRONMENT=$(ENVIRONMENT)
