@@ -13,6 +13,9 @@ services:
 
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == aws
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.toolkit-website.rule=Host(`radartoolkit.com`, `www.radartoolkit.com`)"

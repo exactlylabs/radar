@@ -26,6 +26,9 @@ services:
 
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == aws
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.mapping-api-app.rule=Host(`pods-swarm.staging.radartoolkit.com`)"
