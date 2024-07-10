@@ -1,15 +1,22 @@
+<% can_download_measurements = !current_user.has_measurements_pending_download %>
+<% can_download_all_measurements = !current_user.has_all_measurements_pending_download %>
+<% can_download_ndt7 = !current_user.has_ndt7_pending_download %>
 <div class="dashboard--download-more-options-menu invisible" id="more-options-menu-download-data"
 >
-  <a href="<%= measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
+  <a href="<%= measurements_path(format: 'csv') %>" class="dashboard--download-option-button <%= can_download_measurements ? '' : 'custom-button--disabled pending' %>">
     <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
     Download measurements
   </a>
-  <a href="<%= full_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
-    <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
-    Download all measurements
-  </a>
-  <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
-    <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
-    Download NDT7 extended
-  </a>
+  <% if policy(:measurement).full_index? %>
+    <a href="<%= full_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button <%= can_download_all_measurements ? '' : 'custom-button--disabled' %>">
+      <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
+      Download all measurements
+    </a>
+  <% end %>
+  <% if policy(:measurement).full_ndt7_index? %>
+    <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button <%= can_download_ndt7 ? '' : 'custom-button--disabled' %>">
+      <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
+      Download NDT7 extended
+    </a>
+  <% end %>
 </div>
