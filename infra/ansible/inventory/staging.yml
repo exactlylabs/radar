@@ -2,6 +2,8 @@ managers:
   hosts:
     manager-01.staging.radartoolkit.com:
       swarm_default_addr_pool: 10.0.0.0/16 # Be careful to not conflict with the VPC subnet
+      labels:
+        network: aws
 
 workers:
   hosts:
@@ -9,6 +11,13 @@ workers:
       labels:
         private: "true"
         architecture: arm64
+        network: aws
+    db.mapping.radartoolkit.com:
+      skip_cloudwatch: true
+      labels:
+        external: "true"
+        service: clickhouse
+        network: tailscale
 
 nfs:
   hosts:
