@@ -1,0 +1,30 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+<?xml version="1.0"?>
+{{ ansible_managed | comment('xml') }}
+<clickhouse>
+
+{% for host in clickhouse_listen_host %}
+    <listen_host>{{ host }}</listen_host>
+{% endfor %}
+
+    <max_connections>{{ clickhouse_config.max_connections }}</max_connections>
+    <keep_alive_timeout>{{ clickhouse_config.keep_alive_timeout }}</keep_alive_timeout>
+
+    <!-- Maximum number of concurrent queries. -->
+    <max_concurrent_queries>{{ clickhouse_config.max_concurrent_queries }}</max_concurrent_queries>
+
+    <!-- Maximum session timeout, in seconds. Default: 3600. -->
+    <max_session_timeout>{{ clickhouse_config.max_session_timeout }}</max_session_timeout>
+
+    <!-- Default session timeout, in seconds. Default: 60. -->
+    <default_session_timeout>{{ clickhouse_config.default_session_timeout }}</default_session_timeout>
+
+    <path>{{ clickhouse_path_data }}</path>
+    <tmp_path>{{ clickhouse_path_tmp }}</tmp_path>
+
+    <!-- Directory with user provided files that are accessible by 'file' table function. -->
+    <user_files_path>{{ clickhouse_path_user_files }}</user_files_path>
+
+    <max_table_size_to_drop>{{ clickhouse_config.max_table_size_to_drop }}</max_table_size_to_drop>
+
+</clickhouse>
