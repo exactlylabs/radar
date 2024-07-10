@@ -1,6 +1,7 @@
+<% download_data_enabled = policy(:export).all? && !current_user.has_all_data_pending_download %>
 <div class="dashboard--download-data-wrapper">
   <div class="dashboard--download-data-button custom-button--primary custom-button--lg">
-    <div data-controller="exports" data-action="click->exports#exportAll" class="dashboard--download-data-container">
+    <div data-controller="exports" data-action="click->exports#exportAll" class="dashboard--download-data-container <%= download_data_enabled ? '' : 'custom-button--disabled pending' %>">
       <%= image_tag image_url('download-archive-white.svg'), width: 16, height: 16, class: 'me-2' %>
       <p class='dashboard--download-data-text'>Download data</p>
     </div>
