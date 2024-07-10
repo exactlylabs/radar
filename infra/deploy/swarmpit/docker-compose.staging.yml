@@ -21,7 +21,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1024M
+          memory: 512M
         reservations:
           cpus: '0.25'
           memory: 512M
@@ -36,6 +36,9 @@ services:
     networks:
       - net
     deploy:
+      placement:
+        constraints:
+          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.30'
@@ -51,6 +54,9 @@ services:
     networks:
       - net
     deploy:
+      placement:
+        constraints:
+          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.60'

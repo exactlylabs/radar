@@ -10,6 +10,7 @@ services:
       placement:
         constraints:
           - node.labels.registry == true
+          - node.labels.network == aws
       labels:
         - "traefik.enable=true"
         - "traefik.http.services.docker-registry.loadbalancer.server.port=5000"
