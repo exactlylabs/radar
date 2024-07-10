@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mlab-ingestor:
+    image: registry.staging.radartoolkit.com/mlab-ingestor:latest
+    networks:
+      - host_network # To allow access to clickhousedb
+    environment:
+      - DB_PORT=9000
+      - DB_NAME=mlab-mapping
+      - DB_USER=mapping
+      - DB_HOST=localhost
+      - GOOGLE_APPLICATION_CREDENTIALS=/var/run/secrets/GCLOUD_UPLOADER_CREDENTIALS
+    secrets:
+      - source: CLICKHOUSE_PASSWORD
+        target: DB_PASSWORD
+      - source: GCLOUD_UPLOADER_CREDENTIALS
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == tailscale
+          - node.labels.service == clickhouse
+
+networks:
+  host_network:
+    external:
+      name: "host"
+
+
+secrets:
+  CLICKHOUSE_PASSWORD:
+    external: true
+  GCLOUD_UPLOADER_CREDENTIALS:
+    external: true
