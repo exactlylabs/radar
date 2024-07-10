@@ -3,6 +3,8 @@ services:
     image: registry.staging.radartoolkit.com/pods-server:latest
     networks:
       - traefik_public
+      - fipsgeocoder_public
+      - redis_public
 
     environment:
       - RAILS_ENV=staging
@@ -38,6 +40,10 @@ services:
 
 networks:
   traefik_public:
+    external: true
+  fipsgeocoder_public:
+    external: true
+  redis_public:
     external: true
 
 secrets:
