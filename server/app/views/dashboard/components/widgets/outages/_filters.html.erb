@@ -21,4 +21,9 @@
      href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'network_failure' })) %>"
      target="_top"
   >Network outage</a>
+  <a class="dashboard--outages-filter"
+     data-selected="<%= outage_type === 'unknown_reason' %>"
+     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'unknown_reason' })) %>"
+     target="_top"
+  >Ongoing outage</a>
 </div>
