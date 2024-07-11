@@ -590,7 +590,7 @@ module DashboardHelper
   end
 
   # I want to avoid having more than 500 dots
-  # Base all calculations on milliseconds
+  # Base all calculations in seconds
   def self.get_interval_step(from, to)
     time_diff = to - from
 
