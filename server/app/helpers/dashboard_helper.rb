@@ -356,12 +356,8 @@ module DashboardHelper
         WHEN outage_events.outage_type = 2 THEN 'isp_outage'
         ELSE 'power_outage' END as outage_type,
       outage_events.started_at,
-      CASE
-        WHEN outage_events.status = 0 THEN NOW()
-        ELSE outage_events.resolved_at END as resolved_at,
-      CASE
-        WHEN outage_events.status = 0 THEN EXTRACT(EPOCH FROM NOW() - outage_events.resolved_at) * 1000
-        ELSE EXTRACT(EPOCH FROM outage_events.resolved_at - outage_events.started_at) * 1000 END as duration,
+      COALESCE(outage_events.resolved_at, NOW()) AS resolved_at,
+      EXTRACT(EPOCH FROM COALESCE(outage_events.resolved_at, NOW()) - outage_events.started_at) * 1000 AS duration,
       COUNT(*) as count
     FROM outage_events
     JOIN network_outages ON network_outages.outage_event_id = outage_events.id

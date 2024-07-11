@@ -50,5 +50,14 @@
       Network outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'unknown_reason' ? 'active' : nil %> outages"
+            data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
+            data-outages-modal-target="filter"
+            data-type="unknown_reason"
+            data-label="Ongoing outage"
+    >
+      Ongoing outage
+      <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+    </button>
   </div>
 </div>
