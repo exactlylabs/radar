@@ -40,7 +40,7 @@ export default class extends Controller {
     setTimeout(() => {
       this.modalElement.classList.remove('closing');
       this.element.classList.add('invisible');
-      this.element.parentElement.innerHTML = null;
+      if(this.element.parentElement) this.element.parentElement.innerHTML = null;
     }, 250);
   }
 

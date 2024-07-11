@@ -1,7 +1,7 @@
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
   <% # add new pod to network pods table if it's being remove from inside the network pods page %>
   <% is_in_network_pods_view = request.referrer.include?(locations_path) %>
-  <% all_pods = policy_scope(Client) %>
+  <% all_pods = current_account.is_all_accounts? ? policy_scope(Client) : policy_scope(Client).where(account: current_account) %>
   <% if is_in_network_pods_view %>
     <% if all_pods.count == 0 %>
       <%= turbo_stream.update "network_pods_table_container" do %>
@@ -27,8 +27,27 @@
         <%= render partial: "pods/components/empty_pods_card"%>
       <% end %>
     <% else %>
-      <% @pod_ids.each do |pod_id| %>
-        <%= turbo_stream.remove "client_#{pod_id}" do %>
+
+      <% pods_to_remove = current_account.is_all_accounts? ? Client.none : @pods.where.not(account: current_account) %>
+      <% pods_to_update = current_account.is_all_accounts? ? @pods : @pods.where(account: current_account) %>
+      <% if pods_to_update.count > 0 %>
+        <% pods_to_update.each do |pod| %>
+          <%= turbo_stream.replace "client_#{pod.id}" do %>
+            <%= render partial: "application/components/tables/table_row",
+                       locals: {
+                         row: pod,
+                         type: TablesHelper::TableTypes::PODS,
+                         widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+                         index: pod.unix_user,
+                         even: false
+                       }
+            %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if pods_to_remove.count > 0 %>
+        <% pods_to_remove.each do |pod| %>
+          <%= turbo_stream.remove "client_#{pod.id}" %>
         <% end %>
       <% end %>
     <% end %>
