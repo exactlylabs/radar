@@ -1,5 +1,6 @@
 <% responsive = @responsive || false %>
 <% entities_array =  @download_speeds.map{|row| row['entity_identifier']}.to_set.to_a %>
+<% entities_with_hex = entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i % ChartsHelper::COLORS.length] }} %>
 
 <%= turbo_frame_tag "compare-download-speeds-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @download_speeds.count == 0 %>
@@ -17,12 +18,13 @@
             data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="download-speeds-chart-skeleton"
             data-toggler-id="download-speeds-toggler"
+            data-entities-and-hexes="<%= entities_with_hex.map(&:to_json) %>"
     ></canvas>
     <div id="download-speeds-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareDownloadSpeeds",
-                   options: entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i % ChartsHelper::COLORS.length] }}
+                   options: entities_with_hex
                  }
       %>
     </div>

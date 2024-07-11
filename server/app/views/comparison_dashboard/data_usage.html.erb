@@ -1,5 +1,6 @@
 <% responsive = @responsive || false %>
 <% entities_array = @data_usage.map{|row| row['entity_identifier']}.to_set.to_a %>
+<% entities_with_hex = entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i % ChartsHelper::COLORS.length] }} %>
 
 <%= turbo_frame_tag "compare-data-usage-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @data_usage.count == 0 %>
@@ -17,12 +18,13 @@
             data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="data-usage-chart-skeleton"
             data-toggler-id="data-usage-toggler"
+            data-entities-and-hexes="<%= entities_with_hex.map(&:to_json) %>"
     ></canvas>
     <div id="data-usage-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareDataUsage",
-                   options: entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i  % ChartsHelper::COLORS.length] }}
+                   options: entities_with_hex
                  }
       %>
     </div>

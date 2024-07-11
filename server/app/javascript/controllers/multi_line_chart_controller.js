@@ -1,4 +1,4 @@
-import ChartController, {CHART_TITLES, DOT_SIZE, TOOLTIP_TITLE_PADDING, X_AXIS_OFFSET} from "./chart_controller";
+import ChartController, {DOT_SIZE, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -11,6 +11,10 @@ export default class MultiLineChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
     this.selectedHexes = [];
+    // limit label to max 10 characters, and add ellipsis
+    this.entitiesAndHexes = JSON.parse(this.element.dataset.entitiesAndHexes)
+                            .map(i => JSON.parse(i))
+      .map(i => ({label: i.label.length > 12 ? i.label.substring(0, 12) + '...' : i.label, hex: i.hex}));
     super.connect();
   }
   
@@ -153,6 +157,7 @@ export default class MultiLineChartController extends ChartController {
     let yCoordinate;
     this.showVerticalDashedLine(mouseX);
     let i = 0;
+    let longestLineText = '';
     for(let [hex, linePoints] of this.adjustedData.entries()) {
       if(i >= MAX_TOOLTIP_LINES) break;
       const currentColorMinDifEntry = linePoints[minDifIndex];
@@ -187,7 +192,7 @@ export default class MultiLineChartController extends ChartController {
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    let tooltipWidth = 100;
+    let tooltipWidth = this.isCompareChart ? this.entitiesAndHexes.find(e => e.label.includes('...')) ? 250 : 210 : 190;
     
     const tooltipTitle = this.formatTime(new Date(Number(minDifIndexEntry.x)));
     const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
@@ -264,7 +269,8 @@ export default class MultiLineChartController extends ChartController {
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
       xPixel += DOT_SIZE + DOT_TEXT_SPACING;
-      this.ctx.fillText(tooltipTitle, xPixel, TEXT_Y_COORDINATE);
+      const tooltipLineText = this.entitiesAndHexes.find(e => e.hex === hex).label;
+      this.ctx.fillText(tooltipLineText, xPixel, TEXT_Y_COORDINATE);
       
       this.ctx.font = '13px MulishSemiBold';
       this.ctx.fillStyle = 'black';
