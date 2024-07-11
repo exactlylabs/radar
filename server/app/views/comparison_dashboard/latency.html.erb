@@ -9,7 +9,6 @@
             data-controller="multi-line-chart"
             data-line-chart-data="<%= @latency.to_json %>"
             data-parent-id="compare-latency-widget<%= responsive ? '-responsive' : '' %>"
-            data-y-step-size="1"
             data-label-suffix=" ms"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="compareLatency"

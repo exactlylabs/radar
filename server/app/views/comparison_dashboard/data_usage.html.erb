@@ -9,7 +9,6 @@
             data-controller="multi-line-chart"
             data-line-chart-data="<%= @data_usage.to_json %>"
             data-parent-id="compare-data-usage-widget<%= responsive ? '-responsive' : '' %>"
-            data-y-step-size="100"
             data-label-suffix="<%= current_user.data_cap_unit || "GB" %>"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="compareDataUsage"
