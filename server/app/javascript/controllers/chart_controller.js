@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export const PADDING = 0;
 export const X_AXIS_OFFSET = 12;
@@ -41,6 +42,7 @@ export default class ChartController extends Controller {
   
   connect() {
     this.queryTimeInterval = this.element.dataset.queryTimeInterval || 'day';
+    this.usesQueryIntervalValue ||= false;
     this.isCompareChart = this.element.dataset.isCompareChart === 'true';
     if(this.isCompareChart) {
       this.entityCount = Number(this.element.dataset.entityCount) || 1;
@@ -525,6 +527,79 @@ export default class ChartController extends Controller {
     this.ctx.stroke();
   }
   
+  /**
+   * The rules for axis labels are a bit different than the ones for the tooltip.
+   *
+   * @param date
+   * @param monthWord
+   * @param hours
+   */
+  formatAxisTime(date, monthWord, hours) {
+    const firstDate = new Date(this.getFirstDate());
+    const lastDate = new Date(this.getLastDate());
+    const dateDiff = lastDate.getTime() - firstDate.getTime();
+    const THREE_YEARS_IN_MS = 94_608_000_000;
+    const ONE_YEAR_IN_MS = 31_536_000_000;
+    const ONE_WEEK_IN_MS = 604_800_000;
+    const ONE_DAY_IN_MS = 86_400_000;
+    const TEN_MINUTES_IN_MS = 600_000;
+    
+    // If time dateDiff >= 3 years, show year only
+    // If time dateDiff >= 1 year, show month and year
+    // If time dateDiff >= 1 week, show month and day
+    // If time dateDiff >= 1 day, show day and time in HH:MM AM/PM format
+    // If time dateDiff >= 10 min, show time in HH:MM AM/PM format
+    // If time dateDiff less than 10 min, show time in HH:MM:SS AM/PM format
+    
+    if(dateDiff > THREE_YEARS_IN_MS) {
+      return date.getFullYear();
+    } else if(dateDiff > ONE_YEAR_IN_MS) {
+      return `${monthWord} ${date.getFullYear()}`;
+    } else if(dateDiff > ONE_WEEK_IN_MS) {
+      return `${monthWord} ${date.getDate()}`;
+    } else if(dateDiff > ONE_DAY_IN_MS) {
+      return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    } else if(dateDiff > TEN_MINUTES_IN_MS) {
+      return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    } else {
+      return `${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    }
+  }
+  
+  formatTimeBasedOnDateDiff(date, monthWord, hours) {
+    const firstDate = new Date(this.getFirstDate());
+    const lastDate = new Date(this.getLastDate());
+    const dateDiff = lastDate.getTime() - firstDate.getTime();
+    const ONE_YEAR_IN_MS = 31_536_000_000;
+    const ONE_WEEK_IN_MS = 604_800_000;
+    const ONE_DAY_IN_MS = 86_400_000;
+    // If time dateDiff >= 1 year, show month, day and year
+    // If time dateDiff >= 1 week, show month and day
+    // If time dateDiff >= 1 day, show month day and time in HH:MM AM/PM format
+    // If time dateDiff < 1 day, show month day and time in HH:MM:SS AM/PM format
+    
+    if(dateDiff >= ONE_YEAR_IN_MS) {
+      return `${monthWord} ${date.getDate()}, ${date.getFullYear()}`;
+    } else if(dateDiff >= ONE_WEEK_IN_MS) {
+      return `${monthWord} ${date.getDate()}`;
+    } else if(dateDiff >= ONE_DAY_IN_MS) {
+      return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    } else {
+      return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    }
+    
+  }
+  
+  formatTimeBasedOnQueryInterval(date, monthWord, hours) {
+    if (this.queryTimeInterval === QUERY_INTERVALS.DAY) {
+      return `${monthWord} ${date.getDate()}`;
+    } else if (this.queryTimeInterval === QUERY_INTERVALS.HOUR) {
+      return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    } else if ([QUERY_INTERVALS.MINUTE, QUERY_INTERVALS.SECOND].includes(this.queryTimeInterval)) {
+      return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+    }
+  }
+  
   formatTime(timestamp, isInAxis = false) {
     try {
       let date = null;
@@ -537,35 +612,12 @@ export default class ChartController extends Controller {
       let hours = date.getHours() % 12;
       if(hours === 0) hours = 12;
       hours = hours.toString().padStart(2, '0');
-      if(this.queryTimeInterval === QUERY_INTERVALS.DAY) {
-        const firstDate = new Date(this.getFirstDate());
-        const lastDate = new Date(this.getLastDate());
-        const dateDiff = lastDate.getTime() - firstDate.getTime();
-        const THREE_YEARS_IN_MS = 94_608_000_000;
-        const ONE_YEAR_IN_MS = 31_536_000_000;
-        // if difference is 3 years or more, just show year
-        // if difference is between 1 and 3 years, show month and year
-        // if difference is between 1 week and 1 year, show month and day
-        if(dateDiff >= THREE_YEARS_IN_MS && isInAxis) {
-          return date.getFullYear();
-        } else if(dateDiff >= ONE_YEAR_IN_MS && isInAxis) {
-          return `${monthWord} ${date.getFullYear()}`;
-        } else {
-          return `${monthWord} ${date.getDate()}`;
-        }
-      } else if(this.queryTimeInterval === QUERY_INTERVALS.HOUR && !isInAxis) {
-        // return date in format 'Jan 1, 12:11 AM' always in 2 digit format
-        return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
-      } else if (this.queryTimeInterval === QUERY_INTERVALS.HOUR) {
-        return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
-      } else if([QUERY_INTERVALS.MINUTE, QUERY_INTERVALS.SECOND].includes(this.queryTimeInterval) && !isInAxis) {
-        // return date in format 'Jan 1, 8:30:35 PM' always in 2 digit format
-        return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
-      } else if([QUERY_INTERVALS.MINUTE, QUERY_INTERVALS.SECOND].includes(this.queryTimeInterval)) {
-        return `${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
-      }
+      
+      if(isInAxis) return this.formatAxisTime(date, monthWord, hours);
+      if(this.usesQueryIntervalValue) return this.formatTimeBasedOnQueryInterval(date, monthWord, hours);
+      return this.formatTimeBasedOnDateDiff(date, monthWord, hours);
     } catch(e) {
-      console.error('Invalid timestamp', timestamp);
+      handleError(e, this.identifier);
     }
   }
   

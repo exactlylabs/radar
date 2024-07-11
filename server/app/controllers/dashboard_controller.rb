@@ -89,8 +89,21 @@ class DashboardController < ApplicationController
   end
 
   def online_pods
-    sql = DashboardHelper.get_online_pods_sql(@params[:interval_type], @params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
+    sql = DashboardHelper.get_online_pods_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @online_pods = ActiveRecord::Base.connection.execute(sql)
+
+    # For the online pods chart in particular, we draw way more points than download/upload speeds, latency, etc.
+    # So we need to determine the time interval between each point to decide how to format the x-axis
+    diff_between_dots = (@online_pods[0]['x'].to_i - @online_pods[1]['x'].to_i) / 1000 # in seconds
+    if diff_between_dots >= 1.day.in_seconds
+      @query_time_interval = 'day'
+    elsif diff_between_dots >= 1.hour.in_seconds
+      @query_time_interval = 'hour'
+    elsif diff_between_dots >= 1.minute.in_seconds
+      @query_time_interval = 'minute'
+    else
+      @query_time_interval = 'second'
+    end
   end
 
   def download_speeds

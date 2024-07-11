@@ -1,6 +1,7 @@
 module DashboardHelper
 
   DOT_LIMIT = 500
+  DOT_MINIMUM = 100
 
   def get_time_duration(duration)
     duration_parts = ActiveSupport::Duration.build(duration.to_i).parts
@@ -44,9 +45,11 @@ module DashboardHelper
     "#{start_date.strftime('%b %d, %Y')} - #{end_date.strftime('%b %d, %Y')}"
   end
 
-  def self.get_online_pods_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
+  def self.get_online_pods_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
 
-    time_series_step = self.get_interval_step(from, to, interval_type)
+    time_series_step, interval_type = self.get_interval_step(from, to)
+
+    seconds_from_step = time_series_step.to_i.send(interval_type).in_seconds
 
     sql = %{
       with base_series AS (
@@ -71,43 +74,56 @@ module DashboardHelper
     sql += %{
       ),
         time_filtered AS (
-          SELECT total_online, time
-          FROM filtered_dimensions
-          WHERE "time" BETWEEN :from AND :to
-          ORDER BY "time" ASC
+          SELECT MAX(total_online) as total_online, time FROM (
+            SELECT LAST_VALUE(total_online) OVER
+              (
+                PARTITION BY TO_TIMESTAMP(
+                                            FLOOR(
+                                                (EXTRACT(EPOCH FROM time) - EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time ASC LIMIT 1))) / :seconds_from_step
+                                            ) * :seconds_from_step
+                                            + EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time LIMIT 1))) ORDER BY time
+                ) AS total_online,
+                TO_TIMESTAMP(
+                  FLOOR(
+                    (EXTRACT(EPOCH FROM time) - EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time ASC LIMIT 1))) / :seconds_from_step) * :seconds_from_step
+                  + EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time LIMIT 1))
+                ) AS time
+            FROM filtered_dimensions
+            WHERE "time" BETWEEN :from AND :to
+            ORDER BY "time" ASC
+        ) last_values
+        GROUP BY time
       ),
         initial AS (
-          SELECT :from::timestamp as "time", total_online
-            FROM filtered_dimensions
-            WHERE "time" < :from
-            ORDER BY "time", id DESC LIMIT 1
+          SELECT (SELECT time FROM base_series ORDER BY time LIMIT 1) as "time", total_online
+          FROM filtered_dimensions
+          WHERE "time" < (SELECT time FROM base_series ORDER BY time LIMIT 1)
+          ORDER BY "time", id DESC
+          LIMIT 1
       ),
         table_with_initial AS (
           SELECT * FROM initial
-
           UNION
-
           SELECT "time", NULL as total_online FROM base_series
-
           UNION
-
           SELECT "time", total_online
           FROM time_filtered
+          ORDER BY 1, 2
       ),
         completed_table AS (
-          SELECT
+          SELECT DISTINCT
             "time",
             COALESCE(total_online, FIRST_VALUE(total_online) OVER (PARTITION BY non_null_count ORDER BY "time")) as "total_online"
           FROM (
             SELECT *, COUNT(total_online) OVER (ORDER BY "time") as non_null_count
             FROM table_with_initial
-            WHERE total_online IS NOT NULL
+            ORDER BY 1, 2
           ) t
       )
 
       SELECT EXTRACT(EPOCH FROM "time") * 1000 as x, COALESCE(total_online, 0) as y FROM completed_table ORDER BY time ASC
     }
-    ActiveRecord::Base.sanitize_sql([sql, {step: time_series_step, interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {seconds_from_step: seconds_from_step, step: time_series_step, interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
   def self.get_download_speed_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
@@ -577,23 +593,23 @@ module DashboardHelper
   end
 
   # I want to avoid having more than 500 dots
-  def self.get_interval_step(from, to, interval_type = 'day')
+  # Base all calculations on milliseconds
+  def self.get_interval_step(from, to)
     time_diff = to - from
-    unit = case interval_type
-    when 'second'
-      1.second
-    when 'minute'
-      1.minute
-    when 'day'
-      1.day
-    else
-      1.day
-    end
-    dots_in_interval = time_diff / unit
+
+    # I want to look for the best precision so that I'm getting around 500 dots
+    units = %w[second minute day]
+    best_unit = units
+         .map { |unit| [unit, time_diff / 1.send(unit)]}
+         .sort_by { |unit, dots| (DOT_LIMIT - dots).abs }
+         .filter { |unit, dots| dots > DOT_MINIMUM }
+         .first[0]
+
+    dots_in_interval = time_diff / 1.send(best_unit)
     step = 1
     while dots_in_interval / step > DOT_LIMIT
       step += 5
     end
-    "#{step} "
+    return "#{step} ", best_unit
   end
 end
