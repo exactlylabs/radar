@@ -71,7 +71,7 @@ class DashboardController < ApplicationController
     elsif sort_by == 'account'
       @locations = @locations.joins(:account).order('accounts.name')
     elsif sort_by == 'isp'
-      @locations = @locations.joins(clients: :autonomous_system).order('autonomous_systems.name')
+      @locations = @locations.left_outer_joins(clients: :autonomous_system).order('autonomous_systems.name')
     end
 
     if params[:account_id]
