@@ -14,7 +14,7 @@ class ComparisonDashboardController < ApplicationController
 
   def online_pods
     params = online_pods_params(current_account)
-    sql = DashboardHelper.get_online_pods_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    sql = DashboardHelper.get_online_pods_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     set_query_interval_type(params)
     @online_pods = ActiveRecord::Base.connection.execute(sql)
   end

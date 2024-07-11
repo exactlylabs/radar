@@ -3,6 +3,7 @@ import ChartController, { TOOLTIP_TITLE_PADDING } from "./chart_controller";
 export default class LineChartController extends ChartController {
   connect() {
     this.chartId = 'onlinePods';
+    this.usesQueryIntervalValue = true;
     super.connect();
   }
   
