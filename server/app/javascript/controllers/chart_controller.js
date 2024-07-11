@@ -302,8 +302,15 @@ export default class ChartController extends Controller {
   };
   
   createHiDPICanvas(w, h, ratio) {
-    // padding: 1.5rem -- 24px
-    // margin-top: 1.5rem -- 24px
+    // In comparison charts that have a right-side line toggler, we need to reduce the width of the canvas
+    // to make space for the toggler.
+    // Toggler's max-width is 140px, and we add 16px for padding
+    if(this.isCompareChart && !!this.element.dataset.togglerId) {
+      const LINE_TOGGLER_WIDTH = 140;
+      const LINE_TOGGLER_SPACING = 16;
+      w = w - LINE_TOGGLER_WIDTH - LINE_TOGGLER_SPACING;
+    }
+    
     ratio ||= this.getPixelRatio();
     this.element.width = w * ratio;
     this.element.height = h * ratio;

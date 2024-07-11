@@ -122,6 +122,10 @@ export default class BarChartController extends ChartController {
       xCoordinate = barX + barWidth + SPACING_BETWEEN_TOOLTIP_AND_BAR / 2;
     }
     
+    if(xCoordinate + tooltipWidth > this.canvasWidth) {
+      xCoordinate = this.canvasWidth - barWidth - SPACING_BETWEEN_TOOLTIP_AND_BAR / 2 - tooltipWidth;
+    }
+    
     this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, TOOLTIP_HEIGHT, 6);
     this.ctx.fill();
     this.ctx.stroke();

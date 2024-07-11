@@ -8,7 +8,6 @@
             data-controller="multi-line-chart"
             data-line-chart-data="<%= @upload_speeds.to_json %>"
             data-parent-id="upload-speeds-widget<%= responsive ? '-responsive' : ''%>"
-            data-y-step-size="150"
             data-label-suffix=" Mbps"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="uploadSpeeds"
