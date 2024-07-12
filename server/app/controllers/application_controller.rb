@@ -92,6 +92,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  around_action :set_time_zone
+
   def after_sign_in_path_for(resource)
     if params[:setup].present? && params[:setup] == "true"
       clients_path(setup: true, unix_user: params[:unix_user])
@@ -259,4 +261,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_time_zone
+    Time.use_zone(get_cookie(:timezone) || 'UTC') { yield }
+  end
 end
