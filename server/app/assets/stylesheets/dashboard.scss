@@ -1117,18 +1117,18 @@ div[data-dashboard-time-filter-target="monthYear"] {
 .dashboard--download-data-button {
   @extend .custom-button;
   border-radius: 6px 0 0 6px;
-  border-right: rgba(227, 227, 232, 0.15) solid 0.5px;
+  border-right: $dashboard--download-data-border-color solid 0.5px;
 }
 
 .dashboard--download-more-options-button {
   @extend .custom-button;
   border-radius: 0 6px 6px 0;
-  border-right: rgba(227, 227, 232, 0.15) solid 0.5px;
+  border-right: $dashboard--download-data-border-color solid 0.5px;
   padding: .75rem 10px;
 }
 
 .dashboard--download-vertical-divider {
-  border-right: rgba(227, 227, 232, 0.15) solid 1px;
+  border-right: $dashboard--download-data-border-color solid 1px;
 }
 
 .dashboard--download-more-options-menu {
