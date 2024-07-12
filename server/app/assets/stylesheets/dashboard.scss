@@ -264,7 +264,7 @@
       position: absolute;
       left: .75rem;
     }
-    &[type="time"]::-webkit-calendar-picker-indicator {
+    &[type="time"]::-webkit-calendar-picker-indicator{
       position: absolute;
       left: .25rem;
     }
@@ -338,11 +338,11 @@
   }
 
   &[data-is-range-end="true"] {
-    background: linear-gradient(90deg, $circular-icon-container-gray 0%, $circular-icon-container-gray 50%, white 50%, white 100%);
+    background: linear-gradient(90deg, $circular-icon-container-gray 0%, $circular-icon-container-gray 50%,white 50%, white 100%);
   }
 
   &[data-is-range-start="true"] {
-    background: linear-gradient(270deg, $circular-icon-container-gray 0%, $circular-icon-container-gray 50%, white 50%, white 100%);
+    background: linear-gradient(270deg, $circular-icon-container-gray 0%, $circular-icon-container-gray 50%,white 50%, white 100%);
   }
 
   &[data-within-range="true"] {
@@ -830,7 +830,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     .dashboard--outages-collapsible-row-header {
       border-radius: 6px 6px 0 0;
       border-bottom: solid 1px $cards--selected-pod-border;
-
       .dashboard--outages-modal-range-collapser {
         img {
           transform: rotate(180deg);
@@ -1032,7 +1031,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     div[data-controller="filters"][data-menu-id="account-filter-menu"] {
       display: flex;
     }
-
     div[data-controller="filters"]:not([data-menu-id="account-filter-menu"]) {
       display: none;
     }
@@ -1042,7 +1040,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     div[data-controller="filters"][data-menu-id="network-filter-menu"] {
       display: flex;
     }
-
     div[data-controller="filters"]:not([data-menu-id="network-filter-menu"]) {
       display: none;
     }
@@ -1052,7 +1049,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     div[data-controller="filters"][data-menu-id="category-filter-menu"] {
       display: flex;
     }
-
     div[data-controller="filters"]:not([data-menu-id="category-filter-menu"]) {
       display: none;
     }
@@ -1062,7 +1058,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     div[data-controller="filters"][data-menu-id="isp-filter-menu"] {
       display: flex;
     }
-
     div[data-controller="filters"]:not([data-menu-id="isp-filter-menu"]) {
       display: none;
     }
@@ -1072,7 +1067,6 @@ div[data-dashboard-time-filter-target="monthYear"] {
     div[data-controller="filters"][data-menu-id="pod-filter-menu"] {
       display: flex;
     }
-
     div[data-controller="filters"]:not([data-menu-id="pod-filter-menu"]) {
       display: none;
     }
