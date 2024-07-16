@@ -7,7 +7,9 @@ import (
 type NetType string
 
 const (
+	Unknown  NetType = "unknown"
 	Virtual  NetType = "virtual"
+	Loopback NetType = "loopback"
 	Ethernet NetType = "ethernet"
 	Wlan     NetType = "wlan"
 )
@@ -30,14 +32,20 @@ const (
 )
 
 type NetInterface struct {
+	iface        net.Interface
 	Name         string     `json:"name"`
 	MAC          string     `json:"mac"`
 	IPs          []net.Addr `json:"ips"`
 	DefaultRoute bool       `json:"default"`
-	Type         NetType    `json:"type"`
-	IsWlan       bool       `json:"is_wlan"` // To deprecate. Use Type instead
-	Status       NetStatus  `json:"status"`
-	Enabled      bool       `json:"enabled"`
+}
+
+// NetInterfaceDetail holds more information on the NetInterface
+// This is the kind of information that is dependant on the OS to be able to get.
+type NetInterfaceDetail struct {
+	Type    NetType   `json:"type"`
+	IsWlan  bool      `json:"is_wlan"` // To deprecate. Use Type instead
+	Status  NetStatus `json:"status"`
+	Enabled bool      `json:"enabled"`
 }
 
 func (n NetInterface) UnicastAddress() *net.IPNet {
@@ -49,6 +57,10 @@ func (n NetInterface) UnicastAddress() *net.IPNet {
 		}
 	}
 	return nil
+}
+
+func (n NetInterface) Details() *NetInterfaceDetail {
+	return getNetworkDetails(n)
 }
 
 type NetInterfaces []NetInterface
