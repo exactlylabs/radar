@@ -59,6 +59,8 @@ func (n NetInterface) UnicastAddress() *net.IPNet {
 	return nil
 }
 
+// Details return extra information from the Network Interface. Depending on the OS some information may be missing.
+// This is an expensive operation as it does some HTTP calls, make sure to call it only when needed.
 func (n NetInterface) Details() *NetInterfaceDetail {
 	return getNetworkDetails(n)
 }
@@ -72,4 +74,13 @@ func (n NetInterfaces) FindByName(name string) (bool, NetInterface) {
 		}
 	}
 	return false, NetInterface{}
+}
+
+func (n NetInterfaces) FindByType(t NetType) *NetInterface {
+	for _, iface := range n {
+		if iface.Details().Type == t {
+			return &iface
+		}
+	}
+	return nil
 }
