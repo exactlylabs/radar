@@ -149,3 +149,19 @@ func (*devSysManager) EnsureUserGroups(user string, groups []string) (bool, erro
 func (*devSysManager) EnsureWifiEnabled() error {
 	return nil
 }
+
+// EthernetStatus implements watchdog.SystemManager.
+func (dm *devSysManager) EthernetStatus() (network.NetStatus, error) {
+	return network.ConnectedWithInternet, nil
+}
+
+// PodAgentRunning implements watchdog.SystemManager.
+func (dm *devSysManager) PodAgentRunning() (bool, error) {
+	return true, nil
+}
+
+// SetACTLED implements watchdog.SystemManager.
+func (dm *devSysManager) SetACTLED(state bool) error {
+	log.Println("Setting ACT LED to", state)
+	return nil
+}

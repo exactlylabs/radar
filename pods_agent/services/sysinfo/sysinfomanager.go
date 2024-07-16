@@ -435,6 +435,52 @@ func (si SysInfoManager) EnsureWifiEnabled() error {
 	return nil
 }
 
+func (si SysInfoManager) EthernetStatus() (status network.NetStatus, err error) {
+	status = network.Disconnected
+	ifaces, err := network.Interfaces()
+	if err != nil {
+		return status, errors.W(err)
+	}
+	if eth := ifaces.FindByType(network.Ethernet); eth == nil {
+		return status, nil
+	} else {
+		return eth.Details().Status, nil
+	}
+}
+
+func (si SysInfoManager) PodAgentRunning() (bool, error) {
+	out, err := si.runCommand(exec.Command("systemctl", "is-active", "pods-agent"))
+	exitErr := &exec.ExitError{}
+	if errors.As(err, exitErr) && exitErr.ExitCode() == 3 {
+		return false, nil
+	} else if err != nil {
+		return false, errors.W(err)
+	}
+	return strings.TrimSpace(string(out)) == "active", nil
+}
+
+func (si SysInfoManager) SetACTLED(status bool) error {
+	path := "/sys/class/leds/led0"
+	f, err := os.OpenFile(path+"/trigger", os.O_RDWR, 0644)
+	if err != nil {
+		return errors.W(err)
+	}
+	f.Write([]byte("gpio"))
+	f.Close()
+
+	f, err = os.OpenFile(path+"/brightness", os.O_RDWR, 0644)
+	if err != nil {
+		return errors.W(err)
+	}
+	val := "0"
+	if status {
+		val = "1"
+	}
+	f.Write([]byte(val))
+	f.Close()
+	return nil
+}
+
 func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
 	stdout := bytes.NewBuffer(nil)
 	stderr := bytes.NewBuffer(nil)
