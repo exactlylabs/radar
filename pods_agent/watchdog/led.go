@@ -14,35 +14,35 @@ type LEDPattern struct {
 
 var (
 	// The LED manager will infinitely loop through one of these pattern slices
-	Off = []LEDPattern{{false, baseDuration}}
-	On  = []LEDPattern{{true, baseDuration}}
+	LEDOff = []LEDPattern{{false, baseDuration}}
+	LEDOn  = []LEDPattern{{true, baseDuration}}
 
-	Slow = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration * 4}}
-	Fast = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
+	LEDBlinkSlow = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration * 4}}
+	LEDBlinkFas  = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
 
-	Dot  = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
-	Dash = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration}}
+	LEDBlinkDot  = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
+	LEDBlinkDash = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration}}
 )
 
-type actLEDManager struct {
+type ACTLEDManager struct {
 	sysManager     SystemManager
 	currentPattern []LEDPattern
 	patternCh      chan []LEDPattern
 }
 
-func newActLEDManager(sysManager SystemManager) *actLEDManager {
-	return &actLEDManager{
+func NewActLEDManager(sysManager SystemManager) *ACTLEDManager {
+	return &ACTLEDManager{
 		sysManager:     sysManager,
 		patternCh:      make(chan []LEDPattern),
-		currentPattern: Off,
+		currentPattern: LEDOff,
 	}
 }
 
-func (l *actLEDManager) SetPattern(pattern []LEDPattern) {
+func (l *ACTLEDManager) SetPattern(pattern []LEDPattern) {
 	l.patternCh <- pattern
 }
 
-func (l *actLEDManager) Start(ctx context.Context) {
+func (l *ACTLEDManager) Start(ctx context.Context) {
 	go func() {
 		for {
 			select {

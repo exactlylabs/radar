@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path"
 	"slices"
 	"strings"
 	"time"
@@ -19,6 +20,7 @@ import (
 )
 
 type SysInfoManager struct {
+	actLed string
 }
 
 // NewSystemManager returns an implementation of SystemManager using sysinfo service
@@ -206,7 +208,7 @@ func (si *SysInfoManager) Interfaces() (network.NetInterfaces, error) {
 	return netInterfaces, nil
 }
 
-func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
+func (si *SysInfoManager) GetAuthLogFile() ([]byte, error) {
 	res, err := si.readFile("/var/log/auth.log")
 	if err != nil {
 		return nil, errors.W(err)
@@ -214,7 +216,7 @@ func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
 	return res, nil
 }
 
-func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
+func (si *SysInfoManager) GetSysTimezone() (*time.Location, error) {
 
 	out, err := si.runCommand(exec.Command("timedatectl", "--value", "-p", "Timezone", "show"))
 	if err != nil {
@@ -232,7 +234,7 @@ func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
 	return loc, nil
 }
 
-func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
+func (si *SysInfoManager) SetSysTimezone(tz *time.Location) error {
 	_, err := si.runCommand(exec.Command("timedatectl", "set-timezone", tz.String()))
 	if err != nil {
 		return errors.W(err)
@@ -240,7 +242,7 @@ func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
 	return nil
 }
 
-func (si SysInfoManager) EnsureTailscale() error {
+func (si *SysInfoManager) EnsureTailscale() error {
 	if _, err := exec.LookPath("tailscale"); errors.Is(err, exec.ErrNotFound) {
 		// Install it
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
@@ -287,7 +289,7 @@ func (si SysInfoManager) EnsureTailscale() error {
 	return nil
 }
 
-func (si SysInfoManager) TailscaleUp(authKey string, tags []string) error {
+func (si *SysInfoManager) TailscaleUp(authKey string, tags []string) error {
 	if err := si.EnsureTailscale(); err != nil {
 		return errors.W(err)
 	}
@@ -301,7 +303,7 @@ func (si SysInfoManager) TailscaleUp(authKey string, tags []string) error {
 	return nil
 }
 
-func (si SysInfoManager) TailscaleDown() error {
+func (si *SysInfoManager) TailscaleDown() error {
 	log.Println("sysinfo.SysInfoManager#TailscaleDown: Stopping Tailscale")
 	_, err := si.runCommand(exec.Command("tailscale", "down"))
 	if errors.Is(err, exec.ErrNotFound) {
@@ -322,7 +324,7 @@ func (si SysInfoManager) TailscaleDown() error {
 	return nil
 }
 
-func (si SysInfoManager) TailscaleConnected() (bool, error) {
+func (si *SysInfoManager) TailscaleConnected() (bool, error) {
 	res, err := si.runCommand(exec.Command("tailscale", "status", "--json"))
 	if errors.Is(err, exec.ErrNotFound) {
 		return false, nil
@@ -344,7 +346,7 @@ func (si SysInfoManager) EnsureBinaryPermissions(path string) error {
 	return nil
 }
 
-func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool, error) {
+func (si *SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool, error) {
 	u, err := user.Lookup(userStr)
 	if err != nil {
 		return false, errors.W(err)
@@ -382,7 +384,7 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 	return true, nil
 }
 
-func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) error {
+func (si *SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) error {
 	info, err := os.Stat(path)
 	if err != nil {
 		return errors.W(err)
@@ -400,7 +402,7 @@ func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) er
 
 // EnsureWifiEnabled checks if the wifi interface is unblocked and properly configured.
 // The interface state is validated through `rfkill` command, and country code validated by reading wpa_supplicant.conf file.
-func (si SysInfoManager) EnsureWifiEnabled() error {
+func (si *SysInfoManager) EnsureWifiEnabled() error {
 	// IMPORTANT NOTE: Pi OS Bookworm and onwards use NetworkManager instead of wpa_supplicant (nmcli)
 	// See: https://www.raspberrypi.com/documentation/computers/configuration.html#connect-to-a-wireless-network
 
@@ -435,7 +437,7 @@ func (si SysInfoManager) EnsureWifiEnabled() error {
 	return nil
 }
 
-func (si SysInfoManager) EthernetStatus() (status network.NetStatus, err error) {
+func (si *SysInfoManager) EthernetStatus() (status network.NetStatus, err error) {
 	status = network.Disconnected
 	ifaces, err := network.Interfaces()
 	if err != nil {
@@ -448,10 +450,10 @@ func (si SysInfoManager) EthernetStatus() (status network.NetStatus, err error) 
 	}
 }
 
-func (si SysInfoManager) PodAgentRunning() (bool, error) {
-	out, err := si.runCommand(exec.Command("systemctl", "is-active", "pods-agent"))
+func (si *SysInfoManager) PodAgentRunning() (bool, error) {
+	out, err := si.runCommand(exec.Command("systemctl", "is-active", "radar_agent"))
 	exitErr := &exec.ExitError{}
-	if errors.As(err, exitErr) && exitErr.ExitCode() == 3 {
+	if err != nil && errors.As(err, &exitErr) && exitErr.ExitCode() == 3 {
 		return false, nil
 	} else if err != nil {
 		return false, errors.W(err)
@@ -459,16 +461,14 @@ func (si SysInfoManager) PodAgentRunning() (bool, error) {
 	return strings.TrimSpace(string(out)) == "active", nil
 }
 
-func (si SysInfoManager) SetACTLED(status bool) error {
-	path := "/sys/class/leds/led0"
-	f, err := os.OpenFile(path+"/trigger", os.O_RDWR, 0644)
-	if err != nil {
-		return errors.W(err)
+func (si *SysInfoManager) SetACTLED(status bool) error {
+	if si.actLed == "" {
+		if err := si.configureActLED(); err != nil {
+			return errors.W(err)
+		}
 	}
-	f.Write([]byte("gpio"))
-	f.Close()
 
-	f, err = os.OpenFile(path+"/brightness", os.O_RDWR, 0644)
+	f, err := os.OpenFile(path.Join(si.actLed, "brightness"), os.O_RDWR, 0644)
 	if err != nil {
 		return errors.W(err)
 	}
@@ -479,6 +479,27 @@ func (si SysInfoManager) SetACTLED(status bool) error {
 	f.Write([]byte(val))
 	f.Close()
 	return nil
+}
+
+func (si *SysInfoManager) configureActLED() error {
+	leds, err := os.ReadDir("/sys/class/leds")
+	if err != nil {
+		return errors.W(err)
+	}
+
+	for _, led := range leds {
+		if led.Name() == "ACT" || led.Name() == "led0" {
+			si.actLed = path.Join("/sys/class/leds", led.Name())
+			f, err := os.OpenFile(path.Join(si.actLed, "trigger"), os.O_RDWR, 0644)
+			if err != nil {
+				return errors.W(err)
+			}
+			f.Write([]byte("gpio"))
+			f.Close()
+			return nil
+		}
+	}
+	return errors.New("no ACT LED found")
 }
 
 func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
