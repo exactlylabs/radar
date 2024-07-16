@@ -946,7 +946,6 @@ class ClientsController < ApplicationController
           else
             @location.account = @client.account
           end
-          @location.clients << @client
           @location.save!
           @location.categories << policy_scope(Category).where(id: categories.split(",")) if categories.present?
           @client.location = @location
