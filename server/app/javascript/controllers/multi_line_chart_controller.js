@@ -22,18 +22,26 @@ export default class MultiLineChartController extends ChartController {
     return Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x);
   }
   
-  setYAxis() {
-    this.ctx.beginPath();
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = '13px Mulish';
-    this.maxTotal = 0;
-    this.chartData.forEach((value, key) => {
-      const totals = value.map(entry => entry.y);
-      const max = Math.max(...totals);
-      if(max > this.maxTotal) this.maxTotal = max;
+  // setYAxis() {
+  //   this.ctx.beginPath();
+  //   this.ctx.fillStyle = 'black';
+  //   this.ctx.font = '13px Mulish';
+  //   this.maxTotal = 0;
+  //   this.chartData.forEach((value, key) => {
+  //     const totals = value.map(entry => entry.y);
+  //     const max = Math.max(...totals);
+  //     if(max > this.maxTotal) this.maxTotal = max;
+  //   });
+  //   this.yStepSize = Math.ceil(this.maxTotal / 3);
+  //   this.drawJumpLines();
+  // }
+  
+  getYValues() {
+    let yValues = [];
+    this.chartData.forEach((value, _) => {
+      yValues.push(...value.map(entry => entry.y));
     });
-    this.yStepSize = Math.ceil(this.maxTotal / 3);
-    this.drawJumpLines();
+    return yValues;
   }
   
   prepareData(rawData) {
