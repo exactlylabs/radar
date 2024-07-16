@@ -947,11 +947,22 @@ class ClientsController < ApplicationController
             @location.account = @client.account
           end
           @location.save!
-          @location.categories << policy_scope(Category).where(id: categories.split(",")) if categories.present?
+          if categories.present?
+            now = Time.now
+            network_categories = categories.split(",").map { |category_id| {
+              category_id: category_id,
+              location_id: @location.id,
+              created_at: now,
+              updated_at: now
+            } }
+            CategoriesLocation.insert_all(network_categories)
+          end
           @client.location = @location
         end
       rescue ActiveRecord::RecordInvalid => e
         raise e.message
+      rescue Exception => e
+        handle_exception(e, current_user)
       end
     else
       raise 'Invalid network assignment type'
