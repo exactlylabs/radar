@@ -111,7 +111,7 @@ module DashboardHelper
           ORDER BY 1, 2
       ),
         completed_table AS (
-          SELECT DISTINCT
+          SELECT
             "time",
             COALESCE(total_online, FIRST_VALUE(total_online) OVER (PARTITION BY non_null_count ORDER BY "time")) as "total_online"
           FROM (
@@ -121,7 +121,7 @@ module DashboardHelper
           ) t
       )
 
-      SELECT EXTRACT(EPOCH FROM "time") * 1000 as x, COALESCE(total_online, 0) as y FROM completed_table ORDER BY time ASC
+      SELECT EXTRACT(EPOCH FROM "time") * 1000 as x, COALESCE(total_online, 0) as y FROM completed_table GROUP BY "time", "total_online" ORDER BY time ASC
     }
     ActiveRecord::Base.sanitize_sql([sql, {seconds_from_step: seconds_from_step, step: time_series_step, interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
