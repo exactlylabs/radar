@@ -36,6 +36,8 @@ export const QUERY_INTERVALS = {
   SECOND: 'second',
 }
 
+const MAX_STEPS = [1, 2, 5, 10, 15, 25, 50, 100];
+
 export default class ChartController extends Controller {
   
   COMPARISON_HEX = ['#472118', '#960A8B', '#FC3A11', '#58396A', '#D6463E', '#307B2A', '#535FB6', '#77DFB1', '#767698', '#502628', '#EFE7DF', '#A502EF', '#B21BE4', '#88FC76', '#9FADE3', '#B403C4', '#78BCFE', '#686514', '#B2D343', '#CE87CA', '#20E92E', '#C8A3D7', '#161C6C', '#98AE22', '#A8A5CF', '#D72876', '#105F87', '#432B82', '#5462EA', '#86C625', '#9175BF', '#438F36', '#AF3BCF', '#F3ADEF', '#050044', '#5F47D3', '#E11986', '#0C7566', '#A129E0', '#43B2D6', '#A7CB09', '#0C7318', '#9A6E4F', '#81B2A6', '#AE37B2', '#D66E62', '#05F0D9', '#EC1FA4', '#4CAC54', '#F94C42'];
@@ -398,10 +400,41 @@ export default class ChartController extends Controller {
   // If different data format is expected, override this method
   setYAxis() {
     this.resetStyles();
-    const totals = this.chartData.map(entry => entry.y);
-    this.maxTotal = Math.max(...totals);
-    this.yStepSize = this.maxTotal / 3 > 1 ? Math.ceil(this.maxTotal / 3) : this.maxTotal / 3;
+    const totals = this.getYValues();
+    
+    // If values go over 100, get the closest multiple of 100
+    const maxValue = Math.max(...totals);
+    if(maxValue > MAX_STEPS[MAX_STEPS.length - 1]) {
+      this.maxTotal = Math.ceil(maxValue / 100) * 100;
+    } else {
+      const closestIndex = MAX_STEPS.findIndex(step => step > maxValue);
+      this.maxTotal = MAX_STEPS[closestIndex];
+    }
+    this.yStepSize = this.getYStepSize();
     this.drawJumpLines();
+  }
+  
+  /**
+   * This method is used to calculate the step size for the Y axis. All values are rounded to the nearest multiple of 5.
+   * And all values here are handpicked to ensure the best possible user experience, but can be adjusted as needed.
+   * @returns {number}
+   */
+  getYStepSize() {
+    if(this.maxTotal <= 5) return 1;
+    if(this.maxTotal <= 10) return 2;
+    if(this.maxTotal <= 25) return 5;
+    if(this.maxTotal <= 50) return 10;
+    if(this.maxTotal <= 100) return 25;
+    if(this.maxTotal <= 200) return 50;
+    if(this.maxTotal <= 500) return 100;
+    if(this.maxTotal <= 1000) return 200;
+    if(this.maxTotal <= 2000) return 500;
+    if(this.maxTotal <= 5000) return 1000;
+    return 2500;
+  }
+  
+  getYValues() {
+    return this.chartData.map(entry => entry.y);
   }
   
   formatLabelNumericValue(value) {
