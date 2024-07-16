@@ -25,6 +25,25 @@ const (
 	DisconnectWirelessNetworkMessageType
 )
 
+type SystemEventType int
+
+const (
+	SystemFileChanged SystemEventType = iota
+	AgentStatusChanged
+	EthernetStatusChanged
+	LoginDetected
+)
+
+type SystemEvent struct {
+	EventType SystemEventType
+	Data      any
+}
+
+type SystemStatus struct {
+	EthernetStatus  network.NetStatus
+	PodAgentRunning bool
+}
+
 // SystemManager interface provides methods for dealing with some
 // files of the POD Os
 type SystemManager interface {
@@ -79,6 +98,12 @@ type SystemManager interface {
 	EnsurePathPermissions(path string, mode os.FileMode) error
 	// EnsureWifiEnabled will make sure that the wifi driver is correctly configured and running
 	EnsureWifiEnabled() error
+	// EthernetStatus returns the current status of the Ethernet connection in the OS
+	EthernetStatus() (network.NetStatus, error)
+	// PodAgentRunning returns if the agent is in a running state
+	PodAgentRunning() (bool, error)
+	// SetACTLED will set the state of the ACT LED
+	SetACTLED(state bool) error
 }
 
 type UpdateBinaryServerMessage struct {

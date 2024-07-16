@@ -263,6 +263,61 @@ func (_c *MockSystemManager_EnsureWifiEnabled_Call) RunAndReturn(run func() erro
 	return _c
 }
 
+// EthernetStatus provides a mock function with given fields:
+func (_m *MockSystemManager) EthernetStatus() (network.NetStatus, error) {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for EthernetStatus")
+	}
+
+	var r0 network.NetStatus
+	var r1 error
+	if rf, ok := ret.Get(0).(func() (network.NetStatus, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() network.NetStatus); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(network.NetStatus)
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSystemManager_EthernetStatus_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EthernetStatus'
+type MockSystemManager_EthernetStatus_Call struct {
+	*mock.Call
+}
+
+// EthernetStatus is a helper method to define mock.On call
+func (_e *MockSystemManager_Expecter) EthernetStatus() *MockSystemManager_EthernetStatus_Call {
+	return &MockSystemManager_EthernetStatus_Call{Call: _e.mock.On("EthernetStatus")}
+}
+
+func (_c *MockSystemManager_EthernetStatus_Call) Run(run func()) *MockSystemManager_EthernetStatus_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_EthernetStatus_Call) Return(_a0 network.NetStatus, _a1 error) *MockSystemManager_EthernetStatus_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSystemManager_EthernetStatus_Call) RunAndReturn(run func() (network.NetStatus, error)) *MockSystemManager_EthernetStatus_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAuthLogFile provides a mock function with given fields:
 func (_m *MockSystemManager) GetAuthLogFile() ([]byte, error) {
 	ret := _m.Called()
@@ -774,6 +829,61 @@ func (_c *MockSystemManager_Interfaces_Call) RunAndReturn(run func() (network.Ne
 	return _c
 }
 
+// PodAgentRunning provides a mock function with given fields:
+func (_m *MockSystemManager) PodAgentRunning() (bool, error) {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for PodAgentRunning")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func() (bool, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSystemManager_PodAgentRunning_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PodAgentRunning'
+type MockSystemManager_PodAgentRunning_Call struct {
+	*mock.Call
+}
+
+// PodAgentRunning is a helper method to define mock.On call
+func (_e *MockSystemManager_Expecter) PodAgentRunning() *MockSystemManager_PodAgentRunning_Call {
+	return &MockSystemManager_PodAgentRunning_Call{Call: _e.mock.On("PodAgentRunning")}
+}
+
+func (_c *MockSystemManager_PodAgentRunning_Call) Run(run func()) *MockSystemManager_PodAgentRunning_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_PodAgentRunning_Call) Return(_a0 bool, _a1 error) *MockSystemManager_PodAgentRunning_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSystemManager_PodAgentRunning_Call) RunAndReturn(run func() (bool, error)) *MockSystemManager_PodAgentRunning_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Reboot provides a mock function with given fields:
 func (_m *MockSystemManager) Reboot() error {
 	ret := _m.Called()
@@ -815,6 +925,52 @@ func (_c *MockSystemManager_Reboot_Call) Return(_a0 error) *MockSystemManager_Re
 }
 
 func (_c *MockSystemManager_Reboot_Call) RunAndReturn(run func() error) *MockSystemManager_Reboot_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SetACTLED provides a mock function with given fields: state
+func (_m *MockSystemManager) SetACTLED(state bool) error {
+	ret := _m.Called(state)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SetACTLED")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(bool) error); ok {
+		r0 = rf(state)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockSystemManager_SetACTLED_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetACTLED'
+type MockSystemManager_SetACTLED_Call struct {
+	*mock.Call
+}
+
+// SetACTLED is a helper method to define mock.On call
+//   - state bool
+func (_e *MockSystemManager_Expecter) SetACTLED(state interface{}) *MockSystemManager_SetACTLED_Call {
+	return &MockSystemManager_SetACTLED_Call{Call: _e.mock.On("SetACTLED", state)}
+}
+
+func (_c *MockSystemManager_SetACTLED_Call) Run(run func(state bool)) *MockSystemManager_SetACTLED_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(bool))
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_SetACTLED_Call) Return(_a0 error) *MockSystemManager_SetACTLED_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockSystemManager_SetACTLED_Call) RunAndReturn(run func(bool) error) *MockSystemManager_SetACTLED_Call {
 	_c.Call.Return(run)
 	return _c
 }

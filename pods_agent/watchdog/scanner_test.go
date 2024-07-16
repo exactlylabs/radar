@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/watchdog/mocks"
 )
 
@@ -37,15 +38,18 @@ func TestScanSystemNoChange(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		t.Fatal("unexpected event: ", evt)
+	case <-time.NewTimer(1 * time.Second).C:
 	}
-	if hasChanged {
-		t.Fatalf("expected nothing to change")
-	}
+
 }
 
 func TestScanSystemHostDiffers(t *testing.T) {
@@ -64,14 +68,19 @@ func TestScanSystemHostDiffers(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -91,14 +100,19 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -118,14 +132,19 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -145,14 +164,19 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -172,14 +196,19 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -200,14 +229,19 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatal("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -227,14 +261,19 @@ func TestScanSystemTimeZoneChanged(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !hasChanged {
-		t.Fatalf("ScanSystem didn't return that it has changed")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		if evt.EventType != SystemFileChanged {
+			t.Fatalf("expected a SystemFileChanged event")
+		}
+	case <-time.NewTimer(1 * time.Second).C:
+		t.Fatalf("expected an event")
 	}
 }
 
@@ -253,13 +292,15 @@ func TestScanSystemTimeZoneReturnedNilNoChange(t *testing.T) {
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
 	m.On("EnsureWifiEnabled").Return(nil)
+	m.On("PodAgentRunning").Return(false, nil)
+	m.On("EthernetStatus").Return(network.Disconnected, nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
-	hasChanged, err := ScanSystem(c, m)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if hasChanged {
-		t.Fatalf("ScanSystem expected to not have changes")
+	scanner := NewScanner(m)
+	go scanner.ScanSystem(c)
+	select {
+	case evt := <-scanner.Events():
+		t.Fatalf("unexpected event: %v", evt)
+	case <-time.NewTimer(1 * time.Second).C:
 	}
 }

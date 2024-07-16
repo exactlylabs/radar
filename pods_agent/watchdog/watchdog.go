@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
 )
@@ -24,6 +25,9 @@ type Watchdog struct {
 	cli            WatchdogClient
 	wlanCliFactory WlanClientFactory
 	wlanCli        wifi.WirelessClient
+	sysEventsCh    chan SystemEvent
+	scanner        *Scanner
+	ledManager     *actLEDManager
 }
 
 type WlanClientFactory func(ifaceName string) (wifi.WirelessClient, error)
@@ -36,6 +40,9 @@ func NewWatchdog(c *config.Config, sysManager SystemManager, agentCli display.Ag
 		cli:            cli,
 		wlanCliFactory: wlanCliFactory,
 		wlanCli:        nil,
+		sysEventsCh:    make(chan SystemEvent),
+		scanner:        NewScanner(sysManager),
+		ledManager:     newActLEDManager(sysManager),
 	}
 }
 
@@ -46,8 +53,13 @@ func (w *Watchdog) setup(ctx context.Context) {
 	}()
 	go func() {
 		defer sentry.NotifyIfPanic()
-		StartScanLoop(ctx, w.sysManager)
+		w.scanner.StartScanLoop(ctx)
 	}()
+	go func() {
+		defer sentry.NotifyIfPanic()
+		w.ledManager.Start(ctx)
+	}()
+
 	if w.c.WlanInterface != "" {
 		if err := w.configureWlanInterface(ctx, w.c.WlanInterface); err != nil {
 			log.Println(err)
@@ -143,6 +155,8 @@ func (w *Watchdog) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
+		case event := <-w.sysEventsCh:
+			w.handleSystemEvent(event)
 		case msg := <-cliChan:
 			w.handleMessage(ctx, msg)
 		case <-timer.C:
@@ -156,6 +170,35 @@ func (w *Watchdog) Run(ctx context.Context) {
 				}
 			}
 		}
+	}
+}
+
+func (w *Watchdog) handleSystemEvent(event SystemEvent) {
+	switch event.EventType {
+	case SystemFileChanged:
+		if err := w.sysManager.Reboot(); err != nil {
+			err = errors.W(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+			log.Println(err)
+		}
+
+	case AgentStatusChanged:
+		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
+	case EthernetStatusChanged:
+		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
+
+	case LoginDetected:
+		evt := event.Data.(LoginEvent)
+		if previousAuthLogTime.Before(evt.Time) {
+			previousAuthLogTime = evt.Time
+		}
+		log.Printf("New Login Detected at %v, notifying through tracing\n", evt.Time)
+		sentry.NotifyError(
+			errors.NewWithType("new Login Detected in the Pod", "Login Detected"),
+			map[string]sentry.Context{
+				"Login Info": {"User": evt.User, "Time": evt.Time, "Unix User": w.c.ClientId},
+			},
+		)
 	}
 }
 
@@ -328,4 +371,18 @@ func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data Dis
 		}
 	}
 	return nil
+}
+
+func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
+	if status.EthernetStatus == network.ConnectedWithInternet && status.PodAgentRunning {
+		w.ledManager.SetPattern(On)
+	} else if !status.PodAgentRunning {
+		w.ledManager.SetPattern(Off)
+	} else if status.EthernetStatus == network.ConnectedNoInternet {
+		w.ledManager.SetPattern(Slow)
+	} else if status.EthernetStatus == network.Disconnected {
+		w.ledManager.SetPattern(Fast)
+	} else {
+		w.ledManager.SetPattern(append(Dot, Dash...))
+	}
 }
