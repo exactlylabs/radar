@@ -12,18 +12,18 @@ var pingAddresses = []string{
 
 }
 
-func networkInternetStatus(iface net.Interface) (NetStatus, error) {
+func networkInternetStatus(iface net.Interface) NetStatus {
 	isRunning := iface.Flags&net.FlagRunning != 0
 	isUp := iface.Flags&net.FlagUp != 0
 	addrs, _ := iface.Addrs()
 
 	if !isRunning || !isUp || len(addrs) == 0 {
-		return Disconnected, nil
+		return Disconnected
 	}
 
 	status := ConnectedNoInternet
 	if iface.Flags&net.FlagPointToPoint != 0 {
-		return status, nil
+		return status
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -38,11 +38,11 @@ func networkInternetStatus(iface net.Interface) (NetStatus, error) {
 
 	for i := 0; i < len(pingAddresses); i++ {
 		if <-ret {
-			return ConnectedWithInternet, nil
+			return ConnectedWithInternet
 		}
 	}
 
-	return status, nil
+	return status
 }
 
 func pingServer(ctx context.Context, iface net.Interface, address string) bool {

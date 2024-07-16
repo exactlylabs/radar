@@ -10,9 +10,6 @@ import (
 
 func Interfaces() (NetInterfaces, error) {
 	defaultRoute, _ := netroute.DefaultRoute()
-	// if err != nil {
-	// 	return nil, errors.W(err)
-	// }
 
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -30,30 +27,13 @@ func Interfaces() (NetInterfaces, error) {
 			return nil, errors.W(err).WithMetadata(errors.Metadata{"iface": fmt.Sprintf("%v", iface)})
 		}
 
-		// Filter out virtual and loopback interfaces
-
-		if iface.Flags&net.FlagLoopback == 0 {
-			netType, err := networkType(iface)
-			if err != nil {
-				return nil, errors.W(err)
-			}
-
-			status, err := networkInternetStatus(iface)
-			if err != nil {
-				return nil, errors.W(err)
-			}
-
-			interfaces = append(interfaces, NetInterface{
-				Name:         iface.Name,
-				MAC:          iface.HardwareAddr.String(),
-				DefaultRoute: gatewayRoute,
-				IPs:          addrs,
-				Type:         netType,
-				IsWlan:       netType == Wlan,
-				Status:       status,
-				Enabled:      iface.Flags&net.FlagUp != 0,
-			})
-		}
+		interfaces = append(interfaces, NetInterface{
+			iface:        iface,
+			Name:         iface.Name,
+			MAC:          iface.HardwareAddr.String(),
+			DefaultRoute: gatewayRoute,
+			IPs:          addrs,
+		})
 	}
 	return interfaces, nil
 }
