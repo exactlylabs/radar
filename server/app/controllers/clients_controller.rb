@@ -332,7 +332,7 @@ class ClientsController < ApplicationController
     begin
       assign_pod_to_network(account, params[:network_id], params[:network_assignment_type], params[:categories])
     rescue => e
-      @notice = e.message
+      @notice = e
     end
 
     if !@notice && params[:update_group_id]
@@ -344,12 +344,12 @@ class ClientsController < ApplicationController
       if !@notice && @client.save!
         set_new_account(@client.account) if @client.account != current_account && !current_account.is_all_accounts?
         format.html { redirect_back fallback_location: root_path, notice: "Pod was successfully updated." }
-        format.json { render :show, status: :ok, location: client_path(client.unix_user) }
+        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         flash[:alert] = @notice
         format.turbo_stream
         format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity }
-        format.json { render json: client.errors, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
   end

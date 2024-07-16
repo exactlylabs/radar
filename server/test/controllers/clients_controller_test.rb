@@ -141,7 +141,7 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
       account_id: accounts(:root).id,
       network_id: nil,
       network_assignment_type: PodsHelper::PodAssignmentType::NewNetwork,
-      categories: [categories(:category1).id],
+      categories: categories(:category1).id.to_s,
       location: {
         name: "New Location",
         address: "New Address",
