@@ -25,9 +25,8 @@ type Watchdog struct {
 	cli            WatchdogClient
 	wlanCliFactory WlanClientFactory
 	wlanCli        wifi.WirelessClient
-	sysEventsCh    chan SystemEvent
 	scanner        *Scanner
-	ledManager     *actLEDManager
+	ledManager     *ACTLEDManager
 }
 
 type WlanClientFactory func(ifaceName string) (wifi.WirelessClient, error)
@@ -40,9 +39,8 @@ func NewWatchdog(c *config.Config, sysManager SystemManager, agentCli display.Ag
 		cli:            cli,
 		wlanCliFactory: wlanCliFactory,
 		wlanCli:        nil,
-		sysEventsCh:    make(chan SystemEvent),
 		scanner:        NewScanner(sysManager),
-		ledManager:     newActLEDManager(sysManager),
+		ledManager:     NewActLEDManager(sysManager),
 	}
 }
 
@@ -155,7 +153,7 @@ func (w *Watchdog) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
-		case event := <-w.sysEventsCh:
+		case event := <-w.scanner.Events():
 			w.handleSystemEvent(event)
 		case msg := <-cliChan:
 			w.handleMessage(ctx, msg)
@@ -176,6 +174,7 @@ func (w *Watchdog) Run(ctx context.Context) {
 func (w *Watchdog) handleSystemEvent(event SystemEvent) {
 	switch event.EventType {
 	case SystemFileChanged:
+		log.Println("System File has Changed, requesting reboot.")
 		if err := w.sysManager.Reboot(); err != nil {
 			err = errors.W(err)
 			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
@@ -183,8 +182,10 @@ func (w *Watchdog) handleSystemEvent(event SystemEvent) {
 		}
 
 	case AgentStatusChanged:
+		log.Printf("Radar Agent Status Changed: %v\n", event.Data)
 		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
 	case EthernetStatusChanged:
+		log.Printf("Pod Ethernet Status Changed: %v\n", event.Data)
 		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
 
 	case LoginDetected:
@@ -375,14 +376,14 @@ func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data Dis
 
 func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
 	if status.EthernetStatus == network.ConnectedWithInternet && status.PodAgentRunning {
-		w.ledManager.SetPattern(On)
+		w.ledManager.SetPattern(LEDOn)
 	} else if !status.PodAgentRunning {
-		w.ledManager.SetPattern(Off)
+		w.ledManager.SetPattern(LEDOff)
 	} else if status.EthernetStatus == network.ConnectedNoInternet {
-		w.ledManager.SetPattern(Slow)
+		w.ledManager.SetPattern(LEDBlinkSlow)
 	} else if status.EthernetStatus == network.Disconnected {
-		w.ledManager.SetPattern(Fast)
+		w.ledManager.SetPattern(LEDBlinkFas)
 	} else {
-		w.ledManager.SetPattern(append(Dot, Dash...))
+		w.ledManager.SetPattern(append(LEDBlinkDot, LEDBlinkDash...))
 	}
 }
