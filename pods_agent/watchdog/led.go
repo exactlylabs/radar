@@ -18,7 +18,7 @@ var (
 	LEDOn  = []LEDPattern{{true, baseDuration}}
 
 	LEDBlinkSlow = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration * 4}}
-	LEDBlinkFas  = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
+	LEDBlinkFast = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
 
 	LEDBlinkDot  = []LEDPattern{{true, baseDuration}, {false, baseDuration}}
 	LEDBlinkDash = []LEDPattern{{true, baseDuration * 4}, {false, baseDuration}}
