@@ -382,7 +382,7 @@ func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
 	} else if status.EthernetStatus == network.ConnectedNoInternet {
 		w.ledManager.SetPattern(LEDBlinkSlow)
 	} else if status.EthernetStatus == network.Disconnected {
-		w.ledManager.SetPattern(LEDBlinkFas)
+		w.ledManager.SetPattern(LEDBlinkFast)
 	} else {
 		w.ledManager.SetPattern(append(LEDBlinkDot, LEDBlinkDash...))
 	}
