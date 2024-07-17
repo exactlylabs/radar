@@ -206,12 +206,15 @@
   text-align: center;
   outline: none;
   background-color: transparent;
+  position: relative;
 
-  &::placeholder {
+  &::placeholder,
+  &::-webkit-input-placeholder,
+  &::-moz-placeholder {
     color: #e3e3e8;
     width: 0.5rem;
     height: 0.125rem;
-    background-color: #e3e3e8;
+    background-color: transparent;
     position: relative;
     top: -0.25rem;
     left: .35rem;
