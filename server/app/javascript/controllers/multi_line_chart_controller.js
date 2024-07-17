@@ -127,7 +127,7 @@ export default class MultiLineChartController extends ChartController {
       this.selectedHexes.push(selectedHex);
     }
     this.adjustedData = this.adjustData(this.chartData);
-    this.plotChart(this.adjustedData);
+    this.plotChart();
   }
   
   showTooltip(mouseX, mouseY) {
