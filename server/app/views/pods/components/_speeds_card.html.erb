@@ -9,12 +9,14 @@
           speed_average_path: method(:speed_average_client_url)
         }
     %>
-    <%= render partial: "pods/components/speed_cells",
-        locals: {
-          download_avg: pod.download_avg.present? ? pod.download_avg.round(2) : 'N/A',
-          upload_avg: pod.upload_avg.present? ? pod.upload_avg.round(2) : 'N/A',
-        }
-    %>
+    <%= turbo_frame_tag "pod-speed-averages" do %>
+      <%= render partial: "pods/components/speed_cells",
+          locals: {
+            download_avg: pod.download_avg.present? ? pod.download_avg.round(2) : 'N/A',
+            upload_avg: pod.upload_avg.present? ? pod.upload_avg.round(2) : 'N/A',
+          }
+      %>
+    <% end %>
     <%= link_to "View all measurements", client_measurements_path(pod.unix_user), class: "w-100 custom-button custom-button--secondary custom-button--lg" %>
   </div>
 </div>

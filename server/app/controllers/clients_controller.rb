@@ -590,25 +590,20 @@ class ClientsController < ApplicationController
   end
 
   def speed_average
-    start_date = get_range_start_date(params[:type])
+    # Default to pod's created at if type is empty (all time)
+    start_date = get_range_start_date(params[:type]) || @client.created_at
     end_date = Time.zone.now
     filtered_measurements = @client.account_measurements.where(created_at: start_date..end_date)
     if filtered_measurements.count > 0
-      download_avg = filtered_measurements.average(:download).round(3)
-      upload_avg = filtered_measurements.average(:upload).round(3)
+      @download_avg = filtered_measurements.average(:download).round(3)
+      @upload_avg = filtered_measurements.average(:upload).round(3)
     else
-      download_avg = nil
-      upload_avg = nil
+      @download_avg = nil
+      @upload_avg = nil
     end
 
     respond_to do |format|
-      format.html {
-        render partial: "pods/components/speed_cells",
-               locals: {
-                 download_avg: download_avg.present? ? "#{download_avg.round(2)}" : 'N/A',
-                 upload_avg: upload_avg.present? ? "#{upload_avg.round(2)}" : 'N/A',
-               }
-      }
+      format.turbo_stream
     end
   end
 
