@@ -97,35 +97,43 @@
                  public_use: true
                }
     %>
-    <div class="widgets--grid" data-pod-page="true">
-      <%= render partial: "application/components/widgets/widget",
-                 locals: {
-                   type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED,
-                   custom_url: download_speeds_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
-                   responsive: true
-                 }
-      %>
-      <%= render partial: "application/components/widgets/widget",
-                 locals: {
-                   type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED,
-                   custom_url: upload_speeds_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
-                   responsive: true
-                 }
-      %>
-      <%= render partial: "application/components/widgets/widget",
-                 locals: {
-                   type: WidgetsHelper::WidgetTypes::LATENCY,
-                   custom_url: latency_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
-                   responsive: true
-                 }
-      %>
-      <%= render partial: "application/components/widgets/widget",
-                 locals: {
-                   type: WidgetsHelper::WidgetTypes::DATA_USAGE,
-                   custom_url: data_usage_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
-                   responsive: true
-                 }
-      %>
+    <div class="dashboard--widgets-container" data-dashboard-realtime-filters-target="loadingOverlay">
+      <svg width="24" height="24"
+           class="dashboard--spinner"
+           data-dashboard-realtime-filters-target="spinner"
+           viewBox="0 0 24 24"
+           xmlns="http://www.w3.org/2000/svg"><style>.spinner_ajPY{transform-origin:center;animation:spinner_AtaB .75s infinite linear}@keyframes spinner_AtaB{100%{transform:rotate(360deg)}}</style><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" class="spinner_ajPY"/>
+      </svg>
+      <div class="widgets--grid" data-pod-page="true">
+        <%= render partial: "application/components/widgets/widget",
+                   locals: {
+                     type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED,
+                     custom_url: download_speeds_client_url(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
+                     responsive: true
+                   }
+        %>
+        <%= render partial: "application/components/widgets/widget",
+                   locals: {
+                     type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED,
+                     custom_url: upload_speeds_client_url(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
+                     responsive: true
+                   }
+        %>
+        <%= render partial: "application/components/widgets/widget",
+                   locals: {
+                     type: WidgetsHelper::WidgetTypes::LATENCY,
+                     custom_url: latency_client_url(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
+                     responsive: true
+                   }
+        %>
+        <%= render partial: "application/components/widgets/widget",
+                   locals: {
+                     type: WidgetsHelper::WidgetTypes::DATA_USAGE,
+                     custom_url: data_usage_client_url(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end], responsive: true),
+                     responsive: true
+                   }
+        %>
+      </div>
     </div>
   </div>
 </div>
