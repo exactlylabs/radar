@@ -13,14 +13,17 @@ const TB_UNIT = 1024 ** 4;
 export default class BarChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
+    this.barIdentifiers = [];
+    this.selectedHexes = [];
     super.connect();
   }
   
   prepareData(rawData) {
     this.chartData = this.chartData.map((barData) => {
-      const {x, y} = barData;
-      return {x, y: this.convertToPreferredUnit(y)};
+      const {x, y, hex} = barData;
+      return {x, y: this.convertToPreferredUnit(y), hex};
     });
+    this.adjustedData = this.chartData;
   }
   
   getFirstDate() {
@@ -32,16 +35,19 @@ export default class BarChartController extends ChartController {
   }
   
   getChartDataForComparison(rawData) {
-    return rawData;
+    this.barIdentifiers = rawData
+      .map((row, index) => ({identifier: row['entity_identifier'], hex: this.COMPARISON_HEX[index % this.COMPARISON_HEX.length]}));
+    this.adjustedData = rawData.map((row, index) => ({x: row.entity_identifier, y: row.y, hex: this.COMPARISON_HEX[index % this.COMPARISON_HEX.length]}));
+    return this.adjustedData;
   }
   
   plotChart() {
     this.clearCanvas();
-    this.individualBlockCount ||= this.calculateIndividualBlockCount();
-    this.barWidth = this.calculateBarWidth(this.chartData.length);
-    this.chartData.forEach((barData, index) => {
+    this.individualBlockCount = this.calculateIndividualBlockCount();
+    this.barWidth = this.calculateBarWidth(this.adjustedData.length);
+    this.adjustedData.forEach((barData, index) => {
       if(this.isCompareChart) {
-        this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index % this.COMPARISON_HEX.length], 0.5));
+        this.drawBar(barData, index, this.getFirstGradientStopColor(barData.hex, 0.5));
       } else {
         this.drawBar(barData, index);
       }
@@ -65,7 +71,7 @@ export default class BarChartController extends ChartController {
    * @returns {number}
    */
   calculateIndividualBlockCount() {
-    return this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
+    return this.adjustedData.length * 2 + this.adjustedData.length - 1; // one full data block is 2 individual spacers
   }
   
   calculateBarWidth(totalDataPointsCount) {
@@ -150,7 +156,7 @@ export default class BarChartController extends ChartController {
     if(!shouldContinue) return;
     this.showVerticalDashedLine(mouseX);
     this.resetStrokeStyles();
-    const xDifs = this.chartData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.chartData, index) - mouseX));
+    const xDifs = this.adjustedData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.adjustedData, index) - mouseX));
     const minDif = Math.min(...xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
@@ -160,7 +166,7 @@ export default class BarChartController extends ChartController {
     const TOOLTIP_COMPARISON_DATA_TOP_PADDING = 53;
     const OFFSET = 8;
     
-    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, DEFAULT_BLUE);
+    const res = this.isCompareChart ? this.drawBar(this.adjustedData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, DEFAULT_BLUE);
     const {barX, barY, barHeight, barWidth} = res;
     
     // Tooltip drawing section
@@ -175,7 +181,7 @@ export default class BarChartController extends ChartController {
     this.ctx.shadowBlur = 6;
     
     if(this.isCompareChart) {
-      this.showComparisonTooltip(mouseX, mouseY, res, this.chartData[minDifIndex]);
+      this.showComparisonTooltip(mouseX, mouseY, res, this.adjustedData[minDifIndex]);
       return;
     }
     
@@ -185,12 +191,12 @@ export default class BarChartController extends ChartController {
     // check if tooltip is within the chart space, otherwise shift over
     // if there is no space left, draw on top of the bar
     let tooltipWidth = 120;
-    const tooltipTitle= this.formatTime(new Date(Number(this.chartData[minDifIndex].x)));
+    const tooltipTitle= this.formatTime(new Date(Number(this.adjustedData[minDifIndex].x)));
     const tooltipTitleWidth = this.textWidth(tooltipTitle) + TOOLTIP_TITLE_PADDING;
     
     if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
     
-    const tooltipDataLength = OFFSET + this.textWidth(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + this.labelSuffix);
+    const tooltipDataLength = OFFSET + this.textWidth(this.formatLabelNumericValue(this.adjustedData[minDifIndex].y) + this.labelSuffix);
     
     if(tooltipDataLength > tooltipWidth) tooltipWidth = tooltipDataLength;
     
@@ -235,14 +241,11 @@ export default class BarChartController extends ChartController {
     this.ctx.font = '13px Mulish';
     
     this.ctx.fillStyle = '#6d6a94';
-    if(this.isCompareChart) {
-      this.ctx.fillText('Data:', xCoordinate + OFFSET, yCoordinate + TOOLTIP_COMPARISON_DATA_TOP_PADDING);
-    }
     
     this.ctx.font = '13px MulishSemiBold';
     
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + " " + this.labelSuffix, xCoordinate + OFFSET, yCoordinate + 40 + 13);
+    this.ctx.fillText(this.formatLabelNumericValue(this.adjustedData[minDifIndex].y) + " " + this.labelSuffix, xCoordinate + OFFSET, yCoordinate + 40 + 13);
     
     this.ctx.font = '16px Mulish';
   }
@@ -250,14 +253,37 @@ export default class BarChartController extends ChartController {
   mouseOverBar(mouseX, mouseY, possibleBarIndex) {
     const startBarX = this.horizontalContentStartingPixel + possibleBarIndex * (this.barWidth + this.barWidth / 2);
     const endBarX = startBarX + this.barWidth;
-    const barHeight = this.chartData[possibleBarIndex].y * this.netHeight / this.maxYLabelValue;
+    const barHeight = this.adjustedData[possibleBarIndex].y * this.netHeight / this.maxYLabelValue;
     const barY = this.chartBottomStart;
     const barEndY = barY - barHeight;
     return mouseX >= startBarX && mouseX <= endBarX && mouseY <= barY && mouseY >= barEndY;
   }
   
   getXValueAtIndex(index) {
-    if(index === -1) return this.chartData[this.chartData.length - 1].x;
-    return this.chartData[index].x;
+    if(index === -1) return this.adjustedData[this.adjustedData.length - 1].x;
+    return this.adjustedData[index].x;
+  }
+  
+  toggleBar(e) {
+    if(e.detail.chartId !== this.chartId) return;
+    const selectedHex = e.detail.selectedLine;
+    const selectedLabel = e.detail.selectedLabel;
+    const selectedEntryKey = `${selectedHex}-${selectedLabel}`;
+    if(this.selectedHexes.includes(selectedEntryKey)) {
+      this.selectedHexes = this.selectedHexes.filter(key => key !== selectedEntryKey);
+    } else {
+      this.selectedHexes.push(selectedEntryKey);
+    }
+    
+    if(this.selectedHexes.length === 0) {
+      this.adjustedData = this.chartData;
+    } else {
+      this.adjustedData = this.chartData.filter((entry, index) => {
+        const entryHex = this.barIdentifiers[index].hex;
+        const entryLabel = this.barIdentifiers[index].identifier;
+        return this.selectedHexes.findIndex(key => key === `${entryHex}-${entryLabel}`) !== -1;
+      });
+    }
+    this.plotChart();
   }
 }
