@@ -5,13 +5,15 @@ export const PADDING = 0;
 export const X_AXIS_OFFSET = 12;
 export const Y_AXIS_OFFSET = 10;
 export const GRID_LINE_Y_OFFSET = 5;
-export const BOTTOM_LABELS_HEIGHT = 32;
+export const BOTTOM_LABELS_HEIGHT = 24;
 export const DEFAULT_BLUE = '#4b7be5';
 export const TOOLTIP_X_OFFSET = 8;
 export const TOOLTIP_Y_OFFSET = 21;
 export const DOT_SIZE = 4;
+export const RADII = 6;
 
 export const TOOLTIP_TITLE_PADDING = 40;
+export const TOP_CLEARANCE = 30;
 
 export const TouchEvents = {
   TOUCH_START: 'touchstart',
@@ -59,7 +61,6 @@ export default class ChartController extends Controller {
     if(this.lineToggler) this.lineToggler.style.display = 'block';
     this.skeleton.style.display = 'none';
     this.prepareData(this.chartData);
-    this.loadChart();
     window.addEventListener('resize', this.loadChart.bind(this));
     this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
     this.element.addEventListener('mouseleave', this.plotChart.bind(this));
@@ -69,6 +70,7 @@ export default class ChartController extends Controller {
     this.element.addEventListener('touchend', this.handleMouseUp.bind(this));
     this.element.addEventListener('touchmove', this.handleMouseMove.bind(this));
     this.element.addEventListener('touchcancel', this.handleTapCancelled.bind(this));
+    this.loadChart();
   }
   
   textWidth(text = '') {
@@ -77,6 +79,7 @@ export default class ChartController extends Controller {
   
   prepareInitialState() {
     this.parent = document.getElementById(this.element.dataset.parentId);
+    new ResizeObserver(this.loadChart.bind(this)).observe(this.parent); // This will trigger the loadChart method when the parent element changes size
     this.labelSuffix = this.element.dataset.labelSuffix || '';
     if(this.isCompareChart) {
       if(window.Worker) {
@@ -170,9 +173,10 @@ export default class ChartController extends Controller {
     this.ctx.beginPath();
     this.ctx.strokeStyle = '#3F3C70';
     this.ctx.setLineDash([3]);
-    this.ctx.moveTo(mouseX, Y_AXIS_OFFSET / 2);
-    this.ctx.lineTo(mouseX, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT);
+    this.ctx.moveTo(mouseX, Y_AXIS_OFFSET / 2 + TOP_CLEARANCE);
+    this.ctx.lineTo(mouseX, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET);
     this.ctx.stroke();
+    this.showHelperPopup(mouseX);
   }
   
   handleMouseDown(e) {
@@ -258,7 +262,7 @@ export default class ChartController extends Controller {
       const { mouseX} = this.getMousePosition(e);
       xPos = mouseX;
     }
-    const dragAreaVerticalOffset = 5;
+    const dragAreaVerticalOffset = Y_AXIS_OFFSET / 2 + TOP_CLEARANCE;
     
     // Draw base solid rectangle
     this.ctx.beginPath();
@@ -284,7 +288,10 @@ export default class ChartController extends Controller {
     this.ctx.closePath();
     this.ctx.stroke();
     this.resetStyles();
-    
+    this.showTriangleIndicator(this.mouseClickedX);
+    this.showHelperPopup(this.mouseClickedX);
+    this.showTriangleIndicator(xPos, 'down');
+    this.showHelperPopup(xPos, 'top');
   }
   
   prepareData(rawData) {
@@ -324,6 +331,7 @@ export default class ChartController extends Controller {
   }
   
   loadChart() {
+    if(this.chartData.length === 0) return;
     if(this.ctx) {
       this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       this.labels = [];
@@ -333,8 +341,8 @@ export default class ChartController extends Controller {
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.setLongestLabel();
     this.setNetWidth();
-    this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
-    
+    this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - TOP_CLEARANCE;
+    this.chartBottomStart = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET;
     this.setChartAxis();
     this.plotChart();
   }
@@ -359,7 +367,18 @@ export default class ChartController extends Controller {
     const firstDate = new Date(this.getFirstDate());
     const lastDate = new Date(this.getLastDate());
     const dateDiff = lastDate.getTime() - firstDate.getTime();
-    const maxLabels = this.queryTimeInterval === QUERY_INTERVALS.DAY ? 5 : this.queryTimeInterval === QUERY_INTERVALS.HOUR ? 4 : 3;
+    const MINIMUM_SPACING_BETWEEN_LABELS = 50;
+    const referenceLabel = this.formatTime(firstDate, true);
+    const referenceLabelWidth = this.textWidth(referenceLabel);
+    // get the max amount of labels that can fit in the canvas considering the minimum spacing between labels
+    // consider having overlapping padding for the first and last labels
+    let maxLabels = 1;
+    let accumulatedWidth = referenceLabelWidth + MINIMUM_SPACING_BETWEEN_LABELS;
+    while(accumulatedWidth < this.netWidth) {
+      accumulatedWidth += referenceLabelWidth + MINIMUM_SPACING_BETWEEN_LABELS;
+      maxLabels++;
+    }
+    
     const dateStep = Math.ceil(dateDiff / (maxLabels - 1));
     for(let i = 0 ; i < maxLabels - 1 ; i++) {
       const date = new Date(firstDate.getTime() + dateStep * i);
@@ -381,7 +400,7 @@ export default class ChartController extends Controller {
   
   renderLabels(dateSet) {
     this.labels = [];
-    const labelY = this.canvasHeight - Y_AXIS_OFFSET - PADDING;
+    const labelY = this.canvasHeight - Y_AXIS_OFFSET;
     const labels = Array.from(dateSet);
     const pointCount = labels.length - 1;
     // get each label length, and distance them equally
@@ -484,17 +503,17 @@ export default class ChartController extends Controller {
   drawJumpLines() {
     this.setLongestLabel();
     this.setNetWidth();
-    this.createYAxisLabel(this.isSmallScreen() ? this.labelSuffix : "0", 0, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
+    this.createYAxisLabel(this.isSmallScreen() ? this.labelSuffix : "0", 0, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT);
     let jumps = Math.ceil(this.maxTotal / this.yStepSize);
     if(isNaN(jumps)) jumps = 1;
     if(jumps < 2) {
-      this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.isSmallScreen() ? '' : this.labelSuffix}`, 0, Y_AXIS_OFFSET + PADDING);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.isSmallScreen() ? '' : this.labelSuffix}`, 0, Y_AXIS_OFFSET + TOP_CLEARANCE);
     } else {
-      this.createYAxisLabel(`${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.isSmallScreen() ? '' : this.labelSuffix}`, 0, Y_AXIS_OFFSET + PADDING);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.isSmallScreen() ? '' : this.labelSuffix}`, 0, Y_AXIS_OFFSET + TOP_CLEARANCE);
     }
     const boxHeight = this.netHeight / jumps;
     for(let i = 0 ; i < jumps - 1 ; i++) {
-      const y = this.canvasHeight - PADDING - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - ((i + 1) * boxHeight);
+      const y = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - ((i + 1) * boxHeight);
       const text = `${this.formatLabelNumericValue((i + 1) * this.yStepSize)}${this.isSmallScreen() ? '' : this.labelSuffix}`;
       this.createYAxisLabel(text, 0, y);
     }
@@ -721,7 +740,7 @@ export default class ChartController extends Controller {
   }
   
   getYCoordinateFromYValue(yValue) {
-    const netHeight = this.canvasHeight - 2 * PADDING - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    const netHeight = this.canvasHeight - 2 * PADDING - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - TOP_CLEARANCE;
     const yAxisBlockHeight = netHeight / this.maxYLabelValue;
     const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING;
     return baseHeight - yValue * yAxisBlockHeight;
@@ -742,5 +761,69 @@ export default class ChartController extends Controller {
     this.ctx.arc(x, y, DOT_SIZE, 0, 2 * Math.PI);
     this.ctx.fill();
     this.ctx.stroke();
+  }
+  
+  showTriangleIndicator(xPosition, direction = 'up') {
+    this.resetStyles();
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#3F3C70';
+    this.ctx.strokeStyle = '#3F3C70';
+    const TRIANGLE_WIDTH = 6;
+    const TRIANGLE_HEIGHT = 4;
+    const BOTTOM_Y_AXIS_LINE_POSITION = this.chartBottomStart;
+    if(direction === 'up') {
+      this.ctx.moveTo(xPosition, BOTTOM_Y_AXIS_LINE_POSITION);
+      this.ctx.lineTo(xPosition - TRIANGLE_WIDTH / 2, BOTTOM_Y_AXIS_LINE_POSITION + TRIANGLE_HEIGHT);
+      this.ctx.lineTo(xPosition + TRIANGLE_WIDTH / 2,BOTTOM_Y_AXIS_LINE_POSITION + TRIANGLE_HEIGHT);
+    } else {
+      this.ctx.moveTo(xPosition, TOP_CLEARANCE + GRID_LINE_Y_OFFSET);
+      this.ctx.lineTo(xPosition - TRIANGLE_WIDTH / 2, TOP_CLEARANCE + GRID_LINE_Y_OFFSET - TRIANGLE_HEIGHT);
+      this.ctx.lineTo(xPosition + TRIANGLE_WIDTH / 2, TOP_CLEARANCE + GRID_LINE_Y_OFFSET - TRIANGLE_HEIGHT);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+  
+  showHelperPopup(mouseX, position = 'bottom') {
+    this.resetStyles();
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#F6F7FA';
+    this.ctx.strokeStyle = '#F6F7FA';
+    const HELPER_HEIGHT = 24;
+    const HORIZONTAL_PADDING = 6;
+    const VERTICAL_PADDING = 2;
+    const yPosition = position === 'bottom' ? this.canvasHeight - HELPER_HEIGHT : 0;
+    const text = this.formatTime(this.getExactXValue(mouseX), true);
+    const textWidth = this.textWidth(text);
+    const popupWidth = textWidth + 2 * HORIZONTAL_PADDING;
+    let xPosition = mouseX - popupWidth / 2;
+    
+    if(xPosition + popupWidth > this.canvasWidth) {
+      xPosition = this.canvasWidth - popupWidth;
+    } else if(xPosition < 0) {
+      xPosition = 0;
+    }
+    
+    this.ctx.roundRect(xPosition, yPosition, popupWidth, HELPER_HEIGHT, RADII);
+    this.ctx.fill();
+    
+    this.ctx.fillStyle = '#6d6a94';
+    this.ctx.font = '12px MulishBold';
+    this.ctx.fillText(text, xPosition + HORIZONTAL_PADDING, yPosition + HELPER_HEIGHT / 2 + VERTICAL_PADDING);
+    
+    this.ctx.stroke();
+  }
+  
+  getExactXValue(mouseX) {
+    const firstDate = this.getFirstDate();
+    const lastDate = this.getLastDate();
+    const dateDiff = lastDate - firstDate;
+    const startingPixel = this.horizontalContentStartingPixel;
+    const endPixel = this.canvasWidth;
+    const netWidth = endPixel - startingPixel;
+    const ratio = (mouseX - startingPixel) / netWidth;
+    const fullTime = dateDiff * ratio;
+    return firstDate + fullTime;
   }
 }

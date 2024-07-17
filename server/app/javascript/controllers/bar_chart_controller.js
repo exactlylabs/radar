@@ -3,7 +3,7 @@ import ChartController, {
   GRID_LINE_Y_OFFSET,
   TOOLTIP_TITLE_PADDING,
   Y_AXIS_OFFSET,
-  DEFAULT_BLUE, TOOLTIP_X_OFFSET, TOOLTIP_Y_OFFSET
+  DEFAULT_BLUE, TOOLTIP_X_OFFSET, TOOLTIP_Y_OFFSET, RADII
 } from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
@@ -215,7 +215,6 @@ export default class BarChartController extends ChartController {
     } else {
       yCoordinate += OFFSET;
     }
-    const RADII = 6;
     this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
     this.ctx.fill();
     this.ctx.stroke();
@@ -252,7 +251,7 @@ export default class BarChartController extends ChartController {
     const startBarX = this.horizontalContentStartingPixel + possibleBarIndex * (this.barWidth + this.barWidth / 2);
     const endBarX = startBarX + this.barWidth;
     const barHeight = this.chartData[possibleBarIndex].y * this.netHeight / this.maxYLabelValue;
-    const barY = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET;
+    const barY = this.chartBottomStart;
     const barEndY = barY - barHeight;
     return mouseX >= startBarX && mouseX <= endBarX && mouseY <= barY && mouseY >= barEndY;
   }

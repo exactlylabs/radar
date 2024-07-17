@@ -1,4 +1,4 @@
-import ChartController, {DOT_SIZE, TOOLTIP_TITLE_PADDING} from "./chart_controller";
+import ChartController, {DOT_SIZE, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -143,7 +143,6 @@ export default class MultiLineChartController extends ChartController {
     const TOPMOST_Y_COORDINATE = 5;
     const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
     const TOOLTIP_TITLE_TOP_PADDING = 20;
-    const RADII = 6;
     
     let yValues = [];
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
