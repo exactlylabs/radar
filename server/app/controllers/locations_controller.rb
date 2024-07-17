@@ -234,32 +234,23 @@ class LocationsController < ApplicationController
   end
 
   def speed_average
-    start_date = get_range_start_date(params[:type])
+    # Default to network's created at if type is empty (all time)
+    start_date = get_range_start_date(params[:type]) || @location.created_at
     end_date = Time.zone.now
     filtered_measurements = @location.measurements.where(created_at: start_date..end_date)
     if filtered_measurements.count > 0
-      download_avg = filtered_measurements.average(:download).to_f.round(2)
-      upload_avg = filtered_measurements.average(:upload).to_f.round(2)
+      @download_avg = filtered_measurements.average(:download).to_f.round(2)
+      @upload_avg = filtered_measurements.average(:upload).to_f.round(2)
     else
-      download_avg = nil
-      upload_avg = nil
+      @download_avg = nil
+      @upload_avg = nil
     end
 
-    download_diff = @location.download_diff(download_avg.present? ? download_avg : -1)
-    upload_diff = @location.upload_diff(upload_avg.present? ? upload_avg : -1)
+    @download_diff = @location.download_diff(@download_avg || -1)
+    @upload_diff = @location.upload_diff(@upload_avg || -1)
 
     respond_to do |format|
-      format.html {
-        render partial: "networks/components/speed_cells",
-        locals: {
-          download_avg: download_avg.present? ? "#{download_avg} Mbps" : 'N/A',
-          download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)} Mbps" : 'N/A',
-          download_diff: download_diff.present? ? download_diff : "-",
-          upload_avg: upload_avg.present? ? "#{upload_avg} Mbps" : 'N/A',
-          upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)} Mbps" : 'N/A',
-          upload_diff: upload_diff.present? ? upload_diff : "-",
-        }
-    }
+      format.turbo_stream
     end
   end
 

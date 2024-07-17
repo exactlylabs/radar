@@ -1,0 +1,8 @@
+<%= turbo_stream.update "pod-speed-averages" do %>
+  <%= render partial: "pods/components/speed_cells",
+             locals: {
+               download_avg: @download_avg.present? ? "#{@download_avg.round(2)}" : 'N/A',
+               upload_avg: @upload_avg.present? ? "#{@upload_avg.round(2)}" : 'N/A',
+             }
+  %>
+<% end %>

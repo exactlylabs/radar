@@ -24,7 +24,7 @@ module RangeEvaluator
     when 'year'
       Time.zone.now.beginning_of_year
     else
-      Time.zone.now.beginning_of_day
+      nil
     end
   end
 end
