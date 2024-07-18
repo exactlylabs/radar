@@ -1,4 +1,4 @@
-import ChartController, { TOOLTIP_TITLE_PADDING } from "./chart_controller";
+import ChartController, {RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -35,7 +35,6 @@ export default class LineChartController extends ChartController {
     const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
     const TOOLTIP_TITLE_TOP_PADDING = 20;
     const TOOLTIP_DATA_TOP_PADDING = 53
-    const RADII = 6;
     
     const { ys } = this.adjustedData[minDifIndex];
     

@@ -8,23 +8,19 @@
             data-controller="multi-line-chart"
             data-line-chart-data="<%= @download_speeds.to_json %>"
             data-parent-id="download-speeds-widget<%= responsive ? '-responsive' : ''%>"
-            data-y-step-size="150"
             data-label-suffix=" Mbps"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="downloadSpeeds"
             data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="download-speeds-chart-skeleton"
             data-toggler-id="download-speeds-toggler"
+            data-entities-and-hexes="<%= ChartsHelper::REGULAR_CHARTS_LINE_OPTIONS.map(&:to_json) %>"
     ></canvas>
     <div id="download-speeds-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "downloadSpeeds",
-                   options: [
-                     { label: 'Minimum', hex: '#FF695D' },
-                     { label: 'Median', hex: '#4B7BE5' },
-                     { label: 'Maximum', hex: '#9138E5' }
-                   ]
+                   options: ChartsHelper::REGULAR_CHARTS_LINE_OPTIONS
                  } %>
     </div>
     <div id="download-speeds-chart-skeleton" style="position: absolute; inset: 0">

@@ -1,4 +1,4 @@
-import ChartController, {CHART_TITLES, DOT_SIZE, TOOLTIP_TITLE_PADDING, X_AXIS_OFFSET} from "./chart_controller";
+import ChartController, {DOT_SIZE, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -11,6 +11,10 @@ export default class MultiLineChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
     this.selectedHexes = [];
+    // limit label to max 10 characters, and add ellipsis
+    this.entitiesAndHexes = JSON.parse(this.element.dataset.entitiesAndHexes)
+                            .map(i => JSON.parse(i))
+      .map(i => ({label: i.label.length > 12 ? i.label.substring(0, 12) + '...' : i.label, hex: i.hex}));
     super.connect();
   }
   
@@ -22,18 +26,12 @@ export default class MultiLineChartController extends ChartController {
     return Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x);
   }
   
-  setYAxis() {
-    this.ctx.beginPath();
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = '13px Mulish';
-    this.maxTotal = 0;
-    this.chartData.forEach((value, key) => {
-      const totals = value.map(entry => entry.y);
-      const max = Math.max(...totals);
-      if(max > this.maxTotal) this.maxTotal = max;
+  getYValues() {
+    let yValues = [];
+    this.chartData.forEach((value, _) => {
+      yValues.push(...value.map(entry => entry.y));
     });
-    this.yStepSize = Math.ceil(this.maxTotal / 3);
-    this.drawJumpLines();
+    return yValues;
   }
   
   prepareData(rawData) {
@@ -129,7 +127,7 @@ export default class MultiLineChartController extends ChartController {
       this.selectedHexes.push(selectedHex);
     }
     this.adjustedData = this.adjustData(this.chartData);
-    this.plotChart(this.adjustedData);
+    this.plotChart();
   }
   
   showTooltip(mouseX, mouseY) {
@@ -145,7 +143,6 @@ export default class MultiLineChartController extends ChartController {
     const TOPMOST_Y_COORDINATE = 5;
     const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
     const TOOLTIP_TITLE_TOP_PADDING = 20;
-    const RADII = 6;
     
     let yValues = [];
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
@@ -187,7 +184,11 @@ export default class MultiLineChartController extends ChartController {
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    let tooltipWidth = 100;
+    let tooltipWidth;
+    const hasEllipsis = this.entitiesAndHexes.find(e => e.label.includes('...'));
+    if(this.isCompareChart && hasEllipsis) tooltipWidth = 250;
+    else if(hasEllipsis) tooltipWidth = 210;
+    else tooltipWidth = 190;
     
     const tooltipTitle = this.formatTime(new Date(Number(minDifIndexEntry.x)));
     const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
@@ -264,7 +265,8 @@ export default class MultiLineChartController extends ChartController {
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
       xPixel += DOT_SIZE + DOT_TEXT_SPACING;
-      this.ctx.fillText(tooltipTitle, xPixel, TEXT_Y_COORDINATE);
+      const tooltipLineText = this.entitiesAndHexes.find(e => e.hex === hex).label;
+      this.ctx.fillText(tooltipLineText, xPixel, TEXT_Y_COORDINATE);
       
       this.ctx.font = '13px MulishSemiBold';
       this.ctx.fillStyle = 'black';

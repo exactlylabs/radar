@@ -2,7 +2,7 @@
 <% responsive = local_assigns[:responsive] || false %>
 
 <div class="widgets--canvas-container">
-  <%= turbo_frame_tag "compare-total-data-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy', data: { dashboard_realtime_filters_target: 'widget', action: 'turbo:before-fetch-response->dashboard-realtime-filters#onWidgetSubmitEnd' } do %>
+  <%= turbo_frame_tag "compare-total-data-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy', class: "widgets--comparison-tf", data: { dashboard_realtime_filters_target: 'widget', action: 'turbo:before-fetch-response->dashboard-realtime-filters#onWidgetSubmitEnd' } do %>
     <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
   <% end %>
 </div>

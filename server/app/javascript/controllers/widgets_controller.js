@@ -8,12 +8,13 @@ export default class extends Controller {
     e.stopPropagation();
     const chartId = e.target.dataset.chartId;
     const selectedLine = e.target.dataset.selectedLine;
+    const selectedLabel = e.target.dataset.selectedLabel;
     const allButtons = document.querySelectorAll(`button[data-chart-id="${chartId}"]`);
     allButtons.forEach(button => {
       if(button.dataset.selectedLine === selectedLine) {
         button.dataset.selected = button.dataset.selected === 'true' ? 'false' : 'true';
       }
     });
-    emitCustomEvent('toggleLine', { detail: { selectedLine, chartId: chartId } });
+    emitCustomEvent('toggleLine', { detail: { selectedLine, selectedLabel, chartId } });
   }
 }
