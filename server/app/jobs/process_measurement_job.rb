@@ -3,10 +3,10 @@ class ProcessMeasurementJob < ApplicationJob
 
   def perform(measurement)
     measurement.autonomous_system = AutonomousSystem.find_by_ip(measurement.ip) unless measurement.ip.nil?
-
+    byebug
     case measurement.style
     when "NDT7"
-      data = measurement.result.download.split("\n")
+      data = measurement.read_result.split("\n")
       extended_info = nil
       data.reverse.each do |line|
         begin
@@ -35,7 +35,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.extended_info = extended_info
 
     when "OOKLA"
-      result = JSON.parse(measurement.result.download)
+      result = JSON.parse(measurement.read_result)
 
       measurement.download = (result["download"]["bandwidth"] / (1000.0 * 1000.0)) * 8
       measurement.upload = (result["upload"]["bandwidth"] / (1000.0 * 1000.0)) * 8
