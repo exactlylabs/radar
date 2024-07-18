@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_01_215516) do
+ActiveRecord::Schema.define(version: 2024_07_18_122845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,10 +55,10 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "asn_ip_lookups", id: false, force: :cascade do |t|
+  create_table "asn_ip_lookups", primary_key: ["autonomous_system_id", "ip", "source_file_timestamp"], force: :cascade do |t|
     t.bigint "autonomous_system_id", null: false
     t.inet "ip", null: false
-    t.datetime "source_file_timestamp"
+    t.datetime "source_file_timestamp", null: false
     t.index ["autonomous_system_id"], name: "index_asn_ip_lookups_on_autonomous_system_id"
     t.index ["ip"], name: "index_asn_ip_lookups_on_ip", opclass: :inet_ops, using: :gist
   end
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.index ["org_id"], name: "index_autonomous_system_orgs_on_org_id", unique: true
   end
 
-  create_table "autonomous_system_orgs_geospaces", id: false, force: :cascade do |t|
+  create_table "autonomous_system_orgs_geospaces", force: :cascade do |t|
     t.bigint "geospace_id", null: false
     t.bigint "autonomous_system_org_id", null: false
     t.index ["autonomous_system_org_id"], name: "idx_geospaces_as_orgs_as_org_id"
@@ -359,7 +359,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "feature_flags_users", id: false, force: :cascade do |t|
+  create_table "feature_flags_users", force: :cascade do |t|
     t.bigint "feature_flag_id", null: false
     t.bigint "user_id", null: false
   end
@@ -379,7 +379,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.index ["namespace", "geoid"], name: "index_geospaces_on_namespace_and_geoid", unique: true
   end
 
-  create_table "geospaces_locations", id: false, force: :cascade do |t|
+  create_table "geospaces_locations", force: :cascade do |t|
     t.bigint "geospace_id", null: false
     t.bigint "location_id", null: false
     t.index ["geospace_id"], name: "index_geospaces_locations_on_geospace_id"
@@ -511,7 +511,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.index ["processed_at"], name: "index_measurements_on_processed_at", order: :desc
   end
 
-  create_table "metrics_projections", id: false, force: :cascade do |t|
+  create_table "metrics_projections", force: :cascade do |t|
     t.datetime "timestamp"
     t.string "bucket_name"
     t.bigint "parent_aggregate_id"
