@@ -4,7 +4,7 @@ class ProcessSpeedTestJob < ApplicationJob
   def perform(measurement, is_mobile = false)
     return unless measurement.result.attached?
 
-    json = JSON.parse(measurement.result.download)
+    json = JSON.parse(measurement.read_result)
     json['raw'].each do |result_measurement|
       if result_measurement['LastServerMeasurement'].present? || result_measurement['LastClientMeasurement'].present?
         if result_measurement['type'] == 'download'

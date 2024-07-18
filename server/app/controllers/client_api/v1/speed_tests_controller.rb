@@ -15,8 +15,10 @@ module ClientApi
           @speed_test.permissions = params[:permissions]
           @speed_test.tested_by = params[:client_id]
           filename = "speed-test-#{params[:timestamp]}.json"
-          json_content = params[:result].to_json
-          @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
+          # Compress the result file before attaching it to the measurement
+          result_file = StringIO.new(ActiveSupport::Gzip.compress(params[:result].to_json))
+          @speed_test.result.attach(io: result_file, filename: filename, content_type: 'application/json')
+          @speed_test.gzip = true
           @speed_test.autonomous_system = AutonomousSystem.find_by_ip(@speed_test.ip) unless @speed_test.ip.nil?
           @speed_test.save!
           # Call process to parse JSON and seed measurement
