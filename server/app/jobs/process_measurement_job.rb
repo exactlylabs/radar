@@ -3,7 +3,6 @@ class ProcessMeasurementJob < ApplicationJob
 
   def perform(measurement)
     measurement.autonomous_system = AutonomousSystem.find_by_ip(measurement.ip) unless measurement.ip.nil?
-    byebug
     case measurement.style
     when "NDT7"
       data = measurement.read_result.split("\n")
