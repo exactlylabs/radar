@@ -1,9 +1,4 @@
 <% responsive = @responsive || false %>
-<% options = [
-  { label: 'Minimum', hex: '#FF695D' },
-  { label: 'Median', hex: '#4B7BE5' },
-  { label: 'Maximum', hex: '#9138E5' }
-] %>
 
 <%= turbo_frame_tag "download-speeds-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @download_speeds.count == 0 %>
@@ -20,13 +15,13 @@
             data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="download-speeds-chart-skeleton"
             data-toggler-id="download-speeds-toggler"
-            data-entities-and-hexes="<%= options.map(&:to_json) %>"
+            data-entities-and-hexes="<%= ChartsHelper::REGULAR_CHARTS_LINE_OPTIONS.map(&:to_json) %>"
     ></canvas>
     <div id="download-speeds-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "downloadSpeeds",
-                   options: options
+                   options: ChartsHelper::REGULAR_CHARTS_LINE_OPTIONS
                  } %>
     </div>
     <div id="download-speeds-chart-skeleton" style="position: absolute; inset: 0">

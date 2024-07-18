@@ -157,7 +157,6 @@ export default class MultiLineChartController extends ChartController {
     let yCoordinate;
     this.showVerticalDashedLine(mouseX);
     let i = 0;
-    let longestLineText = '';
     for(let [hex, linePoints] of this.adjustedData.entries()) {
       if(i >= MAX_TOOLTIP_LINES) break;
       const currentColorMinDifEntry = linePoints[minDifIndex];
@@ -192,7 +191,11 @@ export default class MultiLineChartController extends ChartController {
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    let tooltipWidth = this.isCompareChart ? this.entitiesAndHexes.find(e => e.label.includes('...')) ? 250 : 210 : 190;
+    let tooltipWidth;
+    const hasEllipsis = this.entitiesAndHexes.find(e => e.label.includes('...'));
+    if(this.isCompareChart && hasEllipsis) tooltipWidth = 250;
+    else if(hasEllipsis) tooltipWidth = 210;
+    else tooltipWidth = 190;
     
     const tooltipTitle = this.formatTime(new Date(Number(minDifIndexEntry.x)));
     const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
