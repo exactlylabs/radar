@@ -8,6 +8,13 @@ class Measurement < ApplicationRecord
   belongs_to :autonomous_system, optional: true
   has_one_attached :result
 
+  def read_result
+    if self.result.attached?
+      content = self.result.download
+      self.gzip? ? ActiveSupport::Gzip.decompress(content) : content
+    end
+  end
+
   def self.to_ndt7_csv
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download avg_data_used jitter latency created_at(UTC+0)}
