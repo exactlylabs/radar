@@ -45,6 +45,48 @@ module ClientApi
         render json: @speed_tests
       end
 
+      # 0101000020E610000000000000000010C00000000000B0AF40, 355
+      # 0101000020E61000000000000000005CC00000000000AEAF40, 356
+      # 0101000020E61000000000000000805EC00000000000A0AF40, 357
+      # 0101000020E610000000000000000010C00000000000B0AF40, 358
+      # 0101000020E610000000000000000010C00000000000B0AF40, 359
+      # 0101000020E610000000000000000010C00000000000B0AF40, 360
+
+      def tiles
+
+        x = params[:x].to_i
+        y = params[:y].to_i
+        z = params[:z].to_i
+
+        sql_params = {x: x, y: y, z: z}
+        test_sql = %{
+          WITH bbox AS (
+              SELECT ST_TileEnvelope(:z, :x, :y) AS geometry
+          ),
+          mvtgeom AS (
+            SELECT ST_AsMVTGeom(ST_Transform(lonlat::geometry, 3857), bbox.geometry, 4096, 0, true), client_speed_tests.*
+            FROM client_speed_tests, bbox
+            WHERE lonlat::geometry IS NOT NULL AND ST_Intersects(lonlat::geometry, ST_Transform(bbox.geometry, 4326))
+          )
+          SELECT ST_AsMVT(mvtgeom.*, 'tests', 4096, 'lonlat', 'id') FROM mvtgeom;
+        }
+
+        query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([test_sql, sql_params]))
+
+        query_response.each do |row|
+          raw = row['st_asmvt']
+          @tiles = ActiveRecord::Base.connection.unescape_bytea(raw)
+        end
+
+        # Add application/vnd.mapbox-vector-tile header
+        response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
+        response.headers['Content-Length'] = @tiles.length.to_s
+
+        # Respond binary
+        send_data @tiles, type: 'application/vnd.mapbox-vector-tile', disposition: 'inline'
+
+      end
+
       ## New method to prevent issues migrating
       # mainly in the released app.
       # By retrieving NE and SW points of the map
