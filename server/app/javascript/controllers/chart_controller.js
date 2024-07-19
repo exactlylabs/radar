@@ -176,6 +176,7 @@ export default class ChartController extends Controller {
     this.ctx.moveTo(mouseX, Y_AXIS_OFFSET / 2 + TOP_CLEARANCE);
     this.ctx.lineTo(mouseX, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET);
     this.ctx.stroke();
+    if(this.chartId === 'compareTotalData') return;
     this.showHelperPopup(mouseX);
   }
   

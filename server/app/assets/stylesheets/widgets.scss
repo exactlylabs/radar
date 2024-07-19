@@ -510,3 +510,12 @@
   overflow-y: auto;
   padding: 3px;
 }
+
+.widgets--comparison-toggler {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  button.widgets--line-toggler-button {
+    max-width: 125px;
+  }
+}
