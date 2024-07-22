@@ -13,6 +13,15 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 )
 
+type S3StorageOptions struct {
+	BucketName string
+	AccessKey  string
+	SecretKey  string
+	Endpoint   string
+	Region     string
+	Workers    int
+}
+
 type s3Storage struct {
 	bucketName string
 	awsSession *session.Session
@@ -20,11 +29,11 @@ type s3Storage struct {
 	uploader   *Uploader
 }
 
-func New(bucketName, accessKey, secretKey, endpoint, region string) (datastore.Storage, error) {
+func New(opts S3StorageOptions) (datastore.Storage, error) {
 	s3Config := &aws.Config{
-		Credentials:      credentials.NewStaticCredentials(accessKey, secretKey, ""),
-		Endpoint:         aws.String(endpoint),
-		Region:           aws.String(region),
+		Credentials:      credentials.NewStaticCredentials(opts.AccessKey, opts.SecretKey, ""),
+		Endpoint:         aws.String(opts.Endpoint),
+		Region:           aws.String(opts.Region),
 		S3ForcePathStyle: aws.Bool(true),
 	}
 	awsSession, err := session.NewSession(s3Config)
@@ -33,11 +42,28 @@ func New(bucketName, accessKey, secretKey, endpoint, region string) (datastore.S
 	}
 	cli := s3.New(awsSession)
 	return &s3Storage{
-		bucketName: bucketName,
+		bucketName: opts.BucketName,
 		awsSession: awsSession,
 		cli:        cli,
-		uploader:   NewUploader(bucketName, awsSession),
+		uploader:   NewUploader(opts.BucketName, awsSession, opts.Workers),
 	}, nil
+}
+
+// List implements datastore.Storage.
+func (s *s3Storage) List(ctx context.Context, prefix string) ([]string, error) {
+	files := make([]string, 0)
+	opts := &s3.ListObjectsInput{Bucket: &s.bucketName, Prefix: &prefix}
+	err := s.cli.ListObjectsPagesWithContext(ctx, opts, func(p *s3.ListObjectsOutput, last bool) (shouldContinue bool) {
+		for _, obj := range p.Contents {
+			files = append(files, *obj.Key)
+		}
+		return true
+	})
+	if err != nil {
+		return nil, errors.W(err)
+
+	}
+	return files, nil
 }
 
 // Delete implements datastore.Storage.
@@ -82,5 +108,10 @@ func (s *s3Storage) Get(ctx context.Context, filepath string) (io.ReadCloser, er
 // Store implements datastore.Storage.
 func (s *s3Storage) Store(ctx context.Context, reader io.ReadCloser, filepath string) error {
 	s.uploader.Upload(reader, filepath)
+	return nil
+}
+
+func (s *s3Storage) Close() error {
+	s.uploader.Close()
 	return nil
 }

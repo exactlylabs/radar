@@ -4,10 +4,10 @@ import (
 	"io"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type uploadData struct {
@@ -23,20 +23,22 @@ type Uploader struct {
 	bucketName string
 }
 
-func NewUploader(bucketName string, awsSession *session.Session) *Uploader {
+func NewUploader(bucketName string, awsSession *session.Session, nWorkers int) *Uploader {
 	wg := &sync.WaitGroup{}
 	ch := make(chan *uploadData)
-	wg.Add(1)
 	u := &Uploader{
 		uploadCh:   ch,
 		wg:         wg,
 		bucketName: bucketName,
 		uploader:   s3manager.NewUploader(awsSession),
 	}
-	go func() {
-		defer wg.Done()
-		u.uploadWorker(ch)
-	}()
+	for i := 0; i < nWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			u.uploadWorker(ch)
+		}()
+	}
 	return u
 }
 
@@ -54,13 +56,19 @@ func (u *Uploader) Close() {
 
 func (u *Uploader) uploadWorker(ch chan *uploadData) {
 	for work := range ch {
-		_, err := u.uploader.Upload(&s3manager.UploadInput{
-			Bucket: &u.bucketName,
-			Key:    &work.dst,
-			Body:   work.reader,
-		})
-		if err != nil {
-			log.Println(errors.W(err))
+	RETRY:
+		for i := 0; i < 5; i++ {
+			_, err := u.uploader.Upload(&s3manager.UploadInput{
+				Bucket: &u.bucketName,
+				Key:    &work.dst,
+				Body:   work.reader,
+			})
+			if err != nil {
+				log.Println(err)
+				time.Sleep(time.Second * 15)
+			} else {
+				break RETRY
+			}
 		}
 		work.reader.Close()
 	}

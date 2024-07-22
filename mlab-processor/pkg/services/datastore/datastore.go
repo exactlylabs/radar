@@ -14,8 +14,10 @@ import (
 type Storage interface {
 	Store(ctx context.Context, reader io.ReadCloser, filepath string) error
 	Get(ctx context.Context, filepath string) (io.ReadCloser, error)
+	List(ctx context.Context, prefix string) ([]string, error)
 	Delete(ctx context.Context, filepath string) error
 	Exists(ctx context.Context, filepath string) (bool, error)
+	Close() error
 }
 
 // gcpDataStore implements datastore.DataStore interface, storing data in in GCP Storage

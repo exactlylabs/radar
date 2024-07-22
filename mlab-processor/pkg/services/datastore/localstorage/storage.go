@@ -19,6 +19,10 @@ func New(dir string) (datastore.Storage, error) {
 	}, nil
 }
 
+func (l *localStorage) List(ctx context.Context, prefix string) ([]string, error) {
+	panic("not implemented")
+}
+
 func (l *localStorage) Delete(ctx context.Context, filepath string) error {
 	return os.Remove(filepath)
 }
@@ -49,5 +53,9 @@ func (l *localStorage) Store(ctx context.Context, reader io.ReadCloser, filepath
 	if _, err := io.Copy(file, reader); err != nil {
 		return errors.W(err)
 	}
+	return nil
+}
+
+func (l *localStorage) Close() error {
 	return nil
 }

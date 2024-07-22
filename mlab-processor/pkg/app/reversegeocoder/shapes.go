@@ -31,10 +31,10 @@ func tractShapesByStateId(conf *config.ProcessorConfig) map[string]string {
 		} else if matched {
 			filename := d.Name()
 			substrs := strings.Split(filename, "_")
-			if len(substrs) != 4 {
-				return fmt.Errorf("tracts file format is wrong. expected: tl_[year]_[state_fips]_tract.zip")
+			if len(substrs) != 3 {
+				return fmt.Errorf("tracts file format is wrong. expected: tl_[state_fips]_tract.zip")
 			}
-			paths[substrs[2]] = path
+			paths[substrs[1]] = path
 		}
 		return nil
 	})
