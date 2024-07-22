@@ -8,11 +8,12 @@ managers:
 
 workers:
   hosts:
-    worker-01.staging.radartoolkit.com:
-      labels:
-        private: "true"
-        architecture: arm64
-        network: aws
+    # Deactivated -- Left for documenting the labels to use
+    # worker-01.staging.radartoolkit.com:
+    #   labels:
+    #     private: "true"
+    #     architecture: arm64
+    #     network: aws
     db.mapping.radartoolkit.com:
       skip_cloudwatch: true
       labels:

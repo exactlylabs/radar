@@ -1,4 +1,41 @@
+managers:
+  hosts:
+    manager-01.radartoolkit.com:
+      swarm_default_addr_pool: 10.0.0.0/16 # Be careful to not conflict with the VPC subnet
+      labels:
+        network: aws
+        redis: "true"
 
+workers:
+  hosts:
+    # Deactivated -- Left for documenting the labels to use
+    #worker-01.radartoolkit.com:
+    #  labels:
+    #    private: "true"
+    #    architecture: arm64
+    #    network: aws
+    db.mapping.radartoolkit.com:
+      skip_cloudwatch: true
+      labels:
+        external: "true"
+        service: clickhouse
+        network: tailscale
+
+nfs:
+  hosts:
+    nfs.radartoolkit.com:
+  vars:
+    vpc_subnet_cidr: 10.5.0.0/16
+
+postgresql-servers:
+  hosts:
+    db-01.radartoolkit.com:
+  vars:
+      listen_address: 10.5.0.0/16
+
+vpn-routers:
+  hosts:
+    vpn-router.radartoolkit.com:
 
 clickhousedb:
   hosts:

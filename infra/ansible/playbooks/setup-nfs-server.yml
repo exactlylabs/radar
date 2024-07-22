@@ -3,6 +3,7 @@
   hosts:
     - nfs
   roles:
+    - monitoring
     - role: nfs
       nfs_shares:
       # Declare all mounting paths to be used by the applications here
