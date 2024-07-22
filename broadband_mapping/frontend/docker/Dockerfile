@@ -7,9 +7,10 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN NODE_ENV=${NODE_ENV} npm ci
 
-COPY ./src ./public ./webpack ./static.json ./tsconfig.json ./
+RUN NODE_ENV=development npm ci
+
+COPY . .
 
 RUN NODE_ENV=${NODE_ENV} npm run build
 

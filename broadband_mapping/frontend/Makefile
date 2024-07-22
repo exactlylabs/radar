@@ -23,7 +23,7 @@ push-staging: build
 
 
 .PHONY: push
-push: ENVIRONMENT=production
+push: ENVIRONMENT=prod
 push: build
 	docker tag mapping-client:$(VERSION) registry.radartoolkit.com/mapping-client:$(VERSION)
 	docker tag mapping-client:latest registry.radartoolkit.com/mapping-client:latest
