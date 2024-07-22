@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  vector-agent:
+    image: timberio/vector:latest-alpine
+    entrypoint: "/usr/local/bin/load-swarm-secrets /usr/local/bin/vector"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - public
+    deploy:
+      mode: global
+    hostname: "{{.Node.Hostname}}"
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIATCKAMRJSMJ7U76LC
+    secrets:
+      - source: VECTOR_AWS_SECRET_KEY
+        target: AWS_SECRET_ACCESS_KEY
+    configs:
+      - source: vector_config-v4
+        target: /etc/vector/vector.yaml
+      - source: load-secrets
+        target: /usr/local/bin/load-swarm-secrets
+        mode: 0555
+
+
+secrets:
+  VECTOR_AWS_SECRET_KEY:
+    external: true
+
+
+configs:
+  # To update config files, we must rename the config key name, and update the service to source from this new name.
+  # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
+  vector_config-v4:
+    template_driver: golang
+    file: ./configs/vector.yaml
+  load-secrets:
+    template_driver: golang
+    file: ./configs/load-swarm-secrets
+
+
+networks:
+  public:
+    driver: overlay
+    attachable: true
+

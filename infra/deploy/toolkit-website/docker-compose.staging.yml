@@ -18,7 +18,7 @@ services:
           - node.labels.network == aws
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.toolkit-website.rule=Host(`toolkit.staging.radartoolkit.com`)"
+        - "traefik.http.routers.toolkit-website.rule=Host(`toolkit.staging.radartoolkit.com`) || Host(`toolkit.staging.exactlylabs.com`)"
         - "traefik.http.services.toolkit-website.loadbalancer.server.port=3000"
         - "traefik.http.routers.toolkit-website.entrypoints=web,websecure"
         - "traefik.http.routers.toolkit-website.tls.certresolver=myresolver"

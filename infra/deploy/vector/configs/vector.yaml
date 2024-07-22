@@ -35,7 +35,7 @@ sinks:
     stream_name: {{ "\"{{ host }}\"" }}
     auth:
       access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-      secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+      secret_access_key: "{{ secret "AWS_SECRET_ACCESS_KEY" }}"
     healthcheck: false
 
   traefik_access_sink:
@@ -49,7 +49,7 @@ sinks:
     stream_name: {{ "\"{{ host }}\"" }}
     auth:
       access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-      secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+      secret_access_key: "{{ secret "AWS_SECRET_ACCESS_KEY" }}"
     healthcheck: false
 
   # debug:

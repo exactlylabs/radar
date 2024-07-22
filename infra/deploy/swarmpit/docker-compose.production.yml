@@ -21,7 +21,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1024M
+          memory: 512M
         reservations:
           cpus: '0.25'
           memory: 512M
@@ -32,10 +32,13 @@ services:
   db:
     image: couchdb:2.3.1
     volumes:
-      - /opt/janus/swarmpit/couchdb-data:/opt/couchdb/data
+      - couchdb-data:/opt/couchdb/data
     networks:
       - net
     deploy:
+      placement:
+        constraints:
+          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.30'
@@ -47,10 +50,13 @@ services:
   influxdb:
     image: influxdb:1.8
     volumes:
-      - /opt/janus/swarmpit/influxdb-data:/var/lib/influxdb
+      - influxdb-data:/var/lib/influxdb
     networks:
       - net
     deploy:
+      placement:
+        constraints:
+          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.60'
@@ -84,7 +90,16 @@ networks:
     driver: overlay
 
 volumes:
-  db-data:
+  couchdb-data:
     driver: local
-  influx-data:
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
+      device: ":/mnt/nfs/swarmpit/couch-data"
+
+  influxdb-data:
     driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
+      device: ":/mnt/nfs/swarmpit/influx-data"

@@ -19,7 +19,7 @@ push: build
 	docker push registry.radartoolkit.com/otel-collector:$(VERSION)
 
 deploy-staging: push-staging
-	make -C ../infra/deploy deploy STACK=otel-collector: ENVIRONMENT=staging
+	make -C ../ deploy STACK=otel-collector ENVIRONMENT=staging
 
 deploy: push
-	make -C ../infra/deploy deploy STACK=otel-collector: ENVIRONMENT=staging
+	make -C ../ deploy STACK=otel-collector ENVIRONMENT=production

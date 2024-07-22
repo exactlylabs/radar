@@ -2,11 +2,11 @@ version: "3.8"
 
 services:
   speedtest-client:
-    image: registry.staging.radartoolkit.com/speedtest-client:latest
+    image: registry.radartoolkit.com/speedtest-client:latest
     networks:
       - traefik_public
     environment:
-      - NODE_ENV=staging
+      - NODE_ENV=production
     deploy:
       replicas: 1
       placement:
@@ -14,7 +14,7 @@ services:
           - node.labels.network == aws
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.speedtest-client-app.rule=Host(`speed.staging.radartoolkit.com`) || Host(`speed.staging.exactlylabs.com`) || Host(`speedtest.staging.exactlylabs.com`)"
+        - "traefik.http.routers.speedtest-client-app.rule=Host(`speed.radartoolkit.com`) || Host(`speed.exactlylabs.com`) || Host(`speedtest.exactlylabs.com`)"
         - "traefik.http.services.speedtest-client-app.loadbalancer.server.port=9999"
         - "traefik.http.routers.speedtest-client-app.entrypoints=web,websecure"
         - "traefik.http.routers.speedtest-client-app.tls.certresolver=myresolver"
