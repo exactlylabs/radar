@@ -215,7 +215,7 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]} out of #{Location::LOCATIONS_PER_COUNTY_GOAL} goal") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]} out of #{Location::LOCATIONS_PER_PLACE_GOAL} goal") if location_info.place && location_info.extra[:locations_per_place_count].present?
     fieldset.add_field(name: "Total in ISP in the County", value: "#{location_info.extra[:locations_per_isp_county_count]} out of #{Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_county_count].present?
-    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.unix_user)
+    fieldset.add_field(name: "Pod ID", value: self.pod_id(location_info.location))
   end
 
   def fill_online_notification_fieldset(location_info, fieldset, online: true)
@@ -224,6 +224,15 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]}") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.place && location_info.extra[:locations_per_place_count]
     fieldset.add_field(name: "Total in ISP", value: "#{location_info.extra[:locations_per_isp_count]}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_count].present?
-    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.unix_user)
+    fieldset.add_field(name: "Pod ID", value: self.pod_id(location_info.location))
+  end
+
+  def pod_id(location)
+    # Try to grab the current online pod, it could happen that pod goes quickly offline right after, causing it to return nothing.
+    # In these cases, we grab the latest updated pod, not caring for its status.
+    pod_id = location.clients.where(online: online).order(:updated_at).last&.unix_user
+    if pod_id.nil?
+      pod_id = location.clients.order(:updated_at).last&.unix_user
+    end
   end
 end
