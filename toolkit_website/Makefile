@@ -41,3 +41,17 @@ push-staging:	build
 deploy-staging: push-staging
 	@echo "Deploying staging environment"
 	make -C ../infra/deploy deploy STACK=toolkit-website ENVIRONMENT=staging
+
+.PHONY: push
+push: ENVIRONMENT=production
+push:	build
+	@echo "Pushing production environment"
+	docker tag toolkit-website:$(VERSION) registry.radartoolkit.com/toolkit-website:$(VERSION)
+	docker tag toolkit-website:latest registry.radartoolkit.com/toolkit-website:latest
+	docker push registry.radartoolkit.com/toolkit-website:latest
+	docker push registry.radartoolkit.com/toolkit-website:$(VERSION)
+
+.PHONY: deploy
+deploy: push
+	@echo "Deploying production environment"
+	make -C ../infra/deploy deploy STACK=toolkit-website ENVIRONMENT=production

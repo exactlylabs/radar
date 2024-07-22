@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN NODE_ENV=${ENVIRONMENT} npm install
+RUN NODE_ENV=development npm install
 
 RUN NODE_ENV=${ENVIRONMENT} npm run build
 
