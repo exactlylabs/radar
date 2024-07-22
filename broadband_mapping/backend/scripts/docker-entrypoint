@@ -5,5 +5,19 @@ for secret in $(ls /var/run/secrets); do
   export "${secret}"="$(cat /var/run/secrets/${secret})"
 done
 
-exec "$@"
+set -e
 
+if [ ! -z "$TS_AUTHKEY" ]; then
+  echo "Tailscale Key found, connecting container to the Tailnet"
+  tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=41641 &
+  while [ ! -S /run/tailscale/tailscaled.sock ]; do
+    echo "Waiting for tailscaled to start..."
+    sleep 2
+  done
+  echo "Tailscaled Started, waiting 3 seconds to connect"
+  sleep 3
+  tailscale up --authkey=$TS_AUTHKEY --advertise-tags=tag:container --accept-routes
+  sleep 1
+fi
+
+exec "$@"

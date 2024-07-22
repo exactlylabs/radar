@@ -8,6 +8,7 @@ require (
 	cloud.google.com/go/storage v1.30.1
 	github.com/ClickHouse/clickhouse-go/v2 v2.9.1
 	github.com/allegro/bigcache/v3 v3.1.0
+	github.com/aws/aws-sdk-go v1.54.19
 	github.com/exactlylabs/go-errors v0.0.2
 	github.com/exactlylabs/go-monitor v0.0.5
 	github.com/exactlylabs/go-rest v0.0.6
@@ -55,6 +56,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.16.0 // indirect

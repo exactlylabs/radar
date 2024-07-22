@@ -25,7 +25,7 @@ COPY .  ./
 RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o setup_shapes ./cmd/setup_shapes/main.go
 
 #---------------------------------------------------------#
-FROM --platform=${TARGETPLATFORM} alpine:3.14.0
+FROM --platform=${TARGETPLATFORM} tailscale/tailscale:stable
 
 WORKDIR /app
 RUN apk add --no-cache tzdata gdal-tools

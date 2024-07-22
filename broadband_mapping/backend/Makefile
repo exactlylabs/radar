@@ -72,7 +72,7 @@ push-ingestor: build-mlab-ingestor
 
 
 .PHONY: push-api-staging
-push-api-staging: build
+push-api-staging: build build-setup-shapes
 	docker tag mapping-api:$(VERSION) registry.staging.radartoolkit.com/mapping-api:$(VERSION)
 	docker tag mapping-api:latest registry.staging.radartoolkit.com/mapping-api:latest
 	docker push registry.staging.radartoolkit.com/mapping-api:latest
@@ -97,10 +97,15 @@ push-ingestor-staging: build-mlab-ingestor
 deploy-api-staging: push-api-staging
 	make -C ../../infra/deploy deploy STACK=mapping-api ENVIRONMENT=staging
 
+.PHONY: deploy-api
+deploy-api: push-api
+	make -C ../../infra/deploy deploy STACK=mapping-api ENVIRONMENT=production
 
-.PHONY: deploy-ingestor-staging
-deploy-ingestor-staging: push-ingestor-staging
-	make -C ../../infra/deploy deploy STACK=mlab-ingestor ENVIRONMENT=staging
+
+
+.PHONY: deploy-ingestor
+deploy-ingestor: push-ingestor
+	make -C ../../infra/deploy deploy STACK=mlab-ingestor ENVIRONMENT=production
 
 
 .PHONY: deploy
