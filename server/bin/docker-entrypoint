@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+
+for secret in $(ls /var/run/secrets); do
+  export "${secret}"="$(cat /var/run/secrets/${secret})"
+done
+
+
+exec "$@"

@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1
+# syntax = docker/dockerfile:1.7-labs
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=3.0.6
@@ -56,12 +56,13 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
-COPY . .
+COPY --exclude=bin/docker-entrypoint . .
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+RUN  SECRET_KEY_BASE=1 ./bin/rails assets:clobber
 RUN SECRET_KEY_BASE=1 ./bin/rails assets:precompile
 
 
@@ -74,18 +75,17 @@ RUN apt-get update && apt-get install unzip -y
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
-RUN --mount=type=secret,id=MAXMIND_KEY \
-  MAXMIND_KEY=$(cat /run/secrets/MAXMIND_KEY) /rails/scripts/setup.sh
-
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+    chown -R rails:rails db log storage tmp public app
 
 # wicked_pdf was throwing permission denied error when generating a PDF. This may be the cause.
 RUN chmod -R 777 /rails/tmp
 RUN chown -R rails:rails /usr/local/bundle/ruby/*/gems/
 
 USER rails:rails
+
+COPY ./bin/docker-entrypoint ./bin/docker-entrypoint
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
