@@ -19,6 +19,12 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
+type SystemdStatusCode uint
+
+const (
+	statusRunning SystemdStatusCode = 0
+)
+
 type SysInfoManager struct {
 	actLed string
 }
@@ -453,7 +459,7 @@ func (si *SysInfoManager) EthernetStatus() (status network.NetStatus, err error)
 func (si *SysInfoManager) PodAgentRunning() (bool, error) {
 	out, err := si.runCommand(exec.Command("systemctl", "is-active", "radar_agent"))
 	exitErr := &exec.ExitError{}
-	if err != nil && errors.As(err, &exitErr) && exitErr.ExitCode() == 3 {
+	if err != nil && errors.As(err, &exitErr) && exitErr.ExitCode() != int(statusRunning) {
 		return false, nil
 	} else if err != nil {
 		return false, errors.W(err)
