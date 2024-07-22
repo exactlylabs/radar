@@ -25,7 +25,6 @@ const (
 type ConnectionError string
 
 const (
-	NoError       ConnectionError = ""
 	WrongPassword ConnectionError = "wrong_password"
 	SSIDNotFound  ConnectionError = "ssid_not_found"
 	UnknownError  ConnectionError = "unknown_error"
