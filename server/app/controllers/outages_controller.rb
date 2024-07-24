@@ -14,7 +14,7 @@ class OutagesController < ApplicationController
         params[:account_ids],
         params[:page],
         params[:page_size],
-        params[:location_id],
+        params[:location_ids],
         params[:outage_type],
         params[:as_org_id]
       )
