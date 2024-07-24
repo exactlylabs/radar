@@ -1,7 +1,6 @@
 package radar
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -70,7 +69,7 @@ func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient 
 	}
 }
 
-func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.ServerMessage, getSync watchdog.GetSyncMessageFunc) error {
+func (c *RadarWatchdogClient) Connect(ch chan<- watchdog.ServerMessage, getSync watchdog.GetSyncMessageFunc) error {
 	c.getSyncMessage = getSync
 	h := http.Header{}
 	h.Set("User-Agent", WatchdogUserAgent+sysinfo.Metadata().Version)
@@ -88,7 +87,7 @@ func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.Se
 		c.connected = true
 		log.Println("WatchdogChannel connected")
 	}
-	if err := c.channel.Connect(ctx); err != nil {
+	if err := c.channel.Connect(); err != nil {
 		return errors.Wrap(err, "failed to connect to channel")
 	}
 	return nil
@@ -105,6 +104,11 @@ func (c *RadarWatchdogClient) Close() error {
 // handleMessage will notify the caller with the message already parsed
 func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 	switch msg.Type {
+	case cable.Ping:
+		c.returnCh <- watchdog.ServerMessage{
+			Type: watchdog.HealthCheck,
+			Data: watchdog.HealthCheckServerMessage{},
+		}
 	case WatchdogVersionChanged, UpdateWatchdog:
 		payload := cable.ParseMessage[*messages.VersionChangedSubscriptionPayload](msg)
 		if payload != nil {

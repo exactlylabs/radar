@@ -71,7 +71,7 @@ func (c *RadarClient) Close() error {
 	return c.channel.Close()
 }
 
-func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessage) error {
+func (c *RadarClient) Connect(ch chan<- *agent.ServerMessage) error {
 	if c.clientID == "" || c.secret == "" {
 		return errors.New("clientId and secret cannot be empty")
 	}
@@ -95,7 +95,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 		header.Set("Sec-Radar-Service-Started", "false")
 		log.Println("PodAgentChannel Connected")
 	}
-	if err := c.channel.Connect(ctx); err != nil {
+	if err := c.channel.Connect(); err != nil {
 		return errors.W(err)
 	}
 	return nil
@@ -109,6 +109,10 @@ func (c *RadarClient) handleMessage(msg cable.ServerMessage) {
 	switch msg.Type {
 	case cable.Ping:
 		c.sendPong()
+		c.agentCh <- &agent.ServerMessage{
+			Type: agent.HealthCheck,
+			Data: agent.HealthCheckServerMessage{},
+		}
 
 	case TestRequested, RunTest:
 		payload := cable.ParseMessage[*messages.TestRequestedSubscriptionPayload](msg)

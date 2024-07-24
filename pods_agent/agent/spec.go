@@ -12,6 +12,7 @@ const (
 	RunTest MessageType = iota
 	Update
 	UpdateWatchdog
+	HealthCheck
 )
 
 type UpdateBinaryServerMessage struct {
@@ -27,6 +28,8 @@ type ServerMessage struct {
 	Type MessageType
 	Data any
 }
+
+type HealthCheckServerMessage struct{}
 
 type PodInfo struct {
 	Id         int    `json:"id"`
@@ -83,7 +86,8 @@ type RadarClient interface {
 	SendMeasurement(ctx context.Context, testStyle string, measurement MeasurementReport) error
 	Ping(meta *sysinfo.ClientMeta) ([]ServerMessage, error)
 	AssignPodToAccount(accountToken string, network *NetworkData) (*PodInfo, error)
-	Connect(ctx context.Context, ch chan<- *ServerMessage) error
+	// Connect to the server non-blocking. Returns error if anything goes wrong during the connection handshake.
+	Connect(ch chan<- *ServerMessage) error
 	Connected() bool
 	Close() error
 }
