@@ -40,6 +40,8 @@ elif [ "$3" == "production" ]; then
     export DOCKER_HOST=ssh://admin@manager-01.radartoolkit.com
 fi
 
+echo "====== Connecting to ${ENVIRONMENT} environment ======"
+
 find_swarm_container_name
 
 if [ -z "${CONTAINER_NAME}" ]; then

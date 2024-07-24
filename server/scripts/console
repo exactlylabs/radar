@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+ENVIRONMENT=staging
+
+if [ ! -z $1 ]; then
+  ENVIRONMENT=$1
+fi
+
+. ../infra/scripts/run pods-server app ${ENVIRONMENT} bin/docker-entrypoint bin/rails c
