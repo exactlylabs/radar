@@ -14,9 +14,7 @@ module ClientApi
       # POST /client_api/v1/suggestions
       def suggestions
         results = []
-        Google::Cloud::Trace.in_span "Searching in Geocoder: #{params[:address]}" do
-          results = GeoTools::CustomGeocoder.search(params[:address])
-        end
+        results = GeoTools::CustomGeocoder.search(params[:address])
 
         if results.present?
           render json: results.map {|match| Suggestion.new(match.city, match.street, match.state, match.postal_code, match.house_number, match.coordinates) }

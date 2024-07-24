@@ -560,7 +560,7 @@ class Client < ApplicationRecord
       query = ActiveRecord::Base.sanitize_sql([raw_query, id, account_id])
     else
       raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
+        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? ' +
         'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
       query = ActiveRecord::Base.sanitize_sql([raw_query, id])
     end
