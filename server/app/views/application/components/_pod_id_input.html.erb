@@ -1,7 +1,6 @@
 <% unix_user = local_assigns[:unix_user].present? ? local_assigns[:unix_user] : nil %>
 <div id="public--card-inputs-container"
      class="my-6 mw-100"
-     data-controller="claim-pods"
      data-claim-pods-target="inputsContainer"
 >
   <input autofocus value="<%= unix_user.present? ? unix_user[0] : nil %>" data-claim-pods-target="podIdInput" data-action="blur->claim-pods#blurInput focus->claim-pods#focusInput input->claim-pods#switchInput paste->claim-pods#switchInput keydown->claim-pods#parseKeydownEvent" type="text" class="public--card-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" maxlength="1" placeholder="-" id="public--card-input-first" focused="true"/>
