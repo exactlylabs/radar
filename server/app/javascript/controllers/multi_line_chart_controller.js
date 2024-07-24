@@ -1,4 +1,4 @@
-import ChartController, {DOT_SIZE, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
+import ChartController, {DOT_SIZE, HELPER_HEIGHT, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -16,6 +16,7 @@ export default class MultiLineChartController extends ChartController {
                             .map(i => JSON.parse(i))
       .map(i => ({label: i.label.length > 12 ? i.label.substring(0, 12) + '...' : i.label, hex: i.hex}));
     super.connect();
+    this.responsiveMaxHeight = 220;
   }
   
   getFirstDate() {
@@ -200,8 +201,8 @@ export default class MultiLineChartController extends ChartController {
     const MAIN_TEXT_VALUE_SPACING = 16;
     for(let entry of this.adjustedData.entries()) {
       if(i >= MAX_TOOLTIP_LINES) break;
-      let lineWidth = X_SIDE_PADDING + DOT_SIZE + DOT_TEXT_SPACING + tooltipTitleWidth - TOOLTIP_TITLE_PADDING + MAIN_TEXT_VALUE_SPACING +
-        this.textWidth(yValues[i].toFixed(2) + this.labelSuffix) + X_SIDE_PADDING;
+      let lineWidth = X_SIDE_PADDING + DOT_SIZE + DOT_TEXT_SPACING + this.textWidth(this.entitiesAndHexes.find(e => e.hex === entry[0]).label) + MAIN_TEXT_VALUE_SPACING +
+        this.textWidth(yValues[i].toFixed(2) + this.labelSuffix) + X_SIDE_PADDING; // 300 Mbps
       if(lineWidth > tooltipWidth) tooltipWidth = lineWidth;
       i++;
     }
@@ -225,9 +226,10 @@ export default class MultiLineChartController extends ChartController {
       xCoordinate = mouseX;
     }
     
-    if(tooltipTopYCoordinate + tooltipHeight > this.canvasHeight) {
+    const helperTopYCoordinate = this.canvasHeight - HELPER_HEIGHT;
+    if(tooltipTopYCoordinate + tooltipHeight > helperTopYCoordinate) {
       const tooltipEndY = tooltipTopYCoordinate + tooltipHeight;
-      const diff = tooltipEndY - this.canvasHeight;
+      const diff = tooltipEndY - helperTopYCoordinate;
       tooltipTopYCoordinate -= diff + VERTICAL_DYNAMIC_OFFSET;
     } else if (tooltipTopYCoordinate < 0) {
       tooltipTopYCoordinate = TOPMOST_Y_COORDINATE;

@@ -11,7 +11,7 @@ export const TOOLTIP_X_OFFSET = 8;
 export const TOOLTIP_Y_OFFSET = 21;
 export const DOT_SIZE = 4;
 export const RADII = 6;
-
+export const HELPER_HEIGHT = 24;
 export const TOOLTIP_TITLE_PADDING = 40;
 export const TOP_CLEARANCE = 30;
 
@@ -45,6 +45,7 @@ export default class ChartController extends Controller {
   COMPARISON_HEX = ['#472118', '#960A8B', '#FC3A11', '#58396A', '#D6463E', '#307B2A', '#535FB6', '#77DFB1', '#767698', '#502628', '#EFE7DF', '#A502EF', '#B21BE4', '#88FC76', '#9FADE3', '#B403C4', '#78BCFE', '#686514', '#B2D343', '#CE87CA', '#20E92E', '#C8A3D7', '#161C6C', '#98AE22', '#A8A5CF', '#D72876', '#105F87', '#432B82', '#5462EA', '#86C625', '#9175BF', '#438F36', '#AF3BCF', '#F3ADEF', '#050044', '#5F47D3', '#E11986', '#0C7566', '#A129E0', '#43B2D6', '#A7CB09', '#0C7318', '#9A6E4F', '#81B2A6', '#AE37B2', '#D66E62', '#05F0D9', '#EC1FA4', '#4CAC54', '#F94C42'];
   
   connect() {
+    this.responsiveMaxHeight = 250;
     this.queryTimeInterval = this.element.dataset.queryTimeInterval || 'day';
     this.usesQueryIntervalValue ||= false;
     this.isCompareChart = this.element.dataset.isCompareChart === 'true';
@@ -311,7 +312,11 @@ export default class ChartController extends Controller {
     return dpr / bsr;
   };
   
-  createHiDPICanvas(w, h, ratio) {
+  getMaxHeight(possibleHeight) {
+    return possibleHeight > this.responsiveMaxHeight ? this.responsiveMaxHeight : possibleHeight;
+  }
+  
+  createHiDPICanvas(w, h) {
     // In comparison charts that have a right-side line toggler, we need to reduce the width of the canvas
     // to make space for the toggler.
     // Toggler's max-width is 140px, and we add 16px for padding
@@ -321,11 +326,18 @@ export default class ChartController extends Controller {
       w = w - LINE_TOGGLER_WIDTH - LINE_TOGGLER_SPACING;
     }
     
-    ratio ||= this.getPixelRatio();
-    this.element.width = w * ratio;
+    const ratio = this.getPixelRatio();
+    
     this.element.height = h * ratio;
+    this.element.width = w * ratio;
+    
     this.element.style.width = w + 'px';
-    this.element.style.height = h + 'px';
+    if(this.isSmallScreen() && !this.isCompareChart) {
+      this.element.style.height = this.getMaxHeight(h) + 'px';
+    } else {
+      this.element.style.height = h + 'px';
+    }
+    
     this.canvasWidth = w;
     this.canvasHeight = h;
     return ratio;
@@ -481,7 +493,7 @@ export default class ChartController extends Controller {
   }
   
   isSmallScreen() {
-    return window.innerWidth < 768;
+    return window.innerWidth <= 768;
   }
   
   setLongestLabel() {
@@ -791,7 +803,6 @@ export default class ChartController extends Controller {
     this.ctx.beginPath();
     this.ctx.fillStyle = '#F6F7FA';
     this.ctx.strokeStyle = '#F6F7FA';
-    const HELPER_HEIGHT = 24;
     const HORIZONTAL_PADDING = 6;
     const VERTICAL_PADDING = 2;
     const yPosition = position === 'bottom' ? this.canvasHeight - HELPER_HEIGHT : 0;
