@@ -60,13 +60,19 @@ module ClientApi
 
         sql_params = {x: x, y: y, z: z}
         test_sql = %{
+
           WITH bbox AS (
               SELECT ST_TileEnvelope(:z, :x, :y) AS geometry
           ),
+          mod_tests AS (
+            SELECT client_speed_tests.*, ST_Transform(lonlat::geometry, 3857) AS lonlat_mercator
+            FROM client_speed_tests
+            WHERE lonlat IS NOT NULL
+          ),
           mvtgeom AS (
-            SELECT ST_AsMVTGeom(ST_Transform(lonlat::geometry, 3857), bbox.geometry, 4096, 0, true), client_speed_tests.*
-            FROM client_speed_tests, bbox
-            WHERE lonlat::geometry IS NOT NULL AND ST_Intersects(lonlat::geometry, ST_Transform(bbox.geometry, 4326))
+            SELECT ST_AsMVTGeom(lonlat_mercator, bbox.geometry, 4096, 256, false), mod_tests.*
+            FROM mod_tests, bbox
+            WHERE lonlat_mercator IS NOT NULL AND ST_Intersects(lonlat::geometry, ST_Transform(bbox.geometry, 4326))
           )
           SELECT ST_AsMVT(mvtgeom.*, 'tests', 4096, 'lonlat', 'id') FROM mvtgeom;
         }
