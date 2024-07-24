@@ -77,7 +77,6 @@ gem "lograge"
 gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
-gem "stackdriver"
 gem "turbo-rails"
 
 gem "rufus-scheduler"

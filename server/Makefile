@@ -18,3 +18,16 @@ push-staging: build
 .PHONY: deploy-staging
 deploy-staging: push-staging
 	make -C ../infra/deploy deploy STACK=pods-server ENVIRONMENT=staging
+
+
+.PHONY: push
+push: build
+	docker tag pods-server:$(VERSION) registry.radartoolkit.com/pods-server:$(VERSION)
+	docker tag pods-server:latest registry.radartoolkit.com/pods-server:latest
+	docker push registry.radartoolkit.com/pods-server:latest
+	docker push registry.radartoolkit.com/pods-server:$(VERSION)
+
+
+.PHONY: deploy
+deploy: push
+	make -C ../infra/deploy deploy STACK=pods-server ENVIRONMENT=production
