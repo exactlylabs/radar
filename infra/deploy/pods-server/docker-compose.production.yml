@@ -26,7 +26,7 @@ services:
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
     secrets:
       - source: PODS_GEOAPIFY_KEY
-        target: GEO_APIFY_KEY
+        target: GEOAPIFY_KEY
       - source: PODS_BUCKET_SECRET_KEY
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
