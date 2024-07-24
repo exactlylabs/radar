@@ -144,7 +144,6 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 		// We don't accept empty messages
 		return
 	}
-	log.Println("msg:", msg)
 	switch msg.Type {
 	case HealthCheck:
 		a.lastHealthCheck = time.Now()
