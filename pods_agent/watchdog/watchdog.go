@@ -19,28 +19,30 @@ import (
 )
 
 type Watchdog struct {
-	c              *config.Config
-	sysManager     SystemManager
-	agentCli       display.AgentClient
-	cli            WatchdogClient
-	wlanCliFactory WlanClientFactory
-	wlanCli        wifi.WirelessClient
-	scanner        *Scanner
-	ledManager     *ACTLEDManager
+	c               *config.Config
+	sysManager      SystemManager
+	agentCli        display.AgentClient
+	cli             WatchdogClient
+	wlanCliFactory  WlanClientFactory
+	wlanCli         wifi.WirelessClient
+	scanner         *Scanner
+	ledManager      *ACTLEDManager
+	lastHealthCheck time.Time
 }
 
 type WlanClientFactory func(ifaceName string) (wifi.WirelessClient, error)
 
 func NewWatchdog(c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient, wlanCliFactory WlanClientFactory) *Watchdog {
 	return &Watchdog{
-		c:              c,
-		sysManager:     sysManager,
-		agentCli:       agentCli,
-		cli:            cli,
-		wlanCliFactory: wlanCliFactory,
-		wlanCli:        nil,
-		scanner:        NewScanner(sysManager),
-		ledManager:     NewActLEDManager(sysManager),
+		c:               c,
+		sysManager:      sysManager,
+		agentCli:        agentCli,
+		cli:             cli,
+		wlanCliFactory:  wlanCliFactory,
+		wlanCli:         nil,
+		scanner:         NewScanner(sysManager),
+		ledManager:      NewActLEDManager(sysManager),
+		lastHealthCheck: time.Now(),
 	}
 }
 
@@ -138,7 +140,7 @@ func (w *Watchdog) Run(ctx context.Context) {
 
 	timer := time.NewTicker(10 * time.Second)
 	cliChan := make(chan ServerMessage)
-	if err := w.cli.Connect(ctx, cliChan, w.getSync); err != nil {
+	if err := w.cli.Connect(cliChan, w.getSync); err != nil {
 		panic(err)
 	}
 	// Ensure everything is properly stopped when leaving
@@ -148,11 +150,16 @@ func (w *Watchdog) Run(ctx context.Context) {
 		}
 		w.cli.Close()
 	}()
-
+	healthChecker := time.NewTicker(time.Second * 5)
 	for {
 		select {
 		case <-ctx.Done():
 			return
+		case <-healthChecker.C:
+			// Validate that the client is connected, and in a healthy state. Restart the connection if otherwise.
+			if w.cli.Connected() && time.Since(w.lastHealthCheck) > time.Minute*2 {
+				panic("Watchdog can't continue working because WatchdogClient is connected but in an unhealthy state.")
+			}
 		case event := <-w.scanner.Events():
 			w.handleSystemEvent(event)
 		case msg := <-cliChan:

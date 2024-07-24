@@ -18,13 +18,15 @@ import (
 )
 
 type Agent struct {
-	client      RadarClient
-	runners     []Runner
-	runTestCh   chan RunTestServerMessage
-	serverMsgCh chan *ServerMessage
-	wg          *sync.WaitGroup
-	started     bool
-	conf        *config.Config
+	client          RadarClient
+	runners         []Runner
+	runTestCh       chan RunTestServerMessage
+	serverMsgCh     chan *ServerMessage
+	wg              *sync.WaitGroup
+	started         bool
+	conf            *config.Config
+	cancelWorkers   context.CancelFunc
+	lastHealthCheck time.Time
 }
 
 func NewAgent(client RadarClient, runners []Runner) *Agent {
@@ -95,6 +97,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 // Start the Agent, blocking the current goroutine
 func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) {
 	agentCtx, cancel := context.WithCancel(ctx)
+	a.cancelWorkers = cancel
 	a.Setup(ctx, c)
 
 	// Start the workers
@@ -111,17 +114,22 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 		startPingLoop(agentCtx, a.serverMsgCh, a.client, pingFrequency(c))
 	}()
 
-	if err := a.client.Connect(agentCtx, a.serverMsgCh); err != nil {
+	if err := a.client.Connect(a.serverMsgCh); err != nil {
 		panic(err)
 	}
 	defer a.client.Close()
-
+	healthChecker := time.NewTicker(time.Second * 5)
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server
 	for {
 		select {
+		case <-healthChecker.C:
+			// Validate that the client is connected, and in a healthy state.
+			if a.client.Connected() && time.Since(a.lastHealthCheck) > time.Minute*2 {
+				panic("Agent can't continue working because RadarClient is connected but in an unhealthy state.")
+			}
+
 		case <-agentCtx.Done():
-			a.Stop()
-			cancel()
+			close(a.runTestCh)
 			a.wg.Wait()
 			return
 
@@ -136,7 +144,10 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 		// We don't accept empty messages
 		return
 	}
+	log.Println("msg:", msg)
 	switch msg.Type {
+	case HealthCheck:
+		a.lastHealthCheck = time.Now()
 	case RunTest:
 		maybeSendChannel(a.runTestCh, msg.Data.(RunTestServerMessage))
 
@@ -146,7 +157,7 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 			log.Println("Setting version manually to", msg.Data.(UpdateBinaryServerMessage).Version)
 			info.SetVersion(msg.Data.(UpdateBinaryServerMessage).Version)
 			a.client.Close()
-			a.client.Connect(context.Background(), a.serverMsgCh)
+			a.client.Connect(a.serverMsgCh)
 		} else {
 			updateAgent(msg.Data.(UpdateBinaryServerMessage), cancel)
 		}
@@ -160,10 +171,6 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 		}
 
 	}
-}
-
-func (a *Agent) Stop() {
-	close(a.runTestCh)
 }
 
 func (a *Agent) StartTest() {
