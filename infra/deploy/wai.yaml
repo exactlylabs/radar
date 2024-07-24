@@ -13,7 +13,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.labels.network == aws
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik_public"
@@ -21,6 +21,11 @@ services:
         - "traefik.http.services.wai-app.loadbalancer.server.port=3000"
         - "traefik.http.routers.wai-app.entrypoints=web,websecure"
         - "traefik.http.routers.wai-app.tls.certresolver=myresolver"
+        # - "traefik.http.middlewares.forward-headers.headers.sslredirect=true"
+        # - "traefik.http.middlewares.forward-headers.headers.sslProxyHeaders=X-Forwarded-Proto=https"
+        # - "traefik.http.middlewares.ssl-redirect.redirectscheme.scheme=https"
+        # - "traefik.http.middlewares.ssl-redirect.redirectscheme.permanent=true"
+        # - "traefik.http.routers.wai-app.middlewares=forward-headers@swarm,ssl-redirect@swarm"
 
 networks:
   traefik_public:

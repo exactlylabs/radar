@@ -1,0 +1,41 @@
+services:
+  app:
+    image: registry.radartoolkit.com/metabase:latest # Using our own build to use a base image that runs in ARM
+    networks:
+      - traefik_public
+    environment:
+      - MB_DB_DBNAME=metabase
+      - MB_DB_HOST=db-01.radartoolkit.com
+      - MB_DB_PORT=5432
+      - MB_DB_TYPE=postgres
+      - MB_DB_USER=metabase
+      - MB_DB_PASS_FILE=/run/secrets/METABASE_DB_PASSWORD
+    secrets:
+      - METABASE_DB_PASSWORD
+    deploy:
+      placement:
+        constraints:
+          - node.labels.network == aws
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.metabase-app.rule=Host(`metabase.radar.exactlylabs.com`) || Host(`radar-metabase.exactlylabs.com`)"
+        - "traefik.http.services.metabase-app.loadbalancer.server.port=3000"
+        - "traefik.http.routers.metabase-app.entrypoints=web,websecure"
+        - "traefik.http.routers.metabase-app.tls.certresolver=myresolver"
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+
+
+networks:
+  traefik_public:
+    external: true
+
+secrets:
+  METABASE_DB_PASSWORD:
+    external: true
+
