@@ -1,7 +1,6 @@
 package watchdog
 
 import (
-	"context"
 	"os"
 	"time"
 
@@ -23,6 +22,7 @@ const (
 	ReportWirelessStatusMessageType
 	SetWlanInterfaceMessageType
 	DisconnectWirelessNetworkMessageType
+	HealthCheck
 )
 
 type SystemEventType int
@@ -145,10 +145,12 @@ type ServerMessage struct {
 	Data any
 }
 
+type HealthCheckServerMessage struct{}
+
 type GetSyncMessageFunc func() messages.WatchdogSync
 
 type WatchdogClient interface {
-	Connect(context.Context, chan<- ServerMessage, GetSyncMessageFunc) error
+	Connect(chan<- ServerMessage, GetSyncMessageFunc) error
 	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 	NotifyTailscaleConnected(key_id string)
 	NotifyTailscaleDisconnected(key_id string)

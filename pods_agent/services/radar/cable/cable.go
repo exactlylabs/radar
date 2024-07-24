@@ -1,7 +1,6 @@
 package cable
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -47,7 +46,7 @@ func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *
 	}
 }
 
-func (c *ChannelClient) Connect(ctx context.Context) error {
+func (c *ChannelClient) Connect() error {
 	u, err := url.Parse(c.ServerURL)
 	if err != nil {
 		return errors.Wrap(err, "url.Parse failed")
