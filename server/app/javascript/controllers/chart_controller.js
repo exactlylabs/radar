@@ -21,14 +21,15 @@ export const TouchEvents = {
   TOUCH_MOVE: 'touchmove'
 }
 
-export const CHART_TITLES = {
-  'downloadSpeeds': 'Download Speeds',
-  'uploadSpeeds': 'Upload Speeds',
-  'latency': 'Latency',
-  'compareDownloadSpeeds': 'Download Speeds',
-  'compareUploadSpeeds': 'Upload Speeds',
-  'compareLatency': 'Latency',
-  'compareDataUsage': 'Data Usage',
+export const CHART_IDS = {
+  downloadSpeeds: 'downloadSpeeds',
+  uploadSpeeds: 'uploadSpeeds',
+  latency: 'latency',
+  compareDownloadSpeeds: 'compareDownloadSpeeds',
+  compareUploadSpeeds: 'compareUploadSpeeds',
+  compareLatency: 'compareLatency',
+  compareDataUsage: 'compareDataUsage',
+  compareTotalData: 'compareTotalData',
 }
 
 export const QUERY_INTERVALS = {
@@ -425,7 +426,14 @@ export default class ChartController extends Controller {
     // If values go over 100, get the closest multiple of 100
     const maxValue = Math.max(...totals);
     if(maxValue > MAX_STEPS[MAX_STEPS.length - 1]) {
-      this.maxTotal = Math.ceil(maxValue / 100) * 100;
+      // Trying to cover a specific edge case where in the latency chart, the max value is in the millions
+      // so we need to adjust the maxTotal value and unit to something that brings the value down to a more
+      // reasonable range
+      if(this.chartId === CHART_IDS.latency) {
+        this.checkLatencyMaxValue(maxValue);
+      } else {
+        this.maxTotal = Math.ceil(maxValue / 100) * 100;
+      }
     } else {
       const closestIndex = MAX_STEPS.findIndex(step => step > maxValue);
       this.maxTotal = MAX_STEPS[closestIndex];
@@ -826,5 +834,32 @@ export default class ChartController extends Controller {
     const ratio = (mouseX - startingPixel) / netWidth;
     const fullTime = dateDiff * ratio;
     return firstDate + fullTime;
+  }
+  
+  checkLatencyMaxValue(maxLatencyInMilliseconds) {
+    const secondInMilliseconds = 1_000;
+    const minuteInMilliseconds = 60_000;
+    const hourInMilliseconds = 3_600_000;
+    let biggestUnit = 1;
+    if(maxLatencyInMilliseconds > hourInMilliseconds) {
+      biggestUnit = hourInMilliseconds;
+      this.labelSuffix = 'h';
+    } else if(maxLatencyInMilliseconds > minuteInMilliseconds) {
+      biggestUnit = minuteInMilliseconds;
+      this.labelSuffix = 'm';
+    } else if(maxLatencyInMilliseconds > secondInMilliseconds) {
+      biggestUnit = secondInMilliseconds;
+      this.labelSuffix = 's';
+    }
+    
+    if(biggestUnit === 1) return;
+    
+    this.maxTotal = maxLatencyInMilliseconds / biggestUnit;
+    const newChartData = new Map();
+    for(const [key, value] of this.chartData) {
+      newChartData.set(key, value.map(entry => ({ x: entry.x, y: entry.y / biggestUnit })));
+    }
+    this.chartData = newChartData;
+    this.adjustedData = this.adjustData(this.chartData);
   }
 }
