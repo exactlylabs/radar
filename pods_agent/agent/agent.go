@@ -25,7 +25,6 @@ type Agent struct {
 	wg              *sync.WaitGroup
 	started         bool
 	conf            *config.Config
-	cancelWorkers   context.CancelFunc
 	lastHealthCheck time.Time
 }
 
@@ -97,7 +96,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 // Start the Agent, blocking the current goroutine
 func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) {
 	agentCtx, cancel := context.WithCancel(ctx)
-	a.cancelWorkers = cancel
+	defer cancel()
 	a.Setup(ctx, c)
 
 	// Start the workers
