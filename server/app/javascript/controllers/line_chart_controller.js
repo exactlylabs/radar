@@ -1,4 +1,4 @@
-import ChartController, {RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
+import ChartController, {HELPER_HEIGHT, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -96,9 +96,10 @@ export default class LineChartController extends ChartController {
       xCoordinate += offset;
     }
     
-    if(yCoordinate + offset + tooltipHeight > this.canvasHeight) {
+    const bottomHelperTopY = this.canvasHeight - HELPER_HEIGHT;
+    if(yCoordinate + offset + tooltipHeight > bottomHelperTopY) {
       const tooltipEndY = yCoordinate + offset + tooltipHeight;
-      const diff = tooltipEndY - this.canvasHeight;
+      const diff = tooltipEndY - bottomHelperTopY;
       yCoordinate -= diff;
     } else {
       yCoordinate += offset;
