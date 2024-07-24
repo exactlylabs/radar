@@ -30,12 +30,13 @@ type Agent struct {
 
 func NewAgent(client RadarClient, runners []Runner) *Agent {
 	return &Agent{
-		client:      client,
-		runners:     runners,
-		runTestCh:   make(chan RunTestServerMessage),
-		serverMsgCh: make(chan *ServerMessage),
-		wg:          &sync.WaitGroup{},
-		started:     false,
+		client:          client,
+		runners:         runners,
+		runTestCh:       make(chan RunTestServerMessage),
+		serverMsgCh:     make(chan *ServerMessage),
+		wg:              &sync.WaitGroup{},
+		started:         false,
+		lastHealthCheck: time.Now(),
 	}
 }
 
