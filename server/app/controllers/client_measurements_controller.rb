@@ -121,9 +121,9 @@ class ClientMeasurementsController < ApplicationController
       @client = policy_scope(Client).find_by_unix_user(params[:client_id])
     else
       client = Client.find_by_unix_user(params[:client_id])
-      # if client.authenticate_secret(params[:client_secret])
+      if client.authenticate_secret(params[:client_secret])
         @client = client
-      # end
+      end
     end
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
