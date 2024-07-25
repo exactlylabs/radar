@@ -257,12 +257,12 @@ func (si *SysInfoManager) EnsureTailscale() error {
 			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
 
 		if err != nil {
-			metadata := errors.GetMetadata(err)
-			if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
-				return nil
-			}
-			// return errors.W(err)
-			return nil
+			// Leaving this validation commented out to get which pods are in a broken state.
+			// metadata := errors.GetMetadata(err)
+			// if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
+			// 	return nil
+			// }
+			return errors.W(err)
 		}
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
 		_, err = si.runCommand(
