@@ -1,7 +1,13 @@
 services:
   app: &base
     image: registry.radartoolkit.com/pods-server:latest
-    environment:
+    healthcheck:
+      test: "curl --fail http://localhost:3000/health || exit 1"
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    environment: &environments
       - RAILS_ENV=production
       - RAILS_SERVE_STATIC_FILES=true
       - DISABLE_SPRING=1
@@ -24,7 +30,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-    secrets:
+    secrets: &secrets
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
       - source: PODS_BUCKET_SECRET_KEY
@@ -68,6 +74,7 @@ services:
   worker:
     <<: *base
     command: ["./bin/bundle", "exec", "sidekiq"]
+    healthcheck: {}
     networks:
       - fipsgeocoder_public
       - redis_public
@@ -82,6 +89,7 @@ services:
   clock:
     <<: *base
     command: ["./bin/rails", "runner", "clock.rb"]
+    healthcheck: {}
     networks:
       - fipsgeocoder_public
       - redis_public
@@ -95,6 +103,7 @@ services:
   mobile_scanner:
     <<: *base
     command: ["./bin/bundle", "exec", "sidekiq", "-q mobile_scans"]
+    healthcheck: {}
     networks:
       - fipsgeocoder_public
       - redis_public
