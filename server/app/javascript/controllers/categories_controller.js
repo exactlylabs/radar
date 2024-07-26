@@ -3,46 +3,51 @@ import {emitCustomEvent} from "../eventsEmitter";
 import handleError from "./error_handler_controller";
 
 export default class extends Controller {
-    static targets = [
-        "menuIcon",
-        "openCategoriesModalButton",
-        "searchInput",
-        "hiddenHexInput",
-        "colorBall",
-        "categoryCheckbox",
-        "selectClickableContainer",
-        "hiddenCategoriesInput",
-        "colorPicker",
-        "currentPickedColor",
-        "colorPickerCaret",
-        "accountCategoriesPicker",
-        "firstAccountId"
-    ];
+  static targets = [
+      "menuIcon",
+      "openCategoriesModalButton",
+      "searchInput",
+      "hiddenHexInput",
+      "colorBall",
+      "categoryCheckbox",
+      "selectClickableContainer",
+      "hiddenCategoriesInput",
+      "colorPicker",
+      "currentPickedColor",
+      "colorPickerCaret",
+      "accountCategoriesPicker",
+      "firstAccountId"
+  ];
 
-    static values = {
-        hex: String,
-    }
+  static values = {
+      hex: String,
+  }
 
-    connect() {
-        this.token = document.getElementsByName("csrf-token")[0].content;
-        KTMenu.createInstances();
-        this.categories = [];
-        this.accountId = this.hasFirstAccountIdTarget ? this.firstAccountIdTarget.value : null;
-        this.isMenuOpen = false;
-    }
+  connect() {
+      this.token = document.getElementsByName("csrf-token")[0].content;
+      KTMenu.createInstances();
+      this.categories = [];
+      this.accountId = this.hasFirstAccountIdTarget ? this.firstAccountIdTarget.value : null;
+      this.isMenuOpen = false;
+  }
+  
+  selectClickableContainerTargetConnected(element) {
+    this.categories = [];
+    this.initialize();
+  }
 
-    initialize() {
-        if (this.hasCategoryCheckboxTargets) {
-            let categoryIds = [];
-            this.categoryCheckboxTargets.forEach(checkbox => {
-                if (checkbox.getAttribute('checked')) {
-                    const categoryId = checkbox.id.split('check-box-')[1];
-                    categoryIds.push(categoryId);
-                }
-            });
-            this.categories = categoryIds;
-        }
-    }
+  initialize() {
+      if (this.hasCategoryCheckboxTargets) {
+          let categoryIds = [];
+          this.categoryCheckboxTargets.forEach(checkbox => {
+              if (checkbox.getAttribute('checked')) {
+                  const categoryId = checkbox.id.split('check-box-')[1];
+                  categoryIds.push(categoryId);
+              }
+          });
+          this.categories = categoryIds;
+      }
+  }
   
   resetMenuOpen() {
     this.isMenuOpen = false;
@@ -93,6 +98,7 @@ export default class extends Controller {
 
         const formData = new FormData();
         formData.append('categories', this.categories);
+        this.toggleSubmitButton();
         fetch(`/${path}/selected_categories`, {
             method: "PUT",
             headers: {"X-CSRF-Token": this.token},
@@ -311,4 +317,14 @@ export default class extends Controller {
                 handleError(err, this.identifier);
             });
     }
+  
+  toggleSubmitButton() {
+    const submitButton = this.element.querySelector('input[type="submit"]');
+    if(!submitButton) return;
+    if(this.categories.length > 0) {
+      submitButton.removeAttribute('disabled');
+    } else {
+      submitButton.setAttribute('disabled', 'disabled');
+    }
+  }
 }

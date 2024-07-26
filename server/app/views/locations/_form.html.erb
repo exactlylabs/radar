@@ -35,6 +35,7 @@
                  data-categories-path-param="/location_categories"
                  data-action="click->categories#toggleFocus"
                  data-categories-holder-id-value="location_id=<%= @location.id.nil? ? nil : @location.id %>"
+                 data-categories-menu-id="location-categories-dropdown"
             >
               <%= turbo_frame_tag "selected-categories" do %>
                 <%= render partial: "categories/components/table_cell", locals: { categories: @location.categories, shows_tooltip: false, row: -1 } %>
