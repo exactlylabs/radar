@@ -10,7 +10,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_client, only: %i[ release update edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
+  before_action :set_client, only: %i[ release update edit destroy get_client_label toggle_in_service speed_average remove_from_network claim_new_pod ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
   before_action :set_client_and_change_account_if_needed, only: :show
