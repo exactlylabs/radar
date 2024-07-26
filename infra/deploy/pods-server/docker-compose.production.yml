@@ -7,21 +7,20 @@ services:
       timeout: 10s
       retries: 5
       start_period: 20s
-    environment: &environments
+    environment:
       - RAILS_ENV=production
       - RAILS_SERVE_STATIC_FILES=true
       - DISABLE_SPRING=1
       - RAILS_MAX_THREADS=10
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - DB_MAX_POOL_SIZE=20
       - BUCKET_NAME=radar-pods-production
       - BUCKET_ACCESS_KEY=004049506844ea70000000001
       - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
       - WEB_CONCURRENCY=4
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
-      - DB_MAX_POOL_SIZE=40
+      - DB_MAX_POOL_SIZE=20
       - CORS_ALLOWED_ORIGINS=https://speed.exactlylabs.com,https://speedtest.exactlylabs.com,https://speed.radartoolkit.com,https://www.speed.radartoolkit.com
       - RAILS_LOG_TO_STDOUT=true
       - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1043252076664332300/N7I1yHxPvnoifPE0xnrmlgXv8dGrTSvqoOnDx1fwE7gUJ86GNHdD6cGtXuQVbOauNT9P
@@ -30,7 +29,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-    secrets: &secrets
+    secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
       - source: PODS_BUCKET_SECRET_KEY
@@ -72,9 +71,49 @@ services:
         - "traefik.http.routers.pods-server-app.middlewares=ssl-redirect@swarm,forward-headers@swarm"
 
   worker:
-    <<: *base
+    image: registry.radartoolkit.com/pods-server:latest
     command: ["./bin/bundle", "exec", "sidekiq"]
-    healthcheck: {}
+    environment:
+      - RAILS_ENV=production
+      - RAILS_SERVE_STATIC_FILES=true
+      - DISABLE_SPRING=1
+      - RAILS_MAX_THREADS=10
+      - SENTRY_HOST=o1197382.ingest.sentry.io
+      - SENTRY_PROJECT_ID=6320151
+      - BUCKET_NAME=radar-pods-production
+      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
+      - WEB_CONCURRENCY=4
+      - REDIS_URL=redis://redis:6379
+      - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
+      - DB_MAX_POOL_SIZE=40
+      - CORS_ALLOWED_ORIGINS=https://speed.exactlylabs.com,https://speedtest.exactlylabs.com,https://speed.radartoolkit.com,https://www.speed.radartoolkit.com
+      - RAILS_LOG_TO_STDOUT=true
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1043252076664332300/N7I1yHxPvnoifPE0xnrmlgXv8dGrTSvqoOnDx1fwE7gUJ86GNHdD6cGtXuQVbOauNT9P
+      - EVENTS_NOTIFIER_DISCORD_TBP_ALERTS_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_TBP_GENERAL_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
+      - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
+      - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
+    secrets:
+      - source: PODS_GEOAPIFY_KEY
+        target: GEOAPIFY_KEY
+      - source: PODS_BUCKET_SECRET_KEY
+        target: BUCKET_SECRET_KEY
+      - source: PODS_SECRET_KEY
+        target: SECRET_KEY_BASE
+      - source: PODS_SMTP_PASSWORD
+        target: SMTP_PASSWORD
+      - source: PODS_DATABASE_URL
+        target: DATABASE_URL
+      - source: PODS_AMPLITUDE_API_KEY
+        target: AMPLITUDE_API_KEY
+      - source: PODS_BETTERSTACK_STATUS_CRON_KEY
+        target: BETTERSTACK_STATUS_CRON_KEY
+      - source: PODS_BETTERSTACK_TESTS_CRON_KEY
+        target: BETTERSTACK_TESTS_CRON_KEY
+      - source: PODS_TAILSCALE_CLIENT_SECRET
+        target: TAILSCALE_CLIENT_SECRET
     networks:
       - fipsgeocoder_public
       - redis_public
@@ -87,9 +126,49 @@ services:
       labels: []
 
   clock:
-    <<: *base
+    image: registry.radartoolkit.com/pods-server:latest
     command: ["./bin/rails", "runner", "clock.rb"]
-    healthcheck: {}
+    environment:
+      - RAILS_ENV=production
+      - RAILS_SERVE_STATIC_FILES=true
+      - DISABLE_SPRING=1
+      - RAILS_MAX_THREADS=10
+      - SENTRY_HOST=o1197382.ingest.sentry.io
+      - SENTRY_PROJECT_ID=6320151
+      - BUCKET_NAME=radar-pods-production
+      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
+      - WEB_CONCURRENCY=4
+      - REDIS_URL=redis://redis:6379
+      - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
+      - DB_MAX_POOL_SIZE=10
+      - CORS_ALLOWED_ORIGINS=https://speed.exactlylabs.com,https://speedtest.exactlylabs.com,https://speed.radartoolkit.com,https://www.speed.radartoolkit.com
+      - RAILS_LOG_TO_STDOUT=true
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1043252076664332300/N7I1yHxPvnoifPE0xnrmlgXv8dGrTSvqoOnDx1fwE7gUJ86GNHdD6cGtXuQVbOauNT9P
+      - EVENTS_NOTIFIER_DISCORD_TBP_ALERTS_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_TBP_GENERAL_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
+      - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
+      - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
+    secrets:
+      - source: PODS_GEOAPIFY_KEY
+        target: GEOAPIFY_KEY
+      - source: PODS_BUCKET_SECRET_KEY
+        target: BUCKET_SECRET_KEY
+      - source: PODS_SECRET_KEY
+        target: SECRET_KEY_BASE
+      - source: PODS_SMTP_PASSWORD
+        target: SMTP_PASSWORD
+      - source: PODS_DATABASE_URL
+        target: DATABASE_URL
+      - source: PODS_AMPLITUDE_API_KEY
+        target: AMPLITUDE_API_KEY
+      - source: PODS_BETTERSTACK_STATUS_CRON_KEY
+        target: BETTERSTACK_STATUS_CRON_KEY
+      - source: PODS_BETTERSTACK_TESTS_CRON_KEY
+        target: BETTERSTACK_TESTS_CRON_KEY
+      - source: PODS_TAILSCALE_CLIENT_SECRET
+        target: TAILSCALE_CLIENT_SECRET
     networks:
       - fipsgeocoder_public
       - redis_public
@@ -101,9 +180,49 @@ services:
       labels: []
 
   mobile_scanner:
-    <<: *base
+    image: registry.radartoolkit.com/pods-server:latest
     command: ["./bin/bundle", "exec", "sidekiq", "-q mobile_scans"]
-    healthcheck: {}
+    environment:
+      - RAILS_ENV=production
+      - RAILS_SERVE_STATIC_FILES=true
+      - DISABLE_SPRING=1
+      - RAILS_MAX_THREADS=10
+      - SENTRY_HOST=o1197382.ingest.sentry.io
+      - SENTRY_PROJECT_ID=6320151
+      - BUCKET_NAME=radar-pods-production
+      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
+      - WEB_CONCURRENCY=4
+      - REDIS_URL=redis://redis:6379
+      - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
+      - DB_MAX_POOL_SIZE=10
+      - CORS_ALLOWED_ORIGINS=https://speed.exactlylabs.com,https://speedtest.exactlylabs.com,https://speed.radartoolkit.com,https://www.speed.radartoolkit.com
+      - RAILS_LOG_TO_STDOUT=true
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1043252076664332300/N7I1yHxPvnoifPE0xnrmlgXv8dGrTSvqoOnDx1fwE7gUJ86GNHdD6cGtXuQVbOauNT9P
+      - EVENTS_NOTIFIER_DISCORD_TBP_ALERTS_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_TBP_GENERAL_WEBHOOK=https://discord.com/api/webhooks/1105259429038919680/AZpyQ5AnJzODDC27CPG4BrDLjHzAxIRB-49zwestk9ixjdB31G9ZlpsJaVjp1qYlJPmB
+      - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
+      - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
+      - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
+    secrets:
+      - source: PODS_GEOAPIFY_KEY
+        target: GEOAPIFY_KEY
+      - source: PODS_BUCKET_SECRET_KEY
+        target: BUCKET_SECRET_KEY
+      - source: PODS_SECRET_KEY
+        target: SECRET_KEY_BASE
+      - source: PODS_SMTP_PASSWORD
+        target: SMTP_PASSWORD
+      - source: PODS_DATABASE_URL
+        target: DATABASE_URL
+      - source: PODS_AMPLITUDE_API_KEY
+        target: AMPLITUDE_API_KEY
+      - source: PODS_BETTERSTACK_STATUS_CRON_KEY
+        target: BETTERSTACK_STATUS_CRON_KEY
+      - source: PODS_BETTERSTACK_TESTS_CRON_KEY
+        target: BETTERSTACK_TESTS_CRON_KEY
+      - source: PODS_TAILSCALE_CLIENT_SECRET
+        target: TAILSCALE_CLIENT_SECRET
     networks:
       - fipsgeocoder_public
       - redis_public
