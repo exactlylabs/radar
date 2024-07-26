@@ -213,6 +213,7 @@ export default class extends Controller {
     event.stopPropagation();
     const clickedTarget = event.target;
     const clickableContainer = this.selectClickableContainerTarget;
+    if(!clickableContainer) return;
     const categoriesMenu = document.getElementById(clickableContainer.dataset.categoriesMenuId);
     if(!categoriesMenu) return;
     if (!this.selectClickableContainerTarget.contains(clickedTarget) && !categoriesMenu.contains(clickedTarget)) {
