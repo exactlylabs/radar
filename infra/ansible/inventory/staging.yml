@@ -14,12 +14,6 @@ workers:
     #     private: "true"
     #     architecture: arm64
     #     network: aws
-    db.mapping.radartoolkit.com:
-      skip_cloudwatch: true
-      labels:
-        external: "true"
-        service: clickhouse
-        network: tailscale
 
 nfs:
   hosts:
