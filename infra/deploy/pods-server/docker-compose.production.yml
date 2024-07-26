@@ -55,6 +55,11 @@ services:
       - redis_public
     deploy:
       replicas: 3
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
       placement:
         constraints:
           - node.labels.network == aws
