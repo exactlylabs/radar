@@ -172,15 +172,3 @@
     </div>
   </div>
 </div>
-<% if !footerless %>
-  <div class="modal-footer modals--footer">
-    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
-    <button type="submit"
-            class="custom-button custom-button--primary custom-button--sm"
-            data-controller="loading-feedback"
-            data-action="click->loading-feedback#replaceContent"
-    >
-      <%= type == 'create' ? 'Create network' : 'Update network' %>
-    </button>
-  </div>
-<% end %>

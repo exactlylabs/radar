@@ -63,6 +63,11 @@
   gap: .5rem;
 }
 
+.networks--modal-form {
+  height: calc(100% - 56px);
+  overflow-y: auto;
+}
+
 @media (max-width: 450px) {
   .networks--modal-form {
     height: calc(100vh - 56px); 

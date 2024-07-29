@@ -1,6 +1,8 @@
 @import "colors";
 @import "text";
 
+$modal-footer-height: 4.75rem;
+
 .modal-header.modals--borderless-header {
   border-bottom: none;
 }
@@ -68,8 +70,12 @@
   z-index: 1000000;
   transform: translate(-50%, -50%);
   overflow: hidden;
+  height: auto;
   max-height: calc(100vh - 56px - 1.5rem);
-  max-height: calc(100vh - 56px - 1.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
 
   &.opening {
     animation: modal-opening 500ms forwards cubic-bezier(0.3, 0.49, 0.31, 1);
@@ -93,6 +99,7 @@
     top: unset;
     bottom: 0;
     transform: translateX(-50%);
+    max-height: unset;
 
     &[data-modal-type="full"] {
       height: 100dvh;
@@ -158,7 +165,7 @@
 }
 
 .modals--footer-container {
-  height: 4.75rem;
+  height: $modal-footer-height;
   width: 100%;
   border-top: solid 1px $sidebar--horizontal-divider-background-color;
   display: flex;
@@ -208,7 +215,7 @@
   }
 
   &[data-resource="networks"] {
-    max-height: 500px;
+    max-height: calc(100% - #{$modal-footer-height});
     overflow-y: auto;
   }
 
