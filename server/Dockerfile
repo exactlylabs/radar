@@ -18,7 +18,7 @@ ENV RAILS_ENV="production" \
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-apt-get install --no-install-recommends -y curl libpq-dev libvips wkhtmltopdf && \
+apt-get install --no-install-recommends -y curl libpq-dev libvips wkhtmltopdf imagemagick && \
 rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 RUN apt upgrade -y
