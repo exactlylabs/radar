@@ -92,7 +92,7 @@ gem "rgeo-shapefile"
 gem "rqrcode"
 gem "sidekiq"
 gem "wicked_pdf", "~> 2.6.3"
-gem "wkhtmltopdf-binary", "~> 0.12.6.7"
+gem "wkhtmltopdf-binary", "~> 0.12.6.1"
 gem "scenic"
 gem 'oauth2'
 
