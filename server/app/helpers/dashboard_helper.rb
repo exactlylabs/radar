@@ -74,8 +74,8 @@ module DashboardHelper
     sql += %{
       ),
         time_filtered AS (
-          SELECT MAX(total_online) as total_online, time FROM (
-            SELECT LAST_VALUE(total_online) OVER
+          SELECT MIN(total_online) as total_online, time FROM (
+            SELECT MIN(total_online) OVER
               (
                 PARTITION BY TO_TIMESTAMP(
                                             FLOOR(
