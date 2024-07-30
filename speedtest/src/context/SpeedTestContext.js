@@ -85,12 +85,14 @@ export const SpeedTestContextProvider = ({children}) => {
       downloadMeasurement: saveDownloadValue,
       uploadComplete: uploadComplete,
       uploadMeasurement: saveUploadValue,
-      error: err => {
-        setLoading(false);
-        setIsRunning(false);
-        setError(err);
-      },
+      error: setErrorState,
     });
+  }
+
+  const setErrorState = (err) => {
+    setLoading(false);
+    setIsRunning(false);
+    setError(err);
   }
 
   const saveDownloadValue = (data) => {
@@ -170,7 +172,7 @@ export const SpeedTestContextProvider = ({children}) => {
       setIsRunning(false);
       setCurrentStep(STEPS.SPEED_TEST_RESULTS);
     } catch (e) {
-      notifyError(e);
+      setErrorState(e);
     }
   };
 
