@@ -265,6 +265,8 @@ func (si *SysInfoManager) EnsureTailscale() error {
 			// }
 			if meta := errors.GetMetadata(err); meta != nil {
 				m := *meta
+				// In case of error related to APT files corrupted, all we need to do is to pick all reported files and delete them
+				// And run an APT update afteward
 				matcher := regexp.MustCompile(`Unable to parse package file\s(.*?)[\s\n]`)
 				for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
 					os.Remove(match[1])
