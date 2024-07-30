@@ -579,7 +579,7 @@ DEPENDENCIES
   webdrivers
   webpacker (~> 5.0)
   wicked_pdf (~> 2.6.3)
-  wkhtmltopdf-binary (~> 0.12.6.7)
+  wkhtmltopdf-binary (~> 0.12.6.1)
 
 RUBY VERSION
    ruby 3.0.6p216
