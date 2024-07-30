@@ -100,9 +100,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # GET /resource/edit
-  #def edit
+  # def edit
   #  super
-  #end
+  # end
 
   # DELETE /custom_sign_out
   def custom_sign_out
@@ -307,8 +307,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def set_auth_holder
     is_account_accessible_through_share = current_user.shared_accounts.where(id: current_account.id).exists?
-    is_super_user_disabled = current_user.super_user ? is_super_user_disabled? : true
-    @auth_holder = AuthenticationHolder.new(current_user, current_account.is_all_accounts? || false, is_account_accessible_through_share, is_super_user_disabled) unless @auth_holder
+    is_all_accounts = current_account&.is_all_accounts? || false
+    @auth_holder = AuthenticationHolder.new(current_user, is_all_accounts, is_account_accessible_through_share, is_super_user_disabled?) unless @auth_holder
     @auth_holder.set_account(current_account)
   end
 end
