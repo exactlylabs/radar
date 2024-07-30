@@ -155,8 +155,10 @@ module DashboardHelper
         MIN(download) AS "#FF695D",
         MAX(download) AS "#9138E5"
       FROM measurements
+      INNER JOIN clients ON client_id = clients.id
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
+      AND measurements.account_id = clients.account_id
       GROUP BY 1
       ORDER BY "x" ASC
     }
@@ -196,8 +198,10 @@ module DashboardHelper
         MIN(upload) AS "#FF695D",
         MAX(upload) AS "#9138E5"
       FROM measurements
+      INNER JOIN clients ON client_id = clients.id
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
+      AND measurements.account_id = clients.account_id
       GROUP BY 1
       ORDER BY "x" ASC
     }
@@ -237,8 +241,10 @@ module DashboardHelper
         MIN(latency) AS "#FF695D",
         MAX(latency) AS "#9138E5"
       FROM measurements
+      INNER JOIN clients ON client_id = clients.id
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
+      AND measurements.account_id = clients.account_id
       GROUP BY 1
       ORDER BY "x" ASC
     }
@@ -288,9 +294,11 @@ module DashboardHelper
           date_trunc('d', processed_at) as "time",
           SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "total"
         FROM measurements
+        INNER JOIN clients ON client_id = clients.id
         WHERE
           processed_at BETWEEN :from AND :to
           AND client_id = :pod_id
+          AND measurements.account_id = clients.account_id
         GROUP BY 1
         ORDER BY 1 ASC
       )
