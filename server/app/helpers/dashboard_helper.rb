@@ -603,7 +603,15 @@ module DashboardHelper
          .map { |unit| [unit, time_diff / 1.send(unit)]}
          .sort_by { |unit, dots| (DOT_LIMIT - dots).abs }
          .filter { |unit, dots| dots > DOT_MINIMUM }
-         .first[0]
+         .first
+
+    # Check if we have a best unit available. In cases where the time difference is too small, we might not have any
+    # so we default the value to the smallest available unit
+    if best_unit.nil?
+      best_unit = units.first
+    else
+      best_unit = best_unit.first
+    end
 
     dots_in_interval = time_diff / 1.send(best_unit)
     step = 1

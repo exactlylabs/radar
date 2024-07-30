@@ -7,6 +7,7 @@
     <% outage_group_id = entry[0] %>
     <% group_data = entry[1] %>
     <% full_time_span = (end_date - start_date).to_i %>
+    <% full_time_span = 1 if full_time_span == 0 %>
     <% normalized_duration = group_data[:started_at].to_i < start_date.to_i ? group_data[:resolved_at].to_i - start_date.to_i : group_data[:duration].to_i %>
     <% width = (normalized_duration / full_time_span.to_f) * 100 %>
     <% width = 100 if width > 100 %>

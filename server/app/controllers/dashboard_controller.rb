@@ -94,13 +94,18 @@ class DashboardController < ApplicationController
 
     # For the online pods chart in particular, we draw way more points than download/upload speeds, latency, etc.
     # So we need to determine the time interval between each point to decide how to format the x-axis
-    diff_between_dots = (@online_pods[1]['x'].to_i - @online_pods[0]['x'].to_i) / 1000 # in seconds
-    if diff_between_dots >= 1.day.in_seconds
-      @query_time_interval = 'day'
-    elsif diff_between_dots >= 1.hour.in_seconds
-      @query_time_interval = 'hour'
-    elsif diff_between_dots >= 1.minute.in_seconds
-      @query_time_interval = 'minute'
+
+    if @online_pods.count > 1
+      diff_between_dots = (@online_pods[1]['x'].to_i - @online_pods[0]['x'].to_i) / 1000 # in seconds
+      if diff_between_dots >= 1.day.in_seconds
+        @query_time_interval = 'day'
+      elsif diff_between_dots >= 1.hour.in_seconds
+        @query_time_interval = 'hour'
+      elsif diff_between_dots >= 1.minute.in_seconds
+        @query_time_interval = 'minute'
+      else
+        @query_time_interval = 'second'
+      end
     else
       @query_time_interval = 'second'
     end
