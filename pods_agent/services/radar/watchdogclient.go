@@ -106,7 +106,7 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 	switch msg.Type {
 	case cable.Ping:
 		c.returnCh <- watchdog.ServerMessage{
-			Type: watchdog.HealthCheck,
+			Type: watchdog.HealthCheckMessageType,
 			Data: watchdog.HealthCheckServerMessage{},
 		}
 	case WatchdogVersionChanged, UpdateWatchdog:
