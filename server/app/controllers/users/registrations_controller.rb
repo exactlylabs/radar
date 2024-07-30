@@ -100,9 +100,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # GET /resource/edit
-  # def edit
+  #def edit
   #  super
-  # end
+  #end
 
   # DELETE /custom_sign_out
   def custom_sign_out
