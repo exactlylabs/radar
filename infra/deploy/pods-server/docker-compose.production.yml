@@ -125,6 +125,11 @@ services:
 
     deploy:
       replicas: 1
+      resources:
+        limits:
+          memory: 2024M
+        reservations:
+          memory: 512M
       placement:
         constraints:
           - node.labels.network == aws
