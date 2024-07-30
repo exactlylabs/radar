@@ -4,6 +4,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   prepend_before_action :authenticate_scope!, only: [:edit, :edit_email, :update, :update_email, :destroy]
   prepend_before_action :set_minimum_password_length, only: [:new, :edit, :edit_email]
   before_action :set_invite, only: [:render_invite_sign_up, :render_invite_sign_in, :sign_from_invite, :create_from_invite]
+  before_action :set_auth_holder, only: [:edit]
 
   # POST /register
   def create
@@ -99,9 +100,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   # GET /resource/edit
-  #def edit
+  # def edit
   #  super
-  #end
+  # end
 
   # DELETE /custom_sign_out
   def custom_sign_out
@@ -287,9 +288,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     token = params[:token]
     if token
       begin
-      invite_id = token[0..-17]
-      invite_secret = token[-16..-1]
-      @invite = Invite.find(invite_id).authenticate_token(invite_secret)
+        invite_id = token[0..-17]
+        invite_secret = token[-16..-1]
+        @invite = Invite.find(invite_id).authenticate_token(invite_secret)
       rescue ActiveRecord::RecordNotFound
         @notice = "Error: Invite token not found."
       end
@@ -302,5 +303,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
       flash[:alert] = @notice
       redirect_to redirect_path
     end
+  end
+
+  def set_auth_holder
+    @auth_holder = AuthenticationHolder.new(current_user, false, false) unless @auth_holder
+    @auth_holder.set_super_user_disabled(is_super_user_disabled?) if current_user.super_user
+    @auth_holder.set_account(current_account)
+    set_cookie(:radar_current_account_id, current_account.id)
   end
 end
