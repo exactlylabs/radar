@@ -110,15 +110,17 @@ class LocationsService implements ILocationsService {
       },
     );
 
-    if (failureOrLocation.failure != null) {
-      Sentry.captureException(failureOrLocation.failure!.exception,
-          stackTrace: failureOrLocation.failure!.stackTrace);
-      return (latitude: null, longitude: null);
-    } else {
+    if (failureOrLocation.response != null && failureOrLocation.response!.length == 2) {
       return (
         latitude: failureOrLocation.response![0] as double,
         longitude: failureOrLocation.response![1] as double
       );
+    } else {
+      if (failureOrLocation.failure != null) {
+        Sentry.captureException(failureOrLocation.failure!.exception,
+            stackTrace: failureOrLocation.failure!.stackTrace);
+      }
+      return (latitude: null, longitude: null);
     }
   }
 
