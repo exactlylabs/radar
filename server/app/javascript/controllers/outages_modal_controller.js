@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import handleError from "./error_handler_controller";
+import {emitCustomEvent} from "../eventsEmitter";
 
 export default class extends Controller {
   
@@ -35,6 +36,7 @@ export default class extends Controller {
     this.filtersButtonBaseTarget.innerHTML = `${e.target.dataset.label} ${img.outerHTML}`;
     this.setOptionToActive(type);
     this.searchParams.set('outage_type', type);
+    emitCustomEvent('setOutageType', {detail: {outageType: type}})
     this.fetchOutages();
   }
   

@@ -13,6 +13,7 @@ export default class extends Controller {
       this.totalCount = 0;
     }
     this.loadingTimeout = null;
+    this.outageType = new URLSearchParams(window.location.search).get('outage_type');
   }
   
   handleScroll() {
@@ -20,6 +21,11 @@ export default class extends Controller {
     if(((this.element.scrollTop + this.element.parentNode.clientHeight) >= (this.element.scrollHeight - 100)) && this.totalCount > 0) {
       this.loadMore();
     }
+  }
+  
+  setOutageType(e) {
+    this.outageType = e.detail.outageType;
+    this.element.scrollTo({top: 0, behavior: 'smooth'});
   }
   
   loadMore() {
@@ -30,6 +36,9 @@ export default class extends Controller {
     const url = new URL(this.element.dataset.url);
     url.searchParams.set('page', this.nextPage);
     url.searchParams.set('page_size', this.PAGE_SIZE.toString());
+    if(!!this.outageType) {
+      url.searchParams.set('outage_type', this.outageType);
+    }
     fetch(url)
       .then(response => response.text())
       .then(html => {
