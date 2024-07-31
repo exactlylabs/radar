@@ -62,7 +62,9 @@ jobs:
         enum: ["dev", "staging", "prod"]
     executor:
       name: android/android-docker
-      tag: 2023.12.1
+      tag: 2022.09.1
+    environment:
+      java: 17
     resource_class: large
     steps:
       - checkout
