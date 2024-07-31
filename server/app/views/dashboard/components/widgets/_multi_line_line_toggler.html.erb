@@ -1,15 +1,15 @@
 <% raise 'chart_id needs to be present' unless chart_id %>
 <div class="widgets--line-toggler-buttons-container" data-is-vertical="<%= options.count > 3 %>">
-<% options.each do |option| %>
-    <button data-action="click->widgets#toggleLine"
-            data-selected-line="<%= option[:hex] %>"
-            data-chart-id="<%= chart_id %>"
-            class="widgets--line-toggler-button"
-            data-selected="false"
-            data-selected-label="<%= option[:label] %>"
-    >
-      <span style="background-color: <%= option[:hex] %>"></span>
-      <p><%= option[:label] %></p>
-    </button>
-<% end %>
+  <% options.each do |option| %>
+      <button data-action="click->widgets#toggleLine"
+              data-selected-line="<%= option[:hex] %>"
+              data-chart-id="<%= chart_id %>"
+              class="widgets--line-toggler-button"
+              data-selected="false"
+              data-selected-label="<%= option[:label] %>"
+      >
+        <span style="background-color: <%= option[:hex] %>; min-width: 1rem;"></span>
+        <p><%= option[:label] %></p>
+      </button>
+  <% end %>
 </div>
