@@ -26,22 +26,13 @@ export const emptyAddress = {
   house_number: ''
 };
 
-export const emptyNetworkLocation = {
-  id: -1,
-  iconSrc: null,
-  iconSelectedSrc: null,
-  iconLightSrc: null,
-  iconPopupSrc: null,
-  text: '',
-};
-
 export const UserDataContextProvider = ({children}) => {
 
   const [userData, setUserData] = useState({
     currentStep: STEPS.INITIAL,
     address: emptyAddress,
     terms: false,
-    networkLocation: emptyNetworkLocation,
+    networkLocation: null,
     networkType: null,
     networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
     addressProvider: ADDRESS_PROVIDER.MANUAL,

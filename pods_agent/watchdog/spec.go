@@ -22,7 +22,7 @@ const (
 	ReportWirelessStatusMessageType
 	SetWlanInterfaceMessageType
 	DisconnectWirelessNetworkMessageType
-	HealthCheck
+	HealthCheckMessageType
 )
 
 type SystemEventType int

@@ -217,6 +217,8 @@ func (w *Watchdog) handleMessage(ctx context.Context, msg ServerMessage) {
 	}
 	var err error
 	switch msg.Type {
+	case HealthCheckMessageType:
+		w.lastHealthCheck = time.Now()
 	case UpdateWatchdogMessageType:
 		err = w.handleUpdate(msg.Data.(UpdateBinaryServerMessage))
 	case EnableTailscaleMessageType:

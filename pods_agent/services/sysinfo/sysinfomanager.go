@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"os/user"
 	"path"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -262,6 +263,19 @@ func (si *SysInfoManager) EnsureTailscale() error {
 			// if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
 			// 	return nil
 			// }
+			if meta := errors.GetMetadata(err); meta != nil {
+				m := *meta
+				// In case of error related to APT files corrupted, all we need to do is to pick all reported files and delete them
+				// And run an APT update afteward
+				matcher := regexp.MustCompile(`Unable to parse package file\s(.*?)[\s\n]`)
+				for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
+					os.Remove(match[1])
+				}
+				_, err := si.runCommand(exec.Command("apt", "update"))
+				if err != nil {
+					return errors.W(err)
+				}
+			}
 			return errors.W(err)
 		}
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")

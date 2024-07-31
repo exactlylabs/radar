@@ -22,44 +22,48 @@ export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
   const { networkLocation, networkType, networkCost, accuracy, altitude, addressProvider, altitudeAccuracy, speed, heading, expectedDownloadSpeed, expectedUploadSpeed, contactInformation } = userData;
   const { address, city, state, house_number, street, postal_code } = userData.address;
   const location = userData.address.coordinates;
-  return fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      result: { raw: rawData },
-      speed_test: {
-        latitude: location[0],
-        longitude: location[1],
-        tested_at: startTimestamp,
-        address,
-        city,
-        street,
-        state,
-        postal_code,
-        house_number,
-        network_location: networkLocation?.text ?? null,
-        network_type: networkType?.text ?? null,
-        network_cost: networkCost,
-        altitude,
-        accuracy,
-        address_provider: addressProvider,
-        alt_accuracy: altitudeAccuracy,
-        speed,
-        heading,
-        expected_download_speed: expectedDownloadSpeed,
-        expected_upload_speed: expectedUploadSpeed,
-        client_first_name: contactInformation.firstName,
-        client_last_name: contactInformation.lastName,
-        client_email: contactInformation.email,
-        client_phone: contactInformation.phone
-      }
-    }),
-  })
+  try {
+    return fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        result: { raw: rawData },
+        speed_test: {
+          latitude: location[0],
+          longitude: location[1],
+          tested_at: startTimestamp,
+          address,
+          city,
+          street,
+          state,
+          postal_code,
+          house_number,
+          network_location: networkLocation?.text ?? null,
+          network_type: networkType?.text ?? null,
+          network_cost: networkCost,
+          altitude,
+          accuracy,
+          address_provider: addressProvider,
+          alt_accuracy: altitudeAccuracy,
+          speed,
+          heading,
+          expected_download_speed: expectedDownloadSpeed,
+          expected_upload_speed: expectedUploadSpeed,
+          client_first_name: contactInformation.firstName,
+          client_last_name: contactInformation.lastName,
+          client_email: contactInformation.email,
+          client_phone: contactInformation.phone
+        }
+      }),
+    })
     .then(res => {
       if(!res.ok) throw new Error('Error creating new speed test!');
       return res.json();
     })
-    .catch(notifyError);
+  } catch (e) {
+    notifyError(e);
+    throw new Error('Error saving speed test results. Please try again later.');
+  }
 };
 
 export const sendSpeedTestFormInformation = async (userData, clientId) => {
