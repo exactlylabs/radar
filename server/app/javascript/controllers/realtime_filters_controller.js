@@ -68,7 +68,6 @@ export default class extends Controller {
         label = `${(values.length + 1)} ${selectedFilterTarget.dataset.multiLabel}`;
       }
     } else {
-      
       this.searchParams.set(key, value);
       label = this.allItems.get(key).get(value);
     }
@@ -93,8 +92,6 @@ export default class extends Controller {
       baseButton.innerText = text ?? baseButton.dataset.defaultLabel;
       if(calendarIcon) baseButton.prepend(calendarIcon);
       if(caret) baseButton.appendChild(caret);
-      
-      
     }
   }
   
