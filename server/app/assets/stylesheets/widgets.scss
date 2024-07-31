@@ -30,7 +30,7 @@
 }
 
 .widgets--widget {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   background-color: white;
   border-radius: 8px;
   border: solid 1px $widget--border-color;
@@ -92,6 +92,7 @@
 .widgets--header-container {
   width: 100%;
   .widgets--header-text {
+    font-size: 1rem;
     color: $deep-blue;
     @extend .fw-bold;
   }
