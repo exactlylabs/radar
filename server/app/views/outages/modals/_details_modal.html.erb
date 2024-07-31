@@ -10,6 +10,7 @@
        class="dashboard--outages-modal-content"
        data-controller="infinite-scroll"
        data-total-count="<%= @total_count %>"
+       data-action="setOutageType@window->infinite-scroll#setOutageType"
        data-url="<%= detail_modal_outages_url(outage_type: params[:outage_type], network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], days: params[:days], start: params[:start], end: params[:end], total_count: @total_count, grouped: params[:grouped]) %>"
   >
     <% if @outages.present? && @outages.count > 0 %>
