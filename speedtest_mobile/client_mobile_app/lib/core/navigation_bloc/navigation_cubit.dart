@@ -4,7 +4,7 @@ import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 
 class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationState()) {
-    _getConnectionStatuses();
+    _getConnectionStatus();
     _listenToConnectivityChanges();
   }
 
@@ -18,15 +18,15 @@ class NavigationCubit extends Cubit<NavigationState> {
     emit(NavigationState(currentIndex: index, args: args, canNavigate: state.canNavigate));
   }
 
-  Future<void> _getConnectionStatuses() async {
-    final statuses = await _connectivity.checkConnectivity();
-    _parseConnectionStatuses(statuses);
+  Future<void> _getConnectionStatus() async {
+    final status = await _connectivity.checkConnectivity();
+    _parseConnectionStatuses(status);
   }
 
-  void _parseConnectionStatuses(List<ConnectivityResult> statuses) {
-    if (statuses.contains(ConnectivityResult.wifi) ||
-        statuses.contains(ConnectivityResult.mobile) ||
-        statuses.contains(ConnectivityResult.ethernet)) {
+  void _parseConnectionStatuses(ConnectivityResult status) {
+    if (status == ConnectivityResult.wifi ||
+        status == ConnectivityResult.mobile ||
+        status == ConnectivityResult.ethernet) {
       emit(state.copyWith(canNavigate: true));
     } else {
       emit(state.copyWith(canNavigate: false));
@@ -34,8 +34,8 @@ class NavigationCubit extends Cubit<NavigationState> {
   }
 
   void _listenToConnectivityChanges() {
-    _connectivity.onConnectivityChanged.listen((statuses) {
-      _parseConnectionStatuses(statuses);
+    _connectivity.onConnectivityChanged.listen((status) {
+      _parseConnectionStatuses(status);
     });
   }
 

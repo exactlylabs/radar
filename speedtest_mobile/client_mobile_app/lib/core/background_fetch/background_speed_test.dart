@@ -157,11 +157,11 @@ class BackgroundSpeedTest {
   Future<String?> _getConnectionType() async {
     final connectivity = await _connectivity.checkConnectivity();
 
-    if (connectivity.contains(ConnectivityResult.wifi)) {
+    if (connectivity == ConnectivityResult.wifi) {
       return Strings.wifiConnectionType;
-    } else if (connectivity.contains(ConnectivityResult.mobile)) {
+    } else if (connectivity == ConnectivityResult.mobile) {
       return Strings.cellularConnectionType;
-    } else if (connectivity.contains(ConnectivityResult.ethernet)) {
+    } else if (connectivity == ConnectivityResult.ethernet) {
       return Strings.wiredConnectionType;
     }
     return null;

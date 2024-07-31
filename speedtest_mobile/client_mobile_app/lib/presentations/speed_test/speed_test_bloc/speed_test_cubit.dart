@@ -171,11 +171,11 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   Future<void> _listenConnectivityState() async {
     _connectivity.onConnectivityChanged.listen(
       (connectivity) {
-        if (connectivity.contains(ConnectivityResult.wifi)) {
+        if (connectivity == ConnectivityResult.wifi) {
           _setNetworkType(Strings.wifiConnectionType);
-        } else if (connectivity.contains(ConnectivityResult.mobile)) {
+        } else if (connectivity == ConnectivityResult.mobile) {
           _setNetworkType(Strings.cellularConnectionType);
-        } else if (connectivity.contains(ConnectivityResult.ethernet)) {
+        } else if (connectivity == ConnectivityResult.ethernet) {
           _setNetworkType(Strings.wiredConnectionType);
         } else {
           emit(state.resetSpecificStep(false, true, false));
