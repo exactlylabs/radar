@@ -13,7 +13,8 @@ export const DOT_SIZE = 4;
 export const RADII = 6;
 export const HELPER_HEIGHT = 24;
 export const TOOLTIP_TITLE_PADDING = 40;
-export const TOP_CLEARANCE = 30;
+export const TOP_CLEARANCE = 18;
+const LINE_TOGGLER_HEIGHT = 27;
 
 export const TouchEvents = {
   TOUCH_START: 'touchstart',
@@ -328,6 +329,10 @@ export default class ChartController extends Controller {
     }
     
     const ratio = this.getPixelRatio();
+    
+    if(this.lineToggler && !this.isCompareChart) {
+      h -= LINE_TOGGLER_HEIGHT;
+    }
     
     this.element.height = h * ratio;
     this.element.width = w * ratio;
