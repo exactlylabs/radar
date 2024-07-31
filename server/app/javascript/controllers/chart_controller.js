@@ -863,7 +863,10 @@ export default class ChartController extends Controller {
       this.labelSuffix = 's';
     }
     
-    if(biggestUnit === 1) return;
+    if(biggestUnit === 1) {
+      this.maxTotal = Math.ceil(maxLatencyInMilliseconds / 100) * 100;
+      return;
+    }
     
     this.maxTotal = maxLatencyInMilliseconds / biggestUnit;
     const newChartData = new Map();
