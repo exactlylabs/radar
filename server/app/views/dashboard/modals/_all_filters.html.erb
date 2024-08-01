@@ -80,7 +80,7 @@
                    key: 'isp_id',
                    default_value: 'all',
                    default_label: 'All ISPs',
-                   current_label: params[:isp_id].present? ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id]}.name : 'All ISPs',
+                   current_label: params[:isp_id].present? ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id].to_i}.first ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id].to_i}.first['name'] : 'All ISPs' : 'All ISPs',
                    full_width: true,
                    is_dark: true,
                    append_to_body: true
