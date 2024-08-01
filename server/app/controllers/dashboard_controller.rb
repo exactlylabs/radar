@@ -82,6 +82,14 @@ class DashboardController < ApplicationController
       @locations = @locations.where(id: params[:network_id])
     end
 
+    if params[:isp_id]
+      @locations = @locations.joins(clients: [{autonomous_system: :autonomous_system_org}]).where("autonomous_system_orgs.id = ?", params[:isp_id])
+    end
+
+    if params[:category_id]
+      @locations = @locations.joins(:categories).where("categories.id = ?", params[:category_id])
+    end
+
     respond_to do |format|
       format.turbo_stream
       format.html
