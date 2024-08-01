@@ -16,7 +16,7 @@ class OutagesController < ApplicationController
         params[:page_size],
         params[:location_ids],
         params[:outage_type],
-        params[:as_org_id]
+        params[:as_org_ids]
       )
       @outage_ids = ActiveRecord::Base.connection.execute(sql)
 
