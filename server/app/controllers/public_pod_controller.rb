@@ -47,7 +47,7 @@ class PublicPodController < PublicApplicationController
   def download_speeds
     @responsive = params[:responsive] == "true"
     params = pod_download_speeds_params(@client)
-    sql = DashboardHelper.get_pod_download_speed_sql(@client.id, params[:from], params[:to])
+    sql = DashboardHelper.get_pod_download_speed_sql(@client.id, params[:from], params[:to], @client.account.id)
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
     render "dashboard/download_speeds"
   end
@@ -55,7 +55,7 @@ class PublicPodController < PublicApplicationController
   def upload_speeds
     @responsive = params[:responsive] == "true"
     params = pod_upload_speeds_params(@client)
-    sql = DashboardHelper.get_pod_upload_speed_sql(@client.id, params[:from], params[:to])
+    sql = DashboardHelper.get_pod_upload_speed_sql(@client.id, params[:from], params[:to], @client.account.id)
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
     render "dashboard/upload_speeds"
   end
@@ -63,7 +63,7 @@ class PublicPodController < PublicApplicationController
   def latency
     @responsive = params[:responsive] == "true"
     params = pod_latency_params(@client)
-    sql = DashboardHelper.get_pod_latency_sql(@client.id, params[:from], params[:to])
+    sql = DashboardHelper.get_pod_latency_sql(@client.id, params[:from], params[:to], @client.account.id)
     @latencies = ActiveRecord::Base.connection.execute(sql)
     render "dashboard/latency"
   end
@@ -71,7 +71,7 @@ class PublicPodController < PublicApplicationController
   def data_usage
     @responsive = params[:responsive] == "true"
     params = pod_data_usage_params(@client)
-    sql = DashboardHelper.get_pod_usage_sql(@client.id, params[:from], params[:to])
+    sql = DashboardHelper.get_pod_usage_sql(@client.id, params[:from], params[:to], @client.account.id)
     @usage = ActiveRecord::Base.connection.execute(sql)
     render "dashboard/data_usage"
   end
