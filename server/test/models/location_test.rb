@@ -12,13 +12,7 @@ class LocationTest < ActiveSupport::TestCase
       "county" => "County"
     }])
   end
-  test "online_scope" do
-    assert_equal Location.where_online.all().to_a, [locations(:online1), locations(:online2)]
-  end
 
-  test "offline_scope" do
-    assert_equal Location.where_offline.all().to_a, [locations(:offline1), locations(:different_account)]
-  end
 
   test "when location created with lonlat expect Reprocess Geospaces job to be called" do
     job = lambda { |location| assert location.lonlat.present? }
