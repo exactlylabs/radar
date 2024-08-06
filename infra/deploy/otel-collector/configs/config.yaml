@@ -3,6 +3,8 @@ receivers:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
 
   docker_stats:
     container_labels_to_metric_labels:
@@ -10,6 +12,15 @@ receivers:
       "com.docker.swarm.service.name": swarm_service
       com.docker.swarm.task.id: "swarm_container_id"
 
+  postgresql:
+    endpoint: ${env:POSTGRESQL_HOST}:5432
+    transport: tcp
+    username: radar
+    password: "{{ secret "PODS_DATABASE_PASSWORD" }}"
+    databases:
+      - radar
+    collection_interval: 60s
+    
 processors:
   batch:
     timeout: 60s
@@ -19,6 +30,14 @@ processors:
       span:
         - 'attributes["net.peer.name"] == "/var/run/docker.sock"'
 
+  filter/postgres:
+    metrics:
+      metric:
+        - IsMatch(resource.attributes["operation"], ".*")
+        - IsMatch(resource.attributes["state"], ".*")
+        - IsMatch(resource.attributes["source"], ".*")
+        - IsMatch(resource.attributes["type"], ".*")
+
 exporters:
   awsemf:
   awsxray:
@@ -26,9 +45,14 @@ exporters:
 
 service:
   pipelines:
-    metrics:
+    metrics/otlp:
       receivers: [otlp]
       processors: [batch]
+      exporters: [awsemf]
+    
+    metrics/postgresql:
+      receivers: [postgresql]
+      processors: [filter/postgres]
       exporters: [awsemf]
 
     traces:

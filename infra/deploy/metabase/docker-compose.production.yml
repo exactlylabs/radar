@@ -16,6 +16,11 @@ services:
       placement:
         constraints:
           - node.labels.network == aws
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
       replicas: 1
       labels:
         - "traefik.enable=true"

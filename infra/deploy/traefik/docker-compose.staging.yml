@@ -8,6 +8,8 @@ services:
       placement:
         constraints:
           - node.role == manager
+    environment:
+      - OTEL_PROPAGATORS=tracecontext,baggage,xray,ottrace
     command:
       - "--api.insecure=true"
       - "--ping"
