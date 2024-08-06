@@ -19,3 +19,10 @@ no_account:
   unix_user: "r6782"
   name: Pod 2
 
+outage_pod1:
+  unix_user: "r111"
+  account: root
+
+outage_pod2:
+  unix_user: "r222"
+  account: root

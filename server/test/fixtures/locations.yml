@@ -34,3 +34,20 @@ different_account:
   online: false
   created_by_id: 1
 
+outage_location1:
+  name: "Outage Location1"
+  address: "1 Outage Loc"
+  created_by_id: 1
+  account: root
+
+outage_location2:
+  name: "Outage Location2"
+  address: "2 Outage Loc"
+  created_by_id: 1
+  account: root
+
+outage_location3:
+  name: "Outage Location3"
+  address: "2 Outage Loc"
+  created_by_id: 1
+  account: root
