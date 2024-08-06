@@ -11,12 +11,14 @@ services:
       - BUCKET_NAME=radar-pods-staging
       - BUCKET_ACCESS_KEY=004049506844ea70000000001
       - HEALTHCHECK_URL=https://pods.staging.radartoolkit.com/health
-      - WEB_CONCURRENCY=4
+      - WEB_CONCURRENCY=2
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
       - DB_MAX_POOL_SIZE=40
       - CORS_ALLOWED_ORIGINS=https://speed.staging.exactlylabs.com,https://speedtest.staging.exactlylabs.com,https://speed.staging.radartoolkit.com,https://www.speed.staging.radartoolkit.com
       - RAILS_LOG_TO_STDOUT=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
@@ -32,11 +34,17 @@ services:
       - traefik_public
       - fipsgeocoder_public
       - redis_public
+      - otel-collector_public
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.labels.network == aws
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.pods-server-app.rule=Host(`pods-swarm.staging.radartoolkit.com`) || Host(`pods.staging.radartoolkit.com`) || Host(`radar-staging.exactlylabs.com`) || Host(`radar.staging.exactlylabs.com`)"
@@ -55,12 +63,18 @@ services:
     networks:
       - fipsgeocoder_public
       - redis_public
+      - otel-collector_public
 
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.labels.network == aws
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 512M
       labels: []
 
   clock:
@@ -69,6 +83,7 @@ services:
     networks:
       - fipsgeocoder_public
       - redis_public
+      - otel-collector_public
     deploy:
       replicas: 1
       placement:
@@ -82,6 +97,7 @@ services:
     networks:
       - fipsgeocoder_public
       - redis_public
+      - otel-collector_public
     deploy:
       replicas: 1
       placement:
@@ -95,6 +111,8 @@ networks:
   fipsgeocoder_public:
     external: true
   redis_public:
+    external: true
+  otel-collector_public:
     external: true
 
 secrets:
