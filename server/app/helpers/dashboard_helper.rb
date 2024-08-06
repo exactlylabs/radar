@@ -372,22 +372,21 @@ module DashboardHelper
     sql_args = {from: from, to: to, account_ids: account_ids}
     sql = %{
     SELECT
-      outage_events.id,
+      network_outages.id,
       network_outages.autonomous_system_id,
       CASE
-        WHEN outage_events.outage_type = 0 THEN 'unknown_reason'
-        WHEN outage_events.outage_type = 1 THEN 'network_failure'
-        WHEN outage_events.outage_type = 2 THEN 'isp_outage'
+        WHEN network_outages.outage_type = 0 THEN 'unknown_reason'
+        WHEN network_outages.outage_type = 1 THEN 'network_failure'
+        WHEN network_outages.outage_type = 2 THEN 'isp_outage'
         ELSE 'power_outage' END as outage_type,
-      outage_events.started_at,
-      COALESCE(outage_events.resolved_at, NOW()) AS resolved_at,
-      EXTRACT(EPOCH FROM COALESCE(outage_events.resolved_at, NOW()) - outage_events.started_at) * 1000 AS duration,
+      network_outages.started_at,
+      COALESCE(network_outages.resolved_at, NOW()) AS resolved_at,
+      EXTRACT(EPOCH FROM COALESCE(network_outages.resolved_at, NOW()) - network_outages.started_at) * 1000 AS duration,
       COUNT(*) as count
-    FROM outage_events
-    JOIN network_outages ON network_outages.outage_event_id = outage_events.id
+    FROM network_outages
     JOIN locations ON locations.id = network_outages.location_id
-    JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
-    WHERE (outage_events.status = 2 OR outage_events.status = 0) AND locations.account_id IN (:account_ids)
+    JOIN autonomous_systems ON autonomous_systems.id = network_outages.autonomous_system_id
+    WHERE (network_outages.status = 2 OR network_outages.status = 0) AND locations.account_id IN (:account_ids)
     }
 
     if location_ids.present?
@@ -396,7 +395,7 @@ module DashboardHelper
     end
 
     if outage_type.present?
-      sql += " AND outage_events.outage_type = :outage_type "
+      sql += " AND network_outages.outage_type = :outage_type "
       sql_args[:outage_type] = outage_type
     end
 
@@ -406,10 +405,10 @@ module DashboardHelper
     end
 
     sql += %{
-      AND outage_events.started_at < :to::timestamp
-      AND (outage_events.resolved_at > :from::timestamp OR outage_events.resolved_at IS NULL)
+      AND network_outages.started_at < :to::timestamp
+      AND (network_outages.resolved_at > :from::timestamp OR network_outages.resolved_at IS NULL)
       GROUP BY 1, 2, 3, 4, 5, 6
-      ORDER BY outage_events.started_at ASC;
+      ORDER BY network_outages.started_at ASC;
     }
     ActiveRecord::Base.sanitize_sql([sql, sql_args])
   end
@@ -418,12 +417,11 @@ module DashboardHelper
     sql_args = {from: from, to: to, account_ids: account_ids, page: page.to_i * 10, page_size: page_size.to_i}
     sql = %{
     SELECT
-      outage_events.id
-    FROM outage_events
-    JOIN network_outages ON network_outages.outage_event_id = outage_events.id
+      network_outages.id
+    FROM network_outages
     JOIN locations ON locations.id = network_outages.location_id
-    JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
-    WHERE (outage_events.status = 2 OR outage_events.status = 0) AND locations.account_id IN (:account_ids)
+    JOIN autonomous_systems ON autonomous_systems.id = network_outages.autonomous_system_id
+    WHERE (network_outages.status = 2 OR network_outages.status = 0) AND locations.account_id IN (:account_ids)
     }
 
     if location_id.present?
@@ -432,7 +430,7 @@ module DashboardHelper
     end
 
     if outage_type.present?
-      sql += " AND outage_events.outage_type = :outage_type "
+      sql += " AND network_outages.outage_type = :outage_type "
       sql_args[:outage_type] = outage_type
     end
 
@@ -442,9 +440,9 @@ module DashboardHelper
     end
 
     sql += %{
-      AND outage_events.started_at < :to::timestamp
-      AND (outage_events.resolved_at > :from::timestamp OR outage_events.resolved_at IS NULL)
-      ORDER BY outage_events.started_at DESC
+      AND network_outages.started_at < :to::timestamp
+      AND (network_outages.resolved_at > :from::timestamp OR network_outages.resolved_at IS NULL)
+      ORDER BY network_outages.started_at DESC
       LIMIT :page_size OFFSET :page;
     }
     ActiveRecord::Base.sanitize_sql([sql, sql_args])

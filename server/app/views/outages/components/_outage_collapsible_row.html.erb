@@ -12,14 +12,12 @@
     </div>
   </div>
   <div class="dashboard--outages-collapsible-row-content">
-    <% outage.network_outages.each do |co| %>
-      <% affected_network = co.location %>
+      <% affected_network = outage.location %>
       <div class="dashboard--outages-affected-network-row">
         <div class="dashboard--outages-affected-network-icon">
           <%= image_tag image_url('hollow-networks-icon-disabled.png'), width: 16, height: 16 %>
         </div>
         <p><%= affected_network.name %></p>
       </div>
-    <% end %>
   </div>
 </div>

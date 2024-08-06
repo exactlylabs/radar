@@ -20,17 +20,18 @@ class OutagesController < ApplicationController
       )
       @outage_ids = ActiveRecord::Base.connection.execute(sql)
 
-      @outages = OutageEvent.where(id: @outage_ids.map { |outage| outage['id'] })
+      @outages = NetworkOutage.where(id: @outage_ids.map { |outage| outage['id'] })
                             .order(started_at: :asc)
-                            .joins(:network_outages => [:location])
+                            .joins(:location)
                             .joins(:autonomous_system)
                             .select("
-        outage_events.id,
+        network_outages.id,
         network_outages.autonomous_system_id,
-        outage_events.outage_type,
-        outage_events.started_at,
-        COALESCE(outage_events.resolved_at, NOW()) AS resolved_at,
-        EXTRACT(EPOCH FROM COALESCE(outage_events.resolved_at, NOW()) - outage_events.started_at) * 1000 AS duration
+        network_outages.outage_type,
+        network_outages.started_at,
+        network_outages.location_id,
+        COALESCE(network_outages.resolved_at, NOW()) AS resolved_at,
+        EXTRACT(EPOCH FROM COALESCE(network_outages.resolved_at, NOW()) - network_outages.started_at) * 1000 AS duration
       ")
       @outages = OutagesHelper.group_outages(@outages, 'desc', @grouped)
     else
