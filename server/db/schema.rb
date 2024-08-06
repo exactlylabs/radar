@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_18_133827) do
+ActiveRecord::Schema.define(version: 2024_08_03_221428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,22 +154,6 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_client_online_logs_on_account_id"
     t.index ["client_id"], name: "index_client_online_logs_on_client_id"
-  end
-
-  create_table "client_outages", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
-    t.boolean "has_service_started_event", default: false, null: false
-    t.bigint "client_id"
-    t.bigint "location_id"
-    t.bigint "outage_event_id"
-    t.bigint "autonomous_system_id"
-    t.boolean "accounted_in_isp_window", default: false, null: false
-    t.datetime "started_at"
-    t.datetime "resolved_at"
-    t.index ["autonomous_system_id"], name: "index_client_outages_on_autonomous_system_id"
-    t.index ["client_id"], name: "index_client_outages_on_client_id"
-    t.index ["location_id"], name: "index_client_outages_on_location_id"
-    t.index ["outage_event_id"], name: "index_client_outages_on_outage_event_id"
   end
 
   create_table "client_speed_tests", force: :cascade do |t|
@@ -402,6 +386,16 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
     t.index ["user_id"], name: "index_invites_on_user_id"
   end
 
+  create_table "isp_outages", force: :cascade do |t|
+    t.bigint "autonomous_system_id"
+    t.datetime "offline_window_start"
+    t.datetime "offline_window_end"
+    t.datetime "online_window_start"
+    t.datetime "online_window_end"
+    t.datetime "cancelled_at"
+    t.index ["autonomous_system_id"], name: "index_isp_outages_on_autonomous_system_id"
+  end
+
   create_table "location_groups", force: :cascade do |t|
     t.string "name"
     t.bigint "account_id"
@@ -575,14 +569,16 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
     t.integer "status", default: 0, null: false
     t.boolean "has_service_started_event", default: false, null: false
     t.bigint "location_id"
-    t.bigint "outage_event_id"
     t.bigint "autonomous_system_id"
     t.boolean "accounted_in_isp_window", default: false, null: false
     t.datetime "started_at"
     t.datetime "resolved_at"
+    t.integer "outage_type"
+    t.datetime "cancelled_at"
+    t.bigint "isp_outage_id"
     t.index ["autonomous_system_id"], name: "index_network_outages_on_autonomous_system_id"
+    t.index ["isp_outage_id"], name: "index_network_outages_on_isp_outage_id"
     t.index ["location_id"], name: "index_network_outages_on_location_id"
-    t.index ["outage_event_id"], name: "index_network_outages_on_outage_event_id"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -628,16 +624,6 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
     t.index ["autonomous_system_id"], name: "index_online_client_count_projections_on_autonomous_system_id"
     t.index ["event_id"], name: "index_online_client_count_projections_on_event_id"
     t.index ["location_id"], name: "index_online_client_count_projections_on_location_id"
-  end
-
-  create_table "outage_events", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
-    t.integer "outage_type", default: 0, null: false
-    t.bigint "autonomous_system_id"
-    t.datetime "started_at"
-    t.datetime "resolved_at"
-    t.datetime "cancelled_at"
-    t.index ["autonomous_system_id"], name: "index_outage_events_on_autonomous_system_id"
   end
 
   create_table "packages", force: :cascade do |t|
@@ -836,10 +822,6 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
-  add_foreign_key "client_outages", "autonomous_systems"
-  add_foreign_key "client_outages", "clients"
-  add_foreign_key "client_outages", "locations"
-  add_foreign_key "client_outages", "outage_events"
   add_foreign_key "client_speed_tests", "autonomous_systems"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
@@ -854,6 +836,7 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
   add_foreign_key "distributions", "client_versions"
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
+  add_foreign_key "isp_outages", "autonomous_systems"
   add_foreign_key "location_groups", "accounts"
   add_foreign_key "location_metadata_projections", "autonomous_system_orgs"
   add_foreign_key "location_metadata_projections", "locations"
@@ -871,15 +854,14 @@ ActiveRecord::Schema.define(version: 2024_07_18_133827) do
   add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
   add_foreign_key "ndt7_diagnose_reports", "clients"
   add_foreign_key "network_outages", "autonomous_systems"
+  add_foreign_key "network_outages", "isp_outages"
   add_foreign_key "network_outages", "locations"
-  add_foreign_key "network_outages", "outage_events"
   add_foreign_key "notification_settings", "accounts"
   add_foreign_key "notification_settings", "users"
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
-  add_foreign_key "outage_events", "autonomous_systems"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "pod_connectivity_configs", "clients"
   add_foreign_key "pod_connectivity_configs", "pod_network_interfaces", column: "wlan_interface_id"
