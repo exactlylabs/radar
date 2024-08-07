@@ -304,7 +304,7 @@ class OutagesProjector
       ])
     )
 
-    distinct_locations = grouped_networks.map { |n| n["location_id"] }.compact.count
+    distinct_locations = grouped_networks.map { |n| n["location_id"] }.compact.uniq.count
     
     if distinct_locations > ISP_OUTAGE_INITIAL_THRESHOLD
       isp_outage = IspOutage.create!(
