@@ -48,6 +48,12 @@ outage_location2:
 
 outage_location3:
   name: "Outage Location3"
-  address: "2 Outage Loc"
+  address: "3 Outage Loc"
+  created_by_id: 1
+  account: root
+
+outage_location4:
+  name: "Outage Location4"
+  address: "4 Outage Loc"
   created_by_id: 1
   account: root
