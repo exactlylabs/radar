@@ -282,13 +282,13 @@ class OutagesProjector
       return
     end
     
-    offline_window_start = network_outage.started_at - (ISP_WINDOW / 2)
-    offline_window_end = network_outage.started_at + (ISP_WINDOW / 2)
-    online_window_start = network_outage.resolved_at - (ISP_WINDOW / 2)
-    online_window_end = network_outage.resolved_at + (ISP_WINDOW / 2)
+    offline_window_start = network_outage.started_at - (ISP_WINDOW / 2.0)
+    offline_window_end = network_outage.started_at + (ISP_WINDOW / 2.0)
+    online_window_start = network_outage.resolved_at - (ISP_WINDOW / 2.0)
+    online_window_end = network_outage.resolved_at + (ISP_WINDOW / 2.0)
     sql = <<-SQL
       SELECT
-        id
+        id, location_id
       FROM network_outages
       WHERE
         autonomous_system_id = ?
@@ -296,7 +296,6 @@ class OutagesProjector
         AND status = 2
         AND started_at >= ? AND started_at < ?
         AND resolved_at >= ? AND resolved_at < ?
-      GROUP BY id
     SQL
     grouped_networks = ActiveRecord::Base.connection.execute(
       ActiveRecord::Base.sanitize_sql([
@@ -304,8 +303,10 @@ class OutagesProjector
         offline_window_end, online_window_start, online_window_end
       ])
     )
+
+    distinct_locations = grouped_networks.map { |n| n["location_id"] }.compact.count
     
-    if grouped_networks.count > ISP_OUTAGE_INITIAL_THRESHOLD
+    if distinct_locations > ISP_OUTAGE_INITIAL_THRESHOLD
       isp_outage = IspOutage.create!(
         autonomous_system_id: network_outage.autonomous_system_id,
         offline_window_start: offline_window_start,
@@ -313,7 +314,7 @@ class OutagesProjector
         online_window_start: online_window_start,
         online_window_end: online_window_end,
       )
-      NetworkOutage.where(id: grouped_networks).update_all(
+      NetworkOutage.where(id: grouped_networks.map {|n| n["id"]}).update_all(
         outage_type: :isp_outage,
         isp_outage_id: isp_outage.id,
       )
