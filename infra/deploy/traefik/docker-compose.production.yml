@@ -17,11 +17,13 @@ services:
       - "--accesslog.fields.headers.names.Authorization=drop"
       - "--accesslog.fields.headers.names.Content-Type=keep"
       - "--accesslog.fields.headers.names.User-Agent=keep"
-      - "--metrics=true"
-      - "--metrics.otlp=true"
-      # - "--metrics.otlp.addRoutersLabels=true"
+      - "--metrics=false" # Disabled due to costs
+      - "--metrics.addInternals=false"
+      - "--metrics.otlp=false" # Disabled due to costs
+      - "--metrics.otlp.addEntryPointsLabels=false"
+      - "--metrics.otlp.addRoutersLabels=false"
       - "--metrics.otlp.addServicesLabels=true"
-      - "--metrics.otlp.pushInterval=60s"
+      - "--metrics.otlp.pushInterval=300s"
       - "--metrics.otlp.grpc=true"
       - "--metrics.otlp.grpc.insecure=true"
       - "--metrics.otlp.grpc.endpoint=otel-collector:4317"
