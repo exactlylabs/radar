@@ -74,6 +74,7 @@ Rails.application.routes.draw do
       post 'confirm_moving_claimed_pods_to_account_and_network', to: 'clients#confirm_moving_claimed_pods_to_account_and_network'
       post 'claim_new_pod', to: 'clients#claim_new_pod'
       get 'need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id'
+      get 'crl', to: 'clients#crl'
     end
 
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
