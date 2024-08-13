@@ -6,16 +6,13 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/pem"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/config"
@@ -117,13 +114,12 @@ func verifyCertIsRevoked(binCert, rootCert *x509.Certificate) error {
 	if err != nil {
 		return errors.W(err)
 	}
-	if err := rootCert.CheckCRLSignature(crl); err != nil {
+
+	if err := crl.CheckSignatureFrom(rootCert); err != nil {
 		return errors.SentinelWithStack(ErrCRLInvalidSignature)
 	}
-	if crl.HasExpired(time.Now()) {
-		return errors.SentinelWithStack(ErrCRLExpired)
-	}
-	for _, revoked := range crl.TBSCertList.RevokedCertificates {
+
+	for _, revoked := range crl.RevokedCertificateEntries {
 		if revoked.SerialNumber != nil && revoked.SerialNumber.Cmp(binCert.SerialNumber) == 0 {
 			return errors.SentinelWithStack(ErrCertificateRevoked)
 		}
@@ -131,35 +127,41 @@ func verifyCertIsRevoked(binCert, rootCert *x509.Certificate) error {
 	return nil
 }
 
-func loadCRL() (*pkix.CertificateList, error) {
-	crlUrl := config.LoadConfig().CRLUrl
-	u, err := url.Parse(crlUrl)
-	if err != nil {
-		return nil, errors.SentinelWithStack(ErrCRLNotFound)
-	}
-	var crlBytes []byte
+func readFromUrl(u *url.URL) ([]byte, error) {
 	if u.Scheme == "https" || u.Scheme == "http" {
-		res, err := http.Get(crlUrl)
+		res, err := http.Get(u.String())
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get CRL").WithMetadata(errors.Metadata{"url": crlUrl})
+			return nil, errors.Wrap(err, "failed to get CRL").WithMetadata(errors.Metadata{"url": u.String()})
 		}
 		defer res.Body.Close()
-		crlBytes, err = ioutil.ReadAll(res.Body)
+		return io.ReadAll(res.Body)
 	} else if u.Scheme == "file" {
 		f, err := os.Open(u.Host + u.Path)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to open CRL file").WithMetadata(errors.Metadata{"path": u.Host + u.Path})
 		}
 		defer f.Close()
-		crlBytes, err = ioutil.ReadAll(f)
+		return io.ReadAll(f)
 	} else {
 		return nil, errors.New("invalid CRLUrl configuration")
 	}
+}
+
+func loadCRL() (*x509.RevocationList, error) {
+	crlUrl, err := url.JoinPath(config.LoadConfig().ServerURL, "clients", "crl")
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	u, err := url.Parse(crlUrl)
+	if err != nil {
+		return nil, errors.SentinelWithStack(ErrCRLNotFound)
+	}
+	crlBytes, err := readFromUrl(u)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load CRL").WithMetadata(errors.Metadata{"url": u.String()})
 	}
 	crlPem, _ := pem.Decode(crlBytes)
-	crl, err := x509.ParseCRL(crlPem.Bytes)
+	crl, err := x509.ParseRevocationList(crlPem.Bytes)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse CRL")
 	}
@@ -181,7 +183,7 @@ func verifySignature(binCert *x509.Certificate, binary []byte, signature []byte)
 
 func ParseSignedBinary(path string) (*SignedBinary, error) {
 	s := &SignedBinary{}
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read file").WithMetadata(errors.Metadata{"path": path})
 	}
