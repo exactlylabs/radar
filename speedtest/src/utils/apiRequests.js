@@ -72,6 +72,7 @@ export const sendSpeedTestFormInformation = async (userData, clientId) => {
     return emptySubmission.id;
   } catch (err) {
     notifyError(err);
+    throw new Error(err);
   }
 };
 

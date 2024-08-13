@@ -21,7 +21,7 @@
   font-weight: normal;
 }
 
-* {
+*:not(.MuiAlert-icon) {
   font-family: Mulish, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   color: #110e4c;
   font-variation-settings: 'wght' 400;
@@ -127,4 +127,10 @@
 
 input {
   font-family: Mulish, serif;
+}
+
+.MuiSnackbar-root > div > div.MuiAlert-message,
+.MuiSnackbar-root > div > div.MuiAlert-action > button > svg > path,
+.MuiSnackbar-root > div > div.MuiAlert-icon > svg > path {
+  color: white;
 }

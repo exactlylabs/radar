@@ -123,7 +123,7 @@ export const SpeedTestContextProvider = ({children}) => {
     setCounter(0);
     setProgress(0);
     setRunningTestType('upload');
-    if(data?.LastClientMeasurement?.MeanClientMbps) {
+    if(data?.LastClientMeasurement?.MeanClientMbps && data?.LastServerMeasurement?.TCPInfo) {
       downloadRef.current = data.LastClientMeasurement.MeanClientMbps;
       setDownloadValue(data.LastClientMeasurement.MeanClientMbps);
       latencyRef.current = data.LastServerMeasurement.TCPInfo.MinRTT / 1000;
@@ -140,7 +140,7 @@ export const SpeedTestContextProvider = ({children}) => {
     setCounter(100);
     setProgress(100);
     let currentData = speedTestData.rawData;
-    if(data?.LastServerMeasurement) {
+    if(data?.LastServerMeasurement?.TCPInfo) {
       uploadRef.current = (data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8;
       setUploadValue(
         (data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8

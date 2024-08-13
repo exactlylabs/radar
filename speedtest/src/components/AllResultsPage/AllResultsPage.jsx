@@ -24,6 +24,7 @@ import {DEFAULT_GRAY_BUTTON_TEXT_COLOR} from "../../utils/colors";
 import {addMetadataToResults} from "../../utils/metadata";
 import ConnectionContext from "../../context/ConnectionContext";
 import {isArray} from "leaflet/src/core/Util";
+import AlertsContext, {SNACKBAR_TYPES} from "../../context/AlertsContext";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -60,6 +61,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {setNoInternet} = useContext(ConnectionContext);
+  const {showSnackbarMessage} = useContext(AlertsContext);
   let timerId;
 
 
@@ -189,7 +191,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       .then(res => handleTestsWithBoundsResult(res))
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);
-        notifyError(err)
+        notifyError(err);
+        showSnackbarMessage('There has been an error fetching speedtests!', SNACKBAR_TYPES.ERROR);
       })
       .finally(() => setFetchingResults(false));
   }
