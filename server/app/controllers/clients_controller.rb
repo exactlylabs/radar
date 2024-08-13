@@ -7,7 +7,7 @@ class ClientsController < ApplicationController
   include ErrorsHelper
   include RangeEvaluator
   before_action :check_account_presence, only: %i[ index show ]
-  before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
+  before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test crl ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_client, only: %i[ release update edit destroy get_client_label toggle_in_service speed_average remove_from_network claim_new_pod ]
@@ -839,6 +839,11 @@ class ClientsController < ApplicationController
       @notice = there_has_been_an_error('removing your client from network')
     end
 
+  end
+
+  # GET /clients/crl -- Get Certificate Revocation List
+  def crl
+    send_file Rails.root.join("config", "rootCRL.crl.pem"), type: "application/x-pem-file", disposition: "inline"
   end
 
   private
