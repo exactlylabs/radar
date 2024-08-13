@@ -42,7 +42,7 @@ build-setup-shapes:
 .PHONY: build-mlab-ingestor
 build-mlab-ingestor:
 	docker buildx build \
-	  --platform linux/arm64,linux/amd64 \
+	  --platform linux/amd64 \
 		-f docker/Dockerfile.ingestor \
 		-t mlab-ingestor:$(VERSION) .
 

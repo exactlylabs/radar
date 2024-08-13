@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
@@ -55,15 +56,17 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 	defer s.CloseAll()
 	defer clearCache()
 	if err := loadCache(s.GeospaceStorage, s.ASNOrgStorage); err != nil {
-		return errors.Wrap(err, "ingestor.Ingest loadCache")
+		return errors.W(err)
 	}
 
 	if err := ingestFetchedData(ctx, start, s, it); err != nil {
-		return err
+		return errors.W(err)
 	}
 	// Ensure that any outstanding insertion is finished before summarizing
 	if summarize {
-		s.Summarize(0)
+		if err := s.Summarize(0); err != nil {
+			return errors.W(err)
+		}
 	}
 	return nil
 }
@@ -79,6 +82,7 @@ func ingestFetchedData(ctx context.Context, startTime time.Time, s storages.Inge
 				return errors.Wrap(err, "ingestor.Ingest Next")
 			}
 			if readers == nil {
+				log.Println("ingestor.ingestFetcchedata: reader is empty, returning.")
 				return nil
 			}
 			if err := processDate(readers, startTime, s); err != nil {

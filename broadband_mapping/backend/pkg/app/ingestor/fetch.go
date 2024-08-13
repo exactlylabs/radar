@@ -50,10 +50,13 @@ func Fetch(storage Storage, directories []string, start, end time.Time) (*ItemIt
 				prefix = fmt.Sprintf("%s/%s", directory, prefix)
 			}
 			var err error
-			dateNames, err = storage.List(ctx, prefix)
+			log.Printf("Listing files with prefix: %s\n", prefix)
+			fileNames, err := storage.List(ctx, prefix)
 			if err != nil {
 				return nil, errors.W(err)
 			}
+			log.Printf("Found %d files", len(fileNames))
+			dateNames = append(dateNames, fileNames...)
 		}
 		if len(dateNames) == len(directories) {
 			names = append(names, dateNames)
