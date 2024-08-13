@@ -76,7 +76,7 @@ func ParseUpdateFile(r io.Reader) ([]byte, error) {
 }
 
 func readFile(r io.Reader) (*SignedBinary, error) {
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read file")
 	}
