@@ -224,12 +224,16 @@ func (si *SysInfoManager) GetAuthLogFile() ([]byte, error) {
 }
 
 func (si *SysInfoManager) GetSysTimezone() (*time.Location, error) {
-
 	out, err := si.runCommand(exec.Command("timedatectl", "--value", "-p", "Timezone", "show"))
 	if err != nil {
 		metadata := errors.GetMetadata(err)
-		if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Connection timed out") {
-			return nil, nil
+		knownErrors := []string{"Connection timed out", "Transport endpoint is not connected"}
+		if metadata != nil {
+			for _, knownErr := range knownErrors {
+				if strings.Contains((*metadata)["stderr"].(string), knownErr) {
+					return nil, nil
+				}
+			}
 		}
 		return nil, errors.W(err)
 	}
