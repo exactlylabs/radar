@@ -3,7 +3,7 @@
 ###
 #
 # Log into the Rails console of all environments (dev, staging, production)
-# Usage: ./bin/console <environment>
+# Usage: ./bin/console <stack> <service> <environment>
 #
 # IMPORTANT:
 #   The current version of this script considers that the containers run in a known cluster node.
@@ -15,7 +15,7 @@ set -e
 if [ -z "$1" ] | [ -z "$2" ] | [ -z "$3" ]; then
     echo "Missing environment argument"
     echo "Usage: ./run <STACK> <SERVICE> <environment>"
-    echo "Eg: ./run server.app production"
+    echo "Eg: ./run server app production sh"
     exit 1
 fi
 
@@ -30,11 +30,7 @@ find_swarm_container_name() {
 }
 
 
-if [ "$3" == "dev" ]; then
-    echo "Executing Rails console on dev environment (rails c)"
-    rails c
-    exit 0
-elif [ "$3" == "staging" ]; then
+if [ "$3" == "staging" ]; then
     export DOCKER_HOST=ssh://admin@manager-01.staging.radartoolkit.com
 elif [ "$3" == "production" ]; then
     export DOCKER_HOST=ssh://admin@manager-01.radartoolkit.com
@@ -51,5 +47,5 @@ fi
 
 
 shift 3
-echo "Executing $@ console on container ${CONTAINER_NAME}"
+echo "Executing "$@" on container ${CONTAINER_NAME}"
 docker exec -it ${CONTAINER_NAME} $@
