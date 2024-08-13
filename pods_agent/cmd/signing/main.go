@@ -1,15 +1,12 @@
 package main
 
 import (
-	"crypto"
-	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
@@ -56,26 +53,11 @@ func loadFromPath(path string) []byte {
 	if err != nil {
 		panic(err)
 	}
-	data, err := ioutil.ReadAll(f)
+	data, err := io.ReadAll(f)
 	if err != nil {
 		panic(err)
 	}
 	return data
-}
-
-func signBinary(binary []byte, pkey *rsa.PrivateKey) []byte {
-	hasher := sha256.New()
-	_, err := hasher.Write(binary)
-	if err != nil {
-		panic(err)
-	}
-	binHash := hasher.Sum(nil)
-	// Now we sign this binary Hash
-	signature, err := rsa.SignPKCS1v15(rand.Reader, pkey, crypto.SHA256, binHash)
-	if err != nil {
-		panic(err)
-	}
-	return signature
 }
 
 type SignedBinary struct {
@@ -86,7 +68,7 @@ type SignedBinary struct {
 }
 
 func GenerateSignedBinary(binary []byte, pkey *rsa.PrivateKey, cert []byte) *update.SignedBinary {
-	signature := signBinary(binary, pkey)
+	signature := update.SignBinary(binary, pkey)
 	s := &update.SignedBinary{}
 	s.Signature = signature
 	s.Certificate = cert
