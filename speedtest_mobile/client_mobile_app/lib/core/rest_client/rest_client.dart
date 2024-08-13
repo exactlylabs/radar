@@ -13,8 +13,15 @@ class RestClient {
   String get baseUrl => _baseUrl;
 
   String get ws {
-    final url = _baseUrl.replaceAll('http://', '').replaceAll('https://', '');
-    return 'ws://$url$_ws';
+    String url = _baseUrl;
+    final http = RegExp(r'^http://');
+    final https = RegExp(r'^https://');
+    if (http.hasMatch(url)) {
+      url = url.replaceFirst(http, 'ws://');
+    } else if (https.hasMatch(url)) {
+      url = url.replaceFirst(https, 'wss://');
+    }
+    return '$url$_ws';
   }
 
   String _combineUrl(String url) {
