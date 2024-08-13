@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 )
@@ -31,10 +33,28 @@ func SelfUpdate(binaryUrl string, expectedVersion string) error {
 	return nil
 }
 
-func InstallFromUrl(binPath, url, expectedVersion string) error {
-	res, err := http.Get(url)
+// downloadBinary with retry of up to N times when Timeout or NetworkUnreachable errors appear.
+func downloadBinary(updateUrl string, maxRetries int) (res *http.Response, err error) {
+	res, err = http.Get(updateUrl)
+
+	var urlErr *url.Error
+	if maxRetries > 0 && errors.As(err, &urlErr) {
+		// Error treatment: Retry in case of network-related errors
+		if urlErr.Timeout() || strings.Contains(urlErr.Error(), "network is unreachable") {
+			return downloadBinary(updateUrl, maxRetries-1)
+		}
+	}
+
 	if err != nil {
-		return errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": url})
+		return nil, errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": updateUrl})
+	}
+	return res, nil
+}
+
+func InstallFromUrl(binPath, updateUrl, expectedVersion string) error {
+	res, err := downloadBinary(updateUrl, 5)
+	if err != nil {
+		return errors.W(err)
 	}
 	if res.StatusCode != 200 {
 		return errors.New("update.InstallFromUrl unexpected status code: %d", res.StatusCode)
