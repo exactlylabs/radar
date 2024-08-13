@@ -16,9 +16,10 @@ import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
 import ConfigContext from "../../context/ConfigContext";
-import UserDataContext from "../../context/UserData";
+import UserDataContext, {emptyUserData} from "../../context/UserData";
 import ExpectedSpeedsStepPage from "./Pages/ExpectedSpeedsStepPage/ExpectedSpeedsStepPage";
 import SpeedTestContext from "../../context/SpeedTestContext";
+import AlertsContext, {SNACKBAR_TYPES} from "../../context/AlertsContext";
 
 const stepsPageStyle = {
   width: '100%',
@@ -50,8 +51,9 @@ const StepsPage = ({
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {userData, setUserData, setAddress, setTerms, setNetworkType, setNetworkLocation, setCurrentStep} = useContext(UserDataContext);
-  const {runNdt7Test} = useContext(SpeedTestContext);
-  
+  const {clearValues, runNdt7Test} = useContext(SpeedTestContext);
+  const {showSnackbarMessage} = useContext(AlertsContext);
+
   useEffect(() => {
     setCurrentStep(specificStep);
     if(specificStep === STEPS.SPEED_TEST_RESULTS) {
@@ -69,6 +71,12 @@ const StepsPage = ({
 
   const setLastTestTaken = () => {
     const lastTestTaken = getLastStoredValue();
+    if(!lastTestTaken) {
+      setCurrentStep(STEPS.INITIAL);
+      setUserData(emptyUserData);
+      clearValues();
+      return;
+    }
     const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
     const networkType = types.find(type => type.text === lastTestTaken.networkType);
     setUserData({
@@ -153,9 +161,13 @@ const StepsPage = ({
   const goToMapPage = () => goToAreaMap(userData.address.coordinates);
 
   async function goToNoInternetPage() {
-    const emptyTestId = await sendSpeedTestFormInformation(userData, config.clientId);
-    setLastTestResults({id: emptyTestId});
-    setCurrentStep(STEPS.NO_INTERNET);
+    try {
+      const emptyTestId = await sendSpeedTestFormInformation(userData, config.clientId);
+      setLastTestResults({id: emptyTestId});
+      setCurrentStep(STEPS.NO_INTERNET);
+    } catch (e) {
+      showSnackbarMessage('There has been an unexpected error! Please try again later.', SNACKBAR_TYPES.ERROR);
+    }
   }
 
   const goToConnectionAddress = () => setCurrentStep(STEPS.CONNECTION_ADDRESS);

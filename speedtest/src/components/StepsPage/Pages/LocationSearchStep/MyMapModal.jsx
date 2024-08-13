@@ -26,6 +26,7 @@ import {ADDRESS_PROVIDER} from "../../../../utils/userMetadata";
 import UserDataContext from "../../../../context/UserData";
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 import './MyMapModal.css';
+import AlertsContext, {SNACKBAR_TYPES} from "../../../../context/AlertsContext";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -149,6 +150,7 @@ const MyMapModal = ({
   const {userData, setUserData} = useContext(UserDataContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const {setNoInternet} = useContext(ConnectionContext);
+  const {showSnackbarMessage} = useContext(AlertsContext);
   const markerRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
@@ -254,6 +256,7 @@ const MyMapModal = ({
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
       notifyError(e);
+      showSnackbarMessage('There has been an error fetching coordinates!', SNACKBAR_TYPES.ERROR);
     }
   }
 

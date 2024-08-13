@@ -8,8 +8,9 @@ import HistoryPage from "../HistoryPage/HistoryPage";
 import ConnectionContext from "../../context/ConnectionContext";
 import NoInternetModal from "../common/NoInternetModal";
 import OverviewPage from "../OverviewPage/OverviewPage";
-import UserData from "../../context/UserData";
 import UserDataContext from "../../context/UserData";
+import AlertsContext from "../../context/AlertsContext";
+import {Alert, Snackbar} from "@mui/material";
 
 const MainPage = ({config}) => {
 
@@ -35,6 +36,7 @@ const MainPage = ({config}) => {
   const {noInternet, setNoInternet} = useContext(ConnectionContext);
   const {userData} = useContext(UserDataContext);
   const {currentStep} = userData;
+  const {closeSnackbar, isSnackbarVisible, snackbarMessage, snackbarType} = useContext(AlertsContext);
 
   useEffect(() => {
     setSpecificSpeedTestStep(currentStep);
@@ -96,6 +98,19 @@ const MainPage = ({config}) => {
     <Frame config={config} setStep={setStep} step={step}>
       {renderContent()}
       <NoInternetModal isOpen={noInternet} closeModal={() => setNoInternet(false)}/>
+      <Snackbar open={isSnackbarVisible}
+                onClose={closeSnackbar}
+                autoHideDuration={3000}
+      >
+        <Alert severity={snackbarType}
+               variant={'filled'}
+               sx={{width: '100%'}}
+               color={snackbarType}
+               onClose={closeSnackbar}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Frame>
   )
 }

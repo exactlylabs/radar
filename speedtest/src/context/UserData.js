@@ -26,25 +26,27 @@ export const emptyAddress = {
   house_number: ''
 };
 
+export const emptyUserData = {
+  currentStep: STEPS.INITIAL,
+  address: emptyAddress,
+  terms: false,
+  networkLocation: null,
+  networkType: null,
+  networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
+  addressProvider: ADDRESS_PROVIDER.MANUAL,
+  altitude: null, // provided by browser geolocation API
+  accuracy: null, // provided by browser geolocation API
+  altitudeAccuracy: null, // provided by browser geolocation API
+  speed: null, // provided by browser geolocation API
+  heading: null, // provided by browser geolocation API
+  expectedDownloadSpeed: undefined,
+  expectedUploadSpeed: undefined,
+  contactInformation: emptyContactInformation,
+};
+
 export const UserDataContextProvider = ({children}) => {
 
-  const [userData, setUserData] = useState({
-    currentStep: STEPS.INITIAL,
-    address: emptyAddress,
-    terms: false,
-    networkLocation: null,
-    networkType: null,
-    networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
-    addressProvider: ADDRESS_PROVIDER.MANUAL,
-    altitude: null, // provided by browser geolocation API
-    accuracy: null, // provided by browser geolocation API
-    altitudeAccuracy: null, // provided by browser geolocation API
-    speed: null, // provided by browser geolocation API
-    heading: null, // provided by browser geolocation API
-    expectedDownloadSpeed: undefined,
-    expectedUploadSpeed: undefined,
-    contactInformation: emptyContactInformation,
-  });
+  const [userData, setUserData] = useState(emptyUserData);
 
   const setAddress = address => setUserData(prev => ({...prev, address}));
   const setTerms = status => setUserData(prev => ({...prev, terms: status}));
