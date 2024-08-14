@@ -68,7 +68,7 @@
           <option></option>
           <option>&nbsp;</option>
           <% if current_account.is_all_accounts? %>
-            <% policy_scope(Account).first.locations.each do |location|%>
+            <% policy_scope(Account).first&.locations&.each do |location|%>
               <%= render partial: "clients/client_select_option", locals: { option: location, selected: false} %>
             <% end %>
           <% else %>
