@@ -65,7 +65,7 @@
             <p class="public--additional-text wrap"><%= "Last measurement on #{pretty_print_date_with_time(client.latest_measurement.created_at)}" %></p>
           </div>
         <% end %>
-        <% if client.status == Client::STATUSES::RUNNING_TEST %>
+        <% if client.status == Client::STATUSES::RUNNING_TEST || !client.online %>
           <span class="m-0 public--tooltip-wrapper additional-text wrap" data-bs-custom-class="additional-text wrap public--custom-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="A speed test is already running or you need to wait a few minutes before taking another one.">
             <a class="custom-button custom-button--primary custom-button--lg custom-button--disabled public--manage-pod-button disabled">
               <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>

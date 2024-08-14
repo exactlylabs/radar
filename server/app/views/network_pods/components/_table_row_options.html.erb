@@ -1,4 +1,6 @@
-<%= link_to "Run speed test", run_test_client_path(row.unix_user), method: :post, class: "tables--row-option table-menu-option ellipsis" %>
+<% if row.online %>
+  <%= link_to "Run speed test", run_test_client_path(row.unix_user), method: :post, class: "tables--row-option table-menu-option ellipsis" %>
+<% end %>
 <%= link_to "View details", client_path(row.unix_user), class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "_top", "no-turbolink" => true } %>
 <%= link_to "Edit", edit_client_path(row.unix_user), { class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "edit_client_modal" } } %>
 <% if current_user.super_user && !is_super_user_disabled? %>
