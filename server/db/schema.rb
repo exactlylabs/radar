@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_03_221428) do
+ActiveRecord::Schema.define(version: 2024_08_14_130539) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -918,6 +918,46 @@ ActiveRecord::Schema.define(version: 2024_08_03_221428) do
      FROM (measurements
        LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
     GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
+    ORDER BY (date_trunc('d'::text, measurements.processed_at));
+  SQL
+  create_view "aggregated_pod_measurements_by_hours", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      measurements.client_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
+    ORDER BY (date_trunc('h'::text, measurements.processed_at));
+  SQL
+  create_view "aggregated_pod_measurements_by_days", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      measurements.client_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
     ORDER BY (date_trunc('d'::text, measurements.processed_at));
   SQL
 end

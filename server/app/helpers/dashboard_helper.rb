@@ -141,18 +141,6 @@ module DashboardHelper
   end
 
   def self.get_pod_download_speed_sql(pod_id, from, to, pod_account_id)
-    # sql = %{
-    #   SELECT
-    #     EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-    #     percentile_disc(0.5) WITHIN GROUP (ORDER BY download) AS "#4B7BE5",
-    #     MIN(download) AS "#FF695D",
-    #     MAX(download) AS "#9138E5"
-    #   FROM measurements
-    #   WHERE processed_at BETWEEN :from AND :to
-    #   AND client_id = :pod_id
-    #   GROUP BY 1
-    #   ORDER BY "x" ASC
-    # }
     sql = self.get_base_series_sql("download", nil, nil, pod_id)
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
@@ -168,18 +156,6 @@ module DashboardHelper
   end
 
   def self.get_pod_upload_speed_sql(pod_id, from, to, pod_account_id)
-    # sql = %{
-    #   SELECT
-    #     EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-    #     percentile_disc(0.5) WITHIN GROUP (ORDER BY upload) AS "#4B7BE5",
-    #     MIN(upload) AS "#FF695D",
-    #     MAX(upload) AS "#9138E5"
-    #   FROM measurements
-    #   WHERE processed_at BETWEEN :from AND :to
-    #   AND client_id = :pod_id
-    #   GROUP BY 1
-    #   ORDER BY "x" ASC
-    # }
     sql = self.get_base_series_sql("upload", nil, nil, pod_id)
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
@@ -195,18 +171,6 @@ module DashboardHelper
   end
 
   def self.get_pod_latency_sql(pod_id, from, to, pod_account_id)
-    # sql = %{
-    #   SELECT
-    #     EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-    #     percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "#4B7BE5",
-    #     MIN(latency) AS "#FF695D",
-    #     MAX(latency) AS "#9138E5"
-    #   FROM measurements
-    #   WHERE processed_at BETWEEN :from AND :to
-    #   AND client_id = :pod_id
-    #   GROUP BY 1
-    #   ORDER BY "x" ASC
-    # }
     sql = self.get_base_series_sql("upload", nil, nil, pod_id)
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
@@ -247,7 +211,7 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
-  def self.get_pod_usage_sql(pod_id, from, to)
+  def self.get_pod_usage_sql(pod_id, from, to, account_id)
     sql = %{
       WITH data_used_per_day AS (
         SELECT
@@ -258,13 +222,13 @@ module DashboardHelper
         WHERE
           processed_at BETWEEN :from AND :to
           AND client_id = :pod_id
-          AND measurements.account_id = clients.account_id
+          AND measurements.account_id = :account_id
         GROUP BY 1
         ORDER BY 1 ASC
       )
       SELECT total as y, EXTRACT(EPOCH FROM time) * 1000 as x FROM data_used_per_day ORDER BY time ASC;
       }
-    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, account_id: account_id, from: from, to: to}])
   end
 
   def self.get_compare_data_usage_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
@@ -600,13 +564,16 @@ module DashboardHelper
     sql += " COALESCE(MAX(#{metric}_max), 0) as \"#9138E5\", "
     sql += " COALESCE(percentile_disc(0.5) WITHIN GROUP (ORDER BY #{metric}_median), 0) as \"#4B7BE5\", "
     sql += " COALESCE(MIN(#{metric}_min), 0) AS \"#FF695D\" "
-    sql += " FROM aggregated_measurements((SELECT time FROM base_series ORDER BY 1 LIMIT 1)::timestamp, :from::timestamp) "
+
     if pod_id.present?
-      sql += " JOIN measurements ON measurements.id = aggregated_measurements.id "
+      sql += " FROM aggregated_pod_measurements((SELECT time FROM base_series ORDER BY 1 LIMIT 1)::timestamp, :from::timestamp) "
       sql += " JOIN clients ON client_id = clients.id "
+      sql += " WHERE aggregated_pod_measurements.account_id IN (:account_ids) "
+    else
+      sql += " FROM aggregated_measurements((SELECT time FROM base_series ORDER BY 1 LIMIT 1)::timestamp, :from::timestamp) "
+      sql += " WHERE aggregated_measurements.account_id IN (:account_ids) "
     end
 
-    sql += " WHERE account_id IN (:account_ids) "
     sql += " AND autonomous_system_org_id IN (:as_org_ids)" if as_org_ids.present?
     sql += " AND location_id IN (:location_ids)" if location_ids.present?
     sql += " AND client_id = :pod_id" if pod_id.present?
@@ -625,10 +592,17 @@ module DashboardHelper
     sql += " MAX(#{metric}_max) as \"#9138E5\", "
     sql += " percentile_disc(0.5) WITHIN GROUP (ORDER BY #{metric}_median) as \"#4B7BE5\", "
     sql += " MIN(#{metric}_min) AS \"#FF695D\" "
-    sql += " FROM aggregated_measurements(:from::timestamp, :to::timestamp) "
 
-    sql += " JOIN clients ON client_id = clients.id " if pod_id.present?
-    sql += " WHERE account_id IN (:account_ids) "
+    if pod_id.present?
+      sql += " FROM aggregated_pod_measurements(:from::timestamp, :to::timestamp) "
+      sql += " JOIN clients ON client_id = clients.id "
+      sql += " WHERE aggregated_pod_measurements.account_id IN (:account_ids) "
+    else
+      sql += " FROM aggregated_measurements(:from::timestamp, :to::timestamp) "
+      sql += " WHERE aggregated_measurements.account_id IN (:account_ids) "
+    end
+
+
     sql += " AND autonomous_system_org_id IN (:as_org_ids)" if as_org_ids.present?
     sql += " AND location_id IN (:location_ids)" if location_ids.present?
     sql += " AND client_id = :pod_id" if pod_id.present?
