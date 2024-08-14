@@ -29,7 +29,7 @@ func Open(opts ChStorageOptions) (driver.Conn, error) {
 		},
 		Addr:         []string{fmt.Sprintf("%s:%d", opts.Host, opts.Port)},
 		MaxOpenConns: opts.MaxConnections,
-		ReadTimeout:  time.Hour,
+		ReadTimeout:  time.Hour * 24,
 	}
 	if opts.SecureTLS {
 		chOpts.TLS = &tls.Config{}
