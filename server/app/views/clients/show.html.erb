@@ -22,10 +22,10 @@
     <!--end::Info-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <div class="pods--header-options-container">
-        <a class="custom-button custom-button--primary custom-button--lg <%= @client.test_requested ? 'custom-button--disabled' : '' %>"
+        <a class="custom-button custom-button--primary custom-button--lg <%= !@client.online || @client.test_requested ? 'custom-button--disabled' : '' %>"
            rel="nofollow"
            data-method="post"
-           href="<%= @client.test_requested ? '#' : run_test_client_path(@client.unix_user) %>"
+           href="<%= !@client.online || @client.test_requested ? '#' : run_test_client_path(@client.unix_user) %>"
         >
           <%= image_tag image_url('run-speed-test-icon.png'), width: 16, height: 16, class: "me-2" %>
           Run speed test
