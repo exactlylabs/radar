@@ -81,7 +81,8 @@ class Client < ApplicationRecord
   }
   scope :where_test_should_be_requested, lambda {
     where(%{
-      (test_scheduled_at <= NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC') OR test_scheduled_at IS NULL) AND test_requested = false
+      online
+      AND (test_scheduled_at <= NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC') OR test_scheduled_at IS NULL) AND test_requested = false
       AND (
         (test_allowed_time_end IS NULL AND test_allowed_time_start IS NULL)
         OR (
