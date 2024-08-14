@@ -36,5 +36,13 @@
         <%= pod.hardware_platform.nil? ? "Not Available" : pod.hardware_platform.upcase %>
       </span>
     </div>
+    <% if current_user.super_user && !is_super_user_disabled? %>
+      <div class="cards--info-row-full-width mb-4">
+        <label class="forms--label">Register label</label>
+        <span class="cards--info-row-value <%= pod.register_label.nil? ? 'additional-text' : 'regular-text' %>">
+          <%= pod.register_label.nil? ? "Not Available" : pod.register_label %>
+        </span>
+      </div>
+    <% end %>
   </div>
 </div>
