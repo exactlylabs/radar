@@ -95,7 +95,9 @@
     <%= render partial: "application/components/modals/turbo_modal",
                locals: { turbo_frame_tag_id: "notifications_modal" }
     %>
-    <% if flash[:alert].present? %>
+    <% # Devise's "Already authenticated" alert is meaningless, plus, they set it to flash[:alert] which is wrong %>
+    <% # reason for the notification to popup in the error state. Just ignoring that one explicitly here. %>
+    <% if flash[:alert].present? && flash[:alert] != t('devise.failure.already_authenticated') %>
       <%= render partial: "application/notice_alert", locals: {notice: flash[:alert], type: 'error'} %>
     <% end %>
     <%= render partial: "application/notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
