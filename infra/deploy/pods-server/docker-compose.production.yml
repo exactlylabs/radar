@@ -29,7 +29,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
@@ -102,7 +102,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
@@ -164,7 +164,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
@@ -220,7 +220,7 @@ services:
       - EVENTS_NOTIFIER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1072323113544589322/Rlc2mlNd1K_s0p0_KhoUW6DTNLvPXO041FAh9kPfZ8EytAP2ffIdQrs0Z6Tq4y7WQd3D
       - FIPS_GEOCODER_URL=http://fipsgeocoder_api:5000
       - PUBLIC_PAGE_SUBMISSION_EMAILS=matt@exactlylabs.com,amanda@exactlylabs.com,anand@exactlylabs.com
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
