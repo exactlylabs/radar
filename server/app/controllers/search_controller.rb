@@ -9,10 +9,10 @@ class SearchController < ApplicationController
     if @query.present?
       @results[:accounts] = policy_scope(Account).where("name ILIKE ?", "%#{@query}%")
       if current_user_accounts_ids.count == 1
-        @results[:pods] = Client.where("unix_user ILIKE ? AND account_id = ?", "%#{@query}%", current_user_accounts_ids[0])
+        @results[:pods] = Client.where("(unix_user ILIKE ? OR register_label ILIKE ?) AND account_id = ?", "%#{@query}%", "%#{@query}%", current_user_accounts_ids[0])
         @results[:locations] = Location.where("name ILIKE ? AND account_id = ?", "%#{@query}%", current_user_accounts_ids[0])
       else 
-        @results[:pods] = Client.where("unix_user ILIKE ? AND account_id IN (?)", "%#{@query}%", current_user_accounts_ids)
+        @results[:pods] = Client.where("(unix_user ILIKE ? OR register_label ILIKE ?) AND account_id IN (?)", "%#{@query}%", "%#{@query}%", current_user_accounts_ids)
         @results[:locations] = Location.where("name ILIKE ? AND account_id IN (?)", "%#{@query}%", current_user_accounts_ids)
       end
     end
