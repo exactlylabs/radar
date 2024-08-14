@@ -80,6 +80,7 @@ p {
   margin-right: auto;
   position: relative;
   box-sizing: border-box;
+  min-height: 100vh;
 }
 
 @media (max-width: 1024px) {
