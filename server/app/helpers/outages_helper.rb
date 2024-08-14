@@ -14,6 +14,36 @@ module OutagesHelper
     end
   end
 
+  # Join outages based on their type + parent
+  # If no parent, then the join group will be of a single outage.
+  def self.join_by_parent(outages)
+    isp_outages = {}
+    single_outages = []
+    outages.each do |outage|
+      if outage["isp_outage_id"].present?
+        isp_outages[outage["isp_outage_id"]] ||= {
+          "id" => outage["isp_outage_id"],
+          "outage_type" => outage["outage_type"],
+          "autonomous_system_id" => outage["autonomous_system_id"],
+          "started_at" => outage["isp_outage_started_at"],
+          "resolved_at" => outage["isp_outage_resolved_at"],
+          "network_outages" => []
+        }
+        isp_outages[outage["isp_outage_id"]]["network_outages"] << outage
+      else
+        single_outages << {
+          "id" => outage["id"],
+          "outage_type" => outage["outage_type"],
+          "autonomous_system_id" => outage["autonomous_system_id"],
+          "started_at" => outage["started_at"],
+          "resolved_at" => outage["resolved_at"],
+          "network_outages" => [outage]
+        }
+      end
+    end
+    isp_outages.values + single_outages
+  end
+
   def self.group_outages(outages, order='asc', already_grouped=false)
     outages_obj = {}
     group_idx = 0

@@ -13,8 +13,8 @@
         <% @outages.each do |entry| %>
           <% group_data = entry[1] %>
           <% outages = group_data[:outages] %>
-          <% start_date = outages.first.started_at %>
-          <% end_date = outages.sort_by(&:resolved_at).last.resolved_at %>
+          <% start_date = outages.first["started_at"] %>
+          <% end_date = outages.sort_by { |o| o["resolved_at"] }.last["resolved_at"] %>
           <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
           <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
           <% if start_date_formatted == end_date_formatted %>

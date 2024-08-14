@@ -147,6 +147,7 @@ class DashboardController < ApplicationController
     @outages_count = @outages.count
     @outages_ids = @outages.map { |outage| outage['id'] }
     if @outages_count > 0
+      @outages = OutagesHelper.join_by_parent(@outages)
       @outages = OutagesHelper.group_outages(@outages)
       @downtime = @outages.map {|_, v| v[:duration] }.sum
 
