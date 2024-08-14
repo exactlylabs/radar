@@ -1,6 +1,6 @@
 require "test_helper"
 
-class LocationTest < ActiveSupport::TestCase
+class FeatureFlagsHelperTest < ActiveSupport::TestCase
   
   test 'When_is_available_is_called_with_a_flag_and_enabled_super_user_Expect_to_return_true' do
     user = users(:superuser1)

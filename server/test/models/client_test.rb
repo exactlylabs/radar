@@ -1,6 +1,6 @@
 require "test_helper"
 
-class LocationTest < ActiveSupport::TestCase
+class ClientTest < ActiveSupport::TestCase
   test "when client and location are from different account expect failure" do
     location = locations(:different_account)
     client = clients(:pod1)
