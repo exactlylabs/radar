@@ -3,7 +3,7 @@ class ReprocessNetworkGeospaceJob < ApplicationJob
   sidekiq_options retry: 5
 
   def perform(network)
-    Network.transaction do
+    Location.transaction do
       network.geospaces.excluding_lonlat(network.lonlat).each do |geospace|
         network.geospaces.delete geospace
       end
