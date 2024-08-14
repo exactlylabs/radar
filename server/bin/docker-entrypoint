@@ -1,9 +1,14 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 
 for secret in $(ls /var/run/secrets); do
   export "${secret}"="$(cat /var/run/secrets/${secret})"
 done
+
+# If running the rails server then create or migrate existing database
+if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+  ./bin/rails db:prepare db:migrate
+fi
 
 
 exec "$@"
