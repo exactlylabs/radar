@@ -1,6 +1,7 @@
 require "test_helper"
 
 class LocationTest < ActiveSupport::TestCase
+  include Minitest
   setup do
     Geocoder::Lookup::Test.set_default_stub([{
       'coordinates'  => [40.7143528, -74.0059731],
@@ -31,7 +32,7 @@ class LocationTest < ActiveSupport::TestCase
   end
 
   test "when location updated with lonlat change, expect job to be called" do
-    mock = MiniTest::Mock.new
+    mock = Mock.new
     mock.expect(:call, nil, [locations(:online1)])
     ReprocessNetworkGeospaceJob.stub :perform_later, mock do
       locations(:online1).update!(lonlat: "POINT(40.5 1)")
