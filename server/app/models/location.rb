@@ -312,7 +312,6 @@ include Recents
       results = Geocoder.search([self.latitude, self.longitude])
     end
     if geo = results.first
-      self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude
       self.latitude = geo.latitude unless self.latitude
       self.longitude = geo.longitude unless self.longitude
       self.state = geo.state
