@@ -11,15 +11,16 @@ import (
 )
 
 type devSysManager struct {
-	BootConfig          []byte
-	CMDConfig           []byte
-	Hostname            string
-	LogindConf          []byte
-	WatchdogServiceFile []byte
-	RCLocal             []byte
-	Interfaces_         network.NetInterfaces
-	AuthLogFile         []byte
-	Tz                  *time.Location
+	BootConfig            []byte
+	CMDConfig             []byte
+	Hostname              string
+	LogindConf            []byte
+	WatchdogServiceFile   []byte
+	RadarAgentServiceFile []byte
+	RCLocal               []byte
+	Interfaces_           network.NetInterfaces
+	AuthLogFile           []byte
+	Tz                    *time.Location
 }
 
 func NewDevSysManager() watchdog.SystemManager {
@@ -49,6 +50,10 @@ func (dm *devSysManager) GetLogindConf() ([]byte, error) {
 
 func (dm *devSysManager) GetWatchdogServiceFile() ([]byte, error) {
 	return dm.WatchdogServiceFile, nil
+}
+
+func (dm *devSysManager) GetRadarAgentServiceFile() ([]byte, error) {
+	return dm.RadarAgentServiceFile, nil
 }
 
 // GetRCLocal implements watchdog.SystemManager
@@ -88,6 +93,11 @@ func (dm *devSysManager) SetLogindConf(data []byte) error {
 
 func (dm *devSysManager) SetWatchdogServiceFile(data []byte) error {
 	dm.WatchdogServiceFile = data
+	return nil
+}
+
+func (dm *devSysManager) SetRadarAgentServiceFile(data []byte) error {
+	dm.RadarAgentServiceFile = data
 	return nil
 }
 
