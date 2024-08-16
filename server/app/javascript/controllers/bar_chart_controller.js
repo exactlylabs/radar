@@ -229,7 +229,7 @@ export default class BarChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText(this.formatTime(tooltipTitle), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
+    this.ctx.fillText(tooltipTitle, xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
