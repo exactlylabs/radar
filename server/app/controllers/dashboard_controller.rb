@@ -91,39 +91,25 @@ class DashboardController < ApplicationController
   def online_pods
     sql = DashboardHelper.get_online_pods_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @online_pods = ActiveRecord::Base.connection.execute(sql)
-
-    # For the online pods chart in particular, we draw way more points than download/upload speeds, latency, etc.
-    # So we need to determine the time interval between each point to decide how to format the x-axis
-
-    if @online_pods.count > 1
-      diff_between_dots = (@online_pods[1]['x'].to_i - @online_pods[0]['x'].to_i) / 1000 # in seconds
-      if diff_between_dots >= 1.day.in_seconds
-        @query_time_interval = 'day'
-      elsif diff_between_dots >= 1.hour.in_seconds
-        @query_time_interval = 'hour'
-      elsif diff_between_dots >= 1.minute.in_seconds
-        @query_time_interval = 'minute'
-      else
-        @query_time_interval = 'second'
-      end
-    else
-      @query_time_interval = 'second'
-    end
+    set_query_time_interval(@online_pods)
   end
 
   def download_speeds
     sql = DashboardHelper.get_download_speed_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
+    set_query_time_interval(@download_speeds)
   end
 
   def upload_speeds
     sql = DashboardHelper.get_upload_speed_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
+    set_query_time_interval(@upload_speeds)
   end
 
   def latency
     sql = DashboardHelper.get_latency_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @latencies = ActiveRecord::Base.connection.execute(sql)
+    set_query_time_interval(@latencies)
   end
 
   def data_usage
@@ -172,6 +158,23 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def set_query_time_interval(data)
+    if data.count > 1
+      diff_between_dots = (data[1]['x'].to_i - data[0]['x'].to_i) / 1000 # in seconds
+      if diff_between_dots >= 1.day.in_seconds
+        @query_time_interval = 'day'
+      elsif diff_between_dots >= 1.hour.in_seconds
+        @query_time_interval = 'hour'
+      elsif diff_between_dots >= 1.minute.in_seconds
+        @query_time_interval = 'minute'
+      else
+        @query_time_interval = 'second'
+      end
+    else
+      @query_time_interval = 'second'
+    end
+  end
 
   def set_params_and_interval_type
     case request.path
