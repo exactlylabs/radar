@@ -26,3 +26,20 @@ outage_pod1:
 outage_pod2:
   unix_user: "r222"
   account: root
+
+offline_with_autonomous_system_and_location:
+  account: root
+  unix_user: "r431f"
+  user: user1
+  location: offline1
+  ip: "200.102.123.204"
+  autonomous_system: as_1
+
+online_with_autonomous_system_and_location:
+  account: root
+  unix_user: "r432f"
+  user: user1
+  location: offline1
+  ip: "200.102.123.204"
+  autonomous_system: as_1
+  online: true
