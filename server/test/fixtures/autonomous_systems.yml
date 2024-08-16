@@ -1,2 +1,5 @@
 outage_as1:
-  name: "Autonomous System1"
+  name: "Outage Autonomous System1"
+
+as_1:
+  name: "Autonomous System 1"
