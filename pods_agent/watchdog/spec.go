@@ -63,6 +63,10 @@ type SystemManager interface {
 	GetWatchdogServiceFile() ([]byte, error)
 	// SetWatchdogServiceFile replaces the contents of podwatchdog@.service file
 	SetWatchdogServiceFile([]byte) error
+	// GetRadarAgentFile retrieves the contents of radar_agent.service file
+	GetRadarAgentServiceFile() ([]byte, error)
+	// SetRadarAgentFile replaces the contents of radar_agent.service file
+	SetRadarAgentServiceFile([]byte) error
 	// GetBootConfig retrieves the contents of config file from boot partition
 	GetBootConfig() ([]byte, error)
 	// SetBootConfig replaces the contents of config file from boot partition

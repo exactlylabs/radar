@@ -1,0 +1,15 @@
+[Unit]
+Description=Radar Agent
+After=network.target auditd.service
+
+[Service]
+Environment="GODEBUG=netdns=cgo"
+ExecStart=/opt/radar/radar_agent
+KillMode=process
+Restart=always
+RestartSec=5
+User=radar
+Group=radar
+
+[Install]
+WantedBy=multi-user.target

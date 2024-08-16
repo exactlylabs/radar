@@ -123,6 +123,13 @@ func (s *Scanner) ScanSystem(c *config.Config) error {
 	}
 	hasChanges |= changed
 
+	// Validate radar_agent.service
+	changed, err = checkAndReplace("osfiles/etc/systemd/system/radar_agent.service", s.sysManager.GetRadarAgentServiceFile, s.sysManager.SetRadarAgentServiceFile)
+	if err != nil {
+		return errors.W(err)
+	}
+	hasChanges |= changed
+
 	// Validate that the system is set to UTC
 	tz, err := s.sysManager.GetSysTimezone()
 	if err != nil {
