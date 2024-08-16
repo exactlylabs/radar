@@ -328,7 +328,7 @@ class ClientsController < ApplicationController
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
     account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
-    @client.account = account if account.present? && account.id != @client.account.id
+    @client.account = account if account.present? && account.id != @client.account&.id
     begin
       assign_pod_to_network(account, params[:network_id], params[:network_assignment_type], params[:categories])
     rescue => e

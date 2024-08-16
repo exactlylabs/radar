@@ -40,8 +40,10 @@
           <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
         <% end %>
       </select>
-      <div style="font-size: 13px; font-weight: 500;  color: #6D6A94; ">Your pod will be accessible to everyone
-        at <%= @client.account.name %></div>
+      <% if @client.account.present? %>
+        <div style="font-size: 13px; font-weight: 500;  color: #6D6A94; ">Your pod will be accessible to everyone
+          at <%= @client.account.name %></div>
+      <% end %>
     </div>
 
     <div class="modals--form-row mb-4">

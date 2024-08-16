@@ -1,4 +1,10 @@
-import ChartController, {DOT_SIZE, HELPER_HEIGHT, RADII, TOOLTIP_TITLE_PADDING} from "./chart_controller";
+import ChartController, {
+  DOT_SIZE,
+  HELPER_HEIGHT,
+  QUERY_INTERVALS,
+  RADII,
+  TOOLTIP_TITLE_PADDING
+} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -15,6 +21,7 @@ export default class MultiLineChartController extends ChartController {
     this.entitiesAndHexes = JSON.parse(this.element.dataset.entitiesAndHexes)
                             .map(i => JSON.parse(i))
       .map(i => ({label: i.label.length > 12 ? i.label.substring(0, 12) + '...' : i.label, hex: i.hex}));
+    this.usesQueryIntervalValue = Object.values(QUERY_INTERVALS).includes(this.element.dataset.queryTimeInterval);
     super.connect();
     this.responsiveMaxHeight = 220;
   }
