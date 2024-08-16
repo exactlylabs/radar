@@ -3,7 +3,7 @@ export VERSION
 
 .PHONY: build
 build:
-	docker buildx build --platform=linux/arm64,linux/amd64  -t pods-server:$(VERSION) .
+	docker buildx build --platform=linux/arm64  -t pods-server:$(VERSION) .
 	docker tag pods-server:$(VERSION) pods-server:latest
 
 

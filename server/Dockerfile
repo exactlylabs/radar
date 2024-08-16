@@ -68,7 +68,7 @@ RUN SECRET_KEY_BASE=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
-RUN apt-get update && apt-get install unzip -y
+RUN apt-get update && apt-get install unzip libjemalloc2 -y
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
@@ -85,6 +85,11 @@ RUN chown -R rails:rails /usr/local/bundle/ruby/*/gems/
 USER rails:rails
 
 COPY ./bin/docker-entrypoint ./bin/docker-entrypoint
+
+# Enable jemalloc, a memory allocator alternative that deals better with 
+# memory fragmentation issues, and so reducing the memory usage by allowing more memory blocks to be freed
+ENV LD_PRELOAD="libjemalloc.so.2" \
+    MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

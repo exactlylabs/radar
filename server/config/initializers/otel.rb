@@ -8,6 +8,11 @@ if Rails.env.staging? || Rails.env.production?
     c.id_generator = OpenTelemetry::Propagator::XRay::IDGenerator
     c.propagators = [OpenTelemetry::Propagator::XRay::TextMapPropagator.new]
 
-    c.use_all({ 'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false } })
+    c.use_all({ 
+      'OpenTelemetry::Instrumentation::ActiveRecord' => { enabled: false },
+      'OpenTelemetry::Instrumentation::Redis' => { enabled: false },
+      'OpenTelemetry::Instrumentation::PG' => { enabled: false },
+      'OpenTelemetry::Instrumentation::Rake' => { enabled: false },
+    })
   end
 end
