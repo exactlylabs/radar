@@ -110,6 +110,14 @@ func (si *SysInfoManager) GetWatchdogServiceFile() ([]byte, error) {
 	return res, nil
 }
 
+func (si *SysInfoManager) GetRadarAgentServiceFile() ([]byte, error) {
+	res, err := si.readFile("/etc/systemd/system/radar_agent.service")
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	return res, nil
+}
+
 // GetRCLocal implements SystemManager
 func (si *SysInfoManager) GetRCLocal() ([]byte, error) {
 	res, err := si.readFile("/etc/rc.local")
@@ -177,6 +185,14 @@ func (si *SysInfoManager) SetLogindConf(data []byte) error {
 
 func (si *SysInfoManager) SetWatchdogServiceFile(data []byte) error {
 	err := si.writeFile("/etc/systemd/system/podwatchdog@.service", data)
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
+}
+
+func (si *SysInfoManager) SetRadarAgentServiceFile(data []byte) error {
+	err := si.writeFile("/etc/systemd/system/radar_agent.service", data)
 	if err != nil {
 		return errors.W(err)
 	}
