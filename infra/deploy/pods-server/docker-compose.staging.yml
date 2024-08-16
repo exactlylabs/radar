@@ -4,14 +4,13 @@ services:
     environment:
       - RAILS_ENV=staging
       - RAILS_SERVE_STATIC_FILES=true
-      - RAILS_MAX_THREADS=10
+      - RAILS_MAX_THREADS=5
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - DB_MAX_POOL_SIZE=20
       - BUCKET_NAME=radar-pods-staging
       - BUCKET_ACCESS_KEY=004049506844ea70000000001
       - HEALTHCHECK_URL=https://pods.staging.radartoolkit.com/health
-      - WEB_CONCURRENCY=2
+      - WEB_CONCURRENCY=3
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
       - DB_MAX_POOL_SIZE=40
