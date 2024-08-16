@@ -262,10 +262,6 @@ class Client < ApplicationRecord
     end
   end
 
-  def online?
-    online
-  end
-
   def test_requested?
     test_requested || location&.test_requested
   end
@@ -884,8 +880,9 @@ class Client < ApplicationRecord
   end
 
   def check_if_pod_moved
-    if saved_change_to_location_id? || saved_change_to_account_id? && !online?
+    if (location_id_changed? || account_id_changed?) && (online.nil? || !online?)
       self.autonomous_system = nil
+      self.ip = nil
     end
 
     if saved_change_to_account_id?
