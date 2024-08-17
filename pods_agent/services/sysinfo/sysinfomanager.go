@@ -217,7 +217,14 @@ func (si *SysInfoManager) Interfaces() (network.NetInterfaces, error) {
 
 func (si *SysInfoManager) GetAuthLogFile() ([]byte, error) {
 	res, err := si.readFile("/var/log/auth.log")
-	if err != nil {
+	if errors.Is(err, os.ErrNotExist) {
+		// Try Journalctl then
+		res, err := si.runCommand(exec.Command("journalctl", "-u", "systemd-logind"))
+		if err != nil {
+			return nil, errors.W(err)
+		}
+		return res, nil
+	} else if err != nil {
 		return nil, errors.W(err)
 	}
 	return res, nil
