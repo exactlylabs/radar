@@ -3,6 +3,7 @@ Description=Radar Agent
 After=network.target auditd.service
 
 [Service]
+Environment="GODEBUG=netdns=cgo"
 ExecStart=${AGENT_BINARY_PATH}
 KillMode=process
 Restart=always

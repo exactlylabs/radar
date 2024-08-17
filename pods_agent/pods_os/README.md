@@ -18,7 +18,7 @@ If you don't have a bridge, you can see how to setup one [here](https://wiki.qem
 
 ## Setup POD the Image
 
-Download the [POD OS Image](https://console.cloud.google.com/storage/browser/radar-disk-images).
+Download the [POD OS Image](https://exactlylabsinc.sharepoint.com/:f:/s/product/ElS-CZauqU1Kt_7qL7PHc1MBqxzih3MX0Jdt1cLpVlTMlA?e=KKSKBp).
 Select which version you want emulate.
 
 Once the download finishes, run:
