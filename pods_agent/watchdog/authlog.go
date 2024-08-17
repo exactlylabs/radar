@@ -43,6 +43,9 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime time.Time) ([]LoginE
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		text := strings.Replace(string(line), "\x00", "", -1)
+		if strings.HasPrefix(text, "--") {
+			continue
+		}
 		match := connectionRegexp.FindStringSubmatch(text)
 		if len(match) == 5 {
 			t, err = parseDateFromAuthLog(match[1], match[2], match[3])

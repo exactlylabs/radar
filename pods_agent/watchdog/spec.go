@@ -79,7 +79,7 @@ type SystemManager interface {
 	Interfaces() (network.NetInterfaces, error)
 	// Reboot makes the system reboot
 	Reboot() error
-	// GetAuthFile returns a log of authentications in the system
+	// GetAuthFile returns logs from systemd-logind
 	GetAuthLogFile() ([]byte, error)
 	// GetSysTimezone
 	GetSysTimezone() (*time.Location, error)
