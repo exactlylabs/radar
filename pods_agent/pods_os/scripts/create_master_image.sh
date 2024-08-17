@@ -77,17 +77,24 @@ curl -L --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
 
 #### NOTE: Images after 2022-01-28 appear to use .xz and before use .zip
 # Decompress the .xz file
-#VERSION=2022-04-04-raspios-bullseye-arm64-lite.img
-# if [ ! -f $VERSION.xz ]; then
-# curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz
-# fi
-# unxz $VERSION.xz
+URL=https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-07-04/2024-07-04-raspios-bookworm-arm64-lite.img.xz
+VERSION=2024-07-04-raspios-bookworm-arm64-lite.img
+XZ_FILE=${VERSION}.xz
 
-VERSION=2022-01-28-raspios-bullseye-arm64-lite.img
-if [ ! -f ${BUILD_DIR}/${VERSION}.zip ]; then
-curl -L --output ${BUILD_DIR}/${VERSION}.zip https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip
+
+if [ ! -f ${BUILD_DIR}/${VERSION}.xz ] | [ ! -f ${BUILD_DIR}/${VERSION} ]; then
+  curl -L --output ${BUILD_DIR}/${XZ_FILE} $URL
 fi
-unzip -qod ${BUILD_DIR} ${BUILD_DIR}/${VERSION}.zip
+
+if [ ! -f ${BUILD_DIR}/${VERSION} ]; then
+  unxz ${BUILD_DIR}/${XZ_FILE}
+fi
+
+# VERSION=2022-01-28-raspios-bullseye-arm64-lite.img
+# if [ ! -f ${BUILD_DIR}/${VERSION}.zip ]; then
+# curl -L --output ${BUILD_DIR}/${VERSION}.zip https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip
+# fi
+# unzip -qod ${BUILD_DIR} ${BUILD_DIR}/${VERSION}.zip
 
 # Mount the .img in an available loop (/dev/loop) device
 # This makes plain files accessible as block devices

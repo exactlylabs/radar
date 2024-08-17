@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 set -e
 
-DTB_FILE_PATH=${SCRIPT_DIR}/../kernels/bcm2710-rpi-3-b.dtb
+DTB_FILE_PATH=${SCRIPT_DIR}/../kernels/bcm2711-rpi-4-b.dtb
 KERNEL_FILE_PATH=${SCRIPT_DIR}/../kernels/kernel8.img
 IMAGE_FILE=${SCRIPT_DIR}/../dist/radar.img
 
@@ -27,6 +27,13 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     usage
     exit 1
 fi
+
+function required() {
+    if [ -z $2 ]; then
+        echo "ERROR: $1 requires a non-empty option argument"
+        exit 1
+    fi
+}
 
 
 while :; do
@@ -65,17 +72,15 @@ fi
 # Open the image file, to grab the .dtb and kernel.img
 
 qemu-system-aarch64 \
-  -machine raspi3b \
-  -cpu cortex-a72 \
+  -machine raspi4b \
   -dtb $DTB_FILE_PATH \
-  -m 1G \
+  -m 2048 \
   -smp 4 \
   -kernel $KERNEL_FILE_PATH \
-  -sd $IMAGE_FILE \
   -serial stdio \
   -netdev user,id=net1,hostfwd=tcp::2222-:22 \
   -device usb-net,netdev=net1 \
-  -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 console=tty1 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1"
-  # -netdev bridge,id=net0 \
-  # -device usb-net,netdev=net0,mac=cc:9a:1d:1f:cf:0b \
+  -drive "file=${IMAGE_FILE},id=mysdcard,if=sd" \
+  -append 'root=/dev/mmcblk1p2 rootfstype=ext4 rootwait console=ttyAMA0,115200 console=tty1 loglevel=8'
+
 
