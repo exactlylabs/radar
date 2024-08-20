@@ -618,6 +618,15 @@ div[data-dashboard-time-filter-target="monthYear"] {
   line-height: 1.462;
   cursor: pointer;
 
+  &:is(button) {
+    border: none;
+    outline: none;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
   @extend .fw-bold;
 
   &[data-selected="true"] {

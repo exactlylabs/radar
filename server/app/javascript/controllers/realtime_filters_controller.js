@@ -32,7 +32,7 @@ export default class extends Controller {
       this.updateBaseButton(selectedFilterTarget, label);
     }
     this.setAsActive(baseMenuId, key, value);
-    this.removeOverriddenKeys(selectedFilterTarget.dataset.overridenKeys);
+    this.removeOverriddenKeys(selectedFilterTarget.dataset.overriddenKeys);
   }
   
   selectMultiFilter(e) {
@@ -73,7 +73,7 @@ export default class extends Controller {
       label = this.allItems.get(key).get(value);
     }
     this.updateBaseButton(selectedFilterTarget, label);
-    this.removeOverriddenKeys(selectedFilterTarget.dataset.overridenKeys);
+    this.removeOverriddenKeys(selectedFilterTarget.dataset.overriddenKeys);
   }
   
   removeOverriddenKeys(overriddenKeys) {

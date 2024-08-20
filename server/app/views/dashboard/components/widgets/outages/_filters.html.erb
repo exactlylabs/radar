@@ -1,29 +1,28 @@
 <% outage_type = params[:outage_type] || 'all' %>
 
 <div class="dashboard--outages-filters-container">
-  <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'all' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'all' })) %>"
-     target="_top"
-  >All outages</a>
-  <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'isp_outage' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'isp_outage' })) %>"
-     target="_top"
-  >ISP outages</a>
-  <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'power_outage' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'power_outage' })) %>"
-     target="_top"
-  >Power outages</a>
-  <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'network_failure' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'network_failure' })) %>"
-     target="_top"
-  >Network outage</a>
-  <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'unknown_reason' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'unknown_reason' })) %>"
-     target="_top"
-  >Ongoing outage</a>
+  <button class="dashboard--outages-filter"
+          data-value="all"
+          data-key="outage_type"
+          data-label="All outages"
+          data-action="click->dashboard-realtime-filters#selectFilter"
+          data-selected="<%= outage_type === 'all' %>"
+          data-dashboard-realtime-filters-target="filter"
+          data-overridden-keys="[]"
+  >
+    All outages
+  </button>
+  <% NetworkOutage.outage_types.keys.sort.each do |type| %>
+    <button class="dashboard--outages-filter"
+            data-value="<%= type %>"
+            data-key="outage_type"
+            data-label="<%= outage_type_to_human(type) %>"
+            data-action="click->dashboard-realtime-filters#selectFilter"
+            data-selected="<%= outage_type === type %>"
+            data-dashboard-realtime-filters-target="filter"
+            data-overridden-keys="[]"
+    >
+      <%= outage_type_to_human(type) %>
+    </button>
+  <% end %>
 </div>
