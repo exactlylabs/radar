@@ -46,12 +46,12 @@ type network struct {
 	BSSID       string
 	KeyMgmt     string
 	Protocol    string
-	Identity    string // For Enterprise mode
-	PSK         string // Pre-Shared Key
-	Password    string // For Enterprise mode
-	WEPPassword string // For WEP mode
-	WEPKeyIdx   string // For WEP mode
-	ScanSSID    string // set to 1 if the SSID is hidden
+	Identity    string  // For Enterprise mode
+	PSK         *string // Pre-Shared Key
+	Password    *string // For Enterprise mode
+	WEPPassword *string // For WEP mode
+	WEPKeyIdx   string  // For WEP mode
+	ScanSSID    string  // set to 1 if the SSID is hidden
 	Flags       []string
 	Registered  bool
 }
@@ -68,13 +68,13 @@ func (n network) merge(other network) network {
 	if other.Identity != "" {
 		merged.Identity = other.Identity
 	}
-	if other.PSK != "" {
+	if other.PSK != nil {
 		merged.PSK = other.PSK
 	}
-	if other.Password != "" {
+	if other.Password != nil {
 		merged.Password = other.Password
 	}
-	if other.WEPPassword != "" {
+	if other.WEPPassword != nil {
 		merged.WEPPassword = other.WEPPassword
 	}
 	if other.WEPKeyIdx != "" {
@@ -92,9 +92,15 @@ func (n *network) attributes() []string {
 	attrs = appendIfNotEmpty(attrs, "key_mgmt", n.KeyMgmt, false)
 	attrs = appendIfNotEmpty(attrs, "proto", n.Protocol, false)
 	attrs = appendIfNotEmpty(attrs, "identity", n.Identity, true)
-	attrs = appendIfNotEmpty(attrs, "psk", n.PSK, true)
-	attrs = appendIfNotEmpty(attrs, "password", n.Password, true)
-	attrs = appendIfNotEmpty(attrs, "wep_key0", n.WEPPassword, true)
+	if n.PSK != nil {
+		attrs = appendIfNotEmpty(attrs, "psk", *n.PSK, true)
+	}
+	if n.Password != nil {
+		attrs = appendIfNotEmpty(attrs, "password", *n.Password, true)
+	}
+	if n.WEPPassword != nil {
+		attrs = appendIfNotEmpty(attrs, "wep_key0", *n.WEPPassword, true)
+	}
 	attrs = appendIfNotEmpty(attrs, "wep_tx_keyidx", n.WEPKeyIdx, false)
 	attrs = appendIfNotEmpty(attrs, "scan_ssid", n.ScanSSID, false)
 	return attrs
@@ -173,7 +179,7 @@ type NetworkConnectionData struct {
 	SSID     string  `json:"ssid"`
 	Security SecType `json:"security"`
 	Identity string  `json:"identity"` // For Enterprise types
-	Password string  `json:"password"`
+	Password *string `json:"password"`
 	Hidden   bool    `json:"hidden"`
 }
 

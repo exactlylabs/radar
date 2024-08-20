@@ -84,7 +84,7 @@ func (c *RadarClient) Connect(ch chan<- *agent.ServerMessage) error {
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
 	c.channel.OnMessage = c.handleMessage
-	c.channel.OnSubscribed = c.sendSync
+	c.channel.OnSubscribed = c.requestSync
 	c.channel.OnConnectionError = func(err error) {
 		log.Println(errors.W(err))
 		c.connected = false
@@ -144,22 +144,11 @@ func (c *RadarClient) handleMessage(msg cable.ServerMessage) {
 	}
 }
 
-func (c *RadarClient) sendSync() {
-	meta := sysinfo.Metadata()
-	payload := messages.Sync{
-		OSVersion:         runtime.GOOS,
-		HardwarePlatform:  runtime.GOARCH,
-		Distribution:      meta.Distribution,
-		Version:           meta.Version,
-		NetInterfaces:     meta.NetInterfaces,
-		WatchdogVersion:   meta.WatchdogVersion,
-		RegistrationToken: meta.RegistrationToken,
+func (c *RadarClient) requestSync() {
+	c.agentCh <- &agent.ServerMessage{
+		Type: agent.SyncRequested,
+		Data: agent.SyncRequestedMessage{},
 	}
-
-	c.channel.SendAction(cable.CustomActionData{
-		Action:  Sync,
-		Payload: payload, // this should be decoupled?
-	})
 }
 
 func (c *RadarClient) sendPong() {
@@ -367,4 +356,15 @@ func (c *RadarClient) AssignPodToAccount(accountToken string, network *agent.Net
 	}
 
 	return pod, nil
+}
+
+func (c *RadarClient) SyncData(data agent.Sync) error {
+	err := c.channel.SendAction(cable.CustomActionData{
+		Action:  Sync,
+		Payload: data,
+	})
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
 }

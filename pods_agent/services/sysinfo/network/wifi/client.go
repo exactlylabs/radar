@@ -26,17 +26,27 @@ type WirelessClient interface {
 	// AccessPoints lists all scanneable AccessPoints
 	ScanAccessPoints() ([]APDetails, error)
 
-	// Connect to a given SSID. If it is already registered, psk can be empty, but if it fails to connect, the code must try to connect using the given password
-	Connect(network NetworkConnectionData) error
+	// ConfigureNetwork registers the given network in the driver.
+	// If Password is nil, keep the previous value
+	ConfigureNetwork(network NetworkConnectionData) error
 
-	// Select an SSID that is already registered in the device.
-	Select(ssid string) error
+	// Forget the given SSID by removing it from the driver.
+	Forget(ssid string) error
+
+	// Enable the driver to connect to the given SSID
+	Enable(ssid string) error
 
 	// Disconnect from the current connected network
 	Disconnect() error
 
 	// ConnectionStatus of the current connected SSID. If no connection, then returns ErrNotConnected
 	ConnectionStatus() (WifiStatus, error)
+
+	// CurrentSSID the OS is connected to. Returns empty if not connected.
+	CurrentSSID() string
+
+	// ConfiguredNetworks returns a list of all networks registered in the Driver.
+	ConfiguredNetworks() ([]NetworkConnectionData, error)
 
 	// Close this client connection to the interface and any subscription.
 	Close() error
