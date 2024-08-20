@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
 type MessageType int
@@ -13,6 +14,7 @@ const (
 	Update
 	UpdateWatchdog
 	HealthCheck
+	SyncRequested
 )
 
 type UpdateBinaryServerMessage struct {
@@ -23,6 +25,8 @@ type UpdateBinaryServerMessage struct {
 type RunTestServerMessage struct {
 	Interfaces []string `json:"interfaces"`
 }
+
+type SyncRequestedMessage struct{}
 
 type ServerMessage struct {
 	Type MessageType
@@ -68,6 +72,16 @@ type NetworkData struct {
 	UploadMbps   float64 `json:"expected_mbps_up"`
 }
 
+type Sync struct {
+	Distribution      string                `json:"distribution"`
+	Version           string                `json:"version"`
+	NetInterfaces     network.NetInterfaces `json:"net_interfaces"`
+	WatchdogVersion   string                `json:"watchdog_version"`
+	RegistrationToken *string               `json:"registration_token"`
+	OSVersion         string                `json:"os_version"`
+	HardwarePlatform  string                `json:"hardware_platform"`
+}
+
 type Runner interface {
 	// Run a speed test.
 	// The returned error could either by an ErrRunnerConnectionError or an internal generic error
@@ -86,6 +100,7 @@ type RadarClient interface {
 	SendMeasurement(ctx context.Context, testStyle string, measurement MeasurementReport) error
 	Ping(meta *sysinfo.ClientMeta) ([]ServerMessage, error)
 	AssignPodToAccount(accountToken string, network *NetworkData) (*PodInfo, error)
+	SyncData(data Sync) error
 	// Connect to the server non-blocking. Returns error if anything goes wrong during the connection handshake.
 	Connect(ch chan<- *ServerMessage) error
 	Connected() bool
