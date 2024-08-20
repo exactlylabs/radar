@@ -4,7 +4,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
@@ -16,14 +15,13 @@ const (
 	UpdateWatchdogMessageType MessageType = iota
 	EnableTailscaleMessageType
 	DisableTailscaleMessageType
-	ConnectToSSIDMessageType
-	ConnectToExistingSSIDMessageType
+	ConfigureSSIDMessageType
+	ForgetSSIDMessageType
 	ScanAPsMessageType
-	ReportWirelessStatusMessageType
-	SetWlanInterfaceMessageType
-	DisconnectWirelessNetworkMessageType
+	ReportConnectionStatusMessageType
 	HealthCheckMessageType
 	ReportLogsMessageType
+	SyncMessageType
 )
 
 type SystemEventType int
@@ -128,24 +126,24 @@ type DisableTailscaleServerMessage struct {
 	KeyId string `json:"key_id"`
 }
 
-type ConnectToSSIDMessage struct {
-	SSID string `json:"ssid"`
-	PSK  string `json:"psk"`
+type ConfigureSSIDMessage struct {
+	SSID     string  `json:"ssid"`
+	Password *string `json:"password"`
+	Identity string  `json:"identity"`
+	Security string  `json:"security"`
+	Hidden   bool    `json:"hidden"`
+	Enabled  bool    `json:"enabled"`
 }
 
-type ConnectToExistingSSIDMessage struct {
+type ForgetSSIDMessage struct {
 	SSID string `json:"ssid"`
 }
 
 type ScanAPsMessage struct{}
 
-type ReportWirelessStatusMessage struct{}
+type ReportConnectionStatusMessage struct{}
 
-type SetWlanInterfaceMessage struct {
-	Name string `json:"interface"`
-}
-
-type DisconnectWirelessNetworkMessage struct{}
+type SyncMessage struct{}
 
 type ServerMessage struct {
 	Type MessageType
@@ -159,17 +157,43 @@ type ReportLogsMessage struct {
 	Lines    int      `json:"lines"`
 }
 
-type GetSyncMessageFunc func() messages.WatchdogSync
+// type GetSyncMessageFunc func() messages.WatchdogSync
+
+type EthernetStatus struct {
+	Status network.NetStatus `json:"status"`
+}
+
+type WlanStatus struct {
+	Status         network.NetStatus `json:"status"`
+	SSID           string            `json:"ssid"`
+	SignalStrength int               `json:"signal_strength"`
+	Frequency      int               `json:"frequency"`
+	LinkSpeed      int               `json:"link_speed"`
+	Channel        int               `json:"channel"`
+}
+
+type ConnectionsStatus struct {
+	Wlan     WlanStatus     `json:"wlan"`
+	Ethernet EthernetStatus `json:"ethernet"`
+}
+
+type WatchdogSync struct {
+	Version            string            `json:"version"`
+	TailscaleConnected bool              `json:"tailscale_connected"`
+	ConnectionStatus   ConnectionsStatus `json:"connections_status"`
+	RegisteredSSIDs    []string          `json:"registered_ssids"`
+}
 
 type Logs map[string]string
 
 type WatchdogClient interface {
-	Connect(chan<- ServerMessage, GetSyncMessageFunc) error
+	Connect(chan<- ServerMessage) error
 	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 	NotifyTailscaleConnected(key_id string)
 	NotifyTailscaleDisconnected(key_id string)
+	SyncData(data WatchdogSync) error
 	ReportScanAPsResult(aps []wifi.APDetails)
-	ReportWirelessStatus(status wifi.WifiStatus)
+	ReportConnectionStatus(status ConnectionsStatus)
 	ReportWirelessConnectionStateChanged(state, ssid string)
 	ReportLogs(l Logs)
 	ReportActionError(action MessageType, err error)

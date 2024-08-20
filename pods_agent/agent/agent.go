@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -169,6 +170,18 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 			updateWatchdogIfNeeded(msg.Data.(UpdateBinaryServerMessage), rebooter, cancel)
 		}
 
+	case SyncRequested:
+		meta := sysinfo.Metadata()
+		syncData := Sync{
+			OSVersion:         runtime.GOOS,
+			HardwarePlatform:  runtime.GOARCH,
+			Distribution:      meta.Distribution,
+			Version:           meta.Version,
+			NetInterfaces:     meta.NetInterfaces,
+			WatchdogVersion:   meta.WatchdogVersion,
+			RegistrationToken: meta.RegistrationToken,
+		}
+		a.client.SyncData(syncData)
 	}
 }
 

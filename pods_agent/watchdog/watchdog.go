@@ -4,14 +4,12 @@ import (
 	"context"
 	"log"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
-	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
@@ -60,77 +58,58 @@ func (w *Watchdog) setup(ctx context.Context) {
 		w.ledManager.Start(ctx)
 	}()
 
-	if w.c.WlanInterface != "" {
-		if err := w.configureWlanInterface(ctx, w.c.WlanInterface); err != nil {
-			log.Println(err)
-			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
-		}
+	// Try to setup and start the wlan client, but don't panic in case it fails
+	w.setupWlanClient()
+	if w.wlanCli != nil {
+		go func() {
+			defer sentry.NotifyIfPanic()
+			w.startWlanClient(ctx)
+		}()
 	}
 }
 
-func (w *Watchdog) configureWlanInterface(ctx context.Context, name string) error {
-	log.Println("Configuring Wlan Interface connection for", name)
-	if w.wlanCli != nil {
-		w.wlanCli.Close()
-	}
-	if name == "" {
-		return nil
-	}
-	wlanCli, err := w.wlanCliFactory(name)
+func (w *Watchdog) setupWlanClient() {
+	ifaces, err := network.Interfaces()
 	if err != nil {
-		return errors.W(err).WithMetadata(errors.Metadata{"Wlan": name})
+		sentry.NotifyErrorOnce(
+			errors.WrapWithType(err, "failed to retrieve interfaces at startup", "StartupError"),
+			map[string]sentry.Context{},
+		)
+		return
+	}
+	iface := ifaces.FindByType(network.Wlan)
+	if iface == nil {
+		sentry.NotifyErrorOnce(
+			errors.NewWithType("wlan interface not found", "StartupError"),
+			map[string]sentry.Context{},
+		)
+		return
+	}
+	log.Println("watchdog.configureWlanInterface: Configuring Wlan Interface connection for", iface.Name)
+
+	if iface.Name == "" {
+		return
+	}
+	wlanCli, err := w.wlanCliFactory(iface.Name)
+	if err != nil {
+		sentry.NotifyErrorOnce(
+			errors.WrapWithType(err, "", "StartupError").WithMetadata(errors.Metadata{"Wlan": iface.Name}),
+			map[string]sentry.Context{},
+		)
+		return
 	}
 	w.wlanCli = wlanCli
-	w.c = config.Reload()
-	w.c.WlanInterface = name
-	config.Save(w.c)
-	go func() {
-		wifiEvents, err := w.wlanCli.StartSubscriptions()
-		if err != nil {
-			err := errors.W(err)
-			log.Println("watchdog.Watchdog#Run wlanCli.StartSubscriptions:", err)
-			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
-		}
-		for evt := range wifiEvents {
-			w.handleWifiEvents(ctx, evt)
-		}
-	}()
-	return nil
 }
 
-func (w *Watchdog) getSync() messages.WatchdogSync {
-	meta := sysinfo.Metadata()
-	tsConnected, err := w.sysManager.TailscaleConnected()
+func (w *Watchdog) startWlanClient(ctx context.Context) {
+	wifiEvents, err := w.wlanCli.StartSubscriptions()
 	if err != nil {
-		err = errors.W(err)
-		log.Println(err)
+		err := errors.W(err)
+		log.Println("watchdog.Watchdog#Run wlanCli.StartSubscriptions:", err)
 		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
 	}
-	wlan := ""
-	var wifiStatus *wifi.WifiStatus
-	if w.wlanCli != nil {
-		wlan = w.wlanCli.InterfaceName()
-		status, err := w.wlanCli.ConnectionStatus()
-		if err != nil {
-			err = errors.W(err)
-			log.Println(err)
-			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
-		}
-		wifiStatus = &status
-	}
-	return messages.WatchdogSync{
-		Sync: messages.Sync{
-			OSVersion:         runtime.GOOS,
-			HardwarePlatform:  runtime.GOARCH,
-			Distribution:      meta.Distribution,
-			Version:           meta.Version,
-			NetInterfaces:     meta.NetInterfaces,
-			WatchdogVersion:   meta.WatchdogVersion,
-			RegistrationToken: meta.RegistrationToken,
-		},
-		TailscaleConnected: tsConnected,
-		WlanInterface:      wlan,
-		WifiStatus:         wifiStatus,
+	for evt := range wifiEvents {
+		w.handleWifiEvents(ctx, evt)
 	}
 }
 
@@ -140,7 +119,7 @@ func (w *Watchdog) Run(ctx context.Context) {
 
 	timer := time.NewTicker(10 * time.Second)
 	cliChan := make(chan ServerMessage)
-	if err := w.cli.Connect(cliChan, w.getSync); err != nil {
+	if err := w.cli.Connect(cliChan); err != nil {
 		panic(err)
 	}
 	// Ensure everything is properly stopped when leaving
@@ -166,6 +145,7 @@ func (w *Watchdog) Run(ctx context.Context) {
 			w.handleMessage(ctx, msg)
 		case <-timer.C:
 			if !w.cli.Connected() {
+				// Fallback to a manual ping in case the client is failing to connect
 				res, err := w.cli.WatchdogPing(sysinfo.Metadata())
 				if err != nil {
 					log.Println(errors.W(err))
@@ -194,6 +174,7 @@ func (w *Watchdog) handleSystemEvent(event SystemEvent) {
 	case EthernetStatusChanged:
 		log.Printf("Pod Ethernet Status Changed: %v\n", event.Data)
 		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
+		// TODO: Try to push event to Server (in case there is a wireless connection)
 
 	case LoginDetected:
 		evt := event.Data.(LoginEvent)
@@ -219,26 +200,24 @@ func (w *Watchdog) handleMessage(ctx context.Context, msg ServerMessage) {
 	switch msg.Type {
 	case HealthCheckMessageType:
 		w.lastHealthCheck = time.Now()
+	case SyncMessageType:
+		err = w.handleSyncRequested(msg.Data.(SyncMessage))
 	case UpdateWatchdogMessageType:
 		err = w.handleUpdate(msg.Data.(UpdateBinaryServerMessage))
 	case EnableTailscaleMessageType:
 		err = w.handleEnableTailscale(ctx, msg.Data.(EnableTailscaleServerMessage))
 	case DisableTailscaleMessageType:
 		err = w.handleDisableTailscale(ctx, msg.Data.(DisableTailscaleServerMessage))
-	case ConnectToSSIDMessageType:
-		err = w.handleConnectToSSID(ctx, msg.Data.(ConnectToSSIDMessage))
-	case ConnectToExistingSSIDMessageType:
-		err = w.handleConnectToExistingSSID(ctx, msg.Data.(ConnectToExistingSSIDMessage))
+	case ConfigureSSIDMessageType:
+		err = w.handleConfigureSSID(ctx, msg.Data.(ConfigureSSIDMessage))
+	case ForgetSSIDMessageType:
+		err = w.handleForgetSSID(ctx, msg.Data.(ForgetSSIDMessage))
 	case ScanAPsMessageType:
 		err = w.handleScanAps(ctx, msg.Data.(ScanAPsMessage))
-	case ReportWirelessStatusMessageType:
-		err = w.handleReportWirelessStatus(ctx, msg.Data.(ReportWirelessStatusMessage))
-	case SetWlanInterfaceMessageType:
-		err = w.handleSetWlanInterface(ctx, msg.Data.(SetWlanInterfaceMessage))
-	case DisconnectWirelessNetworkMessageType:
-		err = w.handleDisconnectWirelessNetwork(ctx, msg.Data.(DisconnectWirelessNetworkMessage))
 	case ReportLogsMessageType:
 		err = w.handleReportLogs(ctx, msg.Data.(ReportLogsMessage))
+	case ReportConnectionStatusMessageType:
+		err = w.handleReportConnectionStatus(ctx, msg.Data.(ReportConnectionStatusMessage))
 	}
 
 	if err != nil {
@@ -258,6 +237,49 @@ func (w *Watchdog) shouldReportToSentry(err error) bool {
 		return false
 	}
 	return true
+}
+
+func (w *Watchdog) handleSyncRequested(data SyncMessage) (err error) {
+	syncData := WatchdogSync{}
+
+	if meta := sysinfo.Metadata(); meta != nil {
+		syncData.Version = meta.Version
+	}
+
+	syncData.TailscaleConnected, err = w.sysManager.TailscaleConnected()
+	if err != nil {
+		err = errors.W(err)
+		log.Println(err)
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+	}
+
+	if w.wlanCli != nil {
+		nets, err := w.wlanCli.ConfiguredNetworks()
+		if err != nil {
+			err = errors.W(err)
+			log.Println(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		} else {
+			syncData.RegisteredSSIDs = make([]string, len(nets))
+			for i, net := range nets {
+				syncData.RegisteredSSIDs[i] = net.SSID
+			}
+		}
+	}
+
+	connStatus, err := w.getConnectionsStatus()
+	if err != nil {
+		err = errors.W(err)
+		log.Println(err)
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+	} else {
+		syncData.ConnectionStatus = connStatus
+	}
+
+	if err := w.cli.SyncData(syncData); err != nil {
+		return errors.W(err)
+	}
+	return nil
 }
 
 func (w *Watchdog) handleUpdate(data UpdateBinaryServerMessage) error {
@@ -319,29 +341,53 @@ func (w *Watchdog) handleWifiEvents(ctx context.Context, data wifi.Event) error 
 	return nil
 }
 
-func (w *Watchdog) handleConnectToSSID(ctx context.Context, data ConnectToSSIDMessage) error {
-	log.Println("Requested to connect to SSID:", data.SSID)
+func (w *Watchdog) handleConfigureSSID(ctx context.Context, data ConfigureSSIDMessage) error {
+	log.Printf("watchdog.handleConfigureSSID: Received SSID configuration request: %+v\n", data)
 	connData := wifi.NetworkConnectionData{
 		SSID:     data.SSID,
 		Password: data.Password,
 		Identity: data.Identity,
 		Security: wifi.SecType(data.Security),
 	}
-	err := w.wlanCli.Connect(connData)
+	err := w.wlanCli.ConfigureNetwork(connData)
 	if err != nil {
 		return errors.W(err)
 	}
-	log.Println("Successfully connected to SSID.")
+	log.Printf("watchdog.handleConfigureSSID: SSID %s successfuly configured.\n", data.SSID)
+	currentSSID := w.wlanCli.CurrentSSID()
+
+	if data.Enabled && data.SSID != currentSSID {
+		// Disconnect in case it's currently connected to another SSID
+		if currentSSID != "" {
+			err = w.wlanCli.Disconnect()
+			if err != nil {
+				return errors.W(err)
+			}
+			log.Printf("watchdog.handleConfigureSSID: Disconnected from %s\n", currentSSID)
+		}
+
+		err = w.wlanCli.Enable(data.SSID)
+		if err != nil {
+			return errors.W(err)
+		}
+		log.Printf("watchdog.handleConfigureSSID: Successfully connected to %s\n", data.SSID)
+
+	} else if !data.Enabled && data.SSID == currentSSID {
+		err = w.wlanCli.Disconnect()
+		if err != nil {
+			log.Printf("watchdog.handleConfigureSSID: Disconnected from %s\n", currentSSID)
+		}
+	}
+
 	return nil
 }
 
-func (w *Watchdog) handleConnectToExistingSSID(ctx context.Context, data ConnectToExistingSSIDMessage) error {
-	log.Println("Requested to connect to existing SSID:", data.SSID)
-	err := w.wlanCli.Select(data.SSID)
+func (w *Watchdog) handleForgetSSID(ctx context.Context, data ForgetSSIDMessage) error {
+	err := w.wlanCli.Forget(data.SSID)
 	if err != nil {
 		return errors.W(err)
 	}
-	log.Println("Successfully connected to SSID.")
+	log.Printf("watchdog.handleForgetSSID: %s Removed\n", data.SSID)
 	return nil
 }
 
@@ -360,34 +406,13 @@ func (w *Watchdog) handleScanAps(ctx context.Context, data ScanAPsMessage) error
 	return nil
 }
 
-func (w *Watchdog) handleReportWirelessStatus(ctx context.Context, data ReportWirelessStatusMessage) error {
-	if w.wlanCli == nil {
-		return wifi.ErrNotConnected
-	}
+func (w *Watchdog) handleReportConnectionStatus(ctx context.Context, data ReportConnectionStatusMessage) (err error) {
 	log.Println("Reporting Wireless Connection Status")
-	status, err := w.wlanCli.ConnectionStatus()
-	if err != nil && !errors.Is(err, wifi.ErrNotConnected) {
+	status, err := w.getConnectionsStatus()
+	if err != nil {
 		return errors.W(err)
 	}
-	w.cli.ReportWirelessStatus(status)
-	return nil
-}
-
-func (w *Watchdog) handleSetWlanInterface(ctx context.Context, data SetWlanInterfaceMessage) error {
-	if err := w.configureWlanInterface(ctx, data.Name); err != nil {
-		return errors.W(err)
-	}
-	return nil
-}
-
-func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data DisconnectWirelessNetworkMessage) error {
-	if w.wlanCli != nil {
-		log.Println("Disconnecting from Wireless Network")
-		err := w.wlanCli.Disconnect()
-		if err != nil {
-			return errors.W(err)
-		}
-	}
+	w.cli.ReportConnectionStatus(status)
 	return nil
 }
 
@@ -420,4 +445,37 @@ func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
 	} else {
 		w.ledManager.SetPattern(append(LEDBlinkDot, LEDBlinkDash...))
 	}
+}
+
+func (w *Watchdog) getConnectionsStatus() (ConnectionsStatus, error) {
+	status := ConnectionsStatus{}
+	ifaces, err := network.Interfaces()
+	if err != nil {
+		return status, errors.W(err)
+	}
+	ethIface := ifaces.FindByType(network.Ethernet)
+	wlanIface := ifaces.FindByType(network.Wlan)
+
+	wifiInfo, err := w.wlanCli.ConnectionStatus()
+	if err != nil && !errors.Is(err, wifi.ErrNotConnected) {
+		return status, errors.W(err)
+	}
+	status.Wlan.SSID = wifiInfo.SSID
+	status.Wlan.Channel = wifiInfo.Channel
+	status.Wlan.Frequency = wifiInfo.Frequency
+	status.Wlan.LinkSpeed = wifiInfo.TxSpeed
+	status.Wlan.SignalStrength = wifiInfo.Signal
+
+	if wlanIface != nil {
+		if wlanDetails := wlanIface.Details(); wlanDetails != nil {
+			status.Wlan.Status = wlanDetails.Status
+		}
+	}
+	if ethIface != nil {
+		if ethDetails := ethIface.Details(); ethDetails != nil {
+			status.Ethernet.Status = ethDetails.Status
+		}
+	}
+
+	return status, nil
 }
