@@ -37,30 +37,27 @@ const (
 
 // Server MessageTypes
 const (
-	UpdateWatchdog            cable.MessageType = "update"                      // when requested, the agent should update itself
-	WatchdogVersionChanged    cable.MessageType = "version_changed"             // same as update, but sent through the subscription channel
-	EnableTailscale           cable.MessageType = "enable_tailscale"            // when requested, the agent should install and enable tailscale VPN
-	DisableTailscale          cable.MessageType = "disable_tailscale"           // when requested, the agent should disable tailscale VPN
-	ConnectToWirelessNetwork  cable.MessageType = "connect_to_wireless_network" // when requested, the agent will authenticate to the wireless network and select it
-	SelectWirelessNetwork     cable.MessageType = "select_wireless_network"     // when requested, it expects the network to be already registered, and just selects it
-	ScanWirelessNetworks      cable.MessageType = "scan_wireless_networks"      // when requested, it expects a wireless AP scan
-	ReportWirelessStatus      cable.MessageType = "report_wireless_status"      // when requested, it expects a response with the current status of the wireless connection
-	SetWlanInterface          cable.MessageType = "set_wlan_interface"          // when requested, it expects the watchdog to connect to a wlan interface bus
-	DisconnectWirelessNetwork cable.MessageType = "disconnect_wireless_network" // when requested, it expects the wireless network to be turned off
-	ReportLogs                cable.MessageType = "report_logs"                 // when requested, expects logs to get collected
+	UpdateWatchdog           cable.MessageType = "update"                     // when requested, the agent should update itself
+	WatchdogVersionChanged   cable.MessageType = "version_changed"            // same as update, but sent through the subscription channel
+	EnableTailscale          cable.MessageType = "enable_tailscale"           // when requested, the agent should install and enable tailscale VPN
+	DisableTailscale         cable.MessageType = "disable_tailscale"          // when requested, the agent should disable tailscale VPN
+	ConfigureWirelessNetwork cable.MessageType = "configure_wireless_network" // when requested, the watchdog will setup a wireless network in the driver, and connect/disconnect depending on the enabled flag
+	DeleteWirelessNetwork    cable.MessageType = "delete_wireless_network"    // when requested, it expects the network to deleted from the driver.
+	ScanWirelessNetworks     cable.MessageType = "scan_wireless_networks"     // when requested, it expects a wireless AP scan
+	ReportConnectionStatus   cable.MessageType = "report_connection_status"   // when requested, it expects a response with the current status of the both eth and wlan connections
+	ReportLogs               cable.MessageType = "report_logs"                // when requested, expects logs to get collected
 )
 
 var WatchdogUserAgent = "RadarPodsWatchdog/"
 
 // RadarWatchdogClient implements watchdog.WatchdogClient, connecting to the server using websocket
 type RadarWatchdogClient struct {
-	serverURL      string
-	clientID       string
-	secret         string
-	channel        *cable.ChannelClient
-	returnCh       chan<- watchdog.ServerMessage
-	connected      bool
-	getSyncMessage watchdog.GetSyncMessageFunc
+	serverURL string
+	clientID  string
+	secret    string
+	channel   *cable.ChannelClient
+	returnCh  chan<- watchdog.ServerMessage
+	connected bool
 }
 
 func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient {
@@ -71,8 +68,7 @@ func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient 
 	}
 }
 
-func (c *RadarWatchdogClient) Connect(ch chan<- watchdog.ServerMessage, getSync watchdog.GetSyncMessageFunc) error {
-	c.getSyncMessage = getSync
+func (c *RadarWatchdogClient) Connect(ch chan<- watchdog.ServerMessage) error {
 	h := http.Header{}
 	h.Set("User-Agent", WatchdogUserAgent+sysinfo.Metadata().Version)
 	// Setting a header that is in the Forbidden Header Name -- Basically, any header starting with Sec-
@@ -81,7 +77,7 @@ func (c *RadarWatchdogClient) Connect(ch chan<- watchdog.ServerMessage, getSync 
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), WatchdogChannelName, h)
 	c.returnCh = ch
 	c.channel.OnMessage = c.handleMessage
-	c.channel.OnSubscribed = c.sendSync
+	c.channel.OnSubscribed = c.requestSync
 	c.channel.OnConnectionError = func(error) {
 		c.connected = false
 	}
@@ -145,26 +141,27 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 				},
 			}
 		}
-	case ConnectToWirelessNetwork:
-		payload := cable.ParseMessage[*messages.ConnectToWirelessNetworkPayload](msg)
+	case ConfigureWirelessNetwork:
+		payload := cable.ParseMessage[*messages.ConfigureWirelessNetworkPayload](msg)
 		if payload != nil {
 			c.returnCh <- watchdog.ServerMessage{
-				Type: watchdog.ConnectToSSIDMessageType,
-				Data: watchdog.ConnectToSSIDMessage{
+				Type: watchdog.ConfigureSSIDMessageType,
+				Data: watchdog.ConfigureSSIDMessage{
 					SSID:     payload.SSID,
 					Password: payload.Password,
 					Security: payload.Security,
 					Identity: payload.Identity,
 					Hidden:   payload.Hidden,
+					Enabled:  payload.Enabled,
 				},
 			}
 		}
-	case SelectWirelessNetwork:
-		payload := cable.ParseMessage[*messages.SelectWirelessNetworkPayload](msg)
+	case DeleteWirelessNetwork:
+		payload := cable.ParseMessage[*messages.DeleteWirelessNetworkPayload](msg)
 		if payload != nil {
 			c.returnCh <- watchdog.ServerMessage{
-				Type: watchdog.ConnectToExistingSSIDMessageType,
-				Data: watchdog.ConnectToExistingSSIDMessage{
+				Type: watchdog.ForgetSSIDMessageType,
+				Data: watchdog.ForgetSSIDMessage{
 					SSID: payload.SSID,
 				},
 			}
@@ -177,30 +174,12 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 				Data: watchdog.ScanAPsMessage{},
 			}
 		}
-	case ReportWirelessStatus:
-		payload := cable.ParseMessage[*messages.ReportWirelessStatusPayload](msg)
+	case ReportConnectionStatus:
+		payload := cable.ParseMessage[*messages.ReportConnectionStatusPayload](msg)
 		if payload != nil {
 			c.returnCh <- watchdog.ServerMessage{
-				Type: watchdog.ReportWirelessStatusMessageType,
-				Data: watchdog.ReportWirelessStatusMessage{},
-			}
-		}
-	case SetWlanInterface:
-		payload := cable.ParseMessage[*messages.SetWlanInterfacePayload](msg)
-		if payload != nil {
-			c.returnCh <- watchdog.ServerMessage{
-				Type: watchdog.SetWlanInterfaceMessageType,
-				Data: watchdog.SetWlanInterfaceMessage{
-					Name: payload.Name,
-				},
-			}
-		}
-	case DisconnectWirelessNetwork:
-		payload := cable.ParseMessage[*messages.DisconnectWirelessNetworkPayload](msg)
-		if payload != nil {
-			c.returnCh <- watchdog.ServerMessage{
-				Type: watchdog.DisconnectWirelessNetworkMessageType,
-				Data: watchdog.DisconnectWirelessNetworkMessage{},
+				Type: watchdog.ReportConnectionStatusMessageType,
+				Data: watchdog.ReportConnectionStatusMessage{},
 			}
 		}
 	case ReportLogs:
@@ -217,12 +196,11 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 	}
 }
 
-func (c *RadarWatchdogClient) sendSync() {
-	payload := c.getSyncMessage()
-	c.channel.SendAction(cable.CustomActionData{
-		Action:  Sync,
-		Payload: payload,
-	})
+func (c *RadarWatchdogClient) requestSync() {
+	c.returnCh <- watchdog.ServerMessage{
+		Type: watchdog.SyncMessageType,
+		Data: watchdog.SyncMessage{},
+	}
 }
 
 func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.ServerMessage, error) {
@@ -294,12 +272,10 @@ func (c *RadarWatchdogClient) ReportScanAPsResult(aps []wifi.APDetails) {
 	})
 }
 
-func (c *RadarWatchdogClient) ReportWirelessStatus(status wifi.WifiStatus) {
+func (c *RadarWatchdogClient) ReportConnectionStatus(status watchdog.ConnectionsStatus) {
 	c.channel.SendAction(cable.CustomActionData{
-		Action: WirelessStatusReport,
-		Payload: messages.WirelessStatusReport{
-			Status: status,
-		},
+		Action:  WirelessStatusReport,
+		Payload: status,
 	})
 }
 
@@ -324,10 +300,10 @@ func (c *RadarWatchdogClient) ReportLogs(l watchdog.Logs) {
 func (c *RadarWatchdogClient) ReportActionError(action watchdog.MessageType, err error) {
 	actionStr := ""
 	switch action {
-	case watchdog.ConnectToSSIDMessageType:
-		actionStr = string(ConnectToWirelessNetwork)
-	case watchdog.ConnectToExistingSSIDMessageType:
-		actionStr = string(SelectWirelessNetwork)
+	case watchdog.ConfigureSSIDMessageType:
+		actionStr = string(ConfigureWirelessNetwork)
+	case watchdog.ForgetSSIDMessageType:
+		actionStr = string(DeleteWirelessNetwork)
 	case watchdog.ScanAPsMessageType:
 		actionStr = string(ScanWirelessNetworks)
 	}
@@ -343,4 +319,15 @@ func (c *RadarWatchdogClient) ReportActionError(action watchdog.MessageType, err
 			ErrorType: errType,
 		},
 	})
+}
+
+func (c *RadarWatchdogClient) SyncData(data watchdog.WatchdogSync) error {
+	err := c.channel.SendAction(cable.CustomActionData{
+		Action:  Sync,
+		Payload: data,
+	})
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
 }

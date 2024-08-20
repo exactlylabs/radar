@@ -1,11 +1,8 @@
 package messages
 
-import "github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
-
-// WirelessStatusReport has information of the currently connected wireless network
-type WirelessStatusReport struct {
-	Status wifi.WifiStatus `json:"status"`
-}
+import (
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
+)
 
 // WirelessStateChangedReport holds the information on a state transition in the connection
 type WirelessStateChangedReport struct {

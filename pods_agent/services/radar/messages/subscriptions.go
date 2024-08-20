@@ -22,27 +22,23 @@ type DisableTailscaleSubscriptionPayload struct {
 	KeyId string `json:"key_id"`
 }
 
-// ConnectToWlanInterfacePayload shold be sent prior to any other Wireless-related command.
-type ConnectToWlanInterfacePayload struct {
-	InterfaceName string `json:"interface"`
+type ConfigureWirelessNetworkPayload struct {
+	SSID     string  `json:"ssid"`
+	Password *string `json:"password"`
+	Security string  `json:"security"`
+	Identity string  `json:"identity"`
+	Hidden   bool    `json:"hidden"`
+	Enabled  bool    `json:"enabled"`
 }
 
-type ConnectToWirelessNetworkPayload struct {
-	SSID     string `json:"ssid"`
-	Password string `json:"password"`
-	Security string `json:"security"`
-	Identity string `json:"identity"`
-	Hidden   bool   `json:"hidden"`
-}
-
-type SelectWirelessNetworkPayload struct {
+type DeleteWirelessNetworkPayload struct {
 	SSID string `json:"ssid"`
 }
 
 type ScanWirelessNetworksPayload struct {
 }
 
-type ReportWirelessStatusPayload struct {
+type ReportConnectionStatusPayload struct {
 }
 
 type SetWlanInterfacePayload struct {
