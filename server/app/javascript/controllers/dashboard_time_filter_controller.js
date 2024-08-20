@@ -32,8 +32,19 @@ export default class extends Controller {
     this.startTimeInput = this.timeInputTargets.find(input => input.id === 'start-time');
     this.endTimeInput = this.timeInputTargets.find(input => input.id === 'end-time');
     this.canHover = false;
+    this.checkDaysInUrlAndSetState();
     this.populateCalendarGrid();
     document.addEventListener('click', this.closeIfClickedOutside.bind(this));
+  }
+  
+  checkDaysInUrlAndSetState() {
+    const currentSearchParams = new URLSearchParams(window.location.search);
+    if(!!currentSearchParams.get('days')) {
+      this.prepopulateDateRange(Number(currentSearchParams.get('days')));
+    } else if(!currentSearchParams.get('days') && !currentSearchParams.get('start') && !currentSearchParams.get('end')) {
+      this.prepopulateDateRange(30);
+    }
+    this.automaticallySet ||= false;
   }
   
   closeIfClickedOutside(e) {
@@ -57,6 +68,15 @@ export default class extends Controller {
   
   clearFilter(e) {
     e.preventDefault();
+    if(e.type === 'click') {
+      this.resetState();
+    } else {
+      this.checkDaysInUrlAndSetState();
+    }
+    this.populateCalendarGrid();
+  }
+  
+  resetState() {
     this.startDateInput.value = null;
     this.endDateInput.value = null;
     this.startTimeInput.value = null;
@@ -69,7 +89,6 @@ export default class extends Controller {
     const today = new Date();
     this.currentMonth = today.getMonth();
     this.currentYear = today.getFullYear();
-    this.populateCalendarGrid();
   }
   
   applyDateRange(e) {
@@ -150,6 +169,13 @@ export default class extends Controller {
       this.currentYear = startDate.getFullYear();
     } else {
       startDate = new Date(`${this.startDateInput.value}T${this.startTimeInput.value}`);
+      this.currentMonth = startDate.getMonth();
+      this.currentYear = startDate.getFullYear();
+    }
+    
+    if(this.automaticallySet) {
+      this.automaticallySet = false;
+      startDate = new Date(`${this.endDateInput.value}T${this.endTimeInput.value}`);
       this.currentMonth = startDate.getMonth();
       this.currentYear = startDate.getFullYear();
     }
@@ -390,5 +416,17 @@ export default class extends Controller {
   openCalendar(e) {
     e.preventDefault();
     
+  }
+  
+  prepopulateDateRange(days) {
+    if(isNaN(days)) return;
+    const today = new Date();
+    const startDate = new Date(today.setDate(today.getDate() - days));
+    const endDate = new Date();
+    this.startDateInput.value = `${startDate.getFullYear()}-${this.twoDigit(startDate.getMonth() + 1)}-${this.twoDigit(startDate.getDate())}`;
+    this.startTimeInput.value = `${this.twoDigit(startDate.getHours())}:${this.twoDigit(startDate.getMinutes())}`;
+    this.endDateInput.value = `${endDate.getFullYear()}-${this.twoDigit(endDate.getMonth() + 1)}-${this.twoDigit(endDate.getDate())}`;
+    this.endTimeInput.value = `${this.twoDigit(endDate.getHours())}:${this.twoDigit(endDate.getMinutes())}`;
+    this.automaticallySet = true;
   }
 }
