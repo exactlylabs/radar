@@ -29,7 +29,7 @@ type SystemEventType int
 const (
 	SystemFileChanged SystemEventType = iota
 	AgentStatusChanged
-	EthernetStatusChanged
+	ConnectionStatusChanged
 	LoginDetected
 )
 
@@ -40,6 +40,7 @@ type SystemEvent struct {
 
 type SystemStatus struct {
 	EthernetStatus  network.NetStatus
+	WlanStatus      network.NetStatus
 	PodAgentRunning bool
 }
 
@@ -194,8 +195,8 @@ type WatchdogClient interface {
 	SyncData(data WatchdogSync) error
 	ReportScanAPsResult(aps []wifi.APDetails)
 	ReportConnectionStatus(status ConnectionsStatus)
-	ReportWirelessConnectionStateChanged(state, ssid string)
 	ReportLogs(l Logs)
+	ReportWirelessConnectionStateChanged(state network.NetStatus, ssid string)
 	ReportActionError(action MessageType, err error)
 	Connected() bool
 	Close() error

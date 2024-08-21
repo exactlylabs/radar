@@ -3,8 +3,8 @@
 # ----------------------------------------------------------------------- #
 # Name: Build a Golang application
 #
-# Description: 
-#   Build the target golang application 
+# Description:
+#   Build the target golang application
 #   with a specified version and OS/Architecture
 #
 # ----------------------------------------------------------------------- #
@@ -17,6 +17,7 @@ OUTPUT_FILE="./dist/radar_agent"
 GOARCH=$(go env GOARCH)
 GOOS=$(go env GOOS)
 GOARM=""
+TAGS=""
 
 
 function help() {
@@ -32,6 +33,7 @@ Optional Arguments:
     -s | --os       Target Operational System. Default: "$OS"
     -r | --arm      Arm Version, according to https://github.com/golang/go/wiki/GoArm. Default: ""
     -p | --project  Target to the Go Project we are building. Default: $BUILD_PROJECT
+    -t | --tags     Build Tags. Default: "${TAGS}"
 """
 }
 
@@ -48,7 +50,7 @@ while :; do
             help
             exit 0
         ;;
-        -o|--output) 
+        -o|--output)
             required $1 $2
             OUTPUT_FILE=$2
             shift
@@ -71,6 +73,10 @@ while :; do
         -p|--project)
             required $1 $2
             BUILD_PROJECT=$2
+            shift
+        ;;
+        -t|--tags)
+            TAGS=$2
             shift
         ;;
         *) break
@@ -101,14 +107,14 @@ echo "Commit: $COMMIT"
 echo "Building Ookla binary"
 $SCRIPT_DIR/make_ookla.sh -s $GOOS -a $GOARCH
 
-LDFLAGS="-s -X 'github.com/exactlylabs/radar/pods_agent/internal/info.version=$VERSION' 
--X 'github.com/exactlylabs/radar/pods_agent/internal/info.commit=$COMMIT' 
+LDFLAGS="-s -X 'github.com/exactlylabs/radar/pods_agent/internal/info.version=$VERSION'
+-X 'github.com/exactlylabs/radar/pods_agent/internal/info.commit=$COMMIT'
 -X 'github.com/exactlylabs/radar/pods_agent/internal/info.builtAt=$BUILT_AT'
 -X 'github.com/exactlylabs/radar/pods_agent/internal/info.distribution=$DISTRIBUTION'"
 
 # Go to module root directory
 cd $SCRIPT_DIR/..
-GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
+GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -tags $TAGS -ldflags="$LDFLAGS" $BUILD_PROJECT
 
 echo "------"
 echo ""
@@ -119,6 +125,7 @@ echo "Version: $1"
 echo "Commit: $COMMIT"
 echo "Build At: $BUILT_AT"
 echo "Distribution: $DISTRIBUTION"
+echo "Tags: $TAGS"
 echo "Output: $OUTPUT_FILE"
 echo ""
 echo "------"

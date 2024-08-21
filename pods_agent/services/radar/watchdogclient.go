@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
@@ -29,7 +30,7 @@ const (
 	TailscaleConnected             cable.CustomActionTypes = "tailscale_connected"
 	TailscaleDisconnected          cable.CustomActionTypes = "tailscale_disconnected"
 	AccessPointsFound              cable.CustomActionTypes = "access_points_found"
-	WirelessStatusReport           cable.CustomActionTypes = "wireless_status_report"
+	ConnectionStatusReport         cable.CustomActionTypes = "connection_status_report"
 	WirelessConnectionStateChanged cable.CustomActionTypes = "wireless_connection_state_changed"
 	LogsReport                     cable.CustomActionTypes = "logs_report"
 	ActionErrorReport              cable.CustomActionTypes = "action_error_report"
@@ -274,16 +275,16 @@ func (c *RadarWatchdogClient) ReportScanAPsResult(aps []wifi.APDetails) {
 
 func (c *RadarWatchdogClient) ReportConnectionStatus(status watchdog.ConnectionsStatus) {
 	c.channel.SendAction(cable.CustomActionData{
-		Action:  WirelessStatusReport,
+		Action:  ConnectionStatusReport,
 		Payload: status,
 	})
 }
 
-func (c *RadarWatchdogClient) ReportWirelessConnectionStateChanged(state, ssid string) {
+func (c *RadarWatchdogClient) ReportWirelessConnectionStateChanged(status network.NetStatus, ssid string) {
 	c.channel.SendAction(cable.CustomActionData{
 		Action: WirelessConnectionStateChanged,
 		Payload: messages.WirelessStateChangedReport{
-			State: state,
+			State: string(status),
 			SSID:  ssid,
 		},
 	})

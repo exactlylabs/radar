@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/csv"
 	"strings"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 func parseNetwork(b []byte) ([]network, error) {
@@ -11,14 +13,13 @@ func parseNetwork(b []byte) ([]network, error) {
 	if i > 0 {
 		b = b[i:]
 	}
-
 	r := csv.NewReader(bytes.NewReader(b))
 	r.Comma = '\t'
 	r.FieldsPerRecord = 4
 
 	recs, err := r.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, errors.W(err).WithMetadata(errors.Metadata{"networks_response": string(b)})
 	}
 
 	nts := []network{}
