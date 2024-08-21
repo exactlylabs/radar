@@ -5,6 +5,7 @@ class WifiConfiguration < ApplicationRecord
   scope :where_enabled, -> { where(enabled: true) }
 
   validates :enabled, uniqueness: { scope: :location_id, message: "Configuration already enabled for this location." }
+  validates :security, inclusion: { in: %w(none, wep, wpa, wpa2, wpa-enterprise, wpa2-enterprise) }
 
   after_commit :broadcast_created, on: :create
   after_commit :broadcast_destroyed, on: :destroy
