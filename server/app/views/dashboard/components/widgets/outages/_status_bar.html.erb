@@ -3,6 +3,7 @@
 <% start_date = params[:start].present? ? Time.at(params[:start].to_f / 1000) : Time.parse((today - days.days).to_s) %>
 <% end_date = params[:end].present? ? Time.at(params[:end].to_f / 1000) : Time.parse(today.to_s) %>
 <div class="dashboard--status-bar" data-controller="outages-chart">
+  <% seen_left_positions_map = {} # I wanna check if some outages share the "exact" same position, so i can offset them a bit %>
   <% @outages.each do |entry| %>
     <% outage_group_id = entry[0] %>
     <% group_data = entry[1] %>
@@ -13,8 +14,10 @@
     <% width = 100 if width > 100 %>
     <% left = ((group_data[:started_at] - start_date.to_f).to_f / (full_time_span.to_f) * 100).floor(0)  %>
     <% left = 0 if left < 0 %>
+    <% left += seen_left_positions_map[left] + 1 if seen_left_positions_map[left] %>
+    <% seen_left_positions_map[left] = width %>
     <div class="dashboard--status-outage-bar"
-         style="width: <%= width %>%; left: <%= left %>%; border-top-left-radius: <%= left < 1 ? '.25rem' : 0 %>; border-bottom-left-radius: <%= left < 1 ? '.25rem' : 0 %>; border-top-right-radius: <%= width > 99 ? '.25rem' : 0 %>; border-bottom-right-radius: <%= width > 99 ? '.25rem' : 0 %>;"
+         style="min-width: 1px; width: <%= width %>%; left: <%= left %>%; border-top-left-radius: <%= left < 1 ? '.25rem' : 0 %>; border-bottom-left-radius: <%= left < 1 ? '.25rem' : 0 %>; border-top-right-radius: <%= width > 99 ? '.25rem' : 0 %>; border-bottom-right-radius: <%= width > 99 ? '.25rem' : 0 %>;"
          data-action="mouseenter->outages-chart#hoverOutage mouseleave->outages-chart#unhoverOutage"
          data-outages-chart-target="outage"
          data-tooltip-id="outage-tooltip-<%= outage_group_id %>"
