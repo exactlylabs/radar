@@ -2,6 +2,7 @@ package wifi
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -167,6 +168,7 @@ func (c *Client) connect(net network) (network, error) {
 	if err := c.cli.EnableNetwork(id); err != nil {
 		return net, errors.W(err)
 	}
+	log.Printf("wifi.Client#connect: Selecting Network %v\n", net.ID)
 	if err := c.cli.Conn().SendCommandBool(wireless.CmdSelectNetwork, net.ID); err != nil {
 		return net, errors.W(err)
 	}
@@ -314,7 +316,11 @@ func (c *Client) ConfigureNetwork(data NetworkConnectionData) error {
 
 // CurrentSSID implements WirelessClient.
 func (c *Client) CurrentSSID() string {
-	return c.currentSSID
+	nets, _ := c.cli.Networks()
+	if current, exist := nets.FindCurrent(); exist {
+		return current.SSID
+	}
+	return ""
 }
 
 func (c *Client) ConfiguredNetworks() ([]NetworkConnectionData, error) {

@@ -171,10 +171,18 @@ func (w *Watchdog) handleSystemEvent(event SystemEvent) {
 	case AgentStatusChanged:
 		log.Printf("Radar Agent Status Changed: %v\n", event.Data)
 		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
-	case EthernetStatusChanged:
-		log.Printf("Pod Ethernet Status Changed: %v\n", event.Data)
+
+	case ConnectionStatusChanged:
+		log.Printf("Pod Connection Status Changed: %v\n", event.Data)
 		w.updateLEDManagerFromStatus(w.scanner.SystemStatus())
-		// TODO: Try to push event to Server (in case there is a wireless connection)
+		status, err := w.getConnectionsStatus()
+		if err != nil {
+			err = errors.W(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+			log.Println(err)
+			return
+		}
+		w.cli.ReportConnectionStatus(status)
 
 	case LoginDetected:
 		evt := event.Data.(LoginEvent)
@@ -334,9 +342,10 @@ func (w *Watchdog) handleDisableTailscale(ctx context.Context, data DisableTails
 func (w *Watchdog) handleWifiEvents(ctx context.Context, data wifi.Event) error {
 	switch data.Type {
 	case wifi.Connected:
-		w.cli.ReportWirelessConnectionStateChanged("connected", data.SSID)
+		status, _ := w.getConnectionsStatus()
+		w.cli.ReportWirelessConnectionStateChanged(status.Wlan.Status, data.SSID)
 	case wifi.Disconnected:
-		w.cli.ReportWirelessConnectionStateChanged("disconnected", data.SSID)
+		w.cli.ReportWirelessConnectionStateChanged(network.Disconnected, data.SSID)
 	}
 	return nil
 }
@@ -375,8 +384,9 @@ func (w *Watchdog) handleConfigureSSID(ctx context.Context, data ConfigureSSIDMe
 	} else if !data.Enabled && data.SSID == currentSSID {
 		err = w.wlanCli.Disconnect()
 		if err != nil {
-			log.Printf("watchdog.handleConfigureSSID: Disconnected from %s\n", currentSSID)
+			return errors.W(err)
 		}
+		log.Printf("watchdog.handleConfigureSSID: Disconnected from %s\n", currentSSID)
 	}
 
 	return nil

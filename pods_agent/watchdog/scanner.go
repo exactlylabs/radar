@@ -198,16 +198,26 @@ func (s *Scanner) ScanSystem(c *config.Config) error {
 		}
 	}
 
-	// Ethernet Status Change Detection
-	ethernetStatus, err := s.sysManager.EthernetStatus()
+	// Network Status Change Detection
+	networks, err := network.Interfaces()
 	if err != nil {
 		return errors.W(err)
 	}
-	if ethernetStatus != s.status.EthernetStatus {
+	ethernetStatus := s.status.EthernetStatus
+	wlanStatus := s.status.WlanStatus
+	if eth := networks.FindByType(network.Ethernet); eth != nil {
+		ethernetStatus = eth.Details().Status
+	}
+	if wlan := networks.FindByType(network.Wlan); wlan != nil {
+		wlanStatus = wlan.Details().Status
+	}
+
+	if ethernetStatus != s.status.EthernetStatus || wlanStatus != s.status.WlanStatus {
 		s.status.EthernetStatus = ethernetStatus
+		s.status.WlanStatus = wlanStatus
 		s.eventsCh <- SystemEvent{
-			EventType: EthernetStatusChanged,
-			Data:      ethernetStatus,
+			EventType: ConnectionStatusChanged,
+			Data:      map[string]network.NetStatus{"wlan": wlanStatus, "ethernet": ethernetStatus},
 		}
 	}
 

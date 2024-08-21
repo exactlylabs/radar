@@ -7,6 +7,7 @@ BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
 PROVIDER_SIGNING_KEY_PATH?=./dist/certs/binKey.key
 export VERSION?=DEV
+export TAGS=""
 INSTALL_DIR?=/usr/local/bin
 
 # Get Absolute Path of Signing files
@@ -49,7 +50,11 @@ watchdog:
 		--os ${OS} \
 		--arch ${ARCH} \
 		--project cmd/start_watchdog/main.go \
+		--tags ${TAGS} \
 		${VERSION}
+
+watchdog-dev: TAGS=development
+watchdog-dev: watchdog
 
 run:
 	./scripts/dev.sh
