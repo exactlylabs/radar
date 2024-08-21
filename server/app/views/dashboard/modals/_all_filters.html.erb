@@ -40,10 +40,14 @@
                  current_label: params[:network_id].present? ? policy_scope(Location).find(params[:network_id]).name : 'All networks',
                  full_width: true,
                  is_dark: true,
-                 append_to_body: true
+                 append_to_body: true,
+                 infinite_scroll: true,
+                 infinite_scroll_url: locations_url(category: params[:category_id], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'all-filters--network-filter-menu'),
+                 scroll_total_count: @total_networks_count,
+                 scroll_next_page: 2,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: "click->dashboard-modal-realtime-filters#selectFilter:prevent", base_menu_id: 'all-filters--network-filter-menu', base_button_id: 'all-filters--network-filter', key: 'network_id', value: 'all', label: 'All networks', active: params[:network_id].nil? } %>
-      <% policy_scope(Location).order(:name).each do |network| %>
+      <% @networks.each do |network| %>
         <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: "click->dashboard-modal-realtime-filters#selectFilter:prevent", base_menu_id: 'all-filters--network-filter-menu', base_button_id: 'all-filters--network-filter', key: 'network_id', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s } %>
       <% end %>
     <% end %>
@@ -93,7 +97,6 @@
     </div>
   <% end %>
 </div>
-
 <div class="modals--footer-container">
   <button type="button"
           class="custom-button custom-button--secondary custom-button--lg me-4"

@@ -3,6 +3,11 @@
 <% is_dark = local_assigns[:is_dark] || false %>
 <% full_width = local_assigns[:full_width] || false %>
 <% append_to_body = local_assigns[:append_to_body] || false %>
+<% infinite_scroll = local_assigns[:infinite_scroll] || false %>
+<% raise "Infinite Scroll URL is required" if infinite_scroll && local_assigns[:infinite_scroll_url].nil? %>
+<% infinite_scroll_url = local_assigns[:infinite_scroll_url] || nil %>
+<% scroll_total_count = local_assigns[:scroll_total_count] || nil %>
+<% scroll_next_page = local_assigns[:scroll_next_page] || nil %>
 
 <div class="tables--filters-button-container"
      data-controller="filters"
@@ -22,9 +27,13 @@
     <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
   </button>
   <div class="tables--filters-menu-container invisible"
+       data-controller="<%= infinite_scroll ? 'infinite-scroll' : '' %>"
        data-filters-target="filtersMenu"
        id="<%= menu_id %>"
        data-append-to-body="<%= append_to_body %>"
+       data-total-count="<%= scroll_total_count %>"
+       data-next-page="<%= scroll_next_page %>"
+       data-url="<%= infinite_scroll_url %>"
   >
     <%= yield %>
   </div>
