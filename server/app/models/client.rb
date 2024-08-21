@@ -53,8 +53,9 @@ class Client < ApplicationRecord
   has_many :ndt7_diagnose_reports
   has_many :tailscale_auth_keys
   has_many :pod_network_interfaces
+  has_many :wifi_configurations
 
-  has_one :pod_connectivity_config, dependent: :destroy
+  has_one :pod_connection, dependent: :destroy
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
   validate do |client|
@@ -66,7 +67,7 @@ class Client < ApplicationRecord
   after_validation :check_if_pod_moved, on: :update
 
   before_create :create_ids
-  after_create :create_pod_connectivity_config
+  after_create :create_pod_connection
 
   after_save :send_event
   after_validation :check_ip_changed, if: :ip_changed?
@@ -104,8 +105,8 @@ class Client < ApplicationRecord
   scope :where_not_in_service, -> { where(in_service: false) }
   scope :where_no_account, -> { where("account_id IS NULL") }
 
-  def pod_connectivity_config
-    super || create_pod_connectivity_config
+  def pod_connection
+    super || create_pod_connection
   end
 
   def secret=(unencrypted_secret)
@@ -680,7 +681,7 @@ class Client < ApplicationRecord
     active_connections = nil
     default_interface = pod_network_interfaces.where(default: true).first
     active_connections = default_interface.wireless ? 'Wi-Fi' : 'Wired' if default_interface.present?
-    if active_connections != 'Wi-Fi' && pod_connectivity_config.present? && pod_connectivity_config.wlan_connected
+    if active_connections != 'Wi-Fi' && pod_connection.present? && pod_connection.wlan_status == :connected
       active_connections = active_connections.present? ? "#{active_connections} & Wi-Fi" : 'Wi-Fi'
     end
     active_connections
