@@ -20,13 +20,19 @@ class LocationsController < ApplicationController
     if account_id && account_id.to_i != -1
       @locations = @locations.where(account_id: account_id)
     end
-    if FeatureFlagHelper.is_available('networks' , current_user)
-      if params[:status].present? && params[:status] != 'all'
-        status_filter = params[:status] == 'online'
-        @locations = @locations.where(online: status_filter)
-      end
-      @total = @locations.count
-      @locations = paginate(@locations, params[:page], params[:page_size])
+    if params[:status].present? && params[:status] != 'all'
+      status_filter = params[:status] == 'online'
+      @locations = @locations.where(online: status_filter)
+    end
+    @total = @locations.count
+    sort_by = params[:sort_by] || 'name'
+    sort_order = params[:sort_order] || 'asc'
+    @locations = @locations.order(sort_by => sort_order)
+    @locations = paginate(@locations, params[:page], params[:page_size])
+    @menu_id = params[:menu_id] if params[:menu_id].present?
+    respond_to do |format|
+      format.turbo_stream
+      format.html
     end
   end
 

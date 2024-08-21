@@ -42,9 +42,13 @@
                current_label: params[:network_id].present? ? policy_scope(Location).find(params[:network_id]).name : 'All networks',
                pagination: false,
                no_z_index: true,
+               infinite_scroll: true,
+               infinite_scroll_url: locations_url(category: params[:category_id], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'network-filter-menu'),
+               scroll_total_count: @total_networks,
+               scroll_next_page: 2,
              } do %>
     <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: 'all', label: 'All networks', active: params[:network_id].nil? } %>
-    <% policy_scope(Location).order(:name).each do |network| %>
+    <% @locations.limit(50).each do |network| %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s } %>
     <% end %>
   <% end %>

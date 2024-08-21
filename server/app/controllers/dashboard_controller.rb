@@ -2,6 +2,7 @@ class DashboardController < ApplicationController
   include ChartsHelper
   include Onboarding
   include DashboardConcern
+  include Paginator
   before_action :authenticate_user!
   before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data]
 
@@ -15,25 +16,27 @@ class DashboardController < ApplicationController
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:status])
     set_onboarding_step
-    if FeatureFlagHelper.is_available('charts', current_user)
-      @locations = @locations.where(account_id: params[:account_id]) if params[:account_id]
-      @locations = @locations.where(id: params[:network_id]) if params[:network_id]
-    end
-    if FeatureFlagHelper.is_available('networks', current_user)
-      cookie = get_cookie(:ftue_onboarding_modal)
-      if current_user.ftue_disabled
-        if cookie.nil?
-          set_cookie(:ftue_onboarding_modal, false)
-        end
-      else
-        has_no_accounts = policy_scope(Account).count == 0
-        cookie_is_turned_on = cookie.present? && cookie == 'true'
-        if cookie.nil?
-          set_cookie(:ftue_onboarding_modal, has_no_accounts)
-          cookie_is_turned_on = has_no_accounts
-        end
-        @show_ftue = cookie_is_turned_on && has_no_accounts
+    @locations = @locations.where(account_id: params[:account_id]) if params[:account_id]
+    @locations = @locations.where(id: params[:network_id]) if params[:network_id]
+    sort_by = params[:sort_by] || 'name'
+    sort_order = params[:sort_order] || 'asc'
+    @locations = @locations.order(sort_by => sort_order)
+    @total_networks = @locations.count
+    paginate(@locations, params[:page], params[:page_size]) if params[:page]
+
+    cookie = get_cookie(:ftue_onboarding_modal)
+    if current_user.ftue_disabled
+      if cookie.nil?
+        set_cookie(:ftue_onboarding_modal, false)
       end
+    else
+      has_no_accounts = policy_scope(Account).count == 0
+      cookie_is_turned_on = cookie.present? && cookie == 'true'
+      if cookie.nil?
+        set_cookie(:ftue_onboarding_modal, has_no_accounts)
+        cookie_is_turned_on = has_no_accounts
+      end
+      @show_ftue = cookie_is_turned_on && has_no_accounts
     end
     set_as_orgs
   end
@@ -159,6 +162,9 @@ class DashboardController < ApplicationController
   end
 
   def all_filters
+    @networks = policy_scope(Location).order(:name)
+    @total_networks_count = @networks.count
+    @networks = @networks.limit(50)
     if current_account.present?
       params = as_orgs_filters_params(current_account)
       @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:network_id]))

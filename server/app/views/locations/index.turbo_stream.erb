@@ -1,0 +1,5 @@
+<%= turbo_stream.append @menu_id do %>
+  <% @locations.each do |network| %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: "click->dashboard-modal-realtime-filters#selectFilter:prevent", base_menu_id: 'all-filters--network-filter-menu', base_button_id: 'all-filters--network-filter', key: 'network_id', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s } %>
+  <% end %>
+<% end %>

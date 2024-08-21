@@ -7,7 +7,7 @@ export default class extends Controller {
   
   connect() {
     this.element.addEventListener('scroll', this.handleScroll.bind(this));
-    this.nextPage = 1;
+    this.nextPage = parseInt(this.element.dataset.nextPage) || 1;
     this.totalCount = parseInt(this.element.dataset.totalCount);
     if(isNaN(this.totalCount)) {
       this.totalCount = 0;
@@ -18,7 +18,7 @@ export default class extends Controller {
   
   handleScroll() {
     if(this.loadingTimeout) return;
-    if(((this.element.scrollTop + this.element.parentNode.clientHeight) >= (this.element.scrollHeight - 100)) && this.totalCount > 0) {
+    if(((this.element.scrollTop + this.element.parentNode.clientHeight) / (this.element.scrollHeight) > 0.75) && this.totalCount > 0) {
       this.loadMore();
     }
   }
@@ -35,9 +35,11 @@ export default class extends Controller {
     this.loadingTimeout = setTimeout(() => {this.loadingTimeout = null;}, 500);
     const url = new URL(this.element.dataset.url);
     url.searchParams.set('page', this.nextPage);
-    url.searchParams.set('page_size', this.PAGE_SIZE.toString());
     if(!!this.outageType) {
       url.searchParams.set('outage_type', this.outageType);
+    }
+    if(!url.searchParams.has('page_size')) {
+      url.searchParams.set('page_size', this.PAGE_SIZE.toString());
     }
     fetch(url)
       .then(response => response.text())
