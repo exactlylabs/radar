@@ -3,6 +3,7 @@
 <% start_date = params[:start].present? ? Time.at(params[:start].to_f / 1000) : Time.parse((today - days.days).to_s) %>
 <% end_date = params[:end].present? ? Time.at(params[:end].to_f / 1000) : Time.parse(today.to_s) %>
 <div class="dashboard--status-bar" data-controller="outages-chart">
+  <%= render partial: "outages/components/hover_and_drag_handler", locals: { start_date: start_date, end_date: end_date } %>
   <% seen_left_positions_map = {} # I wanna check if some outages share the "exact" same position, so i can offset them a bit %>
   <% @outages.each do |entry| %>
     <% outage_group_id = entry[0] %>
@@ -36,8 +37,11 @@
   <% end %>
 </div>
 <div class="dashboard--status-dates-container">
-  <% jump = (end_date.to_date - start_date.to_date) if params[:from].present? && params[:end].present? %>
-  <% jump ||= (days / 5).floor(0) %>
-  <p class="dashboard--status-date-label"><%= start_date.strftime("%b %d") %></p>
-  <p class="dashboard--status-date-label"><%= end_date.strftime("%b %d") %></p>
+  <% timeframe = end_date - start_date %>
+  <% parsed_start_date = ChartsHelper.format_axis_date(start_date, timeframe) %>
+  <% parsed_end_date = ChartsHelper.format_axis_date(end_date, timeframe) %>
+  <% parsed_mid_date = ChartsHelper.format_axis_date(Time.parse((start_date + timeframe / 2).to_s), timeframe) %>
+  <p class="dashboard--status-date-label"><%= parsed_start_date %></p>
+  <p class="dashboard--status-date-label"><%= parsed_mid_date %></p>
+  <p class="dashboard--status-date-label"><%= parsed_end_date %></p>
 </div>
