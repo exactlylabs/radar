@@ -228,3 +228,6 @@ application.register("claim-pods", ClaimPodsController);
 
 import InfiniteScrollController from "./infinite_scroll_controller";
 application.register("infinite-scroll", InfiniteScrollController);
+
+import OutagesDraggerController from "./outages_dragger_controller";
+application.register("outages-dragger", OutagesDraggerController);

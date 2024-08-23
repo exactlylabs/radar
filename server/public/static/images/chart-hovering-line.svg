@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2px" height="46px" viewBox="0 0 2 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>marker@1x</title>
+    <g id="[D]-Dashboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-dasharray="2,4" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Dashboard---Additional-Chart-Specs---Interacting" transform="translate(-318, -1559)" stroke="#3F3C70">
+            <g id="selected_area" transform="translate(313.3431, 1546.3431)">
+                <line x1="5.65685425" y1="57.6568542" x2="5.65685425" y2="9.65685425" id="marker"></line>
+            </g>
+        </g>
+    </g>
+</svg>

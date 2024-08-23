@@ -1,0 +1,15 @@
+<div class="outages--hover-and-drag-container"
+     data-controller="outages-dragger"
+     data-start-date="<%= start_date %>"
+     data-end-date="<%= end_date %>"
+>
+  <div class="outages--hovering-line" hidden="hidden" data-outages-dragger-target="hoverLine">
+    <div class="outages--hovering-arrow" hidden="hidden"></div>
+  </div>
+  <div class="outages--hovering-line" hidden="hidden" data-outages-dragger-target="endHoverLine">
+    <div class="outages--hovering-arrow" hidden="hidden"></div>
+  </div>
+  <div class="outages--date outages--start-date" data-outages-dragger-target="startDateIndicator" hidden="hidden"></div>
+  <div class="outages--date outages--end-date" data-outages-dragger-target="endDateIndicator" hidden="hidden"></div>
+  <div class="outages--dragged-area" data-outages-dragger-target="draggedArea"></div>
+</div>
