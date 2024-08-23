@@ -1,6 +1,14 @@
 <div class="networks--details-content-container" id="location-details">
   <div class="networks--top-info-card">
     <%= render partial: "application/components/overview_info_cell",
+               locals: {
+                 title: 'Category',
+                 subtitle: nil,
+                 partial: "categories/components/table_cell",
+                 partial_locals: {categories: network.categories, shows_tooltip: true, row: 0}
+               }
+    %>
+    <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Address',
           subtitle: network.address
@@ -8,18 +16,18 @@
     %>
     <%= render partial: "application/components/overview_info_cell",
         locals: {
-          title: 'Total pods',
-          subtitle: "#{network.clients.count} #{network.clients.count == 1 ? 'pod' : 'pods'}"
+          title: 'Exp. Download',
+          subtitle: "#{ network.expected_mbps_down.present? ? "#{network.expected_mbps_down.round(2)} Mbps" : '-' }"
         }
     %>
+
     <%= render partial: "application/components/overview_info_cell",
-        locals: {
-          title: 'Category',
-          subtitle: nil,
-          partial: "categories/components/table_cell",
-          partial_locals: {categories: network.categories, shows_tooltip: true, row: 0}
-        }
+               locals: {
+                 title: 'Exp. Upload',
+                 subtitle: "#{ network.expected_mbps_up.present? ? "#{network.expected_mbps_up.round(2)} Mbps" : '-' }"
+               }
     %>
+
     <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Internet Provider',

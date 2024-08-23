@@ -26,9 +26,6 @@
         <span class="help-dark-text"><%= location.download_avg.present? ? "#{location.download_avg.round(2)} Mbps" : 'Not available' %></span>
         <span class="help-small-text mx-1">/</span>
         <span class="help-small-text"><%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down.round(2)} Mbps" : 'Not available' %></span>
-        <span class="widgets--location-diff-text"
-          data-negative="<%= location.download_diff.present? && location.download_diff.include?('-') %>"
-        ><%= location.download_diff.present? ? location.download_diff : '-' %></span>
       </div>
     </div>
   </div>

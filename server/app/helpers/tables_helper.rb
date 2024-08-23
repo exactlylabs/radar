@@ -123,8 +123,8 @@ module TablesHelper
         { text: 'Checkbox', hidden: true },
         { text: 'Network', sort: 'name', sort_action: 'click->table#sortBy' },
         { text: 'Category' },
-        { text: 'Avg. download', icon_before: 'download-icon.png' },
-        { text: 'Avg. upload', icon_before: 'upload-icon.png' },
+        { text: 'Avg. Download (24h)', icon_before: 'download-icon.png' },
+        { text: 'Avg. Upload (24h)', icon_before: 'upload-icon.png' },
         { text: 'Actions', hidden: true }
       ]
     when TableTypes::MEASUREMENTS
@@ -145,8 +145,8 @@ module TablesHelper
         *rows,
         { text: 'Checkbox', hidden: true },
         { text: 'Pod ID' },
-        { text: 'Avg. download', icon_before: 'download-icon.png' },
-        { text: 'Avg. upload', icon_before: 'upload-icon.png' },
+        { text: 'Avg. Download', icon_before: 'download-icon.png' },
+        { text: 'Avg. Upload', icon_before: 'upload-icon.png' },
         { text: 'Last measurement' },
         { text: 'Actions', hidden: true }
       ]

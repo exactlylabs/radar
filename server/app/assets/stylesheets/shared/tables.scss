@@ -504,6 +504,29 @@
   }
 }
 
+.tables--network-avg-value-diff-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+
+  .tables--network-avg-value {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    font-variation-settings: 'wght' $bold;
+    color: $deep-blue;
+    max-width: 95%;
+
+    &[data-present="false"] {
+      font-size: 0.813rem;
+      line-height: 1.462;
+      font-variation-settings: 'wght' $medium;
+
+    }
+  }
+}
+
 .tables--empty-table-container {
   width: 100%;
   background-color: white;

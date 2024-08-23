@@ -91,6 +91,7 @@
 
 .widgets--header-container {
   width: 100%;
+
   .widgets--header-text {
     font-size: 1rem;
     color: $deep-blue;
@@ -240,13 +241,17 @@
 }
 
 .widgets--location-diff-text {
-  font-size: 0.812rem;
+  font-size: 0.75rem;
+  font-variation-settings: 'wght' $bold;
   line-height: 1.188rem;
   color: $badge--green-color;
-  margin-left: 0.375rem;
+  background-color: $badge--green-background-color;
+  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
 
   &[data-negative="true"] {
     color: $error-red;
+    background-color: $badge--red-background-color;
   }
 
   &[data-neutral="true"] {
@@ -421,16 +426,16 @@
     background-position: 0 0;
   }
   25% {
-      background-position: var(--width) 0;
+    background-position: var(--width) 0;
   }
   50% {
-      background-position: 0 0;
+    background-position: 0 0;
   }
   75% {
-      background-position: var(--width) 0;
+    background-position: var(--width) 0;
   }
   100% {
-      background-position: 0 0;
+    background-position: 0 0;
   }
 }
 
