@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <% accounts = @accounts || policy_scope(Account) %>
 <% locations = @locations || policy_scope(Location) %>
 <% total_networks = @total_networks || locations.count %>
@@ -5,17 +6,22 @@
 <% categories = @categories || policy_scope(Category) %>
 
 <turbo-frame class="dashboard--filters-container" id="dashboard-realtime-filters">
+=======
+<div class="dashboard--filters-container">
+  <% this_year_in_days = Date.today.yday %>
+>>>>>>> 7805426c (dashboard changes)
   <%= render partial: "dashboard/components/date_filter",
              locals: {
                menu_id: 'date-range-filter-menu',
                key: 'days',
-               default_value: 30,
-               default_label: 'Last 30 days',
+               default_value: 1,
+               default_label: 'Last 24 hours',
                no_z_index: true,
                options: [
+                 { label: 'Last 24 hours', value: '1' },
                  { label: 'Last 7 days', value: '7' },
                  { label: 'Last 30 days', value: '30' },
-                 { label: 'Last 90 days', value: '90' },
+                 { label: 'This year', value: "#{this_year_in_days}" },
                ],
              }
   %>
@@ -91,13 +97,21 @@
                  key: 'isp_id',
                  default_value: 'all',
                  default_label: 'All ISPs',
+<<<<<<< HEAD
                  current_label: params[:isp_id].present? ? isps.filter {|isp| isp['id'] == params[:isp_id].to_i}.first ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id].to_i}.first['name'] : 'All ISPs' : 'All ISPs',
+=======
+                 current_label: params[:isp_id].present? ? @filter_as_orgs.filter { |isp| isp['id'] == params[:isp_id].to_i }.first ? @filter_as_orgs.filter { |isp| isp['id'] == params[:isp_id].to_i }.first['name'] : 'All ISPs' : 'All ISPs',
+>>>>>>> 7805426c (dashboard changes)
                  pagination: false,
                  no_z_index: true,
                  entity: 'ISP',
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
+<<<<<<< HEAD
       <% isps.sort_by {|isp| isp['name']}.each do |isp| %>
+=======
+      <% @filter_as_orgs.sort_by { |isp| isp['name'] }.each do |isp| %>
+>>>>>>> 7805426c (dashboard changes)
         <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: isp['id'], label: isp['name'], active: params[:isp_id] == isp['id'].to_s } %>
       <% end %>
     <% end %>
