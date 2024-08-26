@@ -2,9 +2,15 @@
 
 <div class="dashboard--total-data-by-account-container">
   <div class="dashboard--total-data-by-account-name-container">
-    <div class="dashboard--total-data-by-account-initial-container">
-      <p><%= account_name[0].upcase %></p>
-    </div>
+    <% if type == 'account' %>
+      <div class="dashboard--total-data-by-account-initial-container">
+        <p><%= account_name[0].upcase %></p>
+      </div>
+    <% else %>
+      <div class="dashboard--total-data-network-icon-container">
+        <%= image_tag image_url('network-online-icon.png'), width: 16, height: 16 %>
+      </div>
+    <% end %>
     <p class="dashboard--total-data-by-account-name"><%= account_name %></p>
   </div>
   <div class="dashboard--total-data-all-accounts-values-container">
