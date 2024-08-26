@@ -75,16 +75,18 @@
     <% end %>
   </div>
   <div class="public--pod-content-card-body">
+    <% this_year_in_days = Date.today.yday %>
     <%= render partial: "dashboard/components/date_filter",
                locals: {
                  menu_id: 'date-range-filter-menu',
                  key: 'days',
-                 default_value: 30,
-                 default_label: 'Last 30 days',
+                 default_value: 1,
+                 default_label: 'Last 24 hours',
                  options: [
+                   { label: 'Last 24 hours', value: '1' },
                    { label: 'Last 7 days', value: '7' },
                    { label: 'Last 30 days', value: '30' },
-                   { label: 'Last 90 days', value: '90' },
+                   { label: 'This year', value: "#{this_year_in_days}" },
                  ],
                  public_use: true
                }

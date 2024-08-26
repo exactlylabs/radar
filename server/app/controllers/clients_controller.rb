@@ -45,6 +45,8 @@ class ClientsController < ApplicationController
   # GET /clients/1 or /clients/1.json
   def show
     account_id = current_account.id == -1 ? nil : current_account.id
+    start_date = get_range_start_date
+    download_and_upload_averages(@client, start_date)
     @total_avg = @client.get_speed_averages(account_id)
   end
 
@@ -580,18 +582,8 @@ class ClientsController < ApplicationController
   end
 
   def speed_average
-    # Default to pod's created at if type is empty (all time)
     start_date = get_range_start_date(params[:type]) || @client.created_at
-    end_date = Time.zone.now
-    filtered_measurements = @client.account_measurements.where(created_at: start_date..end_date)
-    if filtered_measurements.count > 0
-      @download_avg = filtered_measurements.average(:download).round(3)
-      @upload_avg = filtered_measurements.average(:upload).round(3)
-    else
-      @download_avg = nil
-      @upload_avg = nil
-    end
-
+    download_and_upload_averages(@client, start_date)
     respond_to do |format|
       format.turbo_stream
     end
@@ -991,5 +983,21 @@ class ClientsController < ApplicationController
       Sentry.capture_exception(e)
       @notice ||= there_has_been_an_error('adding your new pod')
     end
+  end
+
+  def download_and_upload_averages(client, start_date)
+    # Default to network's created at if type is empty (all time)
+    end_date = Time.zone.now
+    filtered_measurements = client.measurements.where(created_at: start_date..end_date)
+    if filtered_measurements.count > 0
+      @download_avg = filtered_measurements.average(:download).to_f.round(2)
+      @upload_avg = filtered_measurements.average(:upload).to_f.round(2)
+    else
+      @download_avg = nil
+      @upload_avg = nil
+    end
+
+    @download_diff = client.download_diff(@download_avg || -1)
+    @upload_diff = client.download_diff(@upload_avg || -1)
   end
 end

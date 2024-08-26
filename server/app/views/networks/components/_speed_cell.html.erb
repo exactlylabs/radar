@@ -1,13 +1,24 @@
 <div class="application--speed-cell">
-  <%= image_tag image_url("#{type}-cell-icon.png"), width: 16, height: 16 %>
-  <span class="forms--label ellipsis mt-3 application--speed-cell-title"><%= "Avg. #{type} speed" %></span>
-  <div class="widgets--location-avg-container wrap">
-    <span class="help-dark-text"><%= avg %></span>
-    <span class="help-small-text mx-1">/</span>
-    <span class="help-small-text"><%= expected %></span>
+  <div class="application--speed-cell-header">
+    <div class="application-speed-cell-icon-title">
+      <%= svg_tag("#{type}-icon.svg", { width: 16, height: 16, class: "#{ diff.include?('-') ? 'svg--fill-red' : 'svg--fill-green'}" }) %>
+      <div class="application--speed-cell-value">
+        <span class="forms--label ellipsis application--speed-cell-title"><%= "Avg. #{type}" %></span>
+        <div class="widgets--location-avg-container wrap">
+          <% if avg != "-" %>
+            <span class="application--speed-value-text"><%= avg %></span>
+            <span class="help-dark-text">Mbps</span>
+          <% else %>
+            <span class="help-dark-text"><%= avg %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <% if diff != "-" %>
+      <span class="widgets--location-diff-text"
+            data-negative="<%= diff.include?('-') %>"
+            data-neutral="<%= diff == "-" %>"
+      ><%= diff %></span>
+    <% end %>
   </div>
-  <span class="widgets--location-diff-text"
-    data-negative="<%= diff.include?('-') %>"
-    data-neutral="<%= diff == "-" %>"
-  ><%= diff %></span>
 </div>

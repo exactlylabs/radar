@@ -2,10 +2,10 @@ import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
 
 const SPEED_FILTERS = {
-  ALL_TIME: 'all_time',
-  THIS_WEEK: 'this_year',
-  THIS_MONTH: 'this_month',
-  TODAY: 'today'
+  LAST_24_HOURS: 'last_24_hours',
+  LAST_7_DAYS: 'last_7_days',
+  LAST_30_DAYS: 'last_30_days',
+  THIS_YEAR: 'this_year',
 }
 
 export default class extends Controller {
@@ -16,7 +16,7 @@ export default class extends Controller {
   ];
 
   connect() {
-    this.currentFilter = SPEED_FILTERS.ALL_TIME;
+    this.currentFilter = SPEED_FILTERS.LAST_24_HOURS;
   }
 
   switchFilter(e) {
