@@ -1,35 +1,35 @@
 <div class="application--speed-filters-container" data-controller="speed-filters">
-  <a href="<%= speed_average_path.call(id: resource_id, type: '') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_24_hours') %>"
     class="application--speed-filter selected"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
     data-filter="last_24_hours"
   >
-    All time
+    Last 24 hours
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'year') %>" 
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_7_days') %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
     data-filter="last_7_days"
   >
-    This year
+    Last 7 days
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'month') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_30_days') %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
     data-filter="last_30_days"
   >
-    This month
+    Last 30 days
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'today') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'this_year') %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
     data-filter="this_year"
   >
-    Today
+    This year
   </a>
   <%= render partial: "application/components/speed_filters_dropdown" %>
 </div>

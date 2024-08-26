@@ -19,3 +19,11 @@ svg {
   --base-color: #{$white};
 }
 
+.svg--fill-green {
+  --base-color: #{$badge--green-color};
+}
+
+.svg--fill-red {
+  --base-color: #{$badge--red-color};
+}
+

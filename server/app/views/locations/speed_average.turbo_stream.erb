@@ -1,11 +1,11 @@
 <%= turbo_stream.update "network-speed-averages" do %>
   <%= render partial: "networks/components/speed_cells",
              locals: {
-                download_avg: @download_avg.present? ? "#{@download_avg} Mbps" : 'N/A',
-                download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)} Mbps" : 'N/A',
+                download_avg: @download_avg.present? ? "#{@download_avg}" : '-',
+                download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)}" : '-',
                 download_diff: @download_diff.present? ? @download_diff : "-",
-                upload_avg: @upload_avg.present? ? "#{@upload_avg} Mbps" : 'N/A',
-                upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)} Mbps" : 'N/A',
+                upload_avg: @upload_avg.present? ? "#{@upload_avg}" : '-',
+                upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)}" : '-',
                 upload_diff: @upload_diff.present? ? @upload_diff : "-",
              }
   %>

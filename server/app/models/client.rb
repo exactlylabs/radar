@@ -837,20 +837,29 @@ class Client < ApplicationRecord
     end
   end
 
-  def download_diff
-    return "-" if self.location&.expected_mbps_down.nil?
-    return "-" if self.download_avg.nil?
-    diff = self.download_avg - self.location.expected_mbps_down
-    diff_to_human(diff, self.location.expected_mbps_down)
+  def download_diff(calculated_avg = nil)
+    if calculated_avg == -1
+      return "-"
+    end
+    avg = calculated_avg.present? ? calculated_avg : self.download_avg
+    if avg.nil? || self.location&.expected_mbps_down.nil?
+      return nil
+    end
+    diff = avg - self.location.expected_mbps_down
+    diff_to_human(diff, self.location&.expected_mbps_down)
   end
 
-  def upload_diff
-    return "-" if self.location&.expected_mbps_up.nil?
-    return "-" if self.upload_avg.nil?
-    diff = self.upload_avg - self.location.expected_mbps_up
-    diff_to_human(diff, self.location.expected_mbps_up)
+  def upload_diff(calculated_avg = nil)
+    if calculated_avg == -1
+      return "-"
+    end
+    avg = calculated_avg.present? ? calculated_avg : self.upload_avg
+    if avg.nil? || self.location&.expected_mbps_up.nil?
+      return nil
+    end
+    diff = avg - self.location.expected_mbps_up
+    diff_to_human(diff, self.location&.expected_mbps_up)
   end
-
   def diff_to_human(diff, expected_value)
     sign = diff > 0 ? "+" : "" # Don't need the - for negative values as it will come in the actual calculation
     rounded_percentage = ((diff / expected_value) * 100).round(2)

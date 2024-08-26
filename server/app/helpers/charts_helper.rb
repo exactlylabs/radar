@@ -105,7 +105,7 @@ module ChartsHelper
   end
 
   def time_filter_params
-    days = params[:days] || 30
+    days = params[:days] || 1
     start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
     end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
     { from: start_time.strftime('%Y-%m-%d %H:%M:%S').to_time, to: end_time.strftime('%Y-%m-%d %H:%M:%S').to_time }
