@@ -3,12 +3,14 @@
       locals: {
         type: 'download',
         avg: download_avg,
+        diff: download_diff,
       }
   %>
   <%= render partial: "pods/components/speed_cell", 
       locals: {
         type: 'upload',
         avg: upload_avg,
+        diff: upload_diff,
       }
   %>
 <% end %>
