@@ -239,17 +239,22 @@ module DashboardHelper
   def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
     sql = %{
         SELECT COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) AS "y",
-        EXTRACT(EPOCH FROM :from::timestamp) * 1000 as "x"
+        l.name
         FROM measurements
+        JOIN locations AS l ON l.id = measurements.location_id
         JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
         JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
         WHERE
           processed_at BETWEEN :from AND :to
-          AND account_id IN (:account_ids)
+          AND measurements.account_id IN (:account_ids)
       }
     sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
     sql += " AND location_id IN (:location_ids)" if location_ids.present?
 
+    sql += %{
+      GROUP BY l.name
+      ORDER BY 1 DESC;
+    }
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
