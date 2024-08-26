@@ -14,17 +14,13 @@ export default class extends Controller {
          * An example of possible output: UTC
          */
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        // check if the cookie already exists
         const tzCookie = document.cookie.split(';').find((item) => item.trim().startsWith('timezone='));
         if (tzCookie) {
-            // if it exists, check if it's the same as the current timezone
             const currentTz = tzCookie.split('=')[1];
             if (currentTz !== tz) {
-                // if it's not the same, update it
                 document.cookie = `timezone=${tz}; path=/`;
             }
         } else {
-            // if it doesn't exist, create it
             document.cookie = `timezone=${tz}; path=/`;
         }
     }
