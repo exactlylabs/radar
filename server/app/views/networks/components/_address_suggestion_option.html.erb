@@ -1,0 +1,13 @@
+<button class="networks--address-suggestion" data-action="click->location-form#selectSuggestion"
+        data-coordinates="<%= suggestion.coordinates %>"
+        data-full-address="<%= suggestion.full_address %>"
+        type="button"
+>
+  <div class="networks--suggestion-icon-container">
+    <%= svg_tag('network-suggestion-pin.svg', { width: 16, height: 16, class: "svg--fill-blue" }) %>
+  </div>
+  <div class="networks--suggestion-address-text-container">
+    <p class="networks--suggestion-top-line"><%= suggestion.top_level_address %></p>
+    <p class="networks--suggestion-bottom-line"><%= suggestion.lower_level_address %></p>
+  </div>
+</button>

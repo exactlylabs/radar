@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { MAPBOX_URL } from "../map";
 import neutralLocationIcon from '../../assets/images/location-neutral-icon.png';
+import {emitCustomEvent} from "../eventsEmitter";
 
 export default class extends Controller {
   static values = {
@@ -98,6 +99,7 @@ export default class extends Controller {
     document.querySelector("#location_latitude").value = lat;
     document.querySelector("#location_longitude").value = lng;
     this.addOrUpdateMarker();
+    emitCustomEvent('handlePinMoved', {detail: { coordinates: {lat, lng}}});
   }
 
   latitudeValueChanged() {

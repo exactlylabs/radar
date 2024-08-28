@@ -372,3 +372,113 @@
     }
   }
 }
+
+.networks--map-additional-text {
+  font-size: 0.8125rem;
+  line-height: 1.462;
+  color: $gray;
+  margin: 0;
+  text-wrap: pretty;
+  @extend .fw-medium;
+}
+
+#network-address-suggestions {
+  width: 100%;
+  position: absolute;
+  top: 3rem;
+  left: 0;
+  z-index: 100;
+}
+
+.networks--address-suggestions-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .25rem;
+  padding: .25rem;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  min-height: 2.5rem;
+  max-height: 170px;
+  overflow-y: auto;
+}
+
+.networks--address-suggestion {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  text-align: left;
+  border: none;
+  outline: none;
+  background-color: white;
+  max-width: 100%;
+
+  &:hover {
+    background-color: $subtle-gray;
+    cursor: pointer;
+  }
+
+  &[data-is-use-option="true"] {
+    span {
+      color: $blue;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      @extend .fw-semi-bold;
+    }
+  }
+
+  * {
+    pointer-events: none;
+  }
+}
+
+.networks--suggestion-icon-container {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $circular-icon-container-gray;
+  border-radius: 50%;
+}
+
+.networks--suggestion-address-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2px;
+  max-width: 85%;
+
+  p {
+    margin: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .networks--suggestion-top-line {
+    font-size: 0.875rem;
+    color: $dark-gray;
+    @extend .fw-semi-bold;
+  }
+
+  .networks--suggestion-bottom-line {
+    font-size: 0.75rem;
+    color: $gray;
+    @extend .fw-semi-bold;
+  }
+}

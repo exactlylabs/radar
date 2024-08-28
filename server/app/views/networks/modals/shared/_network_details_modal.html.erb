@@ -23,6 +23,7 @@
   <% if FeatureFlagHelper.is_available('networks', current_user) && onboarding %>
     <input hidden="hidden" name="onboarding" value="true"/>
   <% end %>
+  <%= form.hidden_field "id", value: location.id %>
 
   <%= form.hidden_field "location[account_id]", value: initial_account_id, data: { categories_target: "firstAccountId" } %>
   <% if current_account.is_all_accounts? && !contained %>
@@ -95,18 +96,18 @@
 
 
   <div class="modals--form-row mb-6">
-    <label class="forms--label">Network address</label>
+    <label for="location_address" class="forms--label">Network address</label>
     <div class="forms--input-group" data-location-form-target="addressWrapper">
       <input class="w-100 forms--text-input forms--text-input-focusable forms--text-input-with-decoration"
-             placeholder="Enter your network address"
+             placeholder="Enter an address or ZIP code"
              data-location-form-target="address"
-             data-action="input->location-form#onAddressChange"
+             data-action="input->location-form#onAddressChange focus->location-form#onAddressFocus"
              type="text"
              name="location[address]"
              id="location_address"
              value="<%= location&.address %>"
              data-error="<%= address_is_empty %>"
-        />
+      />
       <div class="d-none forms--input-decoration" data-location-form-target="spinner">
         <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
       </div>
@@ -116,14 +117,29 @@
       >
         <%= image_tag image_url('auto-location-icon.png'), width: 16, height: 16 %>
       </div>
+      <div class="forms--input-decoration forms--input-decoration-clickable d-none"
+           data-action="click->location-form#clearInput"
+           data-location-form-target="clearIcon"
+      >
+        <%= image_tag image_url('clear-input-icon.png'), width: 16, height: 16 %>
+      </div>
+      <turbo-frame id="network-address-suggestions"
+                   data-location-form-target="suggestionsContainer"
+                   hidden="hidden"
+      >
+        <div class="networks--address-suggestions-container">
+          <%= render partial: "networks/components/use_current_address_option", locals: { query: location&.address } %>
+        </div>
+      </turbo-frame>
     </div>
+    <p class="networks--map-additional-text">Your network can be displayed on a map to help you visualize it.</p>
     <% if address_is_empty %>
       <p class="text--error">Address is required.</p>
     <% end %>
     <p class="text--error m-0" data-location-form-target="addressNotFoundMessage" hidden="hidden">Address not found. Please check and try again.</p>
   </div>
 
-  <div class="modals--network-map mb-6"
+  <div class="modals--network-map mb-3"
        data-controller="location"
        data-location-form-target="map"
        data-action="modal:shown->location#display"
@@ -131,6 +147,7 @@
        data-location-longitude-value="<%= location&.longitude %>"
        data-draggable="true"
   ></div>
+  <p class="networks--map-additional-text mb-6">Adjust the map by moving and zooming to ensure the marker is placed correctly.</p>
 
   <div class="modals--form-row mb-6">
     <div class="d-flex align-items-center justify-content-start">

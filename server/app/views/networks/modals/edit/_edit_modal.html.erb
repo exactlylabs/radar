@@ -1,7 +1,7 @@
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: "Edit network", is_custom: true }
 %>
-<%= form_with model: @location, data: { controller: "location-form" } do |form| %>
+<%= form_with model: @location, data: { controller: "location-form", action: "handlePinMoved@window->location-form#handlePinMoved" } do |form| %>
   <%= render partial: "networks/modals/shared/network_details_modal",
              locals: {
                type: "edit",
