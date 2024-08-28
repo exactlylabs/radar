@@ -13,13 +13,14 @@ import { AlertTypes } from "../alerts";
   https://stimulus.hotwired.dev/reference/controllers#:~:text=identifier%2C%20via%20the%20this.identifier%20property
   Other context data is set globally prior to this execution.
  */
-export default function handleError(error, controllerName) {
+export default function handleError(error, controllerName, showGenericAlert = true) {
   if(document.body.dataset.environment === 'development') {
     console.error(error);
   } else {
     Sentry.setContext("controller", { name: controllerName });
     Sentry.captureException(error);
   }
+  if(!showGenericAlert) return;
   emitCustomEvent('renderAlert', {
     detail: {
       message: "Oops! There has been an unexpected error. Please try again later.",

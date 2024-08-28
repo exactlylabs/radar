@@ -1,0 +1,11 @@
+<% query = local_assigns[:query] || '' %>
+
+<button class="networks--address-suggestion" type="button"
+        data-is-use-option="true"
+        data-action="click->location-form#selectForcedSuggestion"
+>
+  <div class="networks--suggestion-icon-container">
+    <%= svg_tag('network-suggestion-pin.svg', { width: 16, height: 16, class: "svg--fill-blue" }) %>
+  </div>
+  <span>Use "<%= query %>"</span>
+</button>

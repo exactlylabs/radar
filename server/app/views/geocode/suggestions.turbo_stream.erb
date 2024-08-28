@@ -1,0 +1,10 @@
+<%= turbo_stream.replace 'network-address-suggestions' do %>
+  <turbo-frame id="network-address-suggestions" data-location-form-target="suggestionsContainer">
+    <div class="networks--address-suggestions-container">
+      <% @suggestions.each do |suggestion| %>
+        <%= render partial: "networks/components/address_suggestion_option", locals: { suggestion: suggestion } %>
+      <% end %>
+      <%= render partial: "networks/components/use_current_address_option", locals: { query: @query } %>
+    </div>
+  </turbo-frame>
+<% end %>

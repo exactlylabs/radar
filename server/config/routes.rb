@@ -203,6 +203,7 @@ Rails.application.routes.draw do
 
   post 'geocode', to: 'geocode#code'
   post 'reverse_geocode', to: 'geocode#reverse_code'
+  post 'suggestions', to: 'geocode#suggestions'
   get 'dashboard', to: 'dashboard#index'
   get 'search_locations', to: 'dashboard#search_locations'
   get 'onboarding_step_1', to: 'dashboard#onboarding_step_1'
