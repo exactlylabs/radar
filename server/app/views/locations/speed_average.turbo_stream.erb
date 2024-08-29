@@ -2,10 +2,10 @@
   <%= render partial: "networks/components/speed_cells",
              locals: {
                 download_avg: @download_avg.present? ? "#{@download_avg} Mbps" : 'N/A',
-                download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)} Mbps" : 'N/A',
+                download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(0)} Mbps" : 'N/A',
                 download_diff: @download_diff.present? ? @download_diff : "-",
                 upload_avg: @upload_avg.present? ? "#{@upload_avg} Mbps" : 'N/A',
-                upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)} Mbps" : 'N/A',
+                upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(0)} Mbps" : 'N/A',
                 upload_diff: @upload_diff.present? ? @upload_diff : "-",
              }
   %>
