@@ -142,9 +142,7 @@
                            action: "input->location-form#networksOnManualChange"
                          }
       %>
-      <label class="regular-text" for="flexSwitchDefault">
-        Adjust coordinates manually
-      </label>
+      <%= form.label :manual_lat_long, "Adjust coordinates manually", class: "regular-text" %>
     </div>
     <span class="additional-text wrap">You can adjust your location coordinates manually if the map doesn't show you the right location.</span>
   </div>
