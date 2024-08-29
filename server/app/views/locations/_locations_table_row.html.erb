@@ -30,7 +30,7 @@
   <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
     <span>
       <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
-      <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %>
+      <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down.round(0)} Mbps" : 'Not available' %>
     </span>
     <span class="ms-2"
           style="color: <%= location.download_diff.present? && location.download_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
@@ -40,7 +40,7 @@
   <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
     <span>
       <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
-      <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'Not available' %>
+      <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up.round(0)} Mbps" : 'Not available' %>
     </span>
     <span class="ms-2"
           style="color: <%= location.upload_diff.present? && location.upload_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">

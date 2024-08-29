@@ -41,7 +41,7 @@
   <div class="widgets--location-avg-container">
     <span class="help-dark-text"><%= row.download_avg.present? ? "#{row.download_avg.round(2)} Mbps" : 'N/A' %></span>
     <span class="help-small-text mx-1">/</span>
-    <span class="help-small-text"><%= row.expected_mbps_down.present? ? "#{row.expected_mbps_down.round(2)} Mbps" : 'N/A' %></span>
+    <span class="help-small-text"><%= row.expected_mbps_down.present? ? "#{row.expected_mbps_down.round(0)} Mbps" : 'N/A' %></span>
   </div>
   <% if row.download_diff.present? %>
     <span class="widgets--location-diff-text"
@@ -54,7 +54,7 @@
   <div class="widgets--location-avg-container">
     <span class="help-dark-text"><%= row.upload_avg.present? ? "#{row.upload_avg.round(2)} Mbps" : 'N/A' %></span>
     <span class="help-small-text mx-1">/</span>
-    <span class="help-small-text"><%= row.expected_mbps_up.present? ? "#{row.expected_mbps_up.round(2)} Mbps" : 'N/A' %></span>
+    <span class="help-small-text"><%= row.expected_mbps_up.present? ? "#{row.expected_mbps_up.round(0)} Mbps" : 'N/A' %></span>
   </div>
   <% if row.upload_diff.present? %>
     <span class="widgets--location-diff-text"

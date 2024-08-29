@@ -67,7 +67,7 @@
               <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
             </div>
             <div class="regular-text ms-1">
-              <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down} Mbps" : ''%>
+              <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down.round(0)} Mbps" : ''%>
             </div>
             <div class="<%= location.download_diff.present? ? location.download_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
               <%= location.expected_mbps_down.present? ? location.download_diff : ''%>
@@ -81,7 +81,7 @@
               <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
             </div>
             <div class="regular-text ms-1">
-              <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up} Mbps" : ''%>
+              <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up.round(0)} Mbps" : ''%>
             </div>
             <div
               class="<%= location.upload_diff.present? ? location.upload_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
