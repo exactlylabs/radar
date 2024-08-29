@@ -12,12 +12,13 @@ class DashboardController < ApplicationController
       new_account_name = policy_scope(Account).last.name
       @notice = "#{new_account_name} was successfully created."
     end
+    @accounts = policy_scope(Account)
+    @categories = policy_scope(Category)
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:status])
     set_onboarding_step
     @locations = @locations.where(account_id: params[:account_id]) if params[:account_id]
-    @locations = @locations.where(id: params[:network_id]) if params[:network_id]
     sort_by = params[:sort_by] || 'name'
     sort_order = params[:sort_order] || 'asc'
     @locations = @locations.order(sort_by => sort_order)
@@ -39,6 +40,38 @@ class DashboardController < ApplicationController
       @show_ftue = cookie_is_turned_on && has_no_accounts
     end
     set_as_orgs
+
+    if params[:network_id]
+      @categories = @categories.joins(:locations).where(locations: {id: params[:network_id]})
+      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == params[:network_id] }
+    end
+
+  end
+
+  def get_updated_filter_options
+    account_id = params[:account_id]
+    network_id = params[:network_id]
+
+    @locations = policy_scope(Location)
+    @accounts = policy_scope(Account)
+    @categories = policy_scope(Category)
+    set_as_orgs
+    puts @categories.inspect
+    if account_id
+      @locations = @locations.where(account_id: account_id)
+      @categories = @categories.joins(:locations).where(locations: {account_id: account_id})
+      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['account_id'] == account_id }
+    end
+
+    if network_id
+      @categories = @categories.joins(:locations).where(locations: {id: network_id})
+      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == network_id }
+    end
+
+    @total_networks = @locations.count
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def onboarding_step_1
@@ -164,13 +197,27 @@ class DashboardController < ApplicationController
   end
 
   def all_filters
+    account_id = params[:account_id]
+    network_id = params[:network_id]
+
+    @accounts = policy_scope(Account).order(:name) if current_account.is_all_accounts?
+    @categories = policy_scope(Category).order(:name)
     @networks = policy_scope(Location).order(:name)
+    set_as_orgs
+
+    if account_id
+      @networks = @networks.where(account_id: account_id)
+      @categories = @categories.joins(:locations).where(locations: {account_id: account_id})
+      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['account_id'] == account_id }
+    end
+
+    if network_id
+      @categories = @categories.joins(:locations).where(locations: {id: network_id})
+      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == network_id }
+    end
+
     @total_networks_count = @networks.count
     @networks = @networks.limit(50)
-    if current_account.present?
-      params = as_orgs_filters_params(current_account)
-      @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:network_id]))
-    end
   end
 
   private

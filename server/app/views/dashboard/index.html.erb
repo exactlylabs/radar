@@ -48,9 +48,7 @@
       <% else %>
         <div class="w-100 mw-100" data-controller="onboard map widgets dashboard-realtime-filters" data-onboard-step-value="<%= @onboard_step %>" data-action="remoteFetchAllWidgets@window->dashboard-realtime-filters#remoteFetchAllWidgets remoteClearFilters@window->dashboard-realtime-filters#remoteClearFilters">
           <%= render partial: "dashboard/components/tabs", locals: { selected: [true, false] } %>
-          <% if FeatureFlagHelper.is_available('charts', current_user) %>
-            <%= render partial: "dashboard/components/widget_filters" %>
-          <% end %>
+          <%= render partial: "dashboard/components/widget_filters" %>
           <div class="dashboard--widgets-container" data-dashboard-realtime-filters-target="loadingOverlay">
             <svg width="24" height="24"
                  class="dashboard--spinner"
