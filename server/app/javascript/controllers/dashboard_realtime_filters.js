@@ -1,5 +1,6 @@
 import RealtimeFiltersController from './realtime_filters_controller';
 import {emitCustomEvent} from "../eventsEmitter";
+import handleError from "./error_handler_controller";
 
 export default class extends RealtimeFiltersController {
   
@@ -34,6 +35,7 @@ export default class extends RealtimeFiltersController {
   
   fetchAllWidgets(customSearchParams = null) {
     if(customSearchParams) this.searchParams = customSearchParams;
+    this.getUpdatedFilterOptions();
     this.spinnerTarget.style.display = 'block';
     this.loadingOverlayTarget.style.opacity = .5;
     const url = new URL(window.location);
@@ -46,6 +48,18 @@ export default class extends RealtimeFiltersController {
       if(this.loadingStates.get(widget.id) === undefined) return;
       this.loadingStates.set(widget.id, true);
     });
+  }
+  
+  getUpdatedFilterOptions() {
+    const url = new URL('/dashboard/get_updated_filter_options', window.location.origin);
+    url.search = this.searchParams.toString();
+    fetch(url, {
+      method: 'GET',
+      headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content}
+    })
+      .then(response => response.text())
+      .then(data => Turbo.renderStreamMessage(data))
+      .catch(error => handleError(error, this.identifier));
   }
   
   remoteFetchAllWidgets(e) {

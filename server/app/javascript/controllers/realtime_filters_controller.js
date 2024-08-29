@@ -93,17 +93,13 @@ export default class extends Controller {
       baseButton.innerText = text ?? baseButton.dataset.defaultLabel;
       if(calendarIcon) baseButton.prepend(calendarIcon);
       if(caret) baseButton.appendChild(caret);
-      
-      
     }
   }
   
   setAsActive(baseMenuId, key, value) {
     const element = document.querySelector(`#${baseMenuId} > button[data-key="${key}"][data-value="${value}"]`);
     const others = document.querySelectorAll(`#${baseMenuId} > button[data-key="${key}"]:not([data-value="${value}"])`);
-    if(element) {
-      element.classList.add('active');
-    }
+    if(element) element.classList.add('active');
     others.forEach(other => {
       other.classList.remove('active');
       if(other.checked) other.checked = false;
