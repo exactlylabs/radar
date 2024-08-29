@@ -40,12 +40,7 @@ class DashboardController < ApplicationController
       @show_ftue = cookie_is_turned_on && has_no_accounts
     end
     set_as_orgs
-
-    if params[:network_id]
-      @categories = @categories.joins(:locations).where(locations: {id: params[:network_id]})
-      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == params[:network_id] }
-    end
-
+    filter_entities_by_account_and_network(params[:account_id], params[:network_id])
   end
 
   def get_updated_filter_options
@@ -56,17 +51,10 @@ class DashboardController < ApplicationController
     @accounts = policy_scope(Account)
     @categories = policy_scope(Category)
     set_as_orgs
-    puts @categories.inspect
-    if account_id
-      @locations = @locations.where(account_id: account_id)
-      @categories = @categories.joins(:locations).where(locations: {account_id: account_id})
-      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['account_id'] == account_id }
-    end
 
-    if network_id
-      @categories = @categories.joins(:locations).where(locations: {id: network_id})
-      @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == network_id }
-    end
+    @locations = @locations.where(account_id: account_id) if account_id
+
+    filter_entities_by_account_and_network(account_id, network_id)
 
     @total_networks = @locations.count
     respond_to do |format|
@@ -203,8 +191,16 @@ class DashboardController < ApplicationController
     @networks = policy_scope(Location).order(:name)
     set_as_orgs
 
+    @networks = @networks.where(account_id: account_id) if account_id
+    filter_entities_by_account_and_network(account_id, network_id)
+    @total_networks_count = @networks.count
+    @networks = @networks.limit(50)
+  end
+
+  private
+
+  def filter_entities_by_account_and_network(account_id, network_id)
     if account_id
-      @networks = @networks.where(account_id: account_id)
       @categories = @categories.joins(:locations).where(locations: {account_id: account_id})
       @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['account_id'] == account_id }
     end
@@ -213,12 +209,7 @@ class DashboardController < ApplicationController
       @categories = @categories.joins(:locations).where(locations: {id: network_id})
       @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == network_id }
     end
-
-    @total_networks_count = @networks.count
-    @networks = @networks.limit(50)
   end
-
-  private
 
   def set_query_time_interval(data)
     if data.count > 1
