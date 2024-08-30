@@ -4,6 +4,6 @@
   <% if @total_data.nil? || @total_data.all? { |object| object['y'] == 0 } %>
     <%= render partial: "dashboard/components/widgets/no_data" %>
   <% else %>
-    <%= render partial: "dashboard/components/widgets/total_data_card", locals: { total_data: @total_data, group_by: @group_by } %>
+    <%= render partial: "dashboard/components/widgets/total_data_card", locals: { data_amount: @data_amount, total_data: @total_data, group_by: @group_by } %>
   <% end %>
 <% end %>

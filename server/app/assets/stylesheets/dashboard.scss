@@ -460,6 +460,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  position: relative;
 }
 
 .dashboard--total-data-value-container {
@@ -504,7 +505,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
   align-items: flex-start;
   justify-content: flex-start;
   gap: 0;
-  padding-bottom: .25rem;
+  padding-bottom: 1rem;
 }
 
 .dashboard--total-data-by-account-container {

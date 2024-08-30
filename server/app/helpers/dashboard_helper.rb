@@ -236,48 +236,112 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
   end
 
-  def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+  def self.get_total_data_amount_sql(from, to, account_ids)
     sql = %{
-        SELECT COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) AS "y",
-        l.name
-        FROM measurements
-        JOIN locations AS l ON l.id = measurements.location_id
-        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
-        WHERE
-          processed_at BETWEEN :from AND :to
-          AND measurements.account_id IN (:account_ids)
-      }
-    sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
-    sql += " AND location_id IN (:location_ids)" if location_ids.present?
-
-    sql += %{
-      GROUP BY l.name
-      ORDER BY 1 DESC;
+      SELECT SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) as "y"
+      FROM measurements
+      WHERE processed_at BETWEEN :from AND :to
+      AND account_id IN (:account_ids)
     }
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, from: from, to: to}])
   end
 
-  def self.get_all_accounts_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+  def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil, limit: nil, query: nil)
     sql = %{
-    SELECT COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes),0) AS "y",
-           a.name
-    FROM measurements AS m
-    JOIN accounts AS a ON a.id = m.account_id
-    JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-    JOIN autonomous_system_orgs
-    ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
-    WHERE processed_at BETWEEN :from AND :to
-    AND account_id IN (:account_ids)
+      with with_measurements AS (
+        SELECT
+          COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
+          l.name AS "name"
+        FROM measurements AS m
+          JOIN locations AS l ON l.id = m.account_id
+          LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+          LEFT OUTER JOIN autonomous_system_orgs
+          ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND l.deleted_at IS NULL
+        AND m.account_id IN (:account_ids)
     }
-    sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
-    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    sql += " AND autonomous_system_orgs.id IN (:as_org_ids) " if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids) " if location_ids.present?
+    sql += " AND l.name ILIKE :query " if query.present?
+
+    sql += " GROUP BY l.name ), "
 
     sql += %{
-      GROUP BY a.name
-      ORDER BY "y" DESC;
+       with_no_measurements AS (
+          SELECT 0 AS "y", l.name AS "name", m.id
+          FROM locations AS l
+          LEFT OUTER JOIN measurements AS m ON l.id = m.location_id
+          WHERE m.id IS NULL
+          AND l.deleted_at IS NULL
+          AND l.account_id IN (:account_ids)
     }
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+
+    sql += " AND l.name ILIKE :query " if query.present?
+
+    sql += " GROUP BY l.name, m.id), "
+
+    sql += %{
+      full_table AS (
+        SELECT * FROM with_measurements
+        UNION
+        SELECT y, name FROM with_no_measurements
+      )
+      SELECT * FROM full_table
+    }
+
+    sql += " ORDER BY 1 DESC, 2 ASC "
+    sql += " LIMIT :limit" if limit.present?
+
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to, limit: limit, query: query}])
+  end
+
+  def self.get_all_accounts_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil, limit: nil, query: nil)
+    sql = %{
+      with with_measurements AS (
+        SELECT
+          COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
+          a.name AS "name"
+        FROM measurements AS m
+          JOIN accounts AS a ON a.id = m.account_id
+          LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+          LEFT OUTER JOIN autonomous_system_orgs
+          ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND account_id IN (:account_ids)
+    }
+
+    sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND a.name ILIKE :query " if query.present?
+
+    sql += " GROUP BY a.name ), "
+
+    sql += %{
+       with_no_measurements AS (
+          SELECT 0 AS "y", a.name AS "name", m.id
+          FROM accounts AS a
+            LEFT OUTER JOIN measurements AS m ON a.id = m.account_id
+          WHERE m.id IS NULL
+          AND a.id IN (:account_ids)
+    }
+
+    sql += " AND a.name ILIKE :query " if query.present?
+
+    sql += " GROUP BY a.name, m.id ), "
+
+    sql += %{
+      full_table AS (
+        SELECT * FROM with_measurements
+        UNION
+        SELECT y, name FROM with_no_measurements
+      )
+      SELECT * FROM full_table
+    }
+
+    sql += " ORDER BY 1 DESC, 2 ASC "
+    sql += " LIMIT :limit" if limit.present?
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to, limit: limit, query: query}])
   end
 
   def self.get_compare_total_data_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)

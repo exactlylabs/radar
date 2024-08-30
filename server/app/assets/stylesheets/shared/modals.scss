@@ -246,6 +246,10 @@
     justify-content: flex-start;
   }
 
+  &[data-resource="total-data"] {
+    padding: 2rem 2rem 0;
+  }
+
   &.contained {
     padding: 1rem;
   }

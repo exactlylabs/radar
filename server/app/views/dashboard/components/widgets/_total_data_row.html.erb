@@ -1,20 +1,20 @@
-<% account_used_data = get_value_in_preferred_unit(data_used) %>
+<% account_used_data = get_value_in_preferred_unit(data_used, unit) %>
 
 <div class="dashboard--total-data-by-account-container">
   <div class="dashboard--total-data-by-account-name-container">
     <% if type == 'account' %>
       <div class="dashboard--total-data-by-account-initial-container">
-        <p><%= account_name[0].upcase %></p>
+        <p><%= entity_name[0].upcase %></p>
       </div>
     <% else %>
       <div class="dashboard--total-data-network-icon-container">
         <%= image_tag image_url('network-online-icon.png'), width: 16, height: 16 %>
       </div>
     <% end %>
-    <p class="dashboard--total-data-by-account-name"><%= account_name %></p>
+    <p class="dashboard--total-data-by-account-name"><%= entity_name %></p>
   </div>
   <div class="dashboard--total-data-all-accounts-values-container">
     <p><%= account_used_data.round(precision) %></p>
-    <span><%= current_user.data_cap_unit.upcase %></span>
+    <span><%= unit %></span>
   </div>
 </div>

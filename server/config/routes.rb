@@ -216,6 +216,8 @@ Rails.application.routes.draw do
   get 'data_usage', to: 'dashboard#data_usage'
   get 'outages', to: 'dashboard#outages'
   get 'total_data', to: 'dashboard#total_data'
+  get 'get_total_data_modal', to: 'dashboard#get_total_data_modal'
+  get 'get_total_data_modal_data', to: 'dashboard#get_total_data_modal_data'
   get 'all_filters', to: 'dashboard#all_filters'
 
   get 'comparison_dashboard', to: 'comparison_dashboard#index'
