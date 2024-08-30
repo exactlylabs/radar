@@ -48,4 +48,10 @@
   &.dropzone--active {
     outline: 1px dashed $avatar-dash-blue;
   }
+
+  .sign-up--avatar-image {
+    /* Ensure there is no blank space on the sides of the avatar */
+    min-width: 100%;
+    min-height: 100%;
+  }
 }
