@@ -34,8 +34,6 @@ class Suggestion
 end
 
 class GeocodeController < ApplicationController
-  skip_forgery_protection only: %i[ code reverse_code ]
-
   def code
     if params["address"].nil?
       results = Geocoder.search(request.remote_ip)

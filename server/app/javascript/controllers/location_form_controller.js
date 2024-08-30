@@ -32,6 +32,7 @@ export default class extends Controller {
     this.address = this.addressTarget.value;
     this.isCreation = this.element.querySelector("input[name='location[id]']").value === "";
     this.isManuallySetting = this.manualLatLongTarget.checked;
+    this.token = document.querySelector('meta[name="csrf-token"]').content;
     if (this.isCreation) {
       this.populatePinAndCoordinatesFromUserIp();
     } else {
@@ -47,7 +48,10 @@ export default class extends Controller {
   }
   
   populatePinAndCoordinatesFromUserIp() {
-    fetch("/geocode", { method: "POST" })
+    fetch("/geocode", {
+      method: "POST",
+      headers: { "X-CSRF-Token": this.token },
+    })
       .then((res) => res.json())
       .then((res) => {
         this.latitudeTarget.value = res[0];
@@ -71,6 +75,7 @@ export default class extends Controller {
         formData.append("query", `[${lat}, ${lon}]`);
         fetch("/reverse_geocode", {
           method: "POST",
+          headers: { "X-CSRF-Token": this.token },
           body: formData,
         })
           .then((response) => response.json())
@@ -188,9 +193,7 @@ export default class extends Controller {
     formData.append("address", this.address);
     fetch("/suggestions", {
       method: "POST",
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
-      },
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
       .then((response) => response.text())
@@ -229,6 +232,7 @@ export default class extends Controller {
     if(this.hasAddressNotFoundMessageTarget) this.addressNotFoundMessageTarget.setAttribute("hidden", "hidden");
     fetch("/geocode", {
       method: "POST",
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
       .then((response) => response.json())
