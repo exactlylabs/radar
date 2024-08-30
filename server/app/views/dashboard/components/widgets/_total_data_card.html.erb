@@ -1,21 +1,35 @@
-<% total_data_sum = total_data.sum { |o| o['y'] } %>
-<% value_in_preferred_unit = get_value_in_preferred_unit(total_data_sum) %>
-<% precision = total_data.map {|o| get_minimum_precision(get_value_in_preferred_unit(o['y']))}.max  %>
+<% data_amount = data_amount[0]['y'] %>
+<% ideal_unit_for_total_data = "TB" %>
+<% value_in_preferred_unit = get_value_in_preferred_unit(data_amount, ideal_unit_for_total_data) %>
+<% precision = total_data.map {|o| get_minimum_precision(get_value_in_preferred_unit(o['y'], ideal_unit_for_total_data))}.max  %>
+<% entity = @group_by == 'network' ? Location : Account %>
 
 <div class="dashboard--total-data-all-accounts-container">
   <div class="dashboard--total-data-value-container">
     <h4><%= value_in_preferred_unit.round(precision) %></h4>
-    <p><%= preferred_unit_humanized %></p>
+    <p><%= preferred_unit_humanized(ideal_unit_for_total_data) %></p>
   </div>
   <div class="dashboard--horizontal-divider"></div>
   <div class="dashboard--total-data-rows-container">
     <% total_data.each do |object| %>
       <%= render partial: "dashboard/components/widgets/total_data_row", locals: {
         data_used: object['y'],
-        account_name: object['name'],
+        entity_name: object['name'],
         precision: precision,
-        type: group_by
+        type: group_by,
+        unit: ideal_unit_for_total_data
       } %>
     <% end %>
   </div>
+  <% if policy_scope(entity).count > 3 %>
+    <div class="dashboard--horizontal-divider"></div>
+    <div class="widgets--total-data-footer">
+      <%= link_to get_total_data_modal_url(type: entity.name, unit: ideal_unit_for_total_data, precision: precision),
+                  class: "regular-link hoverable",
+                  data: { turbo_stream: true, turbo_frame: "total_data_modal" } do %>
+        View all data usage
+        <%= image_tag image_url('caret-right-blue.png'), width: 16, height: 16, style: "margin-left: -4px; margin-top: -2px;" %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

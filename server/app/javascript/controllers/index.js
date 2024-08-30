@@ -231,3 +231,6 @@ application.register("infinite-scroll", InfiniteScrollController);
 
 import OutagesDraggerController from "./outages_dragger_controller";
 application.register("outages-dragger", OutagesDraggerController);
+
+import TotalDataModalController from "./total_data_modal_controller";
+application.register("total-data-modal", TotalDataModalController);

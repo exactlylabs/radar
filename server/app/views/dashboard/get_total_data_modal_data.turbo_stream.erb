@@ -1,0 +1,15 @@
+<%= turbo_stream.update "total_data_list_container" do %>
+  <% if @total_data.count == 0 %>
+    <p>No results found for <%= @query %>.</p>
+  <% else %>
+    <% @total_data.each do |object| %>
+      <%= render partial: "dashboard/components/widgets/total_data_row", locals: {
+        data_used: object['y'],
+        entity_name: object['name'],
+        precision: @precision,
+        type: @type,
+        unit: @unit
+      } %>
+    <% end %>
+  <% end %>
+<% end %>

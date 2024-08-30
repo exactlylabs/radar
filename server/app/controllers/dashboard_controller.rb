@@ -4,7 +4,7 @@ class DashboardController < ApplicationController
   include DashboardConcern
   include Paginator
   before_action :authenticate_user!
-  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data]
+  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data, :get_total_data_modal_data]
 
   # GET /dashboard or /dashboard.json
   def index
@@ -129,14 +129,43 @@ class DashboardController < ApplicationController
   end
 
   def total_data
+    data_amount_sql = DashboardHelper.get_total_data_amount_sql(@params[:from], @params[:to], @params[:account_ids])
+    @data_amount = ActiveRecord::Base.connection.execute(data_amount_sql)
     if current_account.is_all_accounts?
       @group_by = 'account'
-      sql = DashboardHelper.get_all_accounts_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
+      sql = DashboardHelper.get_all_accounts_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids], limit: 3)
     else
       @group_by = 'network'
-      sql = DashboardHelper.get_total_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
+      sql = DashboardHelper.get_total_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids], limit: 3)
     end
     @total_data = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def get_total_data_modal
+    @type = params[:type].downcase
+    @precision = params[:precision]
+    @unit = params[:unit]
+  end
+
+  def get_total_data_modal_data
+    @type = params[:type]
+    @query = params[:query]
+    @precision = params[:precision].to_i
+    @unit = params[:unit]
+
+    unless @query.blank?
+      @query = "%#{@query}%"
+    end
+
+    if @type == 'account'
+      sql = DashboardHelper.get_all_accounts_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids], limit: nil, query: @query)
+    else
+      sql = DashboardHelper.get_total_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids], limit: nil, query: @query)
+    end
+    @total_data = ActiveRecord::Base.connection.execute(sql)
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def outages
@@ -205,6 +234,8 @@ class DashboardController < ApplicationController
     when data_usage_path
       params_fn = method(:data_usage_params)
     when total_data_path
+      params_fn = method(:total_data_params)
+    when get_total_data_modal_data_path
       params_fn = method(:total_data_params)
     end
     @params = params_fn.call(current_account)

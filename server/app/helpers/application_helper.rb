@@ -11,17 +11,56 @@ module ApplicationHelper
     Invite.where(email: user.email).count > 0
   end
 
-  def preferred_unit_humanized
-    if current_user.prefers_tb_unit
+  def preferred_unit_humanized(given_unit = nil)
+    unit = given_unit || current_user.data_cap_unit
+    if unit == "TB"
       "Terabytes"
-    elsif current_user.prefers_gb_unit
+    elsif unit == "GB"
       "Gigabytes"
-    else
+    elsif unit == "MB"
       "Megabytes"
+    else
+      "Bytes"
     end
   end
 
-  def get_value_in_preferred_unit(value)
+  def get_ideal_data_unit(value)
+    remaining_value = value.to_i
+    exponent = 0
+    while remaining_value >= 1_000
+      remaining_value /= 1_000
+      exponent += 1
+    end
+    unit = case exponent
+            when 0
+              "B"
+            when 1
+              "KB"
+            when 2
+              "MB"
+            when 3
+              "GB"
+            when 4
+              "TB"
+            else
+              "TB"
+           end
+  end
+
+  def get_value_in_preferred_unit(value, unit = nil)
+    if unit.present?
+      case unit
+      when "TB"
+        value /= TB_MULTIPLIER
+      when "GB"
+        value /= GB_MULTIPLIER
+      when "MB"
+        value /= MB_MULTIPLIER
+      else
+        value = value.round(0)
+      end
+      return value
+    end
     if current_user.prefers_tb_unit
       value / TB_MULTIPLIER
     elsif current_user.prefers_gb_unit
