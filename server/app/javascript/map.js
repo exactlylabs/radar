@@ -53,7 +53,7 @@ export function getPopupElement(location) {
               <div class="widgets--speed-container">
                 <span class="help-dark-text">${downloadAvg > 0 ? `${downloadAvg} Mbps` : 'Not available'}</span>
                 <span class="help-small-text">/</span>
-                <span class="help-small-text">${expectedDownload > 0 ? `${expectedDownload} Mbps` : 'Not available'}</span>
+                <span class="help-small-text">${expectedDownload > 0 ? `${Math.round(expectedDownload)} Mbps` : 'Not available'}</span>
               </div>
               <span class="widgets--location-diff-text"
                   data-negative="${!!downloadDiff && downloadDiff.includes('-')}"
@@ -71,7 +71,7 @@ export function getPopupElement(location) {
               <div class="widgets--speed-container">
                 <span class="help-dark-text">${uploadAvg > 0 ? `${uploadAvg} Mbps` : 'Not available'}</span>
                 <span class="help-small-text">/</span>
-                <span class="help-small-text">${expectedUpload > 0 ? `${expectedUpload} Mbps` : 'Not available'}</span>
+                <span class="help-small-text">${expectedUpload > 0 ? `${Math.round(expectedUpload)} Mbps` : 'Not available'}</span>
               </div>
               <span class="widgets--location-diff-text"
                   data-negative="${!!uploadDiff && uploadDiff.includes('-')}"
