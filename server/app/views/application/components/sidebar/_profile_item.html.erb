@@ -8,10 +8,10 @@
     data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %> click->sidebar#toggleProfileMenu"
     data-menu-state="closed"
   >
-    <div class="sidebar--profile-item-avatar-container">
+    <div class="avatars--avatar-container sidebar--profile-item-avatar-container">
       <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_fill: [108, 108])) : nil%>"
         height="36"
-        class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"
+        class="<%= current_user.avatar.attached? ? nil : 'invisible' %> avatars--avatar-image"
       />
       <p class="sidebar--profile-item-initial <%= current_user.avatar.attached? ? 'invisible' : nil %>"><%=  current_user.first_name[0].upcase %></p>
     </div>
