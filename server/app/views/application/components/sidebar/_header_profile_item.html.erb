@@ -8,6 +8,6 @@
     height="36"
     class="<%= current_user.avatar.attached? ? nil : 'invisible' %> avatars--avatar-image"
   />
-  <p class="sidebar--profile-item-initial <%= current_user.avatar.attached? ? 'invisible' : nil %>"><%=  current_user.first_name[0].upcase %></p>
+  <p class="avatars--avatar-initial sidebar--profile-item-initial <%= current_user.avatar.attached? ? 'invisible' : nil %>"><%=  current_user.first_name[0].upcase %></p>
 </div>
 <%= render partial: "application/components/sidebar/profile_data_popover", locals: { header: true } %>
