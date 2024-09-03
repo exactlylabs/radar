@@ -1,5 +1,6 @@
 import {Controller} from "@hotwired/stimulus";
 import {emitCustomEvent} from "../eventsEmitter";
+import handleError from "./error_handler_controller";
 
 /**
  * The idea for this specific controller is to have an application-wide
@@ -19,77 +20,98 @@ import {emitCustomEvent} from "../eventsEmitter";
  * - data-turbo => can be set to "true" to make it explicit
  */
 export default class extends Controller {
-
-    connect() {
-        this.token = document.getElementsByName("csrf-token")[0].content;
+  
+  static targets = ['clearIconRef'];
+  
+  connect() {
+    this.token = document.getElementsByName("csrf-token")[0].content;
+  }
+  
+  doStreamRequest(formElement) {
+    const query = this.element.querySelector("[name=query]").value;
+    
+    const currentUrl = new URL(window.location.href);
+    const currentSearchParams = new URLSearchParams(currentUrl.search);
+    
+    let fetchUrl = formElement.getAttribute('data-fetch-url');
+    
+    const newUrl = new URL(fetchUrl);
+    let newSearchParams = new URLSearchParams(newUrl.search);
+    
+    newSearchParams.set('query', query);
+    let shouldUpdateUrl = formElement.getAttribute('data-should-update-url');
+    const usesCurrentParams = formElement.getAttribute('data-uses-current-params');
+    
+    if (!!usesCurrentParams || !!shouldUpdateUrl) {
+      newSearchParams = new URLSearchParams({
+        ...Object.fromEntries(currentSearchParams),
+        ...Object.fromEntries(newSearchParams)
+      });
+      
+      
+      url = newUrl + "?" + newSearchParams.toString();
+      if(!shouldUpdateUrl) window.history.replaceState(null, null, url);
     }
-
-    doStreamRequest(formElement) {
-        const query = document.querySelector("[name=query]").value;
-
-        const currentUrl = new URL(window.location.href);
-        const currentSearchParams = new URLSearchParams(currentUrl.search);
-
-        let fetchUrl = formElement.getAttribute('data-fetch-url');
-
-        const newUrl = new URL(fetchUrl);
-        let newSearchParams = new URLSearchParams(newUrl.search);
-
-        newSearchParams.set('query', query);
-        let shouldUpdateUrl = formElement.getAttribute('data-should-update-url');
-
-
-        if (!!shouldUpdateUrl) {
-            newSearchParams = new URLSearchParams({
-                ...Object.fromEntries(currentSearchParams),
-                ...Object.fromEntries(newSearchParams)
-            });
-
-
-            url = newUrl + "?" + newSearchParams.toString();
-            window.history.replaceState(null, null, url);
-        }
-        let url = newUrl.origin + newUrl.pathname + '?' + newSearchParams.toString()
-
-        const eventToEmitKey = formElement.getAttribute('data-event-key');
-        fetch(url, {
-            method: 'GET',
-            headers: {"X-CSRF-Token": this.token},
-        })
-            .then(response => response.text())
-            .then(html => {
-                Turbo.renderStreamMessage(html);
-                // The use of a custom event here allows multi-controller
-                // communication to handle some functionality when the response
-                // is ready to process.
-                if (eventToEmitKey) emitCustomEvent(eventToEmitKey);
-            })
-            .catch((err) => {
-                handleError(err, this.identifier);
-            });
+    let url = newUrl.origin + newUrl.pathname + '?' + newSearchParams.toString()
+    
+    const eventToEmitKey = formElement.getAttribute('data-event-key');
+    fetch(url, {
+      method: 'GET',
+      headers: {"X-CSRF-Token": this.token},
+    })
+      .then(response => response.text())
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+        // The use of a custom event here allows multi-controller
+        // communication to handle some functionality when the response
+        // is ready to process.
+        if (eventToEmitKey) emitCustomEvent(eventToEmitKey);
+      })
+      .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
+  
+  search(e) {
+    this.toggleClearIcon(e);
+    if (!this.element.getAttribute('data-turbo')) {
+      this.element.requestSubmit();
+    } else {
+      this.doStreamRequest(this.element);
     }
-
-    search(e) {
-        if (e.target.value) {
-            document.querySelector('#category--clear-icon-ref').classList.remove('invisible');
-        } else {
-            document.querySelector('#category--clear-icon-ref').classList.add('invisible');
-        }
-        if (!this.element.getAttribute('data-turbo')) {
-            this.element.requestSubmit();
-        } else {
-            this.doStreamRequest(this.element);
-        }
+  }
+  
+  toggleClearIcon(e) {
+    if(!this.hasClearIconRefTarget) return;
+    if (e.target.value) {
+      this.clearIconRefTarget.classList.remove('invisible');
+    } else {
+      this.clearIconRefTarget.classList.add('invisible');
     }
-
-    clearSearch() {
-        this.element.classList.add('invisible');
-        document.querySelector("[name=query]").value = null;
-        const formElement = document.querySelector('#search-form');
-        if (!formElement.getAttribute('data-turbo')) {
-            formElement.requestSubmit();
-        } else {
-            this.doStreamRequest(formElement);
-        }
+  }
+  
+  clearSearch() {
+    if(this.hasClearIconRefTarget) {
+      this.clearIconRefTarget.classList.add('invisible');
     }
+    this.element.querySelector("input[name='query']").value = '';
+    if (!this.element.getAttribute('data-turbo')) {
+      this.element.requestSubmit();
+    } else {
+      this.doStreamRequest(this.element);
+    }
+  }
+  
+  searchFilter(e) {
+    e.preventDefault();
+    const delay = Number(this.element.dataset.delay);
+    if(!isNaN(delay)) {
+      if(this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.search(e);
+      }, delay);
+    } else {
+      this.search(e);
+    }
+  }
 }

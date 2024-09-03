@@ -21,16 +21,17 @@
   %>
   <div class="public--vertical-divider" style="height: 28px"></div>
   <% if current_account.is_all_accounts? %>
-    <%= render layout: "application/components/filters/realtime_filter",
+    <%= render layout: "application/components/filters/filter_with_search",
                locals: {
-                 id: 'account-filter',
-                 menu_id: 'account-filter-menu',
-                 key: 'account_id',
-                 default_value: 'all',
-                 default_label: 'All accounts',
-                 current_label: params[:account_id].present? ? accounts.find(params[:account_id]).name : 'All accounts',
-                 pagination: false,
-                 no_z_index: true,
+                  id: 'account-filter',
+                  menu_id: 'account-filter-menu',
+                  key: 'account_id',
+                  default_value: 'all',
+                  default_label: 'All accounts',
+                  current_label: params[:account_id].present? ? accounts.find(params[:account_id]).name : 'All accounts',
+                  pagination: false,
+                  no_z_index: true,
+                  entity: Account.name,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: 'all', label: 'All accounts', active: params[:account_id].nil?, overridden_keys: 'network_id,category_id,isp_id' } %>
       <% accounts.order(:name).each do |account| %>
@@ -39,21 +40,22 @@
     <% end %>
   <% end %>
   <% if locations.count > 0 %>
-    <%= render layout: "application/components/filters/realtime_filter",
-               locals: {
-                 id: 'network-filter',
-                 menu_id: 'network-filter-menu',
-                 key: 'network_id',
-                 default_value: 'all',
-                 default_label: 'All networks',
-                 current_label: params[:network_id].present? ? locations.find(params[:network_id]).name : 'All networks',
-                 pagination: false,
-                 no_z_index: true,
-                 infinite_scroll: true,
-                 infinite_scroll_url: locations_url(category: params[:category_id], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'network-filter-menu'),
-                 scroll_total_count: total_networks,
-                 scroll_next_page: 2,
-               } do %>
+      <%= render layout: "application/components/filters/filter_with_search",
+                 locals: {
+                   id: 'network-filter',
+                   menu_id: 'network-filter-menu',
+                   key: 'network_id',
+                   default_value: 'all',
+                   default_label: 'All networks',
+                   current_label: params[:network_id].present? ? locations.find(params[:network_id]).name : 'All networks',
+                   pagination: false,
+                   no_z_index: true,
+                   infinite_scroll: true,
+                   infinite_scroll_url: locations_url(category: params[:category_id], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'network-filter-menu'),
+                   scroll_total_count: total_networks,
+                   scroll_next_page: 2,
+                   entity: Location.name,
+                 } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: 'all', label: 'All networks', active: params[:network_id].nil?, overridden_keys: 'category_id,isp_id' } %>
       <% locations.limit(50).each do |network| %>
         <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s, overridden_keys: 'category_id,isp_id' } %>
@@ -62,7 +64,7 @@
   <% end %>
 
   <% if (!current_account.is_all_accounts? || params[:account_id].present? || params[:network_id].present?) && categories.count > 0 %>
-    <%= render layout: "application/components/filters/realtime_filter",
+    <%= render layout: "application/components/filters/filter_with_search",
                locals: {
                  id: 'category-filter',
                  menu_id: 'category-filter-menu',
@@ -72,6 +74,7 @@
                  current_label: params[:category_id].present? ? categories.find(params[:category_id]).name : 'All categories',
                  pagination: false,
                  no_z_index: true,
+                 entity: Category.name,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
       <% categories.order(:name).each do |category| %>
@@ -81,7 +84,7 @@
   <% end %>
 
   <% if isps.present? && isps.count > 0 %>
-    <%= render layout: "application/components/filters/realtime_filter",
+    <%= render layout: "application/components/filters/filter_with_search",
                locals: {
                  id: 'isp-filter',
                  menu_id: 'isp-filter-menu',
@@ -91,6 +94,7 @@
                  current_label: params[:isp_id].present? ? isps.filter {|isp| isp['id'] == params[:isp_id].to_i}.first ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id].to_i}.first['name'] : 'All ISPs' : 'All ISPs',
                  pagination: false,
                  no_z_index: true,
+                 entity: 'ISP',
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
       <% isps.sort_by {|isp| isp['name']}.each do |isp| %>

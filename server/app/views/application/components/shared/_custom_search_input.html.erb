@@ -2,8 +2,12 @@
 <% should_update_url = local_assigns[:should_update_url].present? && local_assigns[:should_update_url] == true %>
 <% controller = local_assigns[:controller].present? ? local_assigns[:controller] : 'search' %>
 <% method_for_action = local_assigns[:method].present? ? local_assigns[:method] : 'search' %>
+<% uses_current_params = local_assigns[:uses_current_params] || false %>
+<% transparent = local_assigns[:transparent] || false %>
+<% filters = local_assigns[:filters] || false %>
+<% value = local_assigns[:value] || nil %>
 
-<div class="forms--custom-search-input">
+<div class="forms--custom-search-input <%= transparent ? 'transparent' : '' %> <%= filters ? 'filters' : '' %>">
   <%= image_tag image_url("search.png"), class: "forms--search-icon" %>
   <%= form_with(url: url, method: :get, id: "search-form", 
       data: {
@@ -11,13 +15,20 @@
         turbo_frame: turbo_frame,
         turbo: turbo_frame_on,
         fetch_url: url,
-        should_update_url: should_update_url
+        should_update_url: should_update_url,
+        uses_current_params: uses_current_params,
+        delay: 300
       },
       html: { 
-        class: "forms--search-form" 
+        class: "forms--search-form"
       }
     ) do |form| %>
-    <%= form.text_field :query, placeholder: "Search...", "data-action" => "input->#{controller}##{method_for_action}" %>
+    <%= form.text_field :query, placeholder: "Search...", "data-action" => "input->#{controller}##{method_for_action}", value: value, autofocus: true %>
+    <%= image_tag image_url("cancel.png"), id: "clear-icon-ref",
+                  class: "forms--search-clear-icon invisible",
+                  data: {
+                    "#{controller}_target": "clearIconRef",
+                    action: "click->#{controller}#clearSearch"
+                  } %>
   <% end %>
-  <%= image_tag image_url("cancel.png"), id: "category--clear-icon-ref", class: "forms--search-clear-icon invisible", data: { controller: controller, action: "click->#{controller}#clearSearch" } %>
 </div>

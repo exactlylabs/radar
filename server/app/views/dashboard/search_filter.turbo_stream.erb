@@ -1,0 +1,52 @@
+<% entity_id = WidgetsHelper.get_entity_id(@entity) %>
+<% keys_to_override = WidgetsHelper.get_overridden_keys(@entity) %>
+<% base_label = WidgetsHelper.get_base_filter_label(@entity) %>
+
+<%= turbo_stream.update "#{@menu_id}-option-list" do %>
+  <%= render partial: "application/components/filters/realtime_filter_option",
+             locals: {
+                base_menu_id: @menu_id,
+                custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent",
+                base_button_id: @menu_id.gsub('-menu', ''),
+                key: entity_id,
+                value: 'all',
+                label: base_label,
+                active: params[entity_id.to_sym].nil?,
+                overridden_keys: keys_to_override
+            }
+  %>
+  <% if @options.count > 0 %>
+    <% # Need to split by entity here as the ISPs come loaded in a regular object array, not an ActiveRecord list %>
+    <% if @entity == 'ISP' %>
+      <% @options.sort_by {|isp| isp['name']}.each do |isp| %>
+        <%= render partial: "application/components/filters/realtime_filter_option",
+                   locals: {
+                     base_menu_id: 'isp-filter-menu',
+                     custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent",
+                     base_button_id: 'isp-filter',
+                     key: 'isp_id',
+                     value: isp['id'],
+                     label: isp['name'],
+                     active: params[:isp_id] == isp['id'].to_s
+                   } %>
+      <% end %>
+    <% else %>
+      <% @options.order(:name).each do |option| %>
+        <%= render partial: "application/components/filters/realtime_filter_option",
+                   locals: {
+                     base_menu_id: @menu_id,
+                     custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent",
+                     base_button_id: @menu_id.gsub('-menu', ''),
+                     key: entity_id,
+                     value: option.id,
+                     label: option.name,
+                     active: params[entity_id.to_sym] == option.id.to_s,
+                     overridden_keys: keys_to_override
+                   }
+        %>
+      <% end %>
+    <% end %>
+  <% elsif !@query.blank? %>
+    <p class="regular-text ps-3 pt-2">No results found for "<%= @query %>".</p>
+  <% end %>
+<% end %>
