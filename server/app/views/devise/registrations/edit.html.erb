@@ -75,7 +75,7 @@
                              novalidate: "novalidate" do |f| %>
                   <div class="card-body border-top p-9">
                     <div class="fv-row fv-plugins-icon-container" data-controller="edit-profile-picture">
-                      <div class="avatars--avatar-container mb-4">
+                      <div class="avatars--avatar-container sign-up--avatar-container mb-4">
                         <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
                         <img src="<%= url_for(current_user.avatar.variant(resize_to_fill: [312, 312])) %>"
                              class="<%= current_user.avatar.attached? ? nil : 'invisible' %> avatars--avatar-image"
