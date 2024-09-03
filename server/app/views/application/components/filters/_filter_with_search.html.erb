@@ -1,0 +1,16 @@
+<%= render layout: "application/components/filters/realtime_filter", locals: local_assigns do %>
+  <%= render partial: "application/components/shared/custom_search_input", locals: {
+    url: dashboard_search_filter_url(menu_id: menu_id, entity: entity),
+    turbo_frame: true,
+    should_update_url: false,
+    uses_current_params: true,
+    controller: 'search',
+    method: 'searchFilter',
+    transparent: true,
+    filters: true
+  } %>
+  <div class="category--horizontal-divider my-2"></div>
+  <%= turbo_frame_tag "#{menu_id}-option-list" do %>
+    <%= yield %>
+  <% end %>
+<% end %>

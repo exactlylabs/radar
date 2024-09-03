@@ -62,6 +62,28 @@ class DashboardController < ApplicationController
     end
   end
 
+  def search_filter
+    @query = params[:query]
+    @entity = params[:entity]
+    account_id = params[:account_id]
+    network_id = params[:network_id]
+    @menu_id = params[:menu_id]
+
+    if @entity == Account.name
+      get_accounts_for_filter(@query)
+    elsif @entity == Location.name
+      get_locations_for_filter(@query, account_id)
+    elsif @entity == Category.name
+      get_categories_for_filter(@query, account_id, network_id)
+    elsif @entity == 'ISP'
+      get_isps_for_filter(@query, account_id, network_id)
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   def onboarding_step_1
     respond_to do |format|
       format.turbo_stream
@@ -258,5 +280,27 @@ class DashboardController < ApplicationController
     else
       locations.where_offline
     end
+  end
+
+  def get_accounts_for_filter(query)
+    @options = policy_scope(Account).where("name ILIKE ?", "%#{query}%")
+  end
+
+  def get_locations_for_filter(query, account_id)
+    @options = policy_scope(Location).where("name ILIKE ?", "%#{query}%")
+    @options = @options.where(account_id: account_id) if account_id
+  end
+
+  def get_categories_for_filter(query, account_id, network_id)
+    @options = policy_scope(Category).where("categories.name ILIKE ?", "%#{query}%")
+    @options = @options.joins(:locations).where(locations: {account_id: account_id}) if account_id
+    @options = @options.joins(:locations).where(locations: {id: network_id}) if network_id
+  end
+
+  def get_isps_for_filter(query, account_id, network_id)
+    set_as_orgs
+    @options = @filter_as_orgs.select { |as_org| as_org['name'].downcase.include?(query.downcase) }
+    @options = @options.select { |as_org| as_org['account_id'] == account_id } if account_id
+    @options = @options.select { |as_org| as_org['location_id'] == network_id } if network_id
   end
 end

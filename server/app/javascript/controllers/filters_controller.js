@@ -31,8 +31,9 @@ export default class extends Controller {
     this.menu = clonedMenu;
   }
 
-  toggleFiltersMenu() {
+  toggleFiltersMenu(e) {
     if(this.element.dataset.isCalendarOpen === 'true') return;
+    if(e && e.target.tagName !== 'BUTTON') return;
     if(this.menu) {
       if (this.menu.classList.contains("invisible")) {
         this.openFiltersMenu();
@@ -52,7 +53,7 @@ export default class extends Controller {
   }
 
   closeMenuIfClickedOutside(event) {
-    if(!this.element.contains(event.target)) {
+    if(!this.element.contains(event.target) && !this.menu.contains(event.target)) {
       document.removeEventListener("click", this.closeMenuIfClickedOutside.bind(this));
       this.closeFiltersMenu();
     }
