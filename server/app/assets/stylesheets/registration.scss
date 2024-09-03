@@ -30,6 +30,10 @@
   cursor: pointer;
   box-shadow: 0 0 4px -1px $avatar-blue;
 
+  .avatars--avatar-image {
+    margin: 0 auto;
+  }
+
   p {
     font-size: 2rem;
     line-height: 3rem;
