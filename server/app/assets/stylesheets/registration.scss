@@ -27,22 +27,16 @@
 .sign-up--avatar-container {
   width: 96px;
   height: 96px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-color: $avatar-blue;
-  overflow: hidden;
   cursor: pointer;
   box-shadow: 0 0 4px -1px $avatar-blue;
 
+  .avatars--avatar-image {
+    margin: 0 auto;
+  }
+
   p {
-    color: $blue;
     font-size: 2rem;
     line-height: 3rem;
-    letter-spacing: 0;
-    margin: 0;
   }
 
   &.dropzone--active {

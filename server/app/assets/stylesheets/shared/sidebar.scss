@@ -441,20 +441,9 @@ $small-header-height: 67px;
   height: 36px;
   min-width: 36px;
   min-height: 36px;
-  min-width: 36px;
-  min-height: 36px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  background-color: $avatar-blue;
 
   .sidebar--profile-item-initial {
-    margin: 0;
-    color: $blue;
     font-size: 0.938rem;
-    letter-spacing: 0;
     font-variation-settings: 'wght'$bold;
   }
 
@@ -778,19 +767,10 @@ $small-header-height: 67px;
     .sidebar--profile-popover-image-container {
       width: 56px;
       height: 56px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      background-color: $avatar-blue;
       margin-right: .75rem;
     
       .sidebar--profile-popover-initial {
-        margin: 0;
-        color: $blue;
         font-size: 1.5rem;
-        letter-spacing: 0;
         font-variation-settings: 'wght'$bold;
       }
     }

@@ -1,0 +1,22 @@
+@import "./shared/colors.scss";
+
+.avatars--avatar-container {
+  background-color: $avatar-blue;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  .avatars--avatar-image {
+    /* Ensure there is no blank space on the sides of the avatar */
+    min-width: 100%;
+    min-height: 100%;
+  }
+
+  .avatars--avatar-initial {
+    margin: 0;
+    color: $blue;
+    letter-spacing: 0;
+  }
+}
