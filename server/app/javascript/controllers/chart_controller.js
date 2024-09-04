@@ -730,19 +730,8 @@ export default class ChartController extends Controller {
   }
   
   showTooltip(mouseX, mouseY) {
-    this.plotChart();
-    const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
-    if(!shouldContinue) return;
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
-    // create shadow for rect
-    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 2;
-    this.ctx.shadowBlur = 6;
-    this.ctx.fillRect(mouseX, mouseY, 180, 120);
-    this.ctx.stroke();
+    // to override
+    throw new Error('Method not implemented.');
   }
   
   resetStrokeStyles() {
@@ -880,5 +869,41 @@ export default class ChartController extends Controller {
     }
     this.chartData = newChartData;
     this.adjustedData = this.adjustData(this.chartData);
+  }
+  
+  createTooltipShape(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight) {
+    // Tooltip drawing section
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#fff';
+    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
+    
+    // create shadow for rect
+    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
+    this.ctx.shadowOffsetX = 0;
+    this.ctx.shadowOffsetY = 2;
+    this.ctx.shadowBlur = 6;
+    
+    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.shadowColor = 'transparent';
+    this.ctx.fillStyle = 'black';
+    this.ctx.font = 'normal bold 13px MulishBold';
+  }
+  
+  drawTooltipDivingLine(xStart, xEnd, yStart, yEnd = null) {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#e3e3e8';
+    this.ctx.lineWidth = 1;
+    this.ctx.moveTo(xStart, yStart);
+    this.ctx.lineTo(xEnd, !yEnd ? yStart : yEnd);
+    this.ctx.stroke();
+  }
+  
+  setTooltipContentTextStyle() {
+    this.ctx.font = '13px Mulish';
+    this.ctx.fillStyle = '#6d6a94';
+    this.ctx.font = '13px MulishSemiBold';
+    this.ctx.fillStyle = 'black';
   }
 }

@@ -55,17 +55,6 @@ export default class LineChartController extends ChartController {
     this.showVerticalDashedLine(mouseX);
     this.drawDotOnLine(xCoordinate, yCoordinate);
     
-    // Tooltip drawing section
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
-    
-    // create shadow for rect
-    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 2;
-    this.ctx.shadowBlur = 6;
-    
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
     let tooltipWidth = 97;
@@ -105,29 +94,10 @@ export default class LineChartController extends ChartController {
       yCoordinate += offset;
     }
     
-    
-    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
-    this.ctx.fill();
-    this.ctx.stroke();
-    
-    this.ctx.shadowColor = 'transparent';
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = 'normal bold 13px MulishBold';
-    
+    this.createTooltipShape(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight);
     this.ctx.fillText(tooltipTitle, xCoordinate + offset, yCoordinate + TOOLTIP_TITLE_TOP_PADDING);
-    
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#e3e3e8';
-    this.ctx.lineWidth = 1;
-    this.ctx.moveTo(xCoordinate, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.lineTo(xCoordinate + tooltipWidth, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.stroke();
-    
-    this.ctx.font = '13px Mulish';
-    
-    this.ctx.font = '13px MulishSemiBold';
-    
-    this.ctx.fillStyle = 'black';
+    this.drawTooltipDivingLine(xCoordinate, xCoordinate + tooltipWidth, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
+    this.setTooltipContentTextStyle();
     this.ctx.fillText(`${yValue} pods`, xCoordinate + offset, yCoordinate + TOOLTIP_DATA_TOP_PADDING);
   
     this.ctx.font = '16px Mulish';
