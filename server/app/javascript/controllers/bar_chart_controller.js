@@ -132,20 +132,13 @@ export default class BarChartController extends ChartController {
       xCoordinate = this.canvasWidth - barWidth - SPACING_BETWEEN_TOOLTIP_AND_BAR / 2 - tooltipWidth;
     }
     
-    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, TOOLTIP_HEIGHT, 6);
-    this.ctx.fill();
-    this.ctx.stroke();
-    
-    this.ctx.shadowColor = 'transparent';
-    
     const [tooltipValue, tooltipUnit] = tooltipText.split(" ");
     
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = 'normal bold 13px MulishBold';
+    this.createTooltipShape(xCoordinate, yCoordinate, tooltipWidth, TOOLTIP_HEIGHT);
+    
     const tooltipValueXCoordinate = xCoordinate + PADDING;
     const midYPoint = yCoordinate + TOOLTIP_HEIGHT / 2 + PADDING;
     this.ctx.fillText(tooltipValue, tooltipValueXCoordinate, midYPoint);
-    
     const tooltipUnitXCoordinate = tooltipValueXCoordinate + this.textWidth(tooltipValue + " ");
     this.ctx.font = '13px Mulish';
     this.ctx.fillText(tooltipUnit, tooltipUnitXCoordinate, midYPoint);
@@ -168,17 +161,6 @@ export default class BarChartController extends ChartController {
     
     const res = this.isCompareChart ? this.drawBar(this.adjustedData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, DEFAULT_BLUE);
     const {barX, barY, barHeight, barWidth} = res;
-    
-    // Tooltip drawing section
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
-    
-    // create shadow for rect
-    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 2;
-    this.ctx.shadowBlur = 6;
     
     if(this.isCompareChart) {
       this.showComparisonTooltip(mouseX, mouseY, res, this.adjustedData[minDifIndex]);
@@ -221,30 +203,10 @@ export default class BarChartController extends ChartController {
     } else {
       yCoordinate += OFFSET;
     }
-    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
-    this.ctx.fill();
-    this.ctx.stroke();
-    
-    this.ctx.shadowColor = 'transparent';
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = 'normal bold 13px MulishBold';
-    
+    this.createTooltipShape(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight);
     this.ctx.fillText(tooltipTitle, xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
-    
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#e3e3e8';
-    this.ctx.lineWidth = 1;
-    this.ctx.moveTo(xCoordinate, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.lineTo(xCoordinate + tooltipWidth, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.stroke();
-    
-    this.ctx.font = '13px Mulish';
-    
-    this.ctx.fillStyle = '#6d6a94';
-    
-    this.ctx.font = '13px MulishSemiBold';
-    
-    this.ctx.fillStyle = 'black';
+    this.drawTooltipDivingLine(xCoordinate, xCoordinate + tooltipWidth, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
+    this.setTooltipContentTextStyle();
     this.ctx.fillText(this.formatLabelNumericValue(this.adjustedData[minDifIndex].y) + " " + this.labelSuffix, xCoordinate + OFFSET, yCoordinate + 40 + 13);
     
     this.ctx.font = '16px Mulish';

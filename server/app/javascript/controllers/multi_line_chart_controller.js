@@ -178,17 +178,6 @@ export default class MultiLineChartController extends ChartController {
       this.drawDotOnLine(xCoordinate, yCoordinate, hex);
       i++;
     }
-    
-    // Tooltip drawing section
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#fff';
-    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
-
-    // create shadow for rect
-    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 2;
-    this.ctx.shadowBlur = 6;
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
@@ -242,23 +231,9 @@ export default class MultiLineChartController extends ChartController {
       tooltipTopYCoordinate = TOPMOST_Y_COORDINATE;
     }
     
-
-    this.ctx.roundRect(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight, RADII);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.shadowColor = 'transparent';
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = 'normal bold 13px MulishBold';
+    this.createTooltipShape(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight);
     this.ctx.fillText(tooltipTitle, xCoordinate + offset, tooltipTopYCoordinate + TOOLTIP_TITLE_TOP_PADDING);
-
-    this.ctx.beginPath();
-    this.ctx.fillStyle = '#e3e3e8';
-    this.ctx.lineWidth = 1;
-    
-    this.ctx.moveTo(xCoordinate, tooltipTopYCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.lineTo(xCoordinate + tooltipWidth, tooltipTopYCoordinate +  TOOLTIP_TITLE_BOTTOM_PADDING);
-    this.ctx.stroke();
+    this.drawTooltipDivingLine(xCoordinate, xCoordinate + tooltipWidth, tooltipTopYCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
     
     i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
