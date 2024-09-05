@@ -10,7 +10,7 @@ class ExportsMailer < ApplicationMailer
 
   def export_error_email
     @user = params[:user]
-    attachments.inline["new-logo.png"] = File.read("#{Rails.root}/app/assets/images/new-logo.png")
+    attachments.inline["new-radar-logo.png"] = File.read("#{Rails.root}/app/assets/images/new-radar-logo.png")
     mail(to: @user.email, subject: 'There has been an error processing your download')
   end
 end
