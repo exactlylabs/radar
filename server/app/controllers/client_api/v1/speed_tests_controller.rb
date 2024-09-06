@@ -45,44 +45,55 @@ module ClientApi
         render json: @speed_tests
       end
 
-      # 0101000020E610000000000000000010C00000000000B0AF40, 355
-      # 0101000020E61000000000000000005CC00000000000AEAF40, 356
-      # 0101000020E61000000000000000805EC00000000000A0AF40, 357
-      # 0101000020E610000000000000000010C00000000000B0AF40, 358
-      # 0101000020E610000000000000000010C00000000000B0AF40, 359
-      # 0101000020E610000000000000000010C00000000000B0AF40, 360
-
       def tiles
 
         x = params[:x].to_i
         y = params[:y].to_i
         z = params[:z].to_i
 
-        sql_params = {x: x, y: y, z: z}
-        test_sql = %{
+        cache_key = "mvt_#{z}_#{x}_#{y}"
 
-          WITH bbox AS (
-              SELECT ST_TileEnvelope(:z, :x, :y) AS geometry
-          ),
-          mod_tests AS (
-            SELECT client_speed_tests.*, ST_Transform(lonlat::geometry, 3857) AS lonlat_mercator
-            FROM client_speed_tests
-            WHERE lonlat IS NOT NULL
-          ),
-          mvtgeom AS (
-            SELECT ST_AsMVTGeom(lonlat_mercator, bbox.geometry, 4096, 256, false), mod_tests.*
-            FROM mod_tests, bbox
-            WHERE lonlat_mercator IS NOT NULL AND ST_Intersects(lonlat::geometry, ST_Transform(bbox.geometry, 4326))
+        if REDIS.exists?(cache_key)
+          data = REDIS.get(cache_key)
+        else
+          sql_params = {x: x, y: y, z: z}
+
+          test_sql = %{
+          WITH tile_bounds AS (
+            -- Get the tile envelope for a given zoom level ({{z}}), column ({{x}}), and row ({{y}})
+            SELECT ST_Transform(ST_TileEnvelope(:z, :x, :y), 4326) AS geom -- Tile boundary in Web Mercator
           )
-          SELECT ST_AsMVT(mvtgeom.*, 'tests', 4096, 'lonlat', 'id') FROM mvtgeom;
-        }
+          SELECT
+            ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
+          FROM (
+            SELECT
+              id, -- Speed test ID
+              download_avg, -- Avg download speed
+              upload_avg, -- Avg upload speed
+              ST_AsMVTGeom(
+                ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
+                ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
+                4096, -- Tile size (in pixels)
+                256, -- Buffer around the tile in pixels
+                false -- Do not clip geometries
+              ) AS lonlat
+            FROM client_speed_tests
+            WHERE lonlat && (SELECT geom FROM tile_bounds)
+            AND ST_Intersects(
+              lonlat::geometry, -- Cast lonlat to geometry for spatial operations
+              (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
+            )
+            LIMIT 50000 -- Limit the number of features per tile
+          ) AS tile_data;
+          }
 
-        query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([test_sql, sql_params]))
+          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([test_sql, sql_params]))
+          data = query_response[0]['mvt']
 
-        query_response.each do |row|
-          raw = row['st_asmvt']
-          @tiles = ActiveRecord::Base.connection.unescape_bytea(raw)
+          REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
         end
+
+        @tiles = ActiveRecord::Base.connection.unescape_bytea(data)
 
         # Add application/vnd.mapbox-vector-tile header
         response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
