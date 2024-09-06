@@ -1,25 +1,47 @@
 <html>
-<head>
-  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  <style>
-    @import url(http://fonts.googleapis.com/css?family=Roboto);
-    * { font-family: Roboto, serif; }
-  </style>
-</head>
-<body>
-  <div style="width: 60%; text-align: left; padding: 32px 45px; margin-left: auto; margin-right: auto;">
-    <div style="width: 100%; display: flex; justify-content: center; align-items: center">
-      <img src="<%= attachments["new-logo.png"].url %>" alt="Radar-logo" style="width: 25%; height: auto; margin-right: auto; margin-left: auto;"/>
-    </div>
-    <div style="height: 2px; width: 100%; margin-bottom: 45px; margin-top: 30px; background-color: #f6f8fa;"></div>
-    <div style="max-width: 340px; text-align: center; font-weight: bold; font-size: 24px; line-height: 30px; color: #181c31; margin: 0 auto 50px auto;">There has been an unexpected error processing your download. Please try again later.</div>
-    <div style="font-weight: bold; font-size: 16px; line-height: 26px; color: #181c31; margin: 0 0 15px 0"><%= "Hi #{@user.first_name}," %></div>
-    <div style="margin: 0; font-size: 16px; line-height: 26px; color: #181c31">We just wanted to let you know that we have experienced an error processing your measurements download in Radar.</div>
-    <br/>
-    <div style="margin: 0 0 25px 0; font-size: 16px; line-height: 26px; color: #181c31">We are sorry for the inconvenience.</div>
-    <span style="font-size: 16px;">If you have any questions, please contact <a href="mailto:support@exactlylabs.com" style="color: #00a3ff">support@exactlylabs.com</a>.</span>
-    <div style="height: 2px; width: 100%; margin-bottom: 40px; margin-top: 30px; background-color: #f6f8fa;"></div>
-    <div style="color: #b5b5c3; text-align: center; font-size: 14px">© 2023 National Telehealth Technology Assessment Resource Center</div>
-  </div>
-</body>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <link href='https://fonts.googleapis.com/css?family=Mulish:400,700' rel='stylesheet' type='text/css'>
+    <style>
+      main>* {
+        font-family: Mulish, serif;
+        padding: 0 48px;
+      }
+      p {
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main style="margin: 29px auto 32px; max-width: 570px; text-align: center;">
+      <img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" style="max-width: 150px;"/>
+      <div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
+        <p style="font-size: 20px; font-weight: bold;">
+          There has been an error processing your download.
+        </p>
+      </div>
+      <div style="color: #110E4C; text-align: left; font-size: 15px; line-height: 20px;">
+        <p style="font-size: 16px; font-weight: bold; margin-bottom: 16px;">
+          Hi, <%= @user.first_name %>
+        </p>
+        <p style="margin-bottom: 10px">
+          We have experienced an error processing your data download in Radar.
+          Please try again later.
+        </p>
+        <p>
+          We are sorry for the inconvenience.
+        </p>
+      </div>
+      <p style="color: #6D6A94; font-size: 13px; line-height: 19px; margin-top: 48px">
+        If you have any questions, please contact us at
+        <a href="mailto:support@exactlylabs.com" style="color: #4b7be5; font-weight: bold; text-decoration: none;">
+          support@exactlylabs.com
+        </a>
+      </p>
+      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
+      <p style="color: #B5B5C3; font-size: 14px">
+        © 2024 National Telehealth Technology Assessment Resource Center
+      </p>
+    </main>
+  </body>
 </html>
