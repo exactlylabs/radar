@@ -1,28 +1,56 @@
 <html>
   <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+    <link href='https://fonts.googleapis.com/css?family=Mulish:400,700' rel='stylesheet' type='text/css'>
     <style>
-      @import url(http://fonts.googleapis.com/css?family=Roboto);
-      * { font-family: Roboto, serif; }
+      main>* {
+        font-family: Mulish, serif;
+        padding: 0 48px;
+      }
+      p {
+        margin: 0 auto;
+      }
     </style>
   </head>
   <body>
-    <div style="width: 60%; text-align: center; padding: 45px; margin-left: auto; margin-right: auto;">
-      <img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" style="width: 17%; height: auto; margin-right: auto; margin-left: auto;"/>
-      <div style="height: 2px; width: 100%; margin-bottom: 45px; margin-top: 30px; background-color: #f6f8fa;"></div>
-      <div style="font-size: 24px; font-weight: bold; margin-bottom: 30px;"><%= @invite.first_name %> you have been invited to join <%= @account.name %></div>
-      <img src="<%= attachments["illustration@3x.png"].url %>" alt="People-working-image" style="width: 45%; height: auto;"/>
-      <div style="font-size: 16px; font-weight: bold; text-align: left; margin-top: 45px; margin-bottom: 15px;">Hi <%= @invite.first_name %>,</div>
-      <div style="font-size: 16px; text-align: left; margin-bottom: 45px">You have been invited to join <%= @account.name %> in Radar.
-        With Radar, you can analyze your internet connection, get insights on its reliability and speed and learn more about your community’s access to broadband.
-        To set up your new account, click the button below and complete your sign up process.</div>
-        <%= link_to 'Join now', users_invite_sign_up_url(token: @token), style: 'background-color: #00a3ff; color: white; font-size: 16px; border-radius: 6px; width: 170px; height: 45px; border: none; margin-bottom: 25px' %>
-      <div style="font-size: 14px; color: #7f8299; margin-bottom: 55px;">Alternatively, you can paste this link into your browser:
-        <%= link_to "#{users_invite_sign_up_url(token: @token)}", users_invite_sign_up_url(token: @token) %>
+    <main style="margin: 29px auto 32px; max-width: 570px; text-align: center;">
+      <img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" style="max-width: 150px;"/>
+      <div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
+        <div style="background-color: #ECF2FC; border-radius: 50%; width: 28.8px; height: 28.854px; margin: 0 auto 16px; padding: 12.6px">
+          <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="color: #4B7BE5; width: 100%; height: 100%;">
+            <g id="Icons-/-24x24-/-Email" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <path d="M19.7727273,4.25 C21.1408872,4.25 22.25,5.35911278 22.25,6.72727273 L22.25,17.2727273 C22.25,18.6408872 21.1408872,19.75 19.7727273,19.75 L4.22727273,19.75 C2.85911278,19.75 1.75,18.6408872 1.75,17.2727273 L1.75,6.72727273 C1.75,5.35911278 2.85911278,4.25 4.22727273,4.25 L19.7727273,4.25 Z M20.75,7.386 L12.9864236,13.3839202 C12.405386,13.8327364 11.594614,13.8327364 11.0135764,13.3839202 L3.25,7.387 L3.25,17.2727273 C3.25,17.8124601 3.6875399,18.25 4.22727273,18.25 L19.7727273,18.25 C20.3124601,18.25 20.75,17.8124601 20.75,17.2727273 L20.75,7.386 Z M19.7727273,5.75 L4.22727273,5.75 C4.05296691,5.75 3.88931938,5.7956335 3.7476253,5.8756053 L11.9305335,12.1968273 C11.9714517,12.2284341 12.0285483,12.2284341 12.0694665,12.1968273 L20.2523747,5.8756053 C20.1106806,5.7956335 19.9470331,5.75 19.7727273,5.75 Z" id="Shape" fill="currentColor" fill-rule="nonzero"></path>
+            </g>
+          </svg>
+        </div>
+        <p style="font-size: 20px; font-weight: bold;">
+          You've been invited to join <%= @account.name %>.
+        </p>
       </div>
-      <div style="font-size: 16px;">If you experience difficulties setting up your account, please contact support@exactlylabs.com.</div>
-      <div style="height: 2px; width: 100%; margin-bottom: 40px; margin-top: 30px; background-color: #f6f8fa;"></div>
-      <div style="color: #b5b5c3; text-align: center; font-size: 14px">© 2024 National Telehealth Technology Assessment Resource Center</div>
-    </div>
+      <div style="color: #110E4C; text-align: left; font-size: 15px; line-height: 20px;">
+        <p style="font-size: 16px; font-weight: bold; margin-bottom: 16px;">
+          Hi, <%= @invite.first_name %>
+        </p>
+        <p style="margin-bottom: 10px;">
+          With Radar you can analyze your internet connection, get insights into
+          your network's performance, and learn more about your community's access
+          to broadband.
+        </p>
+        <p>
+          Click the button below to join <%= @account.name %>.
+        </p>
+      </div>
+      <%= link_to 'Join now', users_invite_sign_up_url(token: @token), style: 'background-color: #4B7BE5; color: white; font-size: 15px; font-weight: bold; text-decoration: none; display: block; width: max-content; height: 20px; border: none; border-radius: 6px; padding: 12px 24px; margin: 48px auto 64px;' %>
+      <p style="color: #6D6A94; font-size: 13px; line-height: 19px;">
+        If you need any help, please contact us at
+        <a href="mailto:support@exactlylabs.com" style="color: #4b7be5; font-weight: bold; text-decoration: none;">
+          support@exactlylabs.com
+        </a>
+      </p>
+      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
+      <p style="color: #B5B5C3; font-size: 14px">
+        © 2024 National Telehealth Technology Assessment Resource Center
+      </p>
+    </main>
   </body>
 </html>
