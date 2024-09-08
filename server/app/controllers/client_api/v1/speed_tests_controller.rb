@@ -53,7 +53,7 @@ module ClientApi
 
         cache_key = "mvt_#{z}_#{x}_#{y}"
 
-        if REDIS.exists?(cache_key)
+        if REDIS.exists?(cache_key) && false
           data = REDIS.get(cache_key)
         else
           sql_params = {x: x, y: y, z: z}
@@ -62,7 +62,37 @@ module ClientApi
           WITH tile_bounds AS (
             -- Get the tile envelope for a given zoom level ({{z}}), column ({{x}}), and row ({{y}})
             SELECT ST_Transform(ST_TileEnvelope(:z, :x, :y), 4326) AS geom -- Tile boundary in Web Mercator
-          )
+          ),
+          clustered_data AS (
+            SELECT
+          }
+          if z < 10
+            test_sql += %{
+              ST_SnapToGrid(lonlat::geometry, 0.01) AS geom,
+              AVG(download_avg) AS download_avg,
+              AVG(upload_avg) AS upload_avg
+            }
+          else
+            test_sql += %{
+              lonlat::geometry AS geom,
+              download_avg,
+              upload_avg
+            }
+          end
+
+          test_sql += %{
+            FROM client_speed_tests
+            WHERE lonlat && (SELECT geom FROM tile_bounds)
+            AND ST_Intersects(lonlat::geometry, (SELECT geom FROM tile_bounds))
+            GROUP BY
+         }
+          if z < 10
+            test_sql += " ST_SnapToGrid(lonlat::geometry, 0.01)) "
+          else
+            test_sql += " lonlat::geometry, download_avg, upload_avg ) "
+          end
+
+          test_sql += %{
           SELECT
             ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
           FROM (
@@ -74,7 +104,7 @@ module ClientApi
                 ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
                 ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
                 4096, -- Tile size (in pixels)
-                256, -- Buffer around the tile in pixels
+                0, -- Buffer around the tile in pixels
                 false -- Do not clip geometries
               ) AS lonlat
             FROM client_speed_tests
@@ -83,7 +113,6 @@ module ClientApi
               lonlat::geometry, -- Cast lonlat to geometry for spatial operations
               (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
             )
-            LIMIT 50000 -- Limit the number of features per tile
           ) AS tile_data;
           }
 
