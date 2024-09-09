@@ -148,7 +148,7 @@ class DashboardController < ApplicationController
   end
 
   def get_total_data_modal_data
-    @type = params[:type]
+    @type = params[:type].downcase
     @query = params[:query]
     @precision = params[:precision].to_i
     @unit = params[:unit]
