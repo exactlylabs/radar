@@ -1,21 +1,19 @@
-<div id="main" style="margin: 29px auto 32px; max-width: 570px; text-align: center;">
-  <img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" width="150" style="width: 150px;"/>
-  <div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
-    <div style="background-color: #ECF2FC; border-radius: 50%; width: 28.8px; height: 28.854px; margin: 0 auto 16px; padding: 12.6px">
-      <img src="<%= attachments["downloads-icon.png"].url %>" alt="Download icon" style="width: 100%; height: 100%;"/>
-    </div>
-    <p class="font-bold" style="font-size: 20px;">
-      Your data is ready to be downloaded.
-    </p>
+<img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" width="150" style="width: 150px;"/>
+<div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
+  <div style="background-color: #ECF2FC; border-radius: 50%; width: 28.8px; height: 28.854px; margin: 0 auto 16px; padding: 12.6px">
+    <img src="<%= attachments["downloads-icon.png"].url %>" alt="Download icon" style="width: 100%; height: 100%;"/>
   </div>
-  <div style="color: #110E4C; text-align: left;">
-    <p class="font-bold" style="font-size: 16px; margin-bottom: 16px;">
-      Hi, <%= @user.first_name %>
-    </p>
-    <p style="font-size: 15px;">Your data for Radar Pods is now ready to be downloaded. Click the button below to download it.</p>
-  </div>
-  <a class="font-bold" href="<%= @url %>" style="background-color: #4B7BE5; color: white; font-size: 15px; text-decoration: none; display: flex; width: max-content; border: none; border-radius: 6px; padding: 12px 24px; margin: 48px auto 64px; gap: 8px; justify-content: center; align-items: center">
-    <img src="<%= attachments["download-archive-white.png"].url %>" width="16" height="16" alt="Download icon" style="width: 16px; height: 16px;"/>
-    Download data
-  </a>
+  <p class="font-bold" style="font-size: 20px;">
+    Your data is ready to be downloaded.
+  </p>
 </div>
+<div style="color: #110E4C; text-align: left;">
+  <p class="font-bold" style="font-size: 16px; margin-bottom: 16px;">
+    Hi, <%= @user.first_name %>
+  </p>
+  <p style="font-size: 15px;">Your data for Radar Pods is now ready to be downloaded. Click the button below to download it.</p>
+</div>
+<a class="font-bold" href="<%= @url %>" style="background-color: #4B7BE5; color: white; font-size: 15px; text-decoration: none; display: flex; width: max-content; border: none; border-radius: 6px; padding: 12px 24px; margin: 48px auto 64px; gap: 8px; justify-content: center; align-items: center">
+  <img src="<%= attachments["download-archive-white.png"].url %>" width="16" height="16" alt="Download icon" style="width: 16px; height: 16px;"/>
+  Download data
+</a>

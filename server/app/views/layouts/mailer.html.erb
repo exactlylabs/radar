@@ -16,6 +16,9 @@
         font-weight: 700;
         font-variation-settings: 'wght' 700;
       }
+      #main > * {
+        padding: 0 48px;
+      }
       p {
         margin: 0 auto;
       }
@@ -23,16 +26,18 @@
   </head>
 
   <body>
-    <%= yield %>
-    <p style="width: max-content; margin-left: auto; margin-right: auto; color: #6D6A94; font-size: 13px; line-height: 19px;">
-      If you need any help, please contact us at
-      <a class="font-bold" href="mailto:support@exactlylabs.com" style="color: #4b7be5; text-decoration: none; padding: 0;">
-        support@exactlylabs.com
-      </a>
-    </p>
-    <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
-    <p style="width: max-content; margin-left: auto; margin-right: auto; color: #B5B5C3; font-size: 14px;">
-      © 2024 National Telehealth Technology Assessment Resource Center
-    </p>
+    <div id="main" style="margin: 29px auto 32px; max-width: 570px; text-align: center;">
+      <%= yield %>
+      <p style="margin-top: 48px; color: #6D6A94; font-size: 13px; line-height: 19px;">
+        If you need any help, please contact us at
+        <a class="font-bold" href="mailto:support@exactlylabs.com" style="color: #4b7be5; text-decoration: none; padding: 0;">
+          support@exactlylabs.com
+        </a>
+      </p>
+      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
+      <p style="color: #B5B5C3; font-size: 14px;">
+        © 2024 National Telehealth Technology Assessment Resource Center
+      </p>
+    </div>
   </body>
 </html>

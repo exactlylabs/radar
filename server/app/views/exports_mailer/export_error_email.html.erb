@@ -1,47 +1,18 @@
-<html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-    <link href='https://fonts.googleapis.com/css?family=Mulish:400,700' rel='stylesheet' type='text/css'>
-    <style>
-      #main>* {
-        font-family: Mulish, sans-serif;
-        padding: 0 48px;
-      }
-      p {
-        margin: 0 auto;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="main" style="margin: 29px auto 32px; max-width: 570px; text-align: center;">
-      <img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" style="max-width: 150px;"/>
-      <div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
-        <p style="font-size: 20px; font-weight: bold;">
-          There has been an error processing your download.
-        </p>
-      </div>
-      <div style="color: #110E4C; text-align: left; font-size: 15px; line-height: 20px;">
-        <p style="font-size: 16px; font-weight: bold; margin-bottom: 16px;">
-          Hi, <%= @user.first_name %>
-        </p>
-        <p style="margin-bottom: 10px">
-          We have experienced an error processing your data download in Radar.
-          Please try again later.
-        </p>
-        <p>
-          We are sorry for the inconvenience.
-        </p>
-      </div>
-      <p style="color: #6D6A94; font-size: 13px; line-height: 19px; margin-top: 48px">
-        If you have any questions, please contact us at
-        <a href="mailto:support@exactlylabs.com" style="color: #4b7be5; font-weight: bold; text-decoration: none;">
-          support@exactlylabs.com
-        </a>
-      </p>
-      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
-      <p style="color: #B5B5C3; font-size: 14px">
-        © 2024 National Telehealth Technology Assessment Resource Center
-      </p>
-    </div>
-  </body>
-</html>
+<img src="<%= attachments["new-radar-logo.png"].url %>" alt="Radar-logo" width="150" style="width: 150px;"/>
+<div style="background-color: #FDFDFE; border-width: 2px 0; border-color: #F6F8FA; border-style: solid; padding: 32px 48px; margin: 30px auto 40px;">
+  <p class="font-bold" style="font-size: 20px">
+    There has been an error processing your download.
+  </p>
+</div>
+<div style="color: #110E4C; text-align: left">
+  <p class="font-bold" style="font-size: 16px; margin-bottom: 16px;">
+    Hi, <%= @user.first_name %>
+  </p>
+  <p style="font-size: 16px; margin-bottom: 10px">
+    We have experienced an error processing your data download in Radar.
+    Please try again later.
+  </p>
+  <p style="font-size: 16px">
+    We are sorry for the inconvenience.
+  </p>
+</div>
