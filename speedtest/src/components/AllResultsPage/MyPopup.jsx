@@ -112,7 +112,9 @@ const halfPopupHeaderStyle = {
 const popupHeaderAddressContainerStyle = {
   width: '70%',
   justifyContent: 'flex-start',
-  alignItems: 'center',
+  alignItems: 'flex-start',
+  display: 'flex',
+  flexDirection: 'column',
 }
 
 const popupHeaderIconsContainerStyle = {
@@ -186,7 +188,7 @@ const providerNameStyle = {
   overflow: 'hidden',
 }
 
-const MyPopup = ({measurement}) => {
+const MyPopup = ({measurement, provider = 'leaflet'}) => {
 
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
@@ -212,7 +214,6 @@ const MyPopup = ({measurement}) => {
   }
 
   const getPopupHeaderStyle = () => {
-    if(!measurement.street && !measurement.city && !measurement.state) return emptyPopupHeaderStyle;
     if((!measurement.street && (measurement.city || measurement.state)) ||
       (measurement.street && (!measurement.city && !measurement.state)))
       return halfPopupHeaderStyle;
@@ -247,26 +248,31 @@ const MyPopup = ({measurement}) => {
     return popupContentContainerStyle;
   }
 
-  return (
-    // <Popup {...getPopupOptions()}>
-    <div>
+  const content = () => (
+    <>
       <div style={leftPointingArrowStyle}></div>
       <div style={getPopupDivStyle()}>
         <div style={getPopupHeaderStyle()}>
-          <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
-            { !!measurement.street && <div className={'speedtest--bold'} style={addressTitleStyle}>{measurement.street}</div> }
-            { (!!measurement.city || !!measurement.state) && <div style={addressSubtitleStyle}>{getCityStateText()}</div> }
-          </div>
+          {(!!measurement.street || !!measurement.city || !!measurement.state) &&
+            <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
+              {!!measurement.street &&
+                <div className={'speedtest--bold'} style={addressTitleStyle}>{measurement.street}</div>}
+              {(!!measurement.city || !!measurement.state) &&
+                <div style={addressSubtitleStyle}>{getCityStateText()}</div>}
+            </div>
+          }
           {
             (measurement.network_type || measurement.network_location) &&
             <div style={{...popupHeaderIconsContainerStyle, width: getIconsAvailableWidth()}}>
               {
                 measurement.network_location &&
-                <img src={getNetworkPlacementIcon(measurement.network_location, 'iconPopupSrc')} height={28} width={28} alt={'popup-icon-location'} style={measurement.network_type ? leftIconStyle : null}/>
+                <img src={getNetworkPlacementIcon(measurement.network_location, 'iconPopupSrc')} height={28} width={28}
+                     alt={'popup-icon-location'} style={measurement.network_type ? leftIconStyle : null}/>
               }
               {
                 measurement.network_type &&
-                <img src={getNetworkTypeIcon(measurement.network_type, 'iconPopupSrc')} height={28} width={28} alt={'popup-icon-location'}/>
+                <img src={getNetworkTypeIcon(measurement.network_type, 'iconPopupSrc')} height={28} width={28}
+                     alt={'popup-icon-location'}/>
               }
             </div>
           }
@@ -294,15 +300,16 @@ const MyPopup = ({measurement}) => {
           />
         </div>
       </div>
-      {(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org) && 
+      {(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org) &&
         <div style={popupFooterStyle}>
           <img src={ProviderIcon} height={20} width={20} alt={'provider-icon'}/>
           <div className={'speedtest--bold'} style={providerNameStyle}>{measurement.autonomous_system.autonomous_system_org.name}</div>
         </div>
       }
-    {/*</Popup>*/}
-    </div>
-  )
+    </>
+  );
+
+  return provider === 'leaflet' ? <Popup {...getPopupOptions()}>{content()}</Popup> : <div>{content()}</div>;
 }
 
 export default MyPopup;

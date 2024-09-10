@@ -70,10 +70,6 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
 
   useEffect(() => {
-    if(!!mapProvider) {
-      setLoading(false);
-      return;
-    }
     const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates(config.clientId);
 
     if(!givenLocation) {
@@ -255,7 +251,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
       <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
       {!loading && mapProvider === 'leaflet' && <LeafletMap maxHeight={maxHeight}/>}
-      {!loading && mapProvider === 'maplibre' && <MaplibreMap maxHeight={maxHeight}/>}
+      {!loading && !centerCoordinatesLoading &&  mapProvider === 'maplibre' && <MaplibreMap maxHeight={maxHeight} coordinates={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}/>}
       {!loading && !centerCoordinatesLoading && !mapProvider &&
         <div style={getMapWrapperStyle()}>
           <MapContainer

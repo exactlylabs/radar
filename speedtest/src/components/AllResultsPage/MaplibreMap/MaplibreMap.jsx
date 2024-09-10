@@ -12,11 +12,21 @@ import ConfigContext from "../../../context/ConfigContext";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import MyPopup from "../MyPopup";
 
-const MaplibreMap = ({maxHeight}) => {
+const popupOptions = {
+  offset: [20, -28],
+  closeButton: false,
+  closeOnMove: false,
+  closeOnClick: true,
+  anchor: 'top-left',
+  maxWidth: 'none',
+  subpixelPositioning: true
+}
+
+const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const popupRef = useRef(new maplibregl.Popup({ offset: 25 }));
+  const popupRef = useRef(new maplibregl.Popup(popupOptions));
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
@@ -26,7 +36,7 @@ const MaplibreMap = ({maxHeight}) => {
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
-      center: [-3.720, 40.432],
+      center: centerCoordinates,
       style: {
         version: 8,
         sources: {
@@ -91,13 +101,14 @@ const MaplibreMap = ({maxHeight}) => {
       const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
       if(!features.length) return;
       const feature = features[0];
-      console.log('Feature clicked:', feature);
       const popupNode = document.createElement('div');
       const popupRoot = ReactDOM.createRoot(popupNode);
-      popupRoot.render(<MyPopup measurement={feature.properties}/>);
-      popupRef.current.setLngLat([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])
+      popupRoot.render(<MyPopup measurement={feature.properties} provider={'maplibre'}/>);
+      popupRef.current
+        .setLngLat([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])
         .setDOMContent(popupNode)
         .addTo(map.current);
+      map.current.flyTo({center: [feature.geometry.coordinates[0], feature.geometry.coordinates[1]], zoom: 12});
     });
 
     map.current.on('mouseenter', 'circle-layer', () => {

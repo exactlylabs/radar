@@ -2,6 +2,7 @@
 @import url("./resets.css");
 @import url("./leaflet-overrides.css");
 @import url("./mui-overrides.css");
+@import url("./maplibre-overrides.css");
 
 @font-face {
   font-family: 'Mulish';

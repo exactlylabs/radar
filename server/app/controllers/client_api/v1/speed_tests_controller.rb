@@ -100,7 +100,7 @@ module ClientApi
               "autonomous_system_orgs"."name" AS autonomous_system_org_name,
               download_avg,
               upload_avg,
-              loss,
+              COALESCE(loss, 0) as loss,
               latency,
               ST_AsMVTGeom(
                 ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
