@@ -5,6 +5,6 @@
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-.leaflet-popup-content {
+.leaflet-popup-content-wrapper > .leaflet-popup-content {
     margin: 0;
 }
