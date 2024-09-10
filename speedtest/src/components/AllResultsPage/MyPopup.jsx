@@ -248,7 +248,8 @@ const MyPopup = ({measurement}) => {
   }
 
   return (
-    <Popup {...getPopupOptions()}>
+    // <Popup {...getPopupOptions()}>
+    <div>
       <div style={leftPointingArrowStyle}></div>
       <div style={getPopupDivStyle()}>
         <div style={getPopupHeaderStyle()}>
@@ -299,7 +300,8 @@ const MyPopup = ({measurement}) => {
           <div className={'speedtest--bold'} style={providerNameStyle}>{measurement.autonomous_system.autonomous_system_org.name}</div>
         </div>
       }
-    </Popup>
+    {/*</Popup>*/}
+    </div>
   )
 }
 

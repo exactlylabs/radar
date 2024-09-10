@@ -13,7 +13,7 @@ import {getTestsWithBounds, getUserApproximateCoordinates} from '../../utils/api
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {isNoConnectionError, notifyError} from "../../utils/errors";
-import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../utils/cookies";
+import {getCookie, hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent, setCookie} from "../../utils/cookies";
 import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
@@ -25,6 +25,8 @@ import {addMetadataToResults} from "../../utils/metadata";
 import ConnectionContext from "../../context/ConnectionContext";
 import {isArray} from "leaflet/src/core/Util";
 import AlertsContext, {SNACKBAR_TYPES} from "../../context/AlertsContext";
+import LeafletMap from "./LeafletMap/LeafletMap";
+import MaplibreMap from "./MaplibreMap/MaplibreMap";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -43,8 +45,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(false);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
   const [firstTimeModalOpen, setFirstTimeModalOpen] = useState(false);
   const [hasRecentered, setHasRecentered] = useState(false);
@@ -58,6 +60,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
   const [map, setMap] = useState(null);
 
+  const [mapProvider, setMapProvider] = useState(getCookie('map-provider'));
+
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {setNoInternet} = useContext(ConnectionContext);
@@ -66,6 +70,10 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
 
   useEffect(() => {
+    if(!!mapProvider) {
+      setLoading(false);
+      return;
+    }
     const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates(config.clientId);
 
     if(!givenLocation) {
@@ -93,9 +101,20 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       setAlreadyVisitedCookieIfNotPresent();
       openFirstTimeModal();
     }
+
+    window.addEventListener('keydown', handleQuickMapProviderChange);
+
+    return () => {
+      window.removeEventListener('keydown', handleQuickMapProviderChange);
+    }
+
   }, []);
 
   useEffect(() => {
+    if(!!mapProvider) {
+      setLoading(false);
+      return;
+    }
     const fetchSpeedTests = async () => {
       setFetchingResults(true);
       if(!map && !!requestArea && Array.isArray(requestArea)) {
@@ -122,6 +141,15 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       })
       .finally(() => setLoading(false));
   }, [requestArea, map]);
+
+  const handleQuickMapProviderChange = (e) => {
+    // Shift + Cmd/Ctrl + 1 -> triggers map provider set to 'maplibre'
+    if(e.shiftKey && e.metaKey && e.keyCode === 49) {
+      setMapProvider('maplibre');
+      setCookie('map-provider', 'maplibre');
+      window.location.href = process.env.REACT_APP_BASE_URL + '/?tab=2'
+    }
+  }
 
   const filterResults = (selectedTab, filters, paramResults = null) => {
     let fullRange = [];
@@ -226,7 +254,9 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
       <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
-      {!loading && !centerCoordinatesLoading &&
+      {!loading && mapProvider === 'leaflet' && <LeafletMap maxHeight={maxHeight}/>}
+      {!loading && mapProvider === 'maplibre' && <MaplibreMap maxHeight={maxHeight}/>}
+      {!loading && !centerCoordinatesLoading && !mapProvider &&
         <div style={getMapWrapperStyle()}>
           <MapContainer
             id={'speedtest--all-results-page--map-container'}

@@ -77,7 +77,7 @@ module ClientApi
 
         cache_key = "mvt_#{z}_#{x}_#{y}"
 
-        if REDIS.exists?(cache_key)
+        if REDIS.exists?(cache_key) && false
           data = REDIS.get(cache_key)
         else
           sql_params = {x: x, y: y, z: z}
@@ -89,9 +89,19 @@ module ClientApi
           ),
           filtered_tests AS (
             SELECT
-              id,
+              client_speed_tests.id,
+              latitude,
+              longitude,
+              network_location,
+              network_type,
+              state,
+              city,
+              street,
+              "autonomous_system_orgs"."name" AS autonomous_system_org_name,
               download_avg,
               upload_avg,
+              loss,
+              latency,
               ST_AsMVTGeom(
                 ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
                 ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
@@ -110,12 +120,14 @@ module ClientApi
                 ELSE 0
               END AS upload_quality
             FROM client_speed_tests
+            LEFT JOIN "autonomous_systems" ON "autonomous_systems"."id" = "client_speed_tests"."autonomous_system_id"
+            LEFT JOIN "autonomous_system_orgs" ON "autonomous_system_orgs"."id" = "autonomous_systems"."autonomous_system_org_id"
             WHERE lonlat && (SELECT geom FROM tile_bounds)
             AND ST_Intersects(
               lonlat::geometry, -- Cast lonlat to geometry for spatial operations
               (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
             )
-            GROUP BY 1,2,3,4,5
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
           )
           SELECT
             ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
@@ -125,13 +137,25 @@ module ClientApi
               download_avg, -- Avg download speed
               upload_avg, -- Avg upload speed
               lonlat,
+              latitude,
+              longitude,
+              network_location,
+              network_type,
+              state,
+              city,
+              street,
+              autonomous_system_org_name,
+              download_avg,
+              upload_avg,
+              loss,
+              latency,
               -- Pulling this here to reduce complexity on the client side, plus, the mapbox/maplibre
               -- has a very unique way of handling layer styles, where doing something like a min() or max()
               -- is either very complex to follow, but also not intuitive at all. So we just give the client
               -- the correct representation for the dot's color.
               LEAST(download_quality, upload_quality) AS connection_quality
             FROM filtered_tests
-            GROUP BY 1,2,3,4,5
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
           ) AS tile_data;
           }
 
