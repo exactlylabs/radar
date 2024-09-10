@@ -1,13 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
-      /* Email styles need to be inline */
+      @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200..1000&display=swap');
+
+      * {
+        font-family: 'Mulish', Roboto, sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-weight: 400;
+        font-variation-settings: 'wght' 400;
+      }
+      .font-bold {
+        font-weight: 700;
+        font-variation-settings: 'wght' 700;
+      }
+      p {
+        margin: 0 auto;
+      }
     </style>
   </head>
 
   <body>
     <%= yield %>
+    <p style="width: max-content; margin-left: auto; margin-right: auto; color: #6D6A94; font-size: 13px; line-height: 19px;">
+      If you need any help, please contact us at
+      <a class="font-bold" href="mailto:support@exactlylabs.com" style="color: #4b7be5; text-decoration: none; padding: 0;">
+        support@exactlylabs.com
+      </a>
+    </p>
+    <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto;"></div>
+    <p style="width: max-content; margin-left: auto; margin-right: auto; color: #B5B5C3; font-size: 14px;">
+      © 2024 National Telehealth Technology Assessment Resource Center
+    </p>
   </body>
 </html>
