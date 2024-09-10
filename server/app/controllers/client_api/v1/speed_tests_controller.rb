@@ -19,7 +19,7 @@ module ClientApi
           result_file = StringIO.new(ActiveSupport::Gzip.compress(params[:result].to_json))
           @speed_test.result.attach(io: result_file, filename: filename, content_type: 'application/json')
           @speed_test.gzip = true
-          @speed_test.autonomous_system = AutonomousSystem.find_by_ip(@speed_test.ip) unless @speed_test.ip.nil?
+          @speed_test.autonomous_system = AutonomousSystem.find_by_ip(@speed_test.ip) unless @speed_test.ip.nil?  || Rails.env.development?
           @speed_test.save!
           # Call process to parse JSON and seed measurement
           ProcessSpeedTestJob.perform_later(@speed_test, is_mobile)
@@ -27,6 +27,11 @@ module ClientApi
           Sentry.capture_exception(e)
           render json: { error: e.message }, status: :unprocessable_entity
           return
+        end
+        # Invalidate Redis cache for all keys matching mvt_*
+        # to force a refresh considering there is a new test
+        REDIS.keys('mvt_*').each do |key|
+          REDIS.del(key)
         end
         render json: @speed_test, status: :created
       end
@@ -53,46 +58,46 @@ module ClientApi
 
         cache_key = "mvt_#{z}_#{x}_#{y}"
 
-        if REDIS.exists?(cache_key) && false
+        if REDIS.exists?(cache_key)
           data = REDIS.get(cache_key)
         else
           sql_params = {x: x, y: y, z: z}
 
-          test_sql = %{
+          sql = %{
           WITH tile_bounds AS (
             -- Get the tile envelope for a given zoom level ({{z}}), column ({{x}}), and row ({{y}})
             SELECT ST_Transform(ST_TileEnvelope(:z, :x, :y), 4326) AS geom -- Tile boundary in Web Mercator
           ),
-          clustered_data AS (
+          filtered_tests AS (
             SELECT
-          }
-          if z < 10
-            test_sql += %{
-              ST_SnapToGrid(lonlat::geometry, 0.01) AS geom,
-              AVG(download_avg) AS download_avg,
-              AVG(upload_avg) AS upload_avg
-            }
-          else
-            test_sql += %{
-              lonlat::geometry AS geom,
+              id,
               download_avg,
-              upload_avg
-            }
-          end
-
-          test_sql += %{
+              upload_avg,
+              ST_AsMVTGeom(
+                ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
+                ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
+                4096, -- Tile size (in pixels)
+                0, -- Buffer around the tile in pixels
+                false -- Do not clip geometries
+              ) AS lonlat,
+              CASE
+                WHEN download_avg > 100 THEN 2
+                WHEN download_avg > 25 THEN 1
+                ELSE 0
+              END AS download_quality,
+              CASE
+                WHEN upload_avg > 25 THEN 2
+                WHEN upload_avg > 3 THEN 1
+                ELSE 0
+              END AS upload_quality
             FROM client_speed_tests
             WHERE lonlat && (SELECT geom FROM tile_bounds)
-            AND ST_Intersects(lonlat::geometry, (SELECT geom FROM tile_bounds))
-            GROUP BY
-         }
-          if z < 10
-            test_sql += " ST_SnapToGrid(lonlat::geometry, 0.01)) "
-          else
-            test_sql += " lonlat::geometry, download_avg, upload_avg ) "
-          end
-
-          test_sql += %{
+            AND ST_Intersects(
+              lonlat::geometry, -- Cast lonlat to geometry for spatial operations
+              (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
+            )
+            GROUP BY 1,2,3,4,5
+          )
           SELECT
             ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
           FROM (
@@ -100,37 +105,30 @@ module ClientApi
               id, -- Speed test ID
               download_avg, -- Avg download speed
               upload_avg, -- Avg upload speed
-              ST_AsMVTGeom(
-                ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
-                ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
-                4096, -- Tile size (in pixels)
-                0, -- Buffer around the tile in pixels
-                false -- Do not clip geometries
-              ) AS lonlat
-            FROM client_speed_tests
-            WHERE lonlat && (SELECT geom FROM tile_bounds)
-            AND ST_Intersects(
-              lonlat::geometry, -- Cast lonlat to geometry for spatial operations
-              (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
-            )
+              lonlat,
+              -- Pulling this here to reduce complexity on the client side, plus, the mapbox/maplibre
+              -- has a very unique way of handling layer styles, where doing something like a min() or max()
+              -- is either very complex to follow, but also not intuitive at all. So we just give the client
+              -- the correct representation for the dot's color.
+              LEAST(download_quality, upload_quality) AS connection_quality
+            FROM filtered_tests
+            GROUP BY 1,2,3,4,5
           ) AS tile_data;
           }
 
-          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([test_sql, sql_params]))
+          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([sql, sql_params]))
           data = query_response[0]['mvt']
 
+          # Not sure if 1 hour is the best TTL for this cache
+          # I'm open to suggestions
           REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
         end
 
         @tiles = ActiveRecord::Base.connection.unescape_bytea(data)
 
-        # Add application/vnd.mapbox-vector-tile header
         response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
         response.headers['Content-Length'] = @tiles.length.to_s
-
-        # Respond binary
         send_data @tiles, type: 'application/vnd.mapbox-vector-tile', disposition: 'inline'
-
       end
 
       ## New method to prevent issues migrating
