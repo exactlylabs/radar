@@ -13,8 +13,8 @@ const MobileTesting = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Broadband Speed Test for Mobile Devices</title>
-          <meta name="description" content="Test your wifi or cellular connection to find out if you're getting what you expect from your Internet provider."/>
+          <title>Radar: Mobile App to Test Wifi and Cellular Quality</title>
+          <meta name="description" content="Monitor the quality of wifi and cellular signal. Gain a deeper understanding of where internet is not available in your community quickly."/>
         </Head>
         <Frame isDifferentColorFooter >
           <div style={styles.MobilePage}>
