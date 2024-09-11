@@ -1,10 +1,21 @@
-<html>
+<html lang="en">
   <head>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
-    <link href='https://fonts.googleapis.com/css?family=Mulish:400,700' rel='stylesheet' type='text/css'>
     <style>
-      #main>* {
-        font-family: Mulish, sans-serif;
+      @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200..1000&display=swap');
+
+      * {
+        font-family: 'Mulish', Roboto, sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-weight: 400;
+        font-variation-settings: 'wght' 400;
+      }
+      .font-bold {
+        font-weight: 700;
+        font-variation-settings: 'wght' 700;
+      }
+      #main > * {
         padding: 0 48px;
       }
       p {
@@ -14,11 +25,11 @@
   </head>
   <body>
     <div id="main" style="margin: 29px auto 32px; width: 570px; text-align: center">
-      <div style="color: #110E4C; text-align: left; font-size: 15px; line-height: 20px">
-        <p style="font-size: 16px; font-weight: bold; margin-bottom: 16px">
+      <div style="color: #110E4C; text-align: left">
+        <p class="font-bold" style="font-size: 16px; margin-bottom: 16px">
           Hi, <%= @resource.email %>
         </p>
-        <p>
+        <p style="font-size: 15px">
           We're contacting you to notify you that your email is being changed to
           <% if @resource.try(:unconfirmed_email?) %>
             <%= @resource.unconfirmed_email %>.
