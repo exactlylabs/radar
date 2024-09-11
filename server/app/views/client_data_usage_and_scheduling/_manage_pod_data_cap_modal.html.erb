@@ -9,12 +9,12 @@
           <input class="forms--checkbox"
                   type="checkbox"
                   role="switch"
-                  id="flexSwitchCheckDefault"
+                  id="data-cap-checkbox"
                   name="client[wants_to_have_data_cap]"
                   <%= client.data_cap_max_usage.present? ? "checked" : nil %>
                   data-action="input->client-data-cap-form#onSwitchChange"
             />
-          <label class="form-check-label regular-text" for="flexSwitchCheckDefault">Use a data cap on this Pod</label>
+          <label class="form-check-label regular-text" for="data-cap-checkbox">Use a data cap on this Pod</label>
         </div>
       </div>
       <div class="forms--row  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"

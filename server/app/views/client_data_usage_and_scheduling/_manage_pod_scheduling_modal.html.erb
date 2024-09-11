@@ -9,12 +9,12 @@
             <input class="forms--checkbox"
                     type="checkbox"
                     role="switch"
-                    id="flexSwitchCheckDefault"
+                    id="custom-scheduling-checkbox"
                     name="client[custom_scheduling]"
                     <%= client.custom_scheduling ? "checked" : nil %>
                     data-action="input->client-scheduling-form#onSwitchChange"
               />
-            <label class="form-check-label regular-text" for="flexSwitchCheckDefault">Use a custom scheduling on this Pod</label>
+            <label class="form-check-label regular-text" for="custom-scheduling-checkbox">Use a custom scheduling on this Pod</label>
           </div>
         </div>
         <div class="forms--row">
