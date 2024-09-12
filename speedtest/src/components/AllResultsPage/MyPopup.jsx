@@ -28,7 +28,7 @@ const popupOptionsWithFooter = {
   keepInView: false,
   closeButton: false,
   maxWidth: 285,
-  offset: new Point(160, 180),
+  offset: new Point(160, 230),
 }
 
 const emptyPopupOptions = {
@@ -188,7 +188,12 @@ const providerNameStyle = {
   overflow: 'hidden',
 }
 
-const MyPopup = ({measurement, provider = 'leaflet'}) => {
+
+// I'm attempting to refactor this component as little as possible considering we are
+// gonna be progressively migrating from leaflet to maplibre-gl, and after that,
+// we will introduce an entire new UI for the results map, so it's not really worth
+// spending too much time and effort in getting this component clean now.
+const MyPopup = ({measurement, provider = null}) => {
 
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
@@ -309,7 +314,7 @@ const MyPopup = ({measurement, provider = 'leaflet'}) => {
     </>
   );
 
-  return provider === 'leaflet' ? <Popup {...getPopupOptions()}>{content()}</Popup> : <div>{content()}</div>;
+  return !provider ? <Popup {...getPopupOptions()}>{content()}</Popup> : <>{content()}</>;
 }
 
 export default MyPopup;

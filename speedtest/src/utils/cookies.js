@@ -12,6 +12,6 @@ export const getCookie = (name) => {
   return cookie ? cookie.split('=')[1] : null;
 }
 
-export const setCookie = (name, value) => {
-  document.cookie = `${name}=${value}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+export const setCookie = (name, value, expiration = 'expires=Fri, 31 Dec 9999 23:59:59 GMT') => {
+  document.cookie = `${name}=${value}; ${expiration}`;
 }
