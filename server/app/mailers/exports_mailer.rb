@@ -4,7 +4,7 @@ class ExportsMailer < ApplicationMailer
     @url = params[:url]
     attachments.inline["new-radar-logo.png"] = File.read("#{Rails.root}/app/assets/images/new-radar-logo.png")
     attachments.inline["downloads-icon.png"] = File.read("#{Rails.root}/app/assets/images/downloads-icon.png")
-    attachments.inline["download-archive-white.svg"] = File.read("#{Rails.root}/app/assets/images/download-archive-white.svg")
+    attachments.inline["download-archive-white.png"] = File.read("#{Rails.root}/app/assets/images/download-archive-white.png")
     mail(to: @user.email, subject: 'Your download is ready')
   end
 
