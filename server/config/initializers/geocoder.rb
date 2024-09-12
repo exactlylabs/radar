@@ -15,7 +15,7 @@ if Rails.env.production? || Rails.env.staging?
     # Exceptions that should not be rescued by default
     # (if you want to implement custom error handling);
     # supports SocketError and Timeout::Error
-    always_raise: :all,
+    always_raise: [Timeout::Error, SocketError, Geocoder::InvalidApiKey, Geocoder::ServiceUnavailable],
 
     # Calculation options
     # units: :mi,                 # :km for kilometers or :mi for miles
