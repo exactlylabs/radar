@@ -139,11 +139,22 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   }, [requestArea, map]);
 
   const handleQuickMapProviderChange = (e) => {
-    // Shift + Cmd/Ctrl + 1 -> triggers map provider set to 'maplibre'
+    // Shift + Cmd/Ctrl + 0 -> triggers map provider set to null
+    // Shift + Cmd/Ctrl + 1 -> triggers map provider set to 'leaflet-new'
+    // Shift + Cmd/Ctrl + 2 -> triggers map provider set to 'maplibre'
+    if(!e.shiftKey || !e.metaKey) return;
     if(e.shiftKey && e.metaKey && e.keyCode === 49) {
+      setMapProvider('leaflet-new');
+      setCookie('map-provider', 'leaflet-new');
+      window.location.reload();
+    } else if(e.shiftKey && e.metaKey && e.keyCode === 50) {
       setMapProvider('maplibre');
       setCookie('map-provider', 'maplibre');
-      window.location.href = process.env.REACT_APP_BASE_URL + '/?tab=2'
+      window.location.reload();
+    } else if(e.shiftKey && e.metaKey && e.keyCode === 48) {
+      setMapProvider(null);
+      setCookie('map-provider', null, 'expires=Thu, 01 Jan 1970 00:00:00 UTC');
+      window.location.reload();
     }
   }
 
@@ -250,7 +261,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
       <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
-      {!loading && mapProvider === 'leaflet' && <LeafletMap maxHeight={maxHeight}/>}
+      {!loading && mapProvider === 'leaflet-new' && <LeafletMap maxHeight={maxHeight}/>}
       {!loading && !centerCoordinatesLoading &&  mapProvider === 'maplibre' && <MaplibreMap maxHeight={maxHeight} coordinates={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}/>}
       {!loading && !centerCoordinatesLoading && !mapProvider &&
         <div style={getMapWrapperStyle()}>
