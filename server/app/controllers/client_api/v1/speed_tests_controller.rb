@@ -1,6 +1,9 @@
 module ClientApi
   module V1
     class SpeedTestsController < ApiController
+      MIN_ZOOM = 0  # Default min zoom for most maps
+      MAX_ZOOM = 24 # Default max zoom for most maps
+
       def create
         begin
           is_mobile = params[:mobile].present? && params[:mobile] == 'true'
@@ -28,10 +31,26 @@ module ClientApi
           render json: { error: e.message }, status: :unprocessable_entity
           return
         end
-        # Invalidate Redis cache for all keys matching mvt_*
+        # Invalidate Redis cache for all keys that have the XYZ
+        # combination that holds the lonlat point within its bounds
         # to force a refresh considering there is a new test
-        REDIS.keys('mvt_*').each do |key|
-          REDIS.del(key)
+        (MIN_ZOOM..MAX_ZOOM).each do |zoom|
+          x_y = get_xy_from_coordinates_and_zoom(@speed_test.latitude, @speed_test.longitude, zoom)
+          REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}")
+          # I'm clearing some adjacent tiles just to make sure the area is covered
+          # as sometimes the calculation gives a result which is right at the edge
+          # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
+          # zoom levels, the tiles are so big that the chance of a miss is pretty low
+          if zoom >= 6
+            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1]}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1]}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] - 1}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] + 1}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] - 1}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] + 1}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] - 1}")
+            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] + 1}")
+          end
         end
         render json: @speed_test, status: :created
       end
@@ -231,6 +250,32 @@ module ClientApi
           :speed_accuracy_after, :session_id
         )
       end
+
+      # Given lat, lng and zoom level, get XY tile combination
+      def get_xy_from_coordinates_and_zoom(lat, lng, zoom)
+        n = 2.0 ** zoom
+        x_tile = ((lng + 180.0) / 360.0 * n).floor
+        y_tile = ((1.0 - Math.log(Math.tan(lat * Math::PI / 180.0) + 1.0 / Math.cos(lat * Math::PI / 180.0)) / Math::PI) / 2.0 * n).floor
+        [x_tile, y_tile]
+      end
     end
   end
 end
+
+# CLEAR: mvt_10_505_331
+# SENDING Z: 11
+# CLEAR: mvt_11_1010_662
+# SENDING Z: 12
+# CLEAR: mvt_12_2021_1325
+#   ClientSpeedTest Load (1.0ms)  SELECT "client_speed_tests".* FROM "client_speed_tests" WHERE "client_speed_tests"."id" = $1 LIMIT $2  [["id", 238749], ["LIMIT", 1]]
+# SENDING Z: 13
+# CLEAR: mvt_13_4043_2650
+# [ActiveJob] [ProcessSpeedTestJob] [a2a2c4cf-225b-4a0d-9665-60637a08d352] Performing ProcessSpeedTestJob (Job ID: a2a2c4cf-225b-4a0d-9665-60637a08d352) from Async(default) enqueued at 2024-09-12T13:39:06Z with arguments: #<GlobalID:0x000000010bd70850 @uri=#<URI::GID gid://radar/ClientSpeedTest/238749>>, false
+# SENDING Z: 14
+# CLEAR: mvt_14_8087_5301
+# SENDING Z: 15
+# CLEAR: mvt_15_16175_10603
+# SENDING Z: 16
+# CLEAR: mvt_16_32350_21207
+# SENDING Z: 17
+# CLEAR: mvt_17_64701_42415
