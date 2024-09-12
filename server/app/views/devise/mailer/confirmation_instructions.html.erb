@@ -1,5 +1,44 @@
-<p>Welcome <%= @email %>!</p>
+<html lang="en">
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200..1000&display=swap');
 
-<p>You can confirm your account email through the link below:</p>
-
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+      * {
+        font-family: 'Mulish', Roboto, sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-weight: 400;
+        font-variation-settings: 'wght' 400;
+      }
+      .font-bold {
+        font-weight: 700;
+        font-variation-settings: 'wght' 700;
+      }
+      #main > * {
+        padding: 0 48px;
+      }
+      p {
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" style="margin: 29px auto 32px; width: 570px; text-align: center">
+      <div style="color: #110E4C; text-align: left">
+        <p class="font-bold" style="font-size: 16px; margin-bottom: 16px">
+          Hi, <%= @resource.email %>
+        </p>
+        <p style="font-size: 15px">
+          Welcome to Radar! Please click the button below to confirm your
+          account email.
+        </p>
+        <%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token), class: 'font-bold', style: 'background-color: #4B7BE5; color: white; font-size: 15px; text-decoration: none; display: block; width: max-content; height: 20px; border: none; border-radius: 6px; padding: 12px 24px; margin: 48px auto 64px;' %>
+      </div>
+      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto"></div>
+      <p style="color: #B5B5C3; font-size: 14px">
+        © 2024 National Telehealth Technology Assessment Resource Center
+      </p>
+    </div>
+  </body>
+</html>

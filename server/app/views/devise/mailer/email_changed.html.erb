@@ -1,7 +1,47 @@
-<p>Hello <%= @email %>!</p>
+<html lang="en">
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200..1000&display=swap');
 
-<% if @resource.try(:unconfirmed_email?) %>
-  <p>We're contacting you to notify you that your email is being changed to <%= @resource.unconfirmed_email %>.</p>
-<% else %>
-  <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
-<% end %>
+      * {
+        font-family: 'Mulish', Roboto, sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-weight: 400;
+        font-variation-settings: 'wght' 400;
+      }
+      .font-bold {
+        font-weight: 700;
+        font-variation-settings: 'wght' 700;
+      }
+      #main > * {
+        padding: 0 48px;
+      }
+      p {
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" style="margin: 29px auto 32px; width: 570px; text-align: center">
+      <div style="color: #110E4C; text-align: left">
+        <p class="font-bold" style="font-size: 16px; margin-bottom: 16px">
+          Hi, <%= @resource.email %>
+        </p>
+        <p style="font-size: 15px">
+          We're contacting you to notify you that your email is being changed to
+          <% if @resource.try(:unconfirmed_email?) %>
+            <%= @resource.unconfirmed_email %>.
+          <% else %>
+            <%= @resource.email %>.
+          <% end %>
+        </p>
+      </div>
+      <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto"></div>
+      <p style="color: #B5B5C3; font-size: 14px">
+        © 2024 National Telehealth Technology Assessment Resource Center
+      </p>
+    </div>
+  </body>
+</html>
