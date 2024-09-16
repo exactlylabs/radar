@@ -13,8 +13,8 @@ const Index = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Internet Speed Test and Monitoring for Better Broadband Investments</title>
-          <meta name="description" content="Radar helps identify where Internet investment will go the furthest by providing insights into broadband as it is today in your community."/>
+          <title>Radar: Internet Speed Test & Broadband Monitoring Tools</title>
+          <meta name="description" content="Radar is a community toolkit to test Internet speed, monitor and analyze broadband and get insights into where internet investments should be made."/>
         </Head>
         <Frame smallFooterMarginTop={'0px'}>
           <div style={styles.HomePage}>

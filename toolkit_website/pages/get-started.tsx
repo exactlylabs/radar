@@ -17,7 +17,7 @@ const GetStarted = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Get Started with Radar Toolkit</title>
+          <title>Radar: Get Started with Radar Toolkit</title>
           <meta name={'description'} content={'Start using our broadband monitoring and speed testing tools in no time.'}/>
         </Head>
         <Frame isDifferentColorFooter

@@ -14,8 +14,8 @@ const SiteMonitoringPage = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Remote Monitoring of your Sites' Internet Connectivity</title>
-          <meta name="description" content="Ensure sites' Internet connectivity quality matches your expectations through continuous remote monitoring."/>
+          <title>Radar: Broadband Monitoring Tools</title>
+          <meta name="description" content="Use our broadband remote monitoring solutions to continuously identify connectivity issues in your community."/>
         </Head>
         <Frame isDifferentColorFooter>
           <div style={styles.SiteMonitoringPage}>

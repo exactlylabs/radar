@@ -14,8 +14,8 @@ const BroadbandTesting = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Broadband Speed Testing for Consumers and Communities</title>
-          <meta name="description" content="Find out which areas have the most broadband needs through detailed Internet speed tests and mapping solutions."/>
+          <title>Radar: Internet Speed Test for Communities</title>
+          <meta name="description" content="Test your community's broadband using our Internet speed test tool to determine where investments will be most impactful."/>
         </Head>
         <Frame isDifferentColorFooter>
           <div style={styles.BroadbandTestingPage}>

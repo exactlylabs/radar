@@ -11,8 +11,8 @@ const NotFound = (): ReactElement => {
     <ViewportContextProvider>
       <>
         <Head>
-          <title>Radar - Page not found</title>
-          <meta name="description" content="Radar helps identify where Internet investment will go the furthest by providing insights into broadband as it is today in your community."/>
+          <title>Radar: Page not found</title>
+          <meta name="description" content="Radar is a community toolkit to test Internet speed, monitor and analyze broadband and get insights into where internet investments should be made."/>
         </Head>
         <Frame isDifferentColorFooter>
           <div style={styles.NotFoundPage}>
