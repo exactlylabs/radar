@@ -158,8 +158,6 @@ type ReportLogsMessage struct {
 	Lines    int      `json:"lines"`
 }
 
-// type GetSyncMessageFunc func() messages.WatchdogSync
-
 type EthernetStatus struct {
 	Status network.NetStatus `json:"status"`
 }

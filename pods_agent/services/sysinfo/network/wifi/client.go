@@ -27,7 +27,7 @@ type WirelessClient interface {
 	ScanAccessPoints() ([]APDetails, error)
 
 	// ConfigureNetwork registers the given network in the driver.
-	// If Password is nil, keep the previous value
+	// If Password attribute is nil, keep the previous value
 	ConfigureNetwork(network NetworkConnectionData) error
 
 	// Forget the given SSID by removing it from the driver.
