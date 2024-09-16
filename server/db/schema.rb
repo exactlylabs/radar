@@ -507,6 +507,7 @@ ActiveRecord::Schema.define(version: 2024_09_16_134849) do
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
     t.index ["processed_at", "location_id", "autonomous_system_id"], name: "idx_meas_filter_by_loc_and_isp", order: { processed_at: :desc }
     t.index ["processed_at"], name: "index_measurements_on_processed_at", order: :desc
+    t.index ["style", "processed_at"], name: "index_measurements_on_style_and_processed_at"
   end
 
   create_table "metrics_projections", force: :cascade do |t|
