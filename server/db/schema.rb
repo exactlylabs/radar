@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_14_130539) do
+ActiveRecord::Schema.define(version: 2024_09_16_134849) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -493,6 +493,8 @@ ActiveRecord::Schema.define(version: 2024_08_14_130539) do
     t.string "width"
     t.integer "noise"
     t.boolean "gzip"
+    t.string "download_id"
+    t.string "upload_id"
     t.index ["account_id", "client_id", "created_at"], name: "measurements_on_account_client_not_null", order: { created_at: :desc }, where: "((download IS NOT NULL) AND (upload IS NOT NULL))"
     t.index ["account_id", "processed_at"], name: "index_measurements_on_account_id_and_processed_at", order: { processed_at: :desc }
     t.index ["account_id"], name: "index_measurements_on_account_id"

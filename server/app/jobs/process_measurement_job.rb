@@ -13,6 +13,12 @@ class ProcessMeasurementJob < ApplicationJob
         rescue JSON::ParserError
           next
         end
+        if measurement.download_id.nil? && row["Key"] == "measurement" && row["Value"]["Test"] == "download"
+          measurement.download_id = row["Value"]["ConnectionInfo"]["UUID"]
+        end
+        if measurement.upload_id.nil? && row["Key"] == "measurement" && row["Value"]["Test"] == "upload"
+          measurement.upload_id = row["Value"]["ConnectionInfo"]["UUID"]
+        end
         if row["Key"] == "measurement" && row["Value"]["TCPInfo"] && extended_info.nil?
           extended_info = row["Value"]["TCPInfo"]
         end
