@@ -48,3 +48,5 @@ type SetWlanInterfacePayload struct {
 
 type DisconnectWirelessNetworkPayload struct {
 }
+
+type ReportLogsPayload struct{}

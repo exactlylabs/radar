@@ -47,6 +47,7 @@ const (
 	ReportWirelessStatus      cable.MessageType = "report_wireless_status"      // when requested, it expects a response with the current status of the wireless connection
 	SetWlanInterface          cable.MessageType = "set_wlan_interface"          // when requested, it expects the watchdog to connect to a wlan interface bus
 	DisconnectWirelessNetwork cable.MessageType = "disconnect_wireless_network" // when requested, it expects the wireless network to be turned off
+	ReportLogs                cable.MessageType = "report_logs"                 // when requested, expects logs to get collected
 )
 
 var WatchdogUserAgent = "RadarPodsWatchdog/"
@@ -197,6 +198,14 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 			c.returnCh <- watchdog.ServerMessage{
 				Type: watchdog.DisconnectWirelessNetworkMessageType,
 				Data: watchdog.DisconnectWirelessNetworkMessage{},
+			}
+		}
+	case ReportLogs:
+		payload := cable.ParseMessage[*messages.ReportLogsPayload](msg)
+		if payload != nil {
+			c.returnCh <- watchdog.ServerMessage{
+				Type: watchdog.ReportLogsMessageType,
+				Data: watchdog.ReportLogsMessage{},
 			}
 		}
 	}
