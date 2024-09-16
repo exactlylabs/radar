@@ -36,8 +36,8 @@ var args struct {
 }
 
 const (
-	defaultCursorFile = "errors.cursor"
-	defaultErrorsFile = "errors.log"
+	defaultCursorFile = "agent_errors.cursor"
+	defaultErrorsFile = "agent_errors.log"
 )
 
 var defaultCommand = &RunAgentCommand{}

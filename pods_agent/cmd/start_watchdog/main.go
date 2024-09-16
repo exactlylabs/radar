@@ -22,8 +22,8 @@ import (
 )
 
 const (
-	defaultCursorFile = "errors.cursor"
-	defaultErrorsFile = "errors.log"
+	defaultCursorFile = "watchdog_errors.cursor"
+	defaultErrorsFile = "watchdog_errors.log"
 )
 
 var radarPath = flag.String("radar-path", "/opt/radar/radar_agent", "Path to radar binary")
