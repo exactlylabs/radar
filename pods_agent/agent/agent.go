@@ -13,7 +13,6 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
@@ -224,26 +223,26 @@ func updateAgent(msg UpdateBinaryServerMessage, cancel context.CancelFunc) {
 
 // updateWatchdogIfNeeded verifies if the watchdog is running, and in case it's not, it updates it.
 func updateWatchdogIfNeeded(msg UpdateBinaryServerMessage, rebooter Rebooter, cancel context.CancelFunc) {
-	if !sysinfo.WatchdogIsRunning() {
-		log.Printf("An Update for Watchdog Version %v is available\n", msg.Version)
-		err := watchdog.UpdateWatchdog(msg.BinaryUrl, msg.Version)
-		if update.IsValidationError(err) {
-			log.Printf("Existent update is invalid: %v\n", err)
-			sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
-				"Update Data": {
-					"version": msg.Version,
-					"url":     msg.BinaryUrl,
-				},
-			})
-		} else if err != nil {
-			panic(errors.W(err))
-		} else {
-			log.Println("Successfully Updated the Watchdog. Restarting the whole system")
-			if err := rebooter.Reboot(); err != nil {
-				panic(errors.Wrap(err, "Reboot failed"))
-			}
-			cancel()
-			os.Exit(1)
+	// if !sysinfo.WatchdogIsRunning() {
+	log.Printf("An Update for Watchdog Version %v is available\n", msg.Version)
+	err := watchdog.UpdateWatchdog(msg.BinaryUrl, msg.Version)
+	if update.IsValidationError(err) {
+		log.Printf("Existent update is invalid: %v\n", err)
+		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
+			"Update Data": {
+				"version": msg.Version,
+				"url":     msg.BinaryUrl,
+			},
+		})
+	} else if err != nil {
+		panic(errors.W(err))
+	} else {
+		log.Println("Successfully Updated the Watchdog. Restarting the whole system")
+		if err := rebooter.Reboot(); err != nil {
+			panic(errors.Wrap(err, "Reboot failed"))
 		}
+		cancel()
+		os.Exit(1)
 	}
+	// }
 }
