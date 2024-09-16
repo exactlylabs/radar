@@ -64,7 +64,7 @@ func ParseUpdateFile(r io.Reader) ([]byte, error) {
 	if err := verifyCertIsRevoked(cert, rootCert); IsValidationError(err) {
 		return nil, err
 	} else if err != nil {
-		return nil, errors.SentinelWithStack(ErrCertificateRevoked)
+		return nil, errors.W(err)
 	}
 
 	// Validate the binary was not tampered
@@ -148,7 +148,7 @@ func readFromUrl(u *url.URL) ([]byte, error) {
 }
 
 func loadCRL() (*x509.RevocationList, error) {
-	crlUrl, err := url.JoinPath(config.LoadConfig().ServerURL, "clients", "crl")
+	crlUrl, err := url.JoinPath(config.LoadConfig().CRLUrl)
 	if err != nil {
 		return nil, errors.W(err)
 	}
