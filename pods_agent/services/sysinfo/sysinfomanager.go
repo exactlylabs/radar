@@ -283,13 +283,9 @@ func (si *SysInfoManager) EnsureTailscale() error {
 
 		_, err := si.runCommand(
 			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
-
 		if err != nil {
+			err = errors.W(err)
 			// Leaving this validation commented out to get which pods are in a broken state.
-			// metadata := errors.GetMetadata(err)
-			// if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
-			// 	return nil
-			// }
 			if meta := errors.GetMetadata(err); meta != nil {
 				m := *meta
 				// In case of error related to APT files corrupted, all we need to do is to pick all reported files and delete them
@@ -298,13 +294,14 @@ func (si *SysInfoManager) EnsureTailscale() error {
 				for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
 					os.Remove(match[1])
 				}
-				_, err := si.runCommand(exec.Command("apt", "update"))
-				if err != nil {
-					return errors.W(err)
+				_, updateErr := si.runCommand(exec.Command("apt", "update"))
+				if updateErr != nil {
+					err = errors.W(updateErr).WithMetadata(errors.Metadata{"original_stdout": m["stdout"], "original_stderr": m["stderr"]})
 				}
 			}
-			return errors.W(err)
+			return err
 		}
+		
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
 		_, err = si.runCommand(
 			exec.Command("tailscale", "set", "--auto-update"))
