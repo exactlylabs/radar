@@ -96,7 +96,7 @@ module ApplicationHelper
   def active_path?(path)
     if path == dashboard_path && request.path == comparison_dashboard_path
       "active"
-    elsif path == locations_path && FeatureFlagHelper.is_available('networks', current_user)
+    elsif path == locations_path
       "active" if request.path.starts_with?(path) || request.path.starts_with?(clients_path)
     else
       "active" if request.path.starts_with?(path)

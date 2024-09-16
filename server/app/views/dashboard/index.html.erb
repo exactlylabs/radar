@@ -30,83 +30,39 @@
 <!--end::Toolbar-->
 <!--begin::Post-->
 <div class="post fs-6 d-flex border-solid" id="kt_post">
-  <% if FeatureFlagHelper.is_available('networks', current_user) %>
-    <%= turbo_frame_tag "dashboard-main-content" do %>
-      <% if current_account.nil? && policy_scope(Account).count == 0 %>
-        <%= render partial: "dashboard/components/empty_accounts_card" %>
-      <% elsif policy_scope(Location).count == 0 %>
-        <div class="d-flex flex-column w-100">
-          <%= turbo_frame_tag "unassigned-pods-banner" do %>
-            <% if are_there_unassigned_pods? %>
-              <%= render partial: "pods/components/unassigned_pods_banner" %>
-            <% end %>
+  <%= turbo_frame_tag "dashboard-main-content" do %>
+    <% if current_account.nil? && policy_scope(Account).count == 0 %>
+      <%= render partial: "dashboard/components/empty_accounts_card" %>
+    <% elsif policy_scope(Location).count == 0 %>
+      <div class="d-flex flex-column w-100">
+        <%= turbo_frame_tag "unassigned-pods-banner" do %>
+          <% if are_there_unassigned_pods? %>
+            <%= render partial: "pods/components/unassigned_pods_banner" %>
           <% end %>
-          <%= render partial: "dashboard/components/empty_networks_card" %>
-        </div>
-      <% elsif policy_scope(Client).count == 0 %>
-        <%= render partial: "dashboard/components/empty_pods_card" %>
-      <% else %>
-        <div class="w-100 mw-100" data-controller="onboard map widgets dashboard-realtime-filters" data-onboard-step-value="<%= @onboard_step %>" data-action="remoteFetchAllWidgets@window->dashboard-realtime-filters#remoteFetchAllWidgets remoteClearFilters@window->dashboard-realtime-filters#remoteClearFilters">
-          <%= render partial: "dashboard/components/tabs", locals: { selected: [true, false] } %>
-          <%= render partial: "dashboard/components/widget_filters" %>
-          <div class="dashboard--widgets-container" data-dashboard-realtime-filters-target="loadingOverlay">
-            <svg width="24" height="24"
-                 class="dashboard--spinner"
-                 data-dashboard-realtime-filters-target="spinner"
-                 viewBox="0 0 24 24"
-                 xmlns="http://www.w3.org/2000/svg"><style>.spinner_ajPY{transform-origin:center;animation:spinner_AtaB .75s infinite linear}@keyframes spinner_AtaB{100%{transform:rotate(360deg)}}</style><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" class="spinner_ajPY"/></svg>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
-            %>
-            <% if FeatureFlagHelper.is_available('charts', current_user) %>
-              <div class="widgets--grid">
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::OUTAGES }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
-                %>
-                <%= render partial: "application/components/widgets/widget",
-                           locals: { type: WidgetsHelper::WidgetTypes::TOTAL_DATA }
-                %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
-  <% else %>
-    <!--begin::Container-->
-    <% if current_account.present? %>
-      <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
-        <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
-          <%= render partial: "onboard", locals: { step: @onboard_step } %>
-        </div>
-        <% if FeatureFlagHelper.is_available('charts', current_user) %>
-          <%= render partial: "dashboard/components/widget_filters" %>
         <% end %>
-        <% if @locations.exists? || params[:filter].present? %>
-          <!-- REMOVE -->
+        <%= render partial: "dashboard/components/empty_networks_card" %>
+      </div>
+    <% elsif policy_scope(Client).count == 0 %>
+      <%= render partial: "dashboard/components/empty_pods_card" %>
+    <% else %>
+      <div class="w-100 mw-100" data-controller="onboard map widgets dashboard-realtime-filters" data-onboard-step-value="<%= @onboard_step %>" data-action="remoteFetchAllWidgets@window->dashboard-realtime-filters#remoteFetchAllWidgets remoteClearFilters@window->dashboard-realtime-filters#remoteClearFilters">
+        <%= render partial: "dashboard/components/tabs", locals: { selected: [true, false] } %>
+        <%= render partial: "dashboard/components/widget_filters" %>
+        <div class="dashboard--widgets-container" data-dashboard-realtime-filters-target="loadingOverlay">
+          <svg width="24" height="24"
+               class="dashboard--spinner"
+               data-dashboard-realtime-filters-target="spinner"
+               viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg"><style>.spinner_ajPY{transform-origin:center;animation:spinner_AtaB .75s infinite linear}@keyframes spinner_AtaB{100%{transform:rotate(360deg)}}</style><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" class="spinner_ajPY"/></svg>
           <%= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
-        <% end %>
-        <% if FeatureFlagHelper.is_available('charts', current_user) %>
           <div class="widgets--grid">
             <%= render partial: "application/components/widgets/widget",
                        locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::OUTAGES }
             %>
             <%= render partial: "application/components/widgets/widget",
                        locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
@@ -120,14 +76,14 @@
             <%= render partial: "application/components/widgets/widget",
                        locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
             %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::TOTAL_DATA }
+            %>
           </div>
-        <% end %>
+        </div>
       </div>
-    <% else %>
-      <%= render partial: "dashboard/no_accounts_card" %>
     <% end %>
-    <!--end::Container-->
-  <% end %>
+<% end %>
 </div>
 <!--end::Post-->
 
@@ -144,26 +100,23 @@
   <% end %>
 <% end %>
 
-<% if FeatureFlagHelper.is_available('networks', current_user) %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "create_account_modal" }
-  %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
-  %>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "create_account_modal" }
+%>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
+%>
 
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
-  %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
-  %>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
+%>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+%>
 
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "pod_id_modal" }
-  %>
-<% end %>
-
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "pod_id_modal" }
+%>
 <%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "outages_details_modal" }
 %>

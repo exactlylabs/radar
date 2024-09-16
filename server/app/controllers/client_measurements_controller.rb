@@ -13,26 +13,23 @@ class ClientMeasurementsController < ApplicationController
     if @client.account.present?
       @measurements = @measurements.where(account: @client.account)
     end
-
-    if FeatureFlagHelper.is_available('networks', current_user)
-      @measurements = @measurements.where(style: params[:style].upcase) if params[:style].present?
-      if params[:range].present?
-        range = human_filter_to_range(params[:range])
-        @measurements = @measurements.where(created_at: range[0]..range[1])
-      end
-      @measurements = @measurements.where(wireless: params[:connection].upcase == 'WIFI') if params[:connection].present?
-
-      if params[:sort_by].present?
-        sort_by = params[:sort_by]
-        order = params[:order] || 'desc'
-        @measurements = @measurements.order(sort_by => order)
-      else
-        @measurements = @measurements.order(created_at: :desc)
-      end
-
-      @total = @measurements.count
-      @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
+    @measurements = @measurements.where(style: params[:style].upcase) if params[:style].present?
+    if params[:range].present?
+      range = human_filter_to_range(params[:range])
+      @measurements = @measurements.where(created_at: range[0]..range[1])
     end
+    @measurements = @measurements.where(wireless: params[:connection].upcase == 'WIFI') if params[:connection].present?
+
+    if params[:sort_by].present?
+      sort_by = params[:sort_by]
+      order = params[:order] || 'desc'
+      @measurements = @measurements.order(sort_by => order)
+    else
+      @measurements = @measurements.order(created_at: :desc)
+    end
+
+    @total = @measurements.count
+    @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
 
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }

@@ -1,36 +1,27 @@
 <%= turbo_frame_tag "clients_index_content" do %>
   <% if @clients.blank? && empty_search_params? %>
-    <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <%= render partial: "pods/components/empty_pods_card"%>
-    <% else %>
-      <%= render partial: "empty_pods_view" %>
-    <% end %>
+    <%= render partial: "pods/components/empty_pods_card"%>
   <% else %>
-    <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <%= render partial: "application/components/tables/generic_table",
-          locals: {
-            table_id: "pods_table",
-            type: TablesHelper::TableTypes::PODS,
-            titles: TablesHelper.titles(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
-            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
-            rows: @clients,
-            total: @total
-          }
-      %>
-    <% else %>
-      <%= render partial: "clients_table", locals: {clients: @clients} %>
-    <% end %>
+    <%= render partial: "application/components/tables/generic_table",
+        locals: {
+          table_id: "pods_table",
+          type: TablesHelper::TableTypes::PODS,
+          titles: TablesHelper.titles(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+          widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+          rows: @clients,
+          total: @total
+        }
+    %>
   <% end %>
 <% end %>
 
-<% if FeatureFlagHelper.is_available('networks', current_user) %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-    locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
-  %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-    locals: { turbo_frame_tag_id: "bulk_change_release_group_modal" }
-  %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-    locals: { turbo_frame_tag_id: "bulk_move_to_network_modal" }
-  %>
-<% end %>
+
+<%= render partial: "application/components/modals/turbo_modal",
+  locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
+%>
+<%= render partial: "application/components/modals/turbo_modal",
+  locals: { turbo_frame_tag_id: "bulk_change_release_group_modal" }
+%>
+<%= render partial: "application/components/modals/turbo_modal",
+  locals: { turbo_frame_tag_id: "bulk_move_to_network_modal" }
+%>

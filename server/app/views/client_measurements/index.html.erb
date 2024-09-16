@@ -4,11 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <h1 class="page-main-title"><%= @client.unix_user %>
-      <% else %>
-        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %>
-      <% end %>
+      <h1 class="page-main-title"><%= @client.unix_user %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -38,43 +34,35 @@
         ]
       }
     %>
-    <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <div class="measurements--main-table-container">
-        <% if @measurements.count == 0 && request.query_parameters.size == 0 %>
-          <%= render partial: "pod_measurements/components/empty_measurements_card" %>
-        <% else %>
-          <div class="measurements--filters-download-container">
-            <%= render partial: "pod_measurements/components/table_filters" %>
-            <a href="<%= client_measurements_path(@client.unix_user, style: params[:style], range: params[:range], format: 'csv') %>"
-                class="custom-button custom-button--lg custom-button--secondary-light"
-            >
-            <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16, class: 'me-2' %>
-            Download measurements
-            </a>
-          </div>
-          <%= render partial: "application/components/tables/generic_table",
-                  locals: {
-                    table_id: "pod_measurements_table",
-                    type: TablesHelper::TableTypes::MEASUREMENTS,
-                    titles: TablesHelper.titles(TablesHelper::TableTypes::MEASUREMENTS),
-                    widths: TablesHelper.widths(TablesHelper::TableTypes::MEASUREMENTS),
-                    rows: @measurements,
-                    total: @total
-                  }
-              %>
-        <% end %>
-      </div>
+    <div class="measurements--main-table-container">
+      <% if @measurements.count == 0 && request.query_parameters.size == 0 %>
+        <%= render partial: "pod_measurements/components/empty_measurements_card" %>
+      <% else %>
+        <div class="measurements--filters-download-container">
+          <%= render partial: "pod_measurements/components/table_filters" %>
+          <a href="<%= client_measurements_path(@client.unix_user, style: params[:style], range: params[:range], format: 'csv') %>"
+              class="custom-button custom-button--lg custom-button--secondary-light"
+          >
+          <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16, class: 'me-2' %>
+          Download measurements
+          </a>
+        </div>
+        <%= render partial: "application/components/tables/generic_table",
+                locals: {
+                  table_id: "pod_measurements_table",
+                  type: TablesHelper::TableTypes::MEASUREMENTS,
+                  titles: TablesHelper.titles(TablesHelper::TableTypes::MEASUREMENTS),
+                  widths: TablesHelper.widths(TablesHelper::TableTypes::MEASUREMENTS),
+                  rows: @measurements,
+                  total: @total
+                }
+            %>
+      <% end %>
+    </div>
 
-      <%= render partial: "application/components/modals/turbo_modal",
-          locals: { turbo_frame_tag_id: "measurement_details_modal" }
-      %>
-    <% else %>
-    <!--begin::Card-->
-      <div class="card clients--detail-card">
-        <%= render partial: "client_measurements/measurements_table", locals: {client: @client, measurements: @measurements} %>
-      </div>
-      <!--end::Card-->
-    <% end %>
+    <%= render partial: "application/components/modals/turbo_modal",
+        locals: { turbo_frame_tag_id: "measurement_details_modal" }
+    %>
   </div>
   <!--end::Container-->
 </div>
