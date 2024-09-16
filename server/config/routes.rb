@@ -105,6 +105,7 @@ Rails.application.routes.draw do
       get 'latency', to: 'public_pod#latency'
       get 'data_usage', to: 'public_pod#data_usage'
       get 'total_data', to: 'public_pod#total_data'
+      post 'configuration'
     end
 
     collection do

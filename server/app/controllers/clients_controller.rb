@@ -50,6 +50,10 @@ class ClientsController < ApplicationController
     @total_avg = @client.get_speed_averages(account_id)
   end
 
+  def configuration
+    head 200
+  end
+
   # GET /clients/new
   def new
     @client = Client.new
