@@ -4,11 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <h1 class="page-main-title"><%= @client.unix_user %></h1>
-      <% else %>
-        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %></h1>
-      <% end %>
+      <h1 class="page-main-title"><%= @client.unix_user %></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -20,25 +16,23 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <div class="pods--header-options-container">
-        <a class="custom-button custom-button--primary custom-button--lg <%= !@client.online || @client.test_requested ? 'custom-button--disabled' : '' %>"
-           rel="nofollow"
-           data-method="post"
-           href="<%= !@client.online || @client.test_requested ? '#' : run_test_client_path(@client.unix_user) %>"
-        >
-          <%= image_tag image_url('run-speed-test-icon.png'), width: 16, height: 16, class: "me-2" %>
-          Run speed test
-        </a>
-        <%= render partial: "application/components/buttons/custom_more_options_button",
-                   locals: {
-                     type: TablesHelper::OptionsMenuType::POD_OVERVIEW,
-                     with_bg: true,
-                     big: true
-                   }
-        %>
-      </div>
-    <% end %>
+    <div class="pods--header-options-container">
+      <a class="custom-button custom-button--primary custom-button--lg <%= !@client.online || @client.test_requested ? 'custom-button--disabled' : '' %>"
+         rel="nofollow"
+         data-method="post"
+         href="<%= !@client.online || @client.test_requested ? '#' : run_test_client_path(@client.unix_user) %>"
+      >
+        <%= image_tag image_url('run-speed-test-icon.png'), width: 16, height: 16, class: "me-2" %>
+        Run speed test
+      </a>
+      <%= render partial: "application/components/buttons/custom_more_options_button",
+                 locals: {
+                   type: TablesHelper::OptionsMenuType::POD_OVERVIEW,
+                   with_bg: true,
+                   big: true
+                 }
+      %>
+    </div>
   </div>
 </div>
 <!--end::Toolbar-->
@@ -59,11 +53,7 @@
     %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
-    <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <%= render partial: "pods/pod_details", locals: { pod: @client } %>
-    <% else %>
-      <%= render partial: "client_details", locals: { client: @client, total_bytes: @total_avg } %>
-    <% end %>
+    <%= render partial: "pods/pod_details", locals: { pod: @client } %>
     <!--end::Card-->
   </div>
   <!--end::Container-->

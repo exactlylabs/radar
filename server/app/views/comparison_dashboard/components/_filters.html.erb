@@ -39,7 +39,7 @@
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'isp', label: 'ISP', active: params[:compare_by] == 'isp' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
                locals: { overridden_keys: "isp_id[], category_id[], pod_id[], account_id[]", base_menu_id: 'compare-by-filter-menu',
-                         custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'network', label: FeatureFlagHelper.is_available('networks', current_user) ? 'Network' : 'Location', active: params[:compare_by] == 'network' } %>
+                         custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'network', label: 'Network', active: params[:compare_by] == 'network' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
                locals: { overridden_keys: "network_id[], category_id[], account_id[], isp_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'pod', label: 'Pod', active: params[:compare_by] == 'pod' } %>

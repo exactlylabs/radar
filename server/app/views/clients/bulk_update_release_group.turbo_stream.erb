@@ -1,15 +1,3 @@
-<% if FeatureFlagHelper.is_available('networks', current_user) %>
-  <%= turbo_stream.append 'realtime-notice' do %>
-    <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
-  <% end %>
-<% else %>
-  <%= turbo_stream.update 'notice-container' do %>
-    <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
-  <% end %>
-
-  <%= @clients.each do |c| %>
-    <%= turbo_stream.replace c do %>
-      <%= render partial: "clients_table_row", locals: { client: c, selected: true }%>
-    <% end %>
-  <% end %>
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
 <% end %>

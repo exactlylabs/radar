@@ -12,15 +12,12 @@
         }
     %>
   <% end %>
-
-  <% if FeatureFlagHelper.is_available('networks', current_user) %>
-    <%= turbo_stream.update "dashboard-main-content" do %>
-      <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
-        <%= render partial: "application/components/widgets/widget",
-                   locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
-        %>
-      </div>
-    <% end %>
+  <%= turbo_stream.update "dashboard-main-content" do %>
+    <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+      <%= render partial: "application/components/widgets/widget",
+                 locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+      %>
+    </div>
   <% end %>
 <% else %>
   <% if @client.location.nil? %>

@@ -43,31 +43,27 @@ class LocationsController < ApplicationController
   # GET /locations/new
   def new
     @location = Location.new
-    if FeatureFlagHelper.is_available('networks', current_user)
-      respond_to do |format|
-        format.html
-        format.turbo_stream { render turbo_stream: turbo_stream.update('new_location_modal', partial: "locations/new", locals: { location: @location }) }
-      end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render turbo_stream: turbo_stream.update('new_location_modal', partial: "locations/new", locals: { location: @location }) }
     end
   end
 
   def new_network_onboarding
     @location = Location.new
-    if FeatureFlagHelper.is_available('networks', current_user)
-      respond_to do |format|
-        format.html
-        format.turbo_stream
-      end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
   end
 
   # GET /locations/1/edit
   def edit
-    if FeatureFlagHelper.is_available('networks', current_user)
-      respond_to do |format|
-        format.html
-        format.turbo_stream { render turbo_stream: turbo_stream.update('edit_location_modal', partial: "locations/new", locals: { location: @location }) }
-      end
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render turbo_stream: turbo_stream.update('edit_location_modal', partial: "locations/new", locals: { location: @location }) }
     end
   end
 
@@ -123,10 +119,8 @@ class LocationsController < ApplicationController
       @location.categories << policy_scope(Category).where(id: new_categories_ids)
       if @location.save && @location.update(location_params)
         @locations = policy_scope(Location)
-        if FeatureFlagHelper.is_available('networks', current_user)
-          @total = @locations.count
-          @locations = paginate(@locations, params[:page], params[:page_size])
-        end
+        @total = @locations.count
+        @locations = paginate(@locations, params[:page], params[:page_size])
         format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully updated." }
         format.json { render :show, status: :ok, location: @location }
@@ -145,7 +139,7 @@ class LocationsController < ApplicationController
       handle_exception(e, current_user)
       @notice = "Error deleting network."
     end
-    @notice = FeatureFlagHelper.is_available('networks', current_user) ? "Network was successfully deleted." : "Location was successfully deleted." if !@notice
+    @notice = "Network was successfully deleted." unless @notice
     respond_to do |format|
       format.html { redirect_to locations_url, notice: @notice }
       format.json { head :no_content }

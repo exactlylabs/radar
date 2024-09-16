@@ -20,7 +20,7 @@
      data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
      data-resource="networks"
 >
-  <% if FeatureFlagHelper.is_available('networks', current_user) && onboarding %>
+  <% if onboarding %>
     <input hidden="hidden" name="onboarding" value="true"/>
   <% end %>
   <%= form.hidden_field "id", value: location.id %>

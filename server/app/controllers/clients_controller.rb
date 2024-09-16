@@ -36,12 +36,10 @@ class ClientsController < ApplicationController
       @clients = @clients.where_offline if @status == 'offline'
     end
 
-    if FeatureFlagHelper.is_available('networks', current_user)
-      @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
-      @total = @clients.count
-      @clients = @clients.order("location_id NULLS FIRST")
-      @clients = paginate(@clients, params[:page], params[:page_size])
-    end
+    @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
+    @total = @clients.count
+    @clients = @clients.order("location_id NULLS FIRST")
+    @clients = paginate(@clients, params[:page], params[:page_size])
   end
 
   # GET /clients/1 or /clients/1.json
@@ -79,13 +77,12 @@ class ClientsController < ApplicationController
         redirect_to clients_path
       end
     end
-    if FeatureFlagHelper.is_available('networks', current_user)
-      @client = Client.find_by_unix_user(@unix_user)
-      @location = Location.new
-      respond_to do |format|
-        format.turbo_stream
-        format.html { render :get_add_pod_modal, status: :ok }
-      end
+
+    @client = Client.find_by_unix_user(@unix_user)
+    @location = Location.new
+    respond_to do |format|
+      format.turbo_stream
+      format.html { render :get_add_pod_modal, status: :ok }
     end
   end
 
@@ -124,13 +121,8 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
-        if FeatureFlagHelper.is_available('networks', current_user)
-          @notice = "Pod speed test requested successfully."
-          format.turbo_stream
-        else
-          @notice = "Client test requested."
-          format.turbo_stream {}
-        end
+        @notice = "Pod speed test requested successfully."
+        format.turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: @notice }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
@@ -430,11 +422,7 @@ class ClientsController < ApplicationController
 
   def bulk_run_tests
     if @clients.update_all(test_requested: true)
-      if FeatureFlagHelper.is_available('networks', current_user)
-        @notice = "Pod speed tests successfully requested."
-      else
-        @notice = "Test was successfully requested for selected clients."
-      end
+      @notice = "Pod speed tests successfully requested."
     else
       @notice = "Error requesting test for selected clients."
     end
@@ -621,7 +609,7 @@ class ClientsController < ApplicationController
     @unix_user = params[:pod_id]
     @client = Client.find_by_unix_user(@unix_user)
     @error = nil
-    if FeatureFlagHelper.is_available('networks', current_user) && params[:onboarding].present?
+    if params[:onboarding].present?
       @onboarding = true
       @network = policy_scope(Location).last
     end
@@ -711,10 +699,8 @@ class ClientsController < ApplicationController
     rescue => e
       error = e.message
     end
-    if FeatureFlagHelper.is_available('networks', current_user)
-      @onboarding = params[:onboarding].present?
-      @locations = policy_scope(Location)
-    end
+    @onboarding = params[:onboarding].present?
+    @locations = policy_scope(Location)
     respond_to do |format|
       if !error && @client.save!
         format.turbo_stream

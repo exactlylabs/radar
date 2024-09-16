@@ -16,11 +16,7 @@
       <div class="sidebar--horizontal-divider"></div>
     <% end %>
     <p class="help-text m-0 ms-2 mb-2">
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        Networks
-      <% else %>
-        Locations
-      <% end %>
+      Networks
     </p>
     <div class="sidebar--recents-container">
       <% results[:locations].each do |location| %>

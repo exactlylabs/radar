@@ -10,52 +10,34 @@
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
         <li class="breadcrumb-item page-sub-title"><%= current_account.name %></li>
-        <% if FeatureFlagHelper.is_available('networks', current_user) %>
-          <li class="breadcrumb-item page-sub-title">Networks</li>
-        <% end %>
+        <li class="breadcrumb-item page-sub-title">Networks</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
     <div class="pods--index-button-options-container">
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <% if @clients.count >= 1 %>
-          <a href="<%= get_add_pod_modal_clients_path %>"
-             class="custom-button custom-button--primary custom-button--lg"
-             data-turbo-frame="add_pod_modal"
-          >
-            <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
-            Add Pod
-          </a>
-        <% end %>
-        <%= render partial: "application/components/buttons/custom_more_options_button",
-                   locals: {
-                     type: TablesHelper::OptionsMenuType::PODS_INDEX,
-                     with_bg: true,
-                     big: true
-                   }
-        %>
-      <% else %>
-        <% if current_user.super_user && !is_super_user_disabled? %>
-          <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">
-            Manage Release Group
-          </a>
-        <% end %>
-        <% if current_account.superaccount %>
-          <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">
-            Unclaimed Pods
-          </a>
-        <% end %>
-        <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">
+      <% if @clients.count >= 1 %>
+        <a href="<%= get_add_pod_modal_clients_path %>"
+           class="custom-button custom-button--primary custom-button--lg"
+           data-turbo-frame="add_pod_modal"
+        >
+          <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
           Add Pod
-        </button>
+        </a>
       <% end %>
+      <%= render partial: "application/components/buttons/custom_more_options_button",
+                 locals: {
+                   type: TablesHelper::OptionsMenuType::PODS_INDEX,
+                   with_bg: true,
+                   big: true
+                 }
+      %>
     </div>
   </div>
 </div>
 <!--end::Toolbar-->
 <%= turbo_frame_tag "unassigned-pods-banner" do %>
-  <% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
+  <% if are_there_unassigned_pods? %>
     <%= render partial: "pods/components/unassigned_pods_banner" %>
   <% end %>
 <% end %>
@@ -64,11 +46,7 @@
   <!--begin::Container-->
   <div id="clients-table-wrapper" class="d-flex flex-column w-100" data-controller="multi-row-table bulk-release-group-modal">
     <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?) %>
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <%= render partial: "pods/components/table_filters" %>
-      <% else %>
-        <%= render partial: "clients_table_filters" %>
-      <% end %>
+      <%= render partial: "pods/components/table_filters" %>
     <% end %>
     <%= render partial: "clients_index_content", locals: { clients: @clients } %>
     <% if current_user.super_user && !is_super_user_disabled? %>
@@ -80,36 +58,28 @@
   <!--end::Container-->
 </div>
 
-<% if FeatureFlagHelper.is_available('networks', current_user) %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
-  %>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
+%>
 
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "pod_id_modal" }
-  %>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "pod_id_modal" }
+%>
 
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: {
-               turbo_frame_tag_id: "bulk_move_to_account_modal",
-               optional_added_controllers: "multi-pod-select selected-pods-grid qr",
-               needs_overflow: true
-             }
-  %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: {
-               turbo_frame_tag_id: "bulk_move_to_network_qr_modal",
-               optional_added_controllers: "multi-pod-select selected-pods-grid qr",
-               needs_overflow: true
-             }
-  %>
-<% else %>
-  <div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="modal add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
-    <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(setup: params[:setup], unix_user: params[:unix_user]) do %>
-    <% end %>
-  </div>
-<% end %>
-
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: {
+             turbo_frame_tag_id: "bulk_move_to_account_modal",
+             optional_added_controllers: "multi-pod-select selected-pods-grid qr",
+             needs_overflow: true
+           }
+%>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: {
+             turbo_frame_tag_id: "bulk_move_to_network_qr_modal",
+             optional_added_controllers: "multi-pod-select selected-pods-grid qr",
+             needs_overflow: true
+           }
+%>
 <%= render partial: "application/components/modals/turbo_modal",
            locals: {
              turbo_frame_tag_id: "edit_client_modal",
