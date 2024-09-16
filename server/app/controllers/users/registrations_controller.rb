@@ -306,7 +306,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def set_auth_holder
-    is_account_accessible_through_share = current_user.shared_accounts.where(id: current_account.id).exists?
+    is_account_accessible_through_share = !current_account.nil? && current_user.shared_accounts.where(id: current_account.id).exists?
     is_all_accounts = current_account&.is_all_accounts? || false
     @auth_holder = AuthenticationHolder.new(current_user, is_all_accounts, is_account_accessible_through_share, is_super_user_disabled?) unless @auth_holder
     @auth_holder.set_account(current_account)
