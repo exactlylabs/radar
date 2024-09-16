@@ -14,10 +14,10 @@ class ProcessMeasurementJob < ApplicationJob
           next
         end
         if measurement.download_id.nil? && row["Key"] == "measurement" && row["Value"]["Test"] == "download"
-          measurement.download_id = row["Value"]["ConnectionInfo"]["UUID"]
+          measurement.download_id = row["Value"].fetch("ConnectionInfo", {}).fetch("UUID", nil)
         end
         if measurement.upload_id.nil? && row["Key"] == "measurement" && row["Value"]["Test"] == "upload"
-          measurement.upload_id = row["Value"]["ConnectionInfo"]["UUID"]
+          measurement.upload_id = row["Value"].fetch("ConnectionInfo", {}).fetch("UUID", nil)
         end
         if row["Key"] == "measurement" && row["Value"]["TCPInfo"] && extended_info.nil?
           extended_info = row["Value"]["TCPInfo"]
@@ -49,6 +49,8 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
       measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
 
+      measurement.download_id = result["result"]["id"]
+      measurement.upload_id = result["result"]["id"]
     end
     measurement.processed = true
     measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
