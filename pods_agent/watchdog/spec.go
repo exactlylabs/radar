@@ -23,6 +23,7 @@ const (
 	SetWlanInterfaceMessageType
 	DisconnectWirelessNetworkMessageType
 	HealthCheckMessageType
+	ReportLogsMessageType
 )
 
 type SystemEventType int
@@ -151,7 +152,15 @@ type ServerMessage struct {
 
 type HealthCheckServerMessage struct{}
 
+type ReportLogsMessage struct {
+}
+
 type GetSyncMessageFunc func() messages.WatchdogSync
+
+type Logs struct {
+	Agent    string `json:"agent"`
+	Watchdog string `json:"watchdog"`
+}
 
 type WatchdogClient interface {
 	Connect(chan<- ServerMessage, GetSyncMessageFunc) error
@@ -161,6 +170,7 @@ type WatchdogClient interface {
 	ReportScanAPsResult(aps []wifi.APDetails)
 	ReportWirelessStatus(status wifi.WifiStatus)
 	ReportWirelessConnectionStateChanged(state, ssid string)
+	ReportLogs(l Logs)
 	ReportActionError(action MessageType, err error)
 	Connected() bool
 	Close() error

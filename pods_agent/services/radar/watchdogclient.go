@@ -31,6 +31,7 @@ const (
 	AccessPointsFound              cable.CustomActionTypes = "access_points_found"
 	WirelessStatusReport           cable.CustomActionTypes = "wireless_status_report"
 	WirelessConnectionStateChanged cable.CustomActionTypes = "wireless_connection_state_changed"
+	LogsReport                     cable.CustomActionTypes = "logs_report"
 	ActionErrorReport              cable.CustomActionTypes = "action_error_report"
 )
 
@@ -294,6 +295,14 @@ func (c *RadarWatchdogClient) ReportWirelessConnectionStateChanged(state, ssid s
 			State: state,
 			SSID:  ssid,
 		},
+	})
+}
+
+// ReportLogs implements watchdog.WatchdogClient.
+func (c *RadarWatchdogClient) ReportLogs(l watchdog.Logs) {
+	c.channel.SendAction(cable.CustomActionData{
+		Action:  LogsReport,
+		Payload: l,
 	})
 }
 
