@@ -1,4 +1,17 @@
-<% if @type == 'create' %>
+<% if @pod_id %>
+  <%= turbo_stream.update "edit_client_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Import Categories',
+                 modal_partial_path: "location_categories/import_from_another_account_modal",
+                 resource: @accounts,
+                 custom_submit_end_handler: nil,
+                 needs_overflow: true,
+                 pod_id: @pod_id
+               }
+    %>
+  <% end %>
+<% elsif @type == 'create' %>
   <%= turbo_stream.update "new_location_modal" do %>
     <%= render partial: "application/components/modals/empty_custom_modal",
                locals: {

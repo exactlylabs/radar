@@ -14,6 +14,7 @@
                         else
                           location.account.id
                         end %>
+<% pod_id = local_assigns[:pod_id] || nil %>
 
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
      data-type="full"
@@ -72,7 +73,7 @@
         </span>
     </div>
     <%= turbo_frame_tag "location-categories-dropdown" %>
-    <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id, type: type), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
+    <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id, type: type, pod_id: pod_id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
   </div>
 
   <div class="modals--half-width-row mb-6">
