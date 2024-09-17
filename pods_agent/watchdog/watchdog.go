@@ -4,7 +4,9 @@ import (
 	"context"
 	"log"
 	"os"
+	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
@@ -392,12 +394,19 @@ func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage)
 	}
 	l := make(Logs)
 	for _, name := range data.Services {
-		svcLogs, err := w.sysManager.GetServiceLogs(name, n)
+		// svcLogs, err := w.sysManager.GetServiceLogs(name, n)
+		// if err != nil {
+		// 	return errors.W(err)
+		// }
+		command := strings.SplitN(name, " ", 1)
+		args := strings.Split(command[1], " ")
+		out, err := exec.Command(command[0], args...).Output()
 		if err != nil {
 			return errors.W(err)
 		}
-		l[name] = svcLogs
+		l[name] = string(out)
 	}
+
 	w.cli.ReportLogs(l)
 	return nil
 }
