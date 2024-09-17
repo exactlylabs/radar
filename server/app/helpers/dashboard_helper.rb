@@ -188,7 +188,7 @@ module DashboardHelper
     ),
     data_used_per_day AS (
         SELECT
-          date_trunc(:interval_type, processed_at) as "time",
+          EXTRACT(EPOCH FROM date_trunc(:interval_type, processed_at)) * 1000 as "time",
           SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "total"
         FROM measurements
         JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
@@ -205,7 +205,7 @@ module DashboardHelper
         ORDER BY 1 ASC
       )
       SELECT COALESCE(total, 0) AS y, step AS x from timeseries
-      LEFT JOIN data_used_per_day ON timeseries.step = EXTRACT(EPOCH FROM time) * 1000
+      LEFT JOIN data_used_per_day ON timeseries.step = time
       ORDER BY x ASC;
     }
     ActiveRecord::Base.sanitize_sql([sql, {interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
@@ -253,7 +253,7 @@ module DashboardHelper
           COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
           l.name AS "name"
         FROM measurements AS m
-          JOIN locations AS l ON l.id = m.account_id
+          JOIN locations AS l ON l.id = m.location_id
           LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
           LEFT OUTER JOIN autonomous_system_orgs
           ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
@@ -270,9 +270,9 @@ module DashboardHelper
 
     sql += %{
        with_no_measurements AS (
-          SELECT 0 AS "y", l.name AS "name", m.id
+          SELECT DISTINCT 0 AS "y", l.name AS "name", m.id
           FROM locations AS l
-          LEFT OUTER JOIN measurements AS m ON l.id = m.location_id
+          LEFT JOIN measurements AS m ON l.id = m.location_id
           WHERE m.id IS NULL
           AND l.deleted_at IS NULL
           AND l.account_id IN (:account_ids)
@@ -280,12 +280,12 @@ module DashboardHelper
 
     sql += " AND l.name ILIKE :query " if query.present?
 
-    sql += " GROUP BY l.name, m.id), "
+    sql += " ), "
 
     sql += %{
       full_table AS (
         SELECT * FROM with_measurements
-        UNION
+        UNION ALL
         SELECT y, name FROM with_no_measurements
       )
       SELECT * FROM full_table
@@ -304,7 +304,7 @@ module DashboardHelper
           COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
           a.name AS "name"
         FROM measurements AS m
-          JOIN accounts AS a ON a.id = m.account_id
+          JOIN accounts AS a ON a.id = m.location_id
           LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
           LEFT OUTER JOIN autonomous_system_orgs
           ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
@@ -314,26 +314,25 @@ module DashboardHelper
 
     sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
     sql += " AND a.name ILIKE :query " if query.present?
-
     sql += " GROUP BY a.name ), "
 
     sql += %{
        with_no_measurements AS (
-          SELECT 0 AS "y", a.name AS "name", m.id
+          SELECT DISTINCT 0 AS "y", a.name AS "name", m.id
           FROM accounts AS a
-            LEFT OUTER JOIN measurements AS m ON a.id = m.account_id
+            LEFT JOIN measurements AS m ON a.id = m.account_id
           WHERE m.id IS NULL
           AND a.id IN (:account_ids)
     }
 
     sql += " AND a.name ILIKE :query " if query.present?
 
-    sql += " GROUP BY a.name, m.id ), "
+    sql += " ), "
 
     sql += %{
       full_table AS (
         SELECT * FROM with_measurements
-        UNION
+        UNION ALL
         SELECT y, name FROM with_no_measurements
       )
       SELECT * FROM full_table
