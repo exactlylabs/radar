@@ -346,9 +346,9 @@ func (si *SysInfoManager) EnsureTailscale() error {
 }
 
 func (si *SysInfoManager) TailscaleUp(authKey string, tags []string) error {
-	if err := si.EnsureTailscale(); err != nil {
-		return errors.W(err)
-	}
+	// if err := si.EnsureTailscale(); err != nil {
+	// 	return errors.W(err)
+	// }
 	log.Println("sysinfo.SysInfoManager#TailscaleUp: Starting Tailscale")
 	_, err := si.runCommand(
 		exec.Command("tailscale", "up", "--ssh", "--force-reauth", "--timeout=15s", "--auth-key", authKey, "--advertise-tags", strings.Join(tags, ",")))
