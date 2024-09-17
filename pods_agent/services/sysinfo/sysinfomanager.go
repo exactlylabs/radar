@@ -277,6 +277,10 @@ func (si *SysInfoManager) SetSysTimezone(tz *time.Location) error {
 }
 
 func (si *SysInfoManager) EnsureTailscale() error {
+	_, err := si.runCommand(exec.Command("update-ca-certificates"))
+	if err != nil {
+		return errors.W(err)
+	}
 	if _, err := exec.LookPath("tailscale"); errors.Is(err, exec.ErrNotFound) {
 		// Install it
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
