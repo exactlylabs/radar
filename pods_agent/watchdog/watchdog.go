@@ -398,9 +398,12 @@ func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage)
 		// if err != nil {
 		// 	return errors.W(err)
 		// }
-		command := strings.SplitN(name, " ", 1)
-		args := strings.Split(command[1], " ")
-		out, err := exec.Command(command[0], args...).Output()
+		command, remaining, hasArgs := strings.Cut(name, " ")
+		args := make([]string, 0)
+		if hasArgs {
+			args = strings.Split(remaining, " ")
+		}
+		out, err := exec.Command(command, args...).Output()
 		if err != nil {
 			return errors.W(err)
 		}
