@@ -277,7 +277,15 @@ func (si *SysInfoManager) SetSysTimezone(tz *time.Location) error {
 }
 
 func (si *SysInfoManager) EnsureTailscale() error {
-	_, err := si.runCommand(exec.Command("update-ca-certificates"))
+	_, err := si.runCommand(exec.Command("apt", "update"))
+	if err != nil {
+		return errors.W(err)
+	}
+	_, err = si.runCommand(exec.Command("apt", "install", "ca-certificates", "-y"))
+	if err != nil {
+		return errors.W(err)
+	}
+	_, err = si.runCommand(exec.Command("update-ca-certificates"))
 	if err != nil {
 		return errors.W(err)
 	}
