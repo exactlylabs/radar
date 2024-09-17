@@ -237,6 +237,8 @@ func (w *Watchdog) handleMessage(ctx context.Context, msg ServerMessage) {
 		err = w.handleSetWlanInterface(ctx, msg.Data.(SetWlanInterfaceMessage))
 	case DisconnectWirelessNetworkMessageType:
 		err = w.handleDisconnectWirelessNetwork(ctx, msg.Data.(DisconnectWirelessNetworkMessage))
+	case ReportLogsMessageType:
+		err = w.handleReportLogs(ctx, msg.Data.(ReportLogsMessage))
 	}
 
 	if err != nil {
@@ -380,6 +382,35 @@ func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data Dis
 			return errors.W(err)
 		}
 	}
+	return nil
+}
+
+func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage) error {
+	n := data.Lines
+	if n == 0 {
+		n = 100
+	}
+	l := make(Logs)
+	for _, name := range data.Services {
+		svcLogs, err := w.sysManager.GetServiceLogs(name, n)
+		if err != nil {
+			return errors.W(err)
+		}
+		l[name] = svcLogs
+	}
+	// agentLogs, err := exec.Command("journalctl", "-u", "radar_agent", "-n", strconv.Itoa(n)).Output()
+	// if err != nil {
+	// 	return errors.W(err)
+	// }
+	// watchdogLogs, err := exec.Command("journalctl", "-u", "podwatchdog@tty1", "-n", strconv.Itoa(n)).Output()
+	// if err != nil {
+	// 	return errors.W(err)
+	// }
+	// tailscaleLogs, err := exec.Command("journalctl", "-u", "tailscaled", "-n", strconv.Itoa(n)).Output()
+	// if err != nil {
+	// 	return errors.W(err)
+	// }
+	w.cli.ReportLogs(l)
 	return nil
 }
 

@@ -48,3 +48,8 @@ type SetWlanInterfacePayload struct {
 
 type DisconnectWirelessNetworkPayload struct {
 }
+
+type ReportLogsPayload struct {
+	Services []string `json:"services"`
+	Lines    int      `json:"lines"`
+}

@@ -23,6 +23,7 @@ const (
 	SetWlanInterfaceMessageType
 	DisconnectWirelessNetworkMessageType
 	HealthCheckMessageType
+	ReportLogsMessageType
 )
 
 type SystemEventType int
@@ -108,6 +109,8 @@ type SystemManager interface {
 	PodAgentRunning() (bool, error)
 	// SetACTLED will set the state of the ACT LED
 	SetACTLED(state bool) error
+	// GetServiceLogs will collect the logs of the given service name, and return the last given amount of lines.
+	GetServiceLogs(name string, lines int) (string, error)
 }
 
 type UpdateBinaryServerMessage struct {
@@ -151,7 +154,14 @@ type ServerMessage struct {
 
 type HealthCheckServerMessage struct{}
 
+type ReportLogsMessage struct {
+	Services []string `json:"services"`
+	Lines    int      `json:"lines"`
+}
+
 type GetSyncMessageFunc func() messages.WatchdogSync
+
+type Logs map[string]string
 
 type WatchdogClient interface {
 	Connect(chan<- ServerMessage, GetSyncMessageFunc) error
@@ -161,6 +171,7 @@ type WatchdogClient interface {
 	ReportScanAPsResult(aps []wifi.APDetails)
 	ReportWirelessStatus(status wifi.WifiStatus)
 	ReportWirelessConnectionStateChanged(state, ssid string)
+	ReportLogs(l Logs)
 	ReportActionError(action MessageType, err error)
 	Connected() bool
 	Close() error

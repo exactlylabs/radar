@@ -23,6 +23,11 @@ type devSysManager struct {
 	Tz                    *time.Location
 }
 
+// GetServiceLogs implements watchdog.SystemManager.
+func (dm *devSysManager) GetServiceLogs(name string, lines int) (string, error) {
+	return "", nil
+}
+
 func NewDevSysManager() watchdog.SystemManager {
 	utc, _ := time.LoadLocation("utc")
 	return &devSysManager{Tz: utc}
