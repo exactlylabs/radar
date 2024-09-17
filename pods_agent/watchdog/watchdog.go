@@ -398,18 +398,6 @@ func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage)
 		}
 		l[name] = svcLogs
 	}
-	// agentLogs, err := exec.Command("journalctl", "-u", "radar_agent", "-n", strconv.Itoa(n)).Output()
-	// if err != nil {
-	// 	return errors.W(err)
-	// }
-	// watchdogLogs, err := exec.Command("journalctl", "-u", "podwatchdog@tty1", "-n", strconv.Itoa(n)).Output()
-	// if err != nil {
-	// 	return errors.W(err)
-	// }
-	// tailscaleLogs, err := exec.Command("journalctl", "-u", "tailscaled", "-n", strconv.Itoa(n)).Output()
-	// if err != nil {
-	// 	return errors.W(err)
-	// }
 	w.cli.ReportLogs(l)
 	return nil
 }

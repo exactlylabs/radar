@@ -155,6 +155,17 @@
     )
   end
 
+  def self.broadcast_report_logs(client, n: 100, services: nil)
+    services = ["radar_agent", "podwatchdog@tty1"] if services.nil?
+    ActionCable.server.broadcast(
+      WatchdogChannel.watchdog_stream_name(client),
+      {
+        "event": "report_logs",
+        "payload": {lines: n, services: services}
+      }
+    )
+  end
+
   # Actions called by the watchdog
 
   def sync(data)
@@ -221,12 +232,21 @@
     WatchdogPubChannel.broadcast_to(CHANNELS[:watchdog_pub], {event: "wireless_connection_state_changed", payload: data["payload"], client: self.client})
   end
 
+  def logs_report(data)
+    content = ""
+    data["payload"].each do |k, v|
+      content += "#{k}: #{v}\n"
+    end
+    Rails.logger.error("#{self.client.unix_user} Logs Received:\n#{content}")
+  end
+
   def action_error_report(data)
     # payload has the following fields: {action: "which action triggered this", "error: "an internal error message", "error_type": "machine readable error type"}
     # Possible error types are:
     #   * NotRegisteredError -> When trying to connect to an non existing SSID
     #   * NotConnectedError -> When trying to perform action that requires a connection to be stabilished
     #   * TimeOutError -> When Trying to connect to an SSID takes longer than the internal time out defined in the watchdog
+    Rails.logger.error("#{self.client.unix_user} Action Error: \n#{data["payload"]}")
     WatchdogPubChannel.broadcast_to(CHANNELS[:watchdog_pub], {event: "action_error_report", payload: data["payload"], client: self.client})
   end
 
