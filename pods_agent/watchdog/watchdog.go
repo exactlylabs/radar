@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
@@ -387,11 +388,15 @@ func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data Dis
 }
 
 func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage) error {
-	agentLogs, err := exec.Command("journalctl", "-u", "radar_agent", "-n", "500").Output()
+	n := data.Lines
+	if n == 0 {
+		n = 100
+	}
+	agentLogs, err := exec.Command("journalctl", "-u", "radar_agent", "-n", strconv.Itoa(n)).Output()
 	if err != nil {
 		return errors.W(err)
 	}
-	watchdogLogs, err := exec.Command("journalctl", "-u", "podwatchdog@tty1", "-n", "500").Output()
+	watchdogLogs, err := exec.Command("journalctl", "-u", "podwatchdog@tty1", "-n", strconv.Itoa(n)).Output()
 	if err != nil {
 		return errors.W(err)
 	}

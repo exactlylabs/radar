@@ -205,7 +205,9 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 		if payload != nil {
 			c.returnCh <- watchdog.ServerMessage{
 				Type: watchdog.ReportLogsMessageType,
-				Data: watchdog.ReportLogsMessage{},
+				Data: watchdog.ReportLogsMessage{
+					Lines: payload.Lines,
+				},
 			}
 		}
 	}

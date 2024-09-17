@@ -153,6 +153,7 @@ type ServerMessage struct {
 type HealthCheckServerMessage struct{}
 
 type ReportLogsMessage struct {
+	Lines int `json:"lines"`
 }
 
 type GetSyncMessageFunc func() messages.WatchdogSync
