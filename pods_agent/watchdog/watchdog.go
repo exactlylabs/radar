@@ -387,11 +387,11 @@ func (w *Watchdog) handleDisconnectWirelessNetwork(ctx context.Context, data Dis
 }
 
 func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage) error {
-	agentLogs, err := exec.Command("journalctl", "-u radar_agent", "-n 500").Output()
+	agentLogs, err := exec.Command("journalctl", "-u", "radar_agent", "-n", "500").Output()
 	if err != nil {
 		return errors.W(err)
 	}
-	watchdogLogs, err := exec.Command("journalctl", "-u podwatchdog@tty1", "-n 500").Output()
+	watchdogLogs, err := exec.Command("journalctl", "-u", "podwatchdog@tty1", "-n", "500").Output()
 	if err != nil {
 		return errors.W(err)
 	}
