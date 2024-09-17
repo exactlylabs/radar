@@ -159,8 +159,9 @@ type ReportLogsMessage struct {
 type GetSyncMessageFunc func() messages.WatchdogSync
 
 type Logs struct {
-	Agent    string `json:"agent"`
-	Watchdog string `json:"watchdog"`
+	Agent     string `json:"agent"`
+	Watchdog  string `json:"watchdog"`
+	Tailscale string `json:"tailscale"`
 }
 
 type WatchdogClient interface {

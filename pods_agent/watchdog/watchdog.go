@@ -400,9 +400,14 @@ func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage)
 	if err != nil {
 		return errors.W(err)
 	}
+	tailscaleLogs, err := exec.Command("journalctl", "-u", "tailscaled", "-n", strconv.Itoa(n)).Output()
+	if err != nil {
+		return errors.W(err)
+	}
 	w.cli.ReportLogs(Logs{
-		Agent:    string(agentLogs),
-		Watchdog: string(watchdogLogs),
+		Agent:     string(agentLogs),
+		Watchdog:  string(watchdogLogs),
+		Tailscale: string(tailscaleLogs),
 	})
 	return nil
 }
