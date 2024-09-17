@@ -547,6 +547,10 @@ div[data-dashboard-time-filter-target="monthYear"] {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5;
+  max-width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: $deep-blue;
 }
 
