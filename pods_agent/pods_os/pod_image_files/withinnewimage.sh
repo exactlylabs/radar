@@ -13,5 +13,6 @@ echo "APT::Periodic::Unattended-Upgrade \"1\";" >> /etc/apt/apt.conf.d/20auto-up
 systemctl disable userconfig # New PI OS asks for a user on first boot. Disable it.
 
 systemctl enable radar_agent
-systemctl disable getty@
+systemctl mask getty@tty1
+systemctl mask getty@
 systemctl enable podwatchdog@
