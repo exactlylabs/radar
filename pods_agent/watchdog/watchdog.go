@@ -1,7 +1,9 @@
 package watchdog
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -403,15 +405,22 @@ func (w *Watchdog) handleReportLogs(ctx context.Context, data ReportLogsMessage)
 		if hasArgs {
 			args = strings.Split(remaining, " ")
 		}
-		out, err := exec.Command(command, args...).Output()
-		if err != nil {
-			return errors.W(err)
-		}
+		out := runCommand(exec.Command(command, args...))
 		l[name] = string(out)
 	}
 
 	w.cli.ReportLogs(l)
 	return nil
+}
+
+func runCommand(cmd *exec.Cmd) string {
+	stdout := bytes.NewBuffer(nil)
+	stderr := bytes.NewBuffer(nil)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	cmd.Run()
+	res := fmt.Sprintf("STDOUT: %s\nSTDERR: %s", stdout.String(), stderr.String())
+	return res
 }
 
 func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
