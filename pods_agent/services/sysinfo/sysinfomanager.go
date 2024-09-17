@@ -301,7 +301,7 @@ func (si *SysInfoManager) EnsureTailscale() error {
 			}
 			return err
 		}
-		
+
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
 		_, err = si.runCommand(
 			exec.Command("tailscale", "set", "--auto-update"))
@@ -339,7 +339,7 @@ func (si *SysInfoManager) TailscaleUp(authKey string, tags []string) error {
 	}
 	log.Println("sysinfo.SysInfoManager#TailscaleUp: Starting Tailscale")
 	_, err := si.runCommand(
-		exec.Command("tailscale", "up", "--ssh", "--force-reauth", "--auth-key", authKey, "--advertise-tags", strings.Join(tags, ",")))
+		exec.Command("tailscale", "up", "--ssh", "--force-reauth", "--timeout=15s", "--auth-key", authKey, "--advertise-tags", strings.Join(tags, ",")))
 	if err != nil {
 		return errors.W(err)
 	}
