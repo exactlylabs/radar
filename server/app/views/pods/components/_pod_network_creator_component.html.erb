@@ -1,4 +1,5 @@
 <% invisible = local_assigns[:starts_invisible].present? ? local_assigns[:starts_invisible] : false %>
+<% pod_id = local_assigns[:pod_id] || nil %>
 
 <div class="pods--create-network-component-container <%= invisible ? 'invisible' : nil %>"
   data-pod-account-and-network-target="newNetworkComponent"
@@ -12,7 +13,8 @@
         footerless: true,
         contained: true,
         is_account_fixed: true,
-        location: Location.new
+        location: Location.new,
+        pod_id: pod_id
       }
   %>
 </div>

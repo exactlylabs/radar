@@ -49,6 +49,7 @@ class LocationCategoriesController < ApplicationController
     @type = params[:type] || "create"
     @network_id = params[:network_id]
     @accounts = policy_scope(Account)
+    @pod_id = params[:pod_id]
     respond_to do |format|
       format.turbo_stream
     end

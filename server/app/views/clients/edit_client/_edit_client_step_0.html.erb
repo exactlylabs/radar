@@ -63,7 +63,7 @@
 
       <span class="additional-text mt-1 wrap" data-pod-account-and-network-target="networkSubtitle">Assign your pods to a network to keep them organized.</span>
       <%= render partial: "pods/components/pod_creation_network_select" %>
-      <%= render partial: "pods/components/pod_network_creator_component", locals: { starts_invisible: true, form: form } %>
+      <%= render partial: "pods/components/pod_network_creator_component", locals: { starts_invisible: true, form: form, pod_id: @client.unix_user } %>
     </div>
 
     <% if current_user.super_user && !is_super_user_disabled? %>

@@ -30,7 +30,7 @@ export default class extends Controller {
 
   connect() {
     this.address = this.addressTarget.value;
-    this.isCreation = this.element.querySelector("input[name='location[id]']").value === "";
+    this.isCreation = this.element.querySelector("input[name='id']")?.value === "" || false;
     this.isManuallySetting = this.manualLatLongTarget.checked;
     this.token = document.querySelector('meta[name="csrf-token"]').content;
     if (this.isCreation) {
