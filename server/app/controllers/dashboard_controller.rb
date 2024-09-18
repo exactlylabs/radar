@@ -14,6 +14,10 @@ class DashboardController < ApplicationController
     end
     @accounts = policy_scope(Account)
     @categories = policy_scope(Category)
+    unless current_account.is_all_accounts?
+      @categories = @categories.where(account_id: current_account.id).select("DISTINCT ON(categories.name) categories.*")
+    end
+
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:status])
@@ -49,7 +53,7 @@ class DashboardController < ApplicationController
 
     @locations = policy_scope(Location)
     @accounts = policy_scope(Account)
-    @categories = policy_scope(Category)
+    @categories = policy_scope(Category).select("DISTINCT ON(categories.name) categories.*").order(:name)
     set_as_orgs
 
     @locations = @locations.where(account_id: account_id) if account_id
@@ -133,7 +137,7 @@ class DashboardController < ApplicationController
     end
 
     if params[:category_id]
-      @locations = @locations.joins(:categories).where("categories.id = ?", params[:category_id])
+      @locations = @locations.joins(:categories).where("categories.name = ?", params[:category_id])
     end
 
     respond_to do |format|
@@ -240,7 +244,7 @@ class DashboardController < ApplicationController
     network_id = params[:network_id]
 
     @accounts = policy_scope(Account).order(:name) if current_account.is_all_accounts?
-    @categories = policy_scope(Category).order(:name)
+    @categories = policy_scope(Category).select("DISTINCT ON(categories.name) categories.*").order(:name)
     @networks = policy_scope(Location).order(:name)
     set_as_orgs
 

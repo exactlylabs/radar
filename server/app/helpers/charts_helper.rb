@@ -161,7 +161,12 @@ module ChartsHelper
     when 'pod'
       params_to_use[:pod_ids] = params[:pod_id].present? ? policy_filter_ids(Client, params[:pod_id]) : policy_scope(Client).pluck(:id)
     when 'category'
-      params_to_use[:category_ids] = params[:category_id].present? ? policy_filter_ids(Category, params[:category_id]) : policy_scope(Category).pluck(:id)
+      # Categories in comparison dashboard are now meant to be "grouped" by name, so the filtering is also based on the name.
+      # In order to filter by a given list of name we use the regex operator ~ to match the name with the list of names.
+      # The list of names is built by joining the names with the | operator. So something like 'name ~ 'name1|name2|name3' will match any of the names in the list.
+      params_to_use[:category_ids] = params[:category_id].present? ?
+                                       policy_scope(Category).where("name ~ '#{params[:category_id].join('|')}'").distinct.pluck(:name) :
+                                       policy_scope(Category).group(:name).pluck(:name)
     end
     params_to_use
   end
@@ -172,8 +177,8 @@ module ChartsHelper
     { account_ids: account_ids, location_ids: locations_ids, as_org_ids: nil }
   end
 
-  def policy_filter_ids(model, ids)
-    policy_scope(model).where(id: ids).pluck(:id)
+  def policy_filter_ids(model, ids, sym_to_pluck = :id)
+    policy_scope(model).where(id: ids).pluck(sym_to_pluck.to_sym)
   end
 
   def get_interval_type(from, to)

@@ -539,7 +539,7 @@ module DashboardHelper
     when 'isp'
       sql += ' isp_id IN (:as_org_ids) '
     when 'category'
-      sql += ' category_id IN (:category_ids) '
+      sql += ' category_name LIKE ANY (array[:category_ids]) '
     end
     sql
   end

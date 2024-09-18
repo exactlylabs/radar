@@ -63,7 +63,7 @@
     <% end %>
   <% end %>
 
-  <% if (!current_account.is_all_accounts? || params[:account_id].present? || params[:network_id].present?) && categories.count > 0 %>
+  <% if !current_account.is_all_accounts? || params[:account_id].present? || params[:network_id].present? %>
     <%= render layout: "application/components/filters/filter_with_search",
                locals: {
                  id: 'category-filter',
@@ -71,14 +71,14 @@
                  key: 'category_id',
                  default_value: 'all',
                  default_label: 'All categories',
-                 current_label: params[:category_id].present? ? categories.find(params[:category_id]).name : 'All categories',
+                 current_label: params[:category_id].present? ? categories.find_by_name(params[:category_id]).name : 'All categories',
                  pagination: false,
                  no_z_index: true,
                  entity: Category.name,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
       <% categories.order(:name).each do |category| %>
-        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: category.id, label: category.name, active: params[:category_id] == category.id.to_s } %>
+        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: category.name, label: category.name, active: params[:category_id] == category.name } %>
       <% end %>
     <% end %>
   <% end %>
