@@ -102,8 +102,8 @@
                  no_z_index: true,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
-      <% policy_scope(Category).order(:name).each do |category| %>
-        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: category.id, label: category.name, active: params[:category_id] == category.id.to_s || params[:category_id]&.include?(category.id.to_s) } %>
+      <% policy_scope(Category).select("DISTINCT ON(categories.name) categories.*").order(:name).each do |category| %>
+        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: category.name, label: category.name, active: params[:category_id] == category.name || params[:category_id]&.include?(category.name) } %>
       <% end %>
     <% end %>
 
