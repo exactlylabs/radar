@@ -261,21 +261,3 @@ module ClientApi
     end
   end
 end
-
-# CLEAR: mvt_10_505_331
-# SENDING Z: 11
-# CLEAR: mvt_11_1010_662
-# SENDING Z: 12
-# CLEAR: mvt_12_2021_1325
-#   ClientSpeedTest Load (1.0ms)  SELECT "client_speed_tests".* FROM "client_speed_tests" WHERE "client_speed_tests"."id" = $1 LIMIT $2  [["id", 238749], ["LIMIT", 1]]
-# SENDING Z: 13
-# CLEAR: mvt_13_4043_2650
-# [ActiveJob] [ProcessSpeedTestJob] [a2a2c4cf-225b-4a0d-9665-60637a08d352] Performing ProcessSpeedTestJob (Job ID: a2a2c4cf-225b-4a0d-9665-60637a08d352) from Async(default) enqueued at 2024-09-12T13:39:06Z with arguments: #<GlobalID:0x000000010bd70850 @uri=#<URI::GID gid://radar/ClientSpeedTest/238749>>, false
-# SENDING Z: 14
-# CLEAR: mvt_14_8087_5301
-# SENDING Z: 15
-# CLEAR: mvt_15_16175_10603
-# SENDING Z: 16
-# CLEAR: mvt_16_32350_21207
-# SENDING Z: 17
-# CLEAR: mvt_17_64701_42415
