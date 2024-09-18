@@ -40,7 +40,7 @@
       <%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token), class: 'font-bold', style: 'background-color: #4B7BE5; color: white; font-size: 15px; text-decoration: none; display: block; width: max-content; height: 20px; border: none; border-radius: 6px; padding: 12px 24px; margin: 48px auto 64px;' %>
       <div style="background-color: #F6F8FA; height: 2px; margin: 24px auto"></div>
       <p style="color: #B5B5C3; font-size: 14px">
-        © 2024 National Telehealth Technology Assessment Resource Center
+        © <%= Time.now.year %> National Telehealth Technology Assessment Resource Center
       </p>
     </div>
   </body>
