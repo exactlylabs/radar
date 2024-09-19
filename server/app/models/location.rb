@@ -4,6 +4,7 @@ require "csv"
 class Location < ApplicationRecord
 include EventSourceable
 include Recents
+include Schedulable
 
   LOCATIONS_PER_COUNTY_GOAL = 25
   LOCATIONS_PER_PLACE_GOAL = 3
@@ -152,22 +153,14 @@ include Recents
   end
 
   def process_new_measurement!(measurement)
-    query = %{
-      UPDATE locations SET
-        measurements_count = measurements_count + 1,
-        measurements_download_sum = measurements_download_sum + :download,
-        measurements_upload_sum = measurements_upload_sum + :upload,
-        download_avg = (measurements_download_sum + :download) / (measurements_count + 1),
-        upload_avg = (measurements_upload_sum + :upload) / (measurements_count + 1)
-      WHERE id = :location_id
-    }
-    ActiveRecord::Base.connection.execute(
-      ApplicationRecord.sanitize_sql([query, {
-        download: measurement.download,
-        upload: measurement.upload,
-        location_id: self.id
-      }])
+    self.update(
+      measurements_count: arel_table[:measurements_count] + 1,
+      measurements_download_sum: arel_table[:measurements_download_sum] + measurement.download,
+      measurements_upload_sum: arel_table[:measurements_upload_sum] + measurement.upload,
+      download_avg: (arel_table[:measurements_download_sum] + measurement.download) / arel_table[:measurements_count] + 1,
+      upload_avg: (arel_table[:measurements_upload_sum] + measurement.download) / arel_table[:measurements_count] + 1
     )
+    self.compute_test!
   end
 
   def handle_account_change
