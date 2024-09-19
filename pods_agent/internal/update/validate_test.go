@@ -39,7 +39,7 @@ func TestCertNotRevoked(t *testing.T) {
 		res.Write(crlPEM)
 	}))
 	defer testServer.Close()
-	c.ServerURL = testServer.URL
+	c.CRLUrl = testServer.URL
 
 	binCert, _ := x509.ParseCertificate(certs.binCert)
 
@@ -60,7 +60,7 @@ func TestCertRevokedDetected(t *testing.T) {
 		res.Write(crlPEM)
 	}))
 	defer testServer.Close()
-	c.ServerURL = testServer.URL
+	c.CRLUrl = testServer.URL
 
 	if err := verifyCertIsRevoked(binCert, certs.rootCACert); !errors.Is(err, ErrCertificateRevoked) {
 		t.Fatalf("expected certificate to be revoked: %v", err)
@@ -82,7 +82,7 @@ func TestDetectCrlFromDifferentCA(t *testing.T) {
 		res.Write(crlPEM)
 	}))
 	defer testServer.Close()
-	c.ServerURL = testServer.URL
+	c.CRLUrl = testServer.URL
 
 	if err := verifyCertIsRevoked(binCert, certs.rootCACert); !errors.Is(err, ErrCRLInvalidSignature) {
 		t.Fatalf("expected CRL to be invalid: %v", err)
@@ -92,7 +92,6 @@ func TestDetectCrlFromDifferentCA(t *testing.T) {
 func TestParseUpdateFileValidBinary(t *testing.T) {
 	certs := setupTestCertificates()
 
-
 	// Configure CRL Server with binCert not revoked and valid CRL
 	c := config.LoadConfig()
 	_, crlPEM := genTestCRLV2(1, certs.rootCACert, certs.rootKey, time.Now().AddDate(1, 0, 0))
@@ -101,7 +100,7 @@ func TestParseUpdateFileValidBinary(t *testing.T) {
 		res.Write(crlPEM)
 	}))
 	defer testServer.Close()
-	c.ServerURL = testServer.URL
+	c.CRLUrl = testServer.URL
 
 	sb := &SignedBinary{
 		Binary:      []byte("Something to sign"),
