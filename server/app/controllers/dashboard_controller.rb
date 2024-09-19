@@ -136,8 +136,8 @@ class DashboardController < ApplicationController
       @locations = @locations.joins(clients: [{autonomous_system: :autonomous_system_org}]).where("autonomous_system_orgs.id = ?", params[:isp_id])
     end
 
-    if params[:category_id]
-      @locations = @locations.joins(:categories).where("categories.name = ?", params[:category_id])
+    if params[:category_name]
+      @locations = @locations.joins(:categories).where("categories.name = ?", params[:category_name])
     end
 
     respond_to do |format|

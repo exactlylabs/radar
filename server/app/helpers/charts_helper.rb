@@ -143,7 +143,7 @@ module ChartsHelper
     end
 
     filtered_params = get_params_from_compare_by
-    { account_ids: account_ids, as_org_ids: filtered_params[:as_org_ids], location_ids: filtered_params[:location_ids], pod_ids: filtered_params[:pod_ids], category_ids: filtered_params[:category_ids] }
+    { account_ids: account_ids, as_org_ids: filtered_params[:as_org_ids], location_ids: filtered_params[:location_ids], pod_ids: filtered_params[:pod_ids], category_names: filtered_params[:category_names] }
   end
 
   def get_params_from_compare_by
@@ -151,7 +151,7 @@ module ChartsHelper
       as_orgs_ids: nil,
       location_ids: nil,
       pod_ids: nil,
-      category_ids: nil
+      category_names: nil
     }
     case params[:compare_by]
     when 'isp'
@@ -164,8 +164,8 @@ module ChartsHelper
       # Categories in comparison dashboard are now meant to be "grouped" by name, so the filtering is also based on the name.
       # In order to filter by a given list of name we use the regex operator ~ to match the name with the list of names.
       # The list of names is built by joining the names with the | operator. So something like 'name ~ 'name1|name2|name3' will match any of the names in the list.
-      params_to_use[:category_ids] = params[:category_id].present? ?
-                                       policy_scope(Category).where("name ~ '#{params[:category_id].join('|')}'").distinct.pluck(:name) :
+      params_to_use[:category_names] = params[:category_name].present? ?
+                                       policy_scope(Category).where("name ~ ?", params[:category_name].join('|')).distinct.pluck(:name) :
                                        policy_scope(Category).group(:name).pluck(:name)
     end
     params_to_use
