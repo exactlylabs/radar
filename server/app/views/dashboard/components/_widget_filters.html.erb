@@ -33,9 +33,9 @@
                   no_z_index: true,
                   entity: Account.name,
                } do %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: 'all', label: 'All accounts', active: params[:account_id].nil?, overridden_keys: 'network_id,category_id,isp_id' } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: 'all', label: 'All accounts', active: params[:account_id].nil?, overridden_keys: 'network_id,category_name,isp_id' } %>
       <% accounts.order(:name).each do |account| %>
-        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: account.id, label: account.name, active: params[:account_id] == account.id.to_s, overridden_keys: 'network_id,category_id,isp_id' } %>
+        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: account.id, label: account.name, active: params[:account_id] == account.id.to_s, overridden_keys: 'network_id,category_name,isp_id' } %>
       <% end %>
     <% end %>
   <% end %>
@@ -51,7 +51,7 @@
                    pagination: false,
                    no_z_index: true,
                    infinite_scroll: true,
-                   infinite_scroll_url: locations_url(category: params[:category_id], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'network-filter-menu'),
+                   infinite_scroll_url: locations_url(category: params[:category_name], account_id: params[:account_id], sort_by: 'name', page_size: 50, menu_id: 'network-filter-menu'),
                    scroll_total_count: total_networks,
                    scroll_next_page: 2,
                    entity: Location.name,

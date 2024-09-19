@@ -145,9 +145,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
 
-  def self.get_compare_download_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+  def self.get_compare_download_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)
     sql = get_comparison_speed_sql(compare_by, curve_type, 'download')
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_names: category_names, from: from, to: to}])
   end
 
   def self.get_upload_speed_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
@@ -160,9 +160,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
 
-  def self.get_compare_upload_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+  def self.get_compare_upload_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)
     sql = get_comparison_speed_sql(compare_by, curve_type, 'upload')
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_names: category_names, from: from, to: to}])
   end
 
   def self.get_latency_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
@@ -175,9 +175,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
   end
 
-  def self.get_compare_latency_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+  def self.get_compare_latency_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)
     sql = get_comparison_speed_sql(compare_by, curve_type, 'latency')
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_names: category_names, from: from, to: to}])
   end
 
   def self.get_usage_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
@@ -231,9 +231,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, account_id: account_id, from: from, to: to}])
   end
 
-  def self.get_compare_data_usage_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+  def self.get_compare_data_usage_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)
     sql = self.get_comparison_speed_sql(compare_by, curve_type, 'SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes)')
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_names: category_names, from: from, to: to}])
   end
 
   def self.get_total_data_amount_sql(from, to, account_ids)
@@ -343,9 +343,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to, limit: limit, query: query}])
   end
 
-  def self.get_compare_total_data_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+  def self.get_compare_total_data_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)
     sql = self.get_comparison_total_data_sql(compare_by)
-    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_names: category_names, from: from, to: to}])
   end
 
   def self.get_as_orgs_sql(account_ids, from, to, location_ids: nil)
@@ -539,7 +539,7 @@ module DashboardHelper
     when 'isp'
       sql += ' isp_id IN (:as_org_ids) '
     when 'category'
-      sql += ' category_name LIKE ANY (array[:category_ids]) '
+      sql += ' category_name LIKE ANY (array[:category_names]) '
     end
     sql
   end
