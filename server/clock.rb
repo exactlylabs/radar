@@ -27,7 +27,7 @@ end
 
 scheduler.every '15s', overlap: false do
   begin
-    Client.request_scheduled_tests!
+    Location.request_scheduled_tests!
     Rails.application.send_cronjob_heartbeat(BETTERSTACK_KEYS[:request_tests_cron])
   rescue => e
     Sentry.capture_exception(e)
@@ -49,7 +49,7 @@ end
 
 scheduler.every '1h', overlap: false do
   begin
-    Client.refresh_outdated_data_usage!
+    Location.refresh_outdated_data_usage!
     MetricsProjectionJob.perform_later
     RefreshMaterializedViewsJob.perform_later
   rescue => e
