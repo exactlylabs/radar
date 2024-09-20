@@ -1,52 +1,58 @@
 module Schedulable extend ActiveSupport::Concern
-  enum :data_cap_periodicity: [:daily, :weekly, :monthly], _prefix: :data_cap
-  enum :scheduling_periodicity: [:hourly, :daily, :weekly, :monthly], _prefix: :scheduling
+  included do |klass|
+    enum data_cap_periodicity: [:daily, :weekly, :monthly], _prefix: :data_cap
+    enum scheduling_periodicity: [:hourly, :daily, :weekly, :monthly], _prefix: :scheduling
 
-  scope :where_outdated_data_cap, -> { where("data_cap_current_period < ?", Time.current) }
-  scope :where_pending_next_run, -> { where(%{
-    (scheduling_next_run <= NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC') OR scheduling_next_run IS NULL)
-    AND (
-      (test_allowed_time_end IS NULL AND test_allowed_time_start IS NULL)
-      OR (
-        CASE WHEN test_allowed_time_end < test_allowed_time_start THEN
-          ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time NOT BETWEEN test_allowed_time_end AND test_allowed_time_start)
-        ELSE
-          ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time BETWEEN test_allowed_time_start AND test_allowed_time_end)
-        END
+    scope :where_outdated_data_cap, -> { where("data_cap_current_period < ?", Time.current) }
+    scope :where_pending_next_run, -> { where(%{
+      (scheduling_next_run IS NULL OR scheduling_next_run <= NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))
+      AND (
+        SELECT COUNT(1) = 0
+        FROM scheduling_restrictions sr
+        WHERE
+          location_id = locations.id
+          AND (NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::time BETWEEN sr.time_start AND sr.time_end
+          AND ARRAY[EXTRACT(dow FROM NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::integer] <@ weekdays
       )
-    )
-    AND (data_cap_max_usage IS NULL OR data_cap_current_period_usage < data_cap_max_usage)
-  }) }
+      AND (data_cap_max_usage IS NULL OR data_cap_current_usage < data_cap_max_usage)
+      AND (SELECT COUNT(1) > 0 FROM clients WHERE online AND location_id = locations.id)
+    }) }
 
-  def next_data_cap_period
-    if data_cap_current_period.nil?
-      data_cap_current_period = Time.current
-    end
+    klass.extend(ClassMethods)
+  end
 
-    current_period = data_cap_current_period.in_time_zone(scheduling_time_zone)
-    if data_cap_daily?
+  def next_data_cap_period(current_period_end)
+    current_period = current_period_end.in_time_zone(self.scheduling_time_zone)
+    next_period = if self.data_cap_daily?
       current_period.tomorrow.at_end_of_day
-    elsif data_cap_weekly?
+    elsif self.data_cap_weekly?
       current_period.next_week.at_end_of_week
     else
       current_period.next_month.at_end_of_month
     end
+
+
   end
 
-  def next_scheduling_period
-    if scheduling_next_run.nil?
-      scheduling_next_run = Time.current
-    end
-    current_period = scheduling_current_period_start.in_time_zone(scheduling_time_zone)
-    if scheduling.hourly?
-      [current_period.next_hour.at_beginning_of_hour, current_period.next_hour.at_end_of_hour]
-    elsif scheduling.daily?
+  def next_scheduling_period(current_period_end)
+    current_period = current_period_end.in_time_zone(self.scheduling_time_zone)
+    next_start, next_end = if self.scheduling_hourly?
+      [(current_period + 1.hour).at_beginning_of_hour, (current_period + 1.hour).at_end_of_hour]
+    elsif self.scheduling_daily?
       [current_period.next_day.at_beginning_of_day, current_period.next_day.at_end_of_day]
-    elsif scheduling.weekly?
+    elsif self.scheduling_weekly?
       [current_period.next_week.at_beginning_of_week, current_period.next_week.at_end_of_week]
     else
       [current_period.next_month.at_beginning_of_month, current_period.next_month.at_end_of_month]
     end
+
+    # In case this is too behind in the schedule, the next period could be before now.
+    # in these cases, we move forward until reaching a valid period
+    if next_end < Time.current
+      return self.next_scheduling_period(next_end)
+    end
+
+    return next_start, next_end
   end
 
   ##
@@ -56,11 +62,11 @@ module Schedulable extend ActiveSupport::Concern
   #
   ##
   def calculate_next_run(force = false)
-    return scheduling_next_run if !force && scheduling_next_run.present? && scheduling_next_run > Time.current
+    return self.scheduling_next_run if !force && self.scheduling_next_run.present? && self.scheduling_next_run > Time.current
 
-    steps = (scheduling_current_period_end - scheduling_current_period_start) / scheduling_max_count
-    sub_period_start = scheduling_current_period_start + scheduling_current_count * steps
-    sub_period_end = scheduling_current_period_start + (scheduling_current_count + 1) * steps
+    steps = (self.scheduling_current_period_end - self.scheduling_current_period_start) / self.scheduling_max_count
+    sub_period_start = self.scheduling_current_period_start + self.scheduling_current_count * steps
+    sub_period_end = self.scheduling_current_period_start + (self.scheduling_current_count + 1) * steps
 
     # Pick a random time between the sub-period start and end
     Time.at(sub_period_start + (sub_period_end - sub_period_start) * rand)
@@ -84,38 +90,52 @@ module Schedulable extend ActiveSupport::Concern
   def compute_test!(total_bytes)
     self.transaction do
       self.lock!
-      unless scheduling_next_run.nil? || scheduling_next_run >= Time.current
+      unless scheduling_next_run.present? && scheduling_next_run >= Time.current
         # This is the first test from the run. Compute the next schedule
-        scheduling_current_count += 1
-        if scheduling_current_count >= scheduling_max_count
-          scheduling_current_count = 0
-          scheduling_current_period_start, scheduling_current_period_end = self.next_scheduling_period
-        end
+        self.scheduling_current_count ||= 0
+        self.scheduling_current_count += 1
       end
-      scheduling_next_run = self.calculate_next_run
-      data_cap_current_usage += total_bytes
+
+      # Could happen in new locations. Just set with the current value
+      if self.scheduling_current_period_end.nil? || self.scheduling_current_period_start.nil?
+        now = Time.current
+        self.scheduling_current_period_start, self.scheduling_current_period_end = now, now
+      end
+
+      if self.scheduling_current_count >= self.scheduling_max_count || self.scheduling_current_period_end <= Time.current
+        self.scheduling_current_count = 0
+        self.scheduling_current_period_start, self.scheduling_current_period_end = self.next_scheduling_period(self.scheduling_current_period_end)
+      end
+
+      self.data_cap_current_usage += total_bytes
+      self.scheduling_next_run = self.calculate_next_run
       self.save!
     end
   end
 
-  def self.refresh_outdated_data_usage!
-    self.where_outdated_data_cap.each do |obj|
-      obj.update(
-        data_cap_current_period: self.next_data_cap_period,
-        data_cap_current_usage: 0.0
-      )
-    end
-  end
-
-  def self.request_scheduled_tests!
-    self.where_pending_next_run.each do |location|
-      client = location.scheduling_selected_client
-      if client.nil? || client.location != location
-        # This client got removed from the network, pick a different one
-        client = location.clients.where_online.first
-        location.update(scheduling_selected_client: client)
+  module ClassMethods
+    def refresh_outdated_data_usage!
+      self.where_outdated_data_cap.each do |obj|
+        obj.update(
+          data_cap_current_period: obj.next_data_cap_period(self.data_cap_current_period || Time.current),
+          data_cap_current_usage: 0.0
+        )
       end
-      client.update(test_requested: true) unless client.nil? || client.test_requested?
+    end
+
+    def request_scheduled_tests!
+      self.where_pending_next_run.each do |location|
+        client = location.scheduling_selected_client
+        if client.nil? || client.location != location || !client.online?
+          # This client got removed from the network or is offline, pick a different one
+          # If is offline, but same location, then cancel any requested tests to avoid duplicates
+
+          client.update(test_requested: false) if client.present? && client.location == location
+          client = location.clients.where_online.first
+          location.update(scheduling_selected_client: client)
+        end
+        client.update(test_requested: true) unless client.nil? || client.test_requested?
+      end
     end
   end
 end
