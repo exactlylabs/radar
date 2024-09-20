@@ -39,7 +39,7 @@ const LeafletMap = ({maxHeight}) => {
       noWrap: true
     }).addTo(map.current);
 
-    const baseLayer = L.vectorGrid.protobuf(VECTOR_TILES_URL, vectorTileOptions).on('click', (e) => {
+    const baseLayer = L.vectorGrid.protobuf(VECTOR_TILES_URL + '?client_id=' + config.clientId, vectorTileOptions).on('click', (e) => {
       const popupNode = document.createElement('div');
       popupNode.style.width = '275px';
       const popupRoot = ReactDOM.createRoot(popupNode);
