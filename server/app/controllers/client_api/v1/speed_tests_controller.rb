@@ -75,7 +75,7 @@ module ClientApi
         x = params[:x].to_i
         y = params[:y].to_i
         z = params[:z].to_i
-
+        is_global = params[:global] || @widget_client.id == 1
         cache_key = "mvt_#{z}_#{x}_#{y}"
 
         if REDIS.exists?(cache_key) && false
@@ -128,6 +128,11 @@ module ClientApi
               lonlat::geometry, -- Cast lonlat to geometry for spatial operations
               (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
             )
+          }
+
+          sql += " AND tested_by = #{@widget_client.id}" unless is_global
+
+          sql += %{
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
           )
           SELECT

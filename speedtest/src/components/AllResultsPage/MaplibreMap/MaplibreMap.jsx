@@ -63,7 +63,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       // Add vector tile source and layer here
       map.current.addSource('custom-tiles', {
         type: 'vector',
-        tiles: [VECTOR_TILES_URL],
+        tiles: [VECTOR_TILES_URL + '?client_id=' + config.clientId],
         minzoom: 0,
         maxzoom: 14,
       });
