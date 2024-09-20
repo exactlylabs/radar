@@ -70,8 +70,6 @@ module ClientApi
       end
 
       def tiles
-        # TODO: Add client_id filtering to the query!
-
         x = params[:x].to_i
         y = params[:y].to_i
         z = params[:z].to_i
