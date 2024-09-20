@@ -446,8 +446,6 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
     t.bigint "measurements_count", default: 0
     t.float "measurements_download_sum", default: 0.0
     t.float "measurements_upload_sum", default: 0.0
-    t.boolean "wlan_enabled"
-    t.bigint "wlan_selected_client_id"
     t.datetime "scheduling_next_run"
     t.bigint "scheduling_selected_client_id"
     t.string "scheduling_time_zone", default: "UTC"
@@ -464,7 +462,6 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
     t.index ["scheduling_selected_client_id"], name: "index_locations_on_scheduling_selected_client_id"
-    t.index ["wlan_selected_client_id"], name: "index_locations_on_wlan_selected_client_id"
   end
 
   create_table "mailer_targets", force: :cascade do |t|
@@ -654,16 +651,15 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
-  create_table "pod_connections", force: :cascade do |t|
-    t.bigint "client_id"
-    t.integer "ethernet_status"
-    t.integer "wlan_status"
+  create_table "pod_connectivity_configs", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "wlan_interface_id"
+    t.boolean "wlan_enabled", default: false
+    t.string "selected_ssid"
     t.string "current_ssid"
-    t.float "wlan_signal"
-    t.float "wlan_frequency"
-    t.float "wlan_channel"
-    t.float "wlan_link_speed"
-    t.index ["client_id"], name: "index_pod_connections_on_client_id"
+    t.boolean "wlan_connected", default: false
+    t.index ["client_id"], name: "index_pod_connectivity_configs_on_client_id"
+    t.index ["wlan_interface_id"], name: "index_pod_connectivity_configs_on_wlan_interface_id"
   end
 
   create_table "pod_network_interfaces", force: :cascade do |t|
@@ -842,19 +838,6 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "wifi_configurations", force: :cascade do |t|
-    t.bigint "client_id"
-    t.bigint "location_id"
-    t.string "ssid", null: false
-    t.string "security"
-    t.string "identity"
-    t.boolean "hidden", default: false
-    t.boolean "enabled"
-    t.index ["client_id"], name: "index_wifi_configurations_on_client_id"
-    t.index ["enabled", "location_id"], name: "index_wifi_configurations_on_enabled_and_location_id", unique: true
-    t.index ["location_id"], name: "index_wifi_configurations_on_location_id"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "asn_ip_lookups", "autonomous_systems"
@@ -883,7 +866,6 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
   add_foreign_key "location_metadata_projections", "locations"
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "clients", column: "scheduling_selected_client_id"
-  add_foreign_key "locations", "clients", column: "wlan_selected_client_id"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
   add_foreign_key "measurements", "accounts"
@@ -906,6 +888,8 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "pod_connectivity_configs", "clients"
+  add_foreign_key "pod_connectivity_configs", "pod_network_interfaces", column: "wlan_interface_id"
   add_foreign_key "pod_network_interfaces", "clients"
   add_foreign_key "recent_searches", "clients"
   add_foreign_key "recent_searches", "locations"
@@ -923,8 +907,6 @@ ActiveRecord::Schema.define(version: 2024_09_18_193352) do
   add_foreign_key "update_groups", "watchdog_versions", column: "old_watchdog_version_id"
   add_foreign_key "users_accounts", "accounts"
   add_foreign_key "users_accounts", "users"
-  add_foreign_key "wifi_configurations", "clients"
-  add_foreign_key "wifi_configurations", "locations"
 
   create_view "aggregated_measurements_by_hours", materialized: true, sql_definition: <<-SQL
       SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
