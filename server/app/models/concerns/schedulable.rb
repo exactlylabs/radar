@@ -90,26 +90,29 @@ module Schedulable extend ActiveSupport::Concern
   def compute_test!(total_bytes)
     self.transaction do
       self.lock!
-      unless scheduling_next_run.present? && scheduling_next_run >= Time.current
-        # This is the first test from the run. Compute the next schedule
-        self.scheduling_current_count ||= 0
-        self.scheduling_current_count += 1
-      end
-
-      # Could happen in new locations. Just set with the current value
-      if self.scheduling_current_period_end.nil? || self.scheduling_current_period_start.nil?
-        now = Time.current
-        self.scheduling_current_period_start, self.scheduling_current_period_end = now, now
-      end
-
-      if self.scheduling_current_count >= self.scheduling_max_count || self.scheduling_current_period_end <= Time.current
-        self.scheduling_current_count = 0
-        self.scheduling_current_period_start, self.scheduling_current_period_end = self.next_scheduling_period(self.scheduling_current_period_end)
-      end
+      self.schedule_next_test!
 
       self.data_cap_current_usage += total_bytes
       self.scheduling_next_run = self.calculate_next_run
       self.save!
+    end
+  end
+
+  def schedule_next_test!
+    unless scheduling_next_run.present? && scheduling_next_run >= Time.current
+      self.scheduling_current_count ||= 0
+      self.scheduling_current_count += 1
+    end
+
+    # Could happen in new locations. Just set with the current value
+    if self.scheduling_current_period_end.nil? || self.scheduling_current_period_start.nil?
+      now = Time.current
+      self.scheduling_current_period_start, self.scheduling_current_period_end = now, now
+    end
+
+    if self.scheduling_current_count >= self.scheduling_max_count || self.scheduling_current_period_end <= Time.current
+      self.scheduling_current_count = 0
+      self.scheduling_current_period_start, self.scheduling_current_period_end = self.next_scheduling_period(self.scheduling_current_period_end)
     end
   end
 

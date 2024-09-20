@@ -25,8 +25,14 @@ end
 FEATURE_FLAGS = %w[networks charts]
 FEATURE_FLAGS.each do |flag|
     FeatureFlag.find_or_create_by(name: flag) do |f|
-        if Rails.env.development || Rails.env.testing?
+        if Rails.env.development? || Rails.env.testing?
             f.generally_available = true
         end
     end
+end
+
+if Rails.env.development? && User.count == 0
+  admin = User.create!(first_name: "admin", last_name: "admin", email: "admin@exactlylabs.com", password: "admin1234", super_user: true)
+  acc = Account.create!(name: "Admin", superaccount: true)
+  UsersAccount.create!(user: admin, account: acc, joined_at: Time.current)
 end
