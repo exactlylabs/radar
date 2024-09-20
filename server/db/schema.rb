@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_09_16_134849) do
+ActiveRecord::Schema.define(version: 2024_09_18_193352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -448,9 +448,22 @@ ActiveRecord::Schema.define(version: 2024_09_16_134849) do
     t.float "measurements_upload_sum", default: 0.0
     t.boolean "wlan_enabled"
     t.bigint "wlan_selected_client_id"
+    t.datetime "scheduling_next_run"
+    t.bigint "scheduling_selected_client_id"
+    t.string "scheduling_time_zone", default: "UTC"
+    t.integer "scheduling_max_count", default: 1
+    t.integer "scheduling_current_count", default: 0
+    t.integer "scheduling_periodicity", default: 0
+    t.datetime "scheduling_current_period_start"
+    t.datetime "scheduling_current_period_end"
+    t.float "data_cap_max_usage"
+    t.float "data_cap_current_usage", default: 0.0
+    t.integer "data_cap_periodicity", default: 2
+    t.datetime "data_cap_current_period"
     t.index ["account_id"], name: "index_locations_on_account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
+    t.index ["scheduling_selected_client_id"], name: "index_locations_on_scheduling_selected_client_id"
     t.index ["wlan_selected_client_id"], name: "index_locations_on_wlan_selected_client_id"
   end
 
@@ -696,6 +709,14 @@ ActiveRecord::Schema.define(version: 2024_09_16_134849) do
     t.index ["user_id"], name: "index_recent_searches_on_user_id"
   end
 
+  create_table "scheduling_restrictions", force: :cascade do |t|
+    t.bigint "location_id"
+    t.time "time_start"
+    t.time "time_end"
+    t.integer "weekdays", array: true
+    t.index ["location_id"], name: "index_scheduling_restrictions_on_location_id"
+  end
+
   create_table "shared_accounts", force: :cascade do |t|
     t.bigint "original_account_id", null: false
     t.bigint "shared_to_account_id", null: false
@@ -861,6 +882,7 @@ ActiveRecord::Schema.define(version: 2024_09_16_134849) do
   add_foreign_key "location_metadata_projections", "autonomous_system_orgs"
   add_foreign_key "location_metadata_projections", "locations"
   add_foreign_key "locations", "accounts"
+  add_foreign_key "locations", "clients", column: "scheduling_selected_client_id"
   add_foreign_key "locations", "clients", column: "wlan_selected_client_id"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
@@ -888,6 +910,7 @@ ActiveRecord::Schema.define(version: 2024_09_16_134849) do
   add_foreign_key "recent_searches", "clients"
   add_foreign_key "recent_searches", "locations"
   add_foreign_key "recent_searches", "users"
+  add_foreign_key "scheduling_restrictions", "locations"
   add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
   add_foreign_key "snapshots", "events"
