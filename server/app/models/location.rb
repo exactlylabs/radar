@@ -286,7 +286,7 @@ include Recents
   end
 
   def autonomous_system
-    self.clients.map(&:autonomous_system).compact.first
+    self.clients.map(&:autonomous_system).compact.first || self.latest_measurement&.autonomous_system
   end
 
   private
