@@ -57,3 +57,9 @@ outage_location4:
   address: "4 Outage Loc"
   created_by_id: 1
   account: root
+
+empty_location:
+  name: "Empty Location4"
+  address: "Empty Loc"
+  created_by_id: 1
+  account: root

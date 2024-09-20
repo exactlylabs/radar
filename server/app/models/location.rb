@@ -49,6 +49,7 @@ include Schedulable
   has_one :client_count_aggregate, :as => :aggregator
   has_and_belongs_to_many :geospaces
   has_one :location_metadata_projections
+  belongs_to :scheduling_selected_client, class_name: "Client", optional: true
 
   before_validation :check_if_only_coordinates
   after_validation :custom_geocode, if: Proc.new { new_record? || address_changed? || latitude_changed? || longitude_changed? }

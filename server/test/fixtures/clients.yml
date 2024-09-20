@@ -1,13 +1,19 @@
 pod1:
   account: root
-  unix_user: "r1234"
+  unix_user: "pod1"
   name: Pod 1
   user: user1
 
 pod2:
   account: root
-  unix_user: "r1235"
+  unix_user: "pod2"
   name: Pod 2
+  user: user1
+
+pod3:
+  account: root
+  unix_user: "pod3"
+  name: Pod 3
   user: user1
 
 unclaimed:
