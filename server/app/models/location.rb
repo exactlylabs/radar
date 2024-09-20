@@ -161,7 +161,7 @@ include Schedulable
       download_avg: (arel_table[:measurements_download_sum] + measurement.download) / arel_table[:measurements_count] + 1,
       upload_avg: (arel_table[:measurements_upload_sum] + measurement.download) / arel_table[:measurements_count] + 1
     )
-    self.compute_test!
+    self.compute_test!(measurement.download_total_bytes + measurement.upload_total_bytes)
   end
 
   def handle_account_change
