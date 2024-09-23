@@ -1,0 +1,16 @@
+http:
+  services:
+    tailscale-control-plane:
+      loadBalancer:
+        servers:
+          - url: "https://controlplane.tailscale.com"
+
+  routers:
+    tailscale-proxy:
+      entryPoints:
+        - websecure
+        - web
+      rule: "Host(`pods.vpn.radartoolkit.com`)"
+      service: tailscale-control-plane
+      tls:
+        certResolver: myresolver

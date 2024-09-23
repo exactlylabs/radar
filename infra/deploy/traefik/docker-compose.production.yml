@@ -8,6 +8,9 @@ services:
       placement:
         constraints:
           - node.role == manager
+    configs:
+      - source: traefik_dynamic_v1
+        target: /etc/traefik/dynamic/traefik.yml
     command:
       - "--api.insecure=true"
       - "--ping"
@@ -35,6 +38,7 @@ services:
       - "--providers.swarm=true"
       - "--providers.swarm.exposedbydefault=false"
       - "--providers.swarm.network=traefik_public"
+      - "--providers.file.directory=/etc/traefik/dynamic"
       - "--entrypoints.web.address=:80"
       - "--entryPoints.web.transport.respondingTimeouts.readTimeout=600"
       - "--entrypoints.web.forwardedheaders.trustedips=10.5.0.0/16"
@@ -82,3 +86,10 @@ volumes:
       type: nfs
       o: nfsvers=4,addr=nfs.radartoolkit.com,rw
       device: ":/mnt/nfs/traefik/letsencrypt"
+
+configs:
+  # To update config files, we must rename the config key name, and update the service to source from this new name.
+  # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
+  traefik_dynamic_v1:
+    template_driver: golang
+    file: ./configs/dynamic.yml
