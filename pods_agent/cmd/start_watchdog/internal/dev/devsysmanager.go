@@ -166,8 +166,8 @@ func (*devSysManager) EnsureWifiEnabled() error {
 }
 
 // EthernetStatus implements watchdog.SystemManager.
-func (dm *devSysManager) EthernetStatus() (network.NetStatus, error) {
-	return network.ConnectedWithInternet, nil
+func (dm *devSysManager) SystemStatus() (watchdog.SystemStatus, error) {
+	return watchdog.SystemStatus{WlanStatus: network.Disconnected, EthernetStatus: network.ConnectedWithInternet, PodAgentRunning: true}, nil
 }
 
 // PodAgentRunning implements watchdog.SystemManager.

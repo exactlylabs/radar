@@ -204,18 +204,18 @@ func (c *RadarWatchdogClient) requestSync() {
 	}
 }
 
-func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.ServerMessage, error) {
+func (c *RadarWatchdogClient) WatchdogPing(data watchdog.WatchdogSync, token *string) (*watchdog.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverURL, c.clientID)
 	form := url.Values{}
 	form.Add("secret", c.secret)
-	form.Add("version", meta.Version)
+	form.Add("version", data.Version)
 	req, err := NewRequest("POST", apiUrl, c.clientID, c.secret, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, errors.W(err)
 	}
 	req.Header.Add("Accept", "application/json")
-	if meta.RegistrationToken != nil {
-		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *meta.RegistrationToken))
+	if token != nil {
+		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *token))
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
