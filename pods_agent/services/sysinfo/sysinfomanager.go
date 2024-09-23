@@ -19,6 +19,7 @@ import (
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
+	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
 type SystemdStatusCode uint
@@ -482,17 +483,26 @@ func (si *SysInfoManager) EnsureWifiEnabled() error {
 	return nil
 }
 
-func (si *SysInfoManager) EthernetStatus() (status network.NetStatus, err error) {
-	status = network.Disconnected
-	ifaces, err := network.Interfaces()
+func (si *SysInfoManager) SystemStatus() (status watchdog.SystemStatus, err error) {
+	networks, err := network.Interfaces()
 	if err != nil {
 		return status, errors.W(err)
 	}
-	if eth := ifaces.FindByType(network.Ethernet); eth == nil {
-		return status, nil
-	} else {
-		return eth.Details().Status, nil
+	status.EthernetStatus = network.Disconnected
+	status.WlanStatus = network.Disconnected
+	if eth := networks.FindByType(network.Ethernet); eth != nil {
+		status.EthernetStatus = eth.Details().Status
 	}
+	if wlan := networks.FindByType(network.Wlan); wlan != nil {
+		status.WlanStatus = wlan.Details().Status
+	}
+
+	status.PodAgentRunning, err = si.PodAgentRunning()
+	if err != nil {
+		return status, errors.W(err)
+	}
+
+	return status, nil
 }
 
 func (si *SysInfoManager) PodAgentRunning() (bool, error) {
