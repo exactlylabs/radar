@@ -10,7 +10,6 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
@@ -31,6 +30,7 @@ func NewScanner(sysManager SystemManager) *Scanner {
 	return &Scanner{
 		status: SystemStatus{
 			EthernetStatus:  network.Disconnected,
+			WlanStatus:      network.Disconnected,
 			PodAgentRunning: false,
 		},
 		sysManager: sysManager,
@@ -147,7 +147,7 @@ func (s *Scanner) ScanSystem(c *config.Config) error {
 		return errors.W(err)
 	}
 
-	if err := s.sysManager.EnsureBinaryPermissions(sysinfo.WatchdogPath); err != nil {
+	if err := s.sysManager.EnsureBinaryPermissions(WatchdogPath); err != nil {
 		return errors.W(err)
 	}
 
@@ -184,40 +184,28 @@ func (s *Scanner) ScanSystem(c *config.Config) error {
 		}
 	}
 
-	// Agent Status Change Detection
-	agentRunning, err := s.sysManager.PodAgentRunning()
+	// System Status Change Detection
+	sysStatus, err := s.sysManager.SystemStatus()
 	if err != nil {
 		return errors.W(err)
 	}
 
-	if agentRunning != s.status.PodAgentRunning {
-		s.status.PodAgentRunning = agentRunning
+	// -- Pod Agent
+	if sysStatus.PodAgentRunning != s.status.PodAgentRunning {
+		s.status.PodAgentRunning = sysStatus.PodAgentRunning
 		s.eventsCh <- SystemEvent{
 			EventType: AgentStatusChanged,
-			Data:      agentRunning,
+			Data:      sysStatus.PodAgentRunning,
 		}
 	}
 
-	// Network Status Change Detection
-	networks, err := network.Interfaces()
-	if err != nil {
-		return errors.W(err)
-	}
-	ethernetStatus := s.status.EthernetStatus
-	wlanStatus := s.status.WlanStatus
-	if eth := networks.FindByType(network.Ethernet); eth != nil {
-		ethernetStatus = eth.Details().Status
-	}
-	if wlan := networks.FindByType(network.Wlan); wlan != nil {
-		wlanStatus = wlan.Details().Status
-	}
-
-	if ethernetStatus != s.status.EthernetStatus || wlanStatus != s.status.WlanStatus {
-		s.status.EthernetStatus = ethernetStatus
-		s.status.WlanStatus = wlanStatus
+	// --  Network Status Change Detection
+	if sysStatus.EthernetStatus != s.status.EthernetStatus || sysStatus.WlanStatus != s.status.WlanStatus {
+		s.status.EthernetStatus = sysStatus.EthernetStatus
+		s.status.WlanStatus = sysStatus.WlanStatus
 		s.eventsCh <- SystemEvent{
 			EventType: ConnectionStatusChanged,
-			Data:      map[string]network.NetStatus{"wlan": wlanStatus, "ethernet": ethernetStatus},
+			Data:      map[string]network.NetStatus{"wlan": sysStatus.WlanStatus, "ethernet": sysStatus.EthernetStatus},
 		}
 	}
 

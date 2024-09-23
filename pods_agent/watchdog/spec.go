@@ -4,7 +4,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 )
@@ -39,9 +38,9 @@ type SystemEvent struct {
 }
 
 type SystemStatus struct {
-	EthernetStatus  network.NetStatus
-	WlanStatus      network.NetStatus
-	PodAgentRunning bool
+	EthernetStatus  network.NetStatus `json:"ethernet"`
+	WlanStatus      network.NetStatus `json:"wlan"`
+	PodAgentRunning bool              `json:"agent_status"`
 }
 
 // SystemManager interface provides methods for dealing with some
@@ -102,10 +101,8 @@ type SystemManager interface {
 	EnsurePathPermissions(path string, mode os.FileMode) error
 	// EnsureWifiEnabled will make sure that the wifi driver is correctly configured and running
 	EnsureWifiEnabled() error
-	// EthernetStatus returns the current status of the Ethernet connection in the OS
-	EthernetStatus() (network.NetStatus, error)
-	// PodAgentRunning returns if the agent is in a running state
-	PodAgentRunning() (bool, error)
+	// SystemStatus returns the current status of the relevant system components for this app
+	SystemStatus() (SystemStatus, error)
 	// SetACTLED will set the state of the ACT LED
 	SetACTLED(state bool) error
 	// GetServiceLogs will collect the logs of the given service name, and return the last given amount of lines.
@@ -187,7 +184,7 @@ type Logs map[string]string
 
 type WatchdogClient interface {
 	Connect(chan<- ServerMessage) error
-	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
+	WatchdogPing(data WatchdogSync, registrationToken *string) (*ServerMessage, error)
 	NotifyTailscaleConnected(key_id string)
 	NotifyTailscaleDisconnected(key_id string)
 	SyncData(data WatchdogSync) error

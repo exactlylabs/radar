@@ -9,8 +9,8 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
@@ -145,8 +145,9 @@ func (w *Watchdog) Run(ctx context.Context) {
 			w.handleMessage(ctx, msg)
 		case <-timer.C:
 			if !w.cli.Connected() {
+				data := w.getSyncData()
 				// Fallback to a manual ping in case the client is failing to connect
-				res, err := w.cli.WatchdogPing(sysinfo.Metadata())
+				res, err := w.cli.WatchdogPing(data, w.c.RegistrationToken)
 				if err != nil {
 					log.Println(errors.W(err))
 					continue
@@ -248,42 +249,10 @@ func (w *Watchdog) shouldReportToSentry(err error) bool {
 }
 
 func (w *Watchdog) handleSyncRequested(data SyncMessage) (err error) {
-	syncData := WatchdogSync{}
-
-	if meta := sysinfo.Metadata(); meta != nil {
-		syncData.Version = meta.Version
-	}
-
-	syncData.TailscaleConnected, err = w.sysManager.TailscaleConnected()
+	syncData := w.getSyncData()
 	if err != nil {
-		err = errors.W(err)
-		log.Println(err)
-		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		return errors.W(err)
 	}
-
-	if w.wlanCli != nil {
-		nets, err := w.wlanCli.ConfiguredNetworks()
-		if err != nil {
-			err = errors.W(err)
-			log.Println(err)
-			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
-		} else {
-			syncData.RegisteredSSIDs = make([]string, len(nets))
-			for i, net := range nets {
-				syncData.RegisteredSSIDs[i] = net.SSID
-			}
-		}
-	}
-
-	connStatus, err := w.getConnectionsStatus()
-	if err != nil {
-		err = errors.W(err)
-		log.Println(err)
-		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
-	} else {
-		syncData.ConnectionStatus = connStatus
-	}
-
 	if err := w.cli.SyncData(syncData); err != nil {
 		return errors.W(err)
 	}
@@ -455,6 +424,43 @@ func (w *Watchdog) updateLEDManagerFromStatus(status SystemStatus) {
 	} else {
 		w.ledManager.SetPattern(append(LEDBlinkDot, LEDBlinkDash...))
 	}
+}
+
+func (w *Watchdog) getSyncData() (syncData WatchdogSync) {
+	var err error
+	syncData.Version = info.BuildInfo().Version
+
+	syncData.TailscaleConnected, err = w.sysManager.TailscaleConnected()
+	if err != nil {
+		err = errors.W(err)
+		log.Println(err)
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+	}
+
+	if w.wlanCli != nil {
+		nets, err := w.wlanCli.ConfiguredNetworks()
+		if err != nil {
+			err = errors.W(err)
+			log.Println(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		} else {
+			syncData.RegisteredSSIDs = make([]string, len(nets))
+			for i, net := range nets {
+				syncData.RegisteredSSIDs[i] = net.SSID
+			}
+		}
+	}
+
+	connStatus, err := w.getConnectionsStatus()
+	if err != nil {
+		err = errors.W(err)
+		log.Println(err)
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+	} else {
+		syncData.ConnectionStatus = connStatus
+	}
+
+	return
 }
 
 func (w *Watchdog) getConnectionsStatus() (ConnectionsStatus, error) {

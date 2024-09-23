@@ -8,11 +8,13 @@ import (
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
+const WatchdogPath = "/opt/radar/watchdog"
+const WatchdogServicePath = "/etc/systemd/system/podwatchdog@.service"
+
 func UpdateWatchdog(binaryUrl string, expectedVersion string) error {
-	err := update.InstallFromUrl(sysinfo.WatchdogPath, binaryUrl, expectedVersion)
+	err := update.InstallFromUrl(WatchdogPath, binaryUrl, expectedVersion)
 	if err != nil {
 		return errors.W(err)
 	}
@@ -25,9 +27,9 @@ func installWatchdogService() error {
 
 	// create file with RW-RW-R and group radar
 	exec.Command("sudo", "install", "-m", "0664", "-g", "1000", "/dev/null", "/etc/systemd/system/podwatchdog@.service").Output()
-	f, err := os.OpenFile(sysinfo.WatchdogServicePath, os.O_CREATE|os.O_RDWR, 0644)
+	f, err := os.OpenFile(WatchdogServicePath, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
-		return errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": sysinfo.WatchdogServicePath})
+		return errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": WatchdogServicePath})
 	}
 	defer f.Close()
 	serviceFile, err := OSFS.ReadFile("osfiles/etc/systemd/system/podwatchdog@.service")
@@ -36,7 +38,7 @@ func installWatchdogService() error {
 	}
 	if _, err := f.Write(serviceFile); err != nil {
 		return errors.Wrap(err, "failed to write file").WithMetadata(errors.Metadata{
-			"path": sysinfo.WatchdogServicePath, "content": string(serviceFile),
+			"path": WatchdogServicePath, "content": string(serviceFile),
 		})
 	}
 	cmd := exec.Command("sudo", "systemctl", "daemon-reload")
