@@ -266,7 +266,7 @@
         type: "update",
         message: {
           version: self.client.to_update_watchdog_version.version,
-          binary_url: WatchdogChannel.blob_path(self.client.to_update_watchdog_signed_binary)
+          binary_url: Rails.application.routes.url_helpers.download_watchdog_version_path(id: self.client.to_update_watchdog_version.version, signed: true)
         },
       }
     )

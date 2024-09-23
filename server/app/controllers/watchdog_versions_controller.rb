@@ -7,13 +7,14 @@ class WatchdogVersionsController < ApplicationController
         end
         if !v
             head(404)
-        else
-            response.headers["Content-Type"] = v.binary.content_type
-            response.headers["Content-Disposition"] = "attachment; filename=#{v.binary.filename}"
-            
-            v.binary.download do |chunk|
-                response.stream.write(chunk)
-            end
+            return
+        end
+        signed = (params[:signed] || "false") == "true"
+        blob = signed ? v.signed_binary : v.binary
+        response.headers["Content-Type"] = blob.content_type
+        response.headers["Content-Disposition"] = "attachment; filename=#{blob.filename}"
+        blob.download do |chunk|
+            response.stream.write(chunk)
         end
     ensure
         response.stream.close

@@ -311,11 +311,11 @@ class Client < ApplicationRecord
   end
 
   def to_update_version
-    target_client_version unless raw_version == 'Dev'
+    target_client_version
   end
 
   def to_update_watchdog_version
-    target_watchdog_version unless raw_version == 'Dev'
+    target_watchdog_version
   end
 
   def to_update_distribution
