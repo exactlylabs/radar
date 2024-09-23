@@ -123,15 +123,16 @@ class PodAgentChannel < ApplicationCable::Channel
   end
 
   def update()
+    distribution = self.client.to_update_distribution
     self.connection.transmit(
       {
         type: "update",
         message: {
-          version: self.client.to_update_version.version,
-          binary_url: PodAgentChannel.blob_path(self.client.to_update_signed_binary)
+          version: distribution.client_version.version,
+          binary_url: Rails.application.routes.url_helpers.download_client_version_distribution_path(id: distribution.name, client_version_id: distribution.client_version.version, signed: true)
         },
       }
-    ) if self.client.to_update_version.present?
+    ) if distribution.present?
   end
 
   def update_watchdog()
