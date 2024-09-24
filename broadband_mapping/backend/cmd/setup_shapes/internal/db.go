@@ -14,7 +14,7 @@ import (
 var codesMap = map[namespaces.Namespace][]string{
 	namespaces.US_STATE:  {"GEOID", "NAME"},
 	namespaces.US_COUNTY: {"GEOID", "NAME"},
-	namespaces.US_TTRACT: {"ORG_CODE", "IND_NAME"},
+	namespaces.US_TTRACT: {"GEOID", "NAME"},
 }
 
 var geospaces = map[string]*storages.DetailedGeospace{}
