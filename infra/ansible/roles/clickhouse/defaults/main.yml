@@ -101,3 +101,4 @@ clickhouse_config:
   max_session_timeout: 3600
   default_session_timeout: 60
   max_table_size_to_drop: 0
+  max_server_memory_usage_to_ram_ratio: 1
