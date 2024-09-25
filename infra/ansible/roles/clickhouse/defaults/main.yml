@@ -29,18 +29,18 @@ clickhouse_dbs: "{{ clickhouse_dbs_default + clickhouse_dbs_custom }}"
 
 clickhouse_profiles_custom:
   default:
-    max_memory_usage: 28000000000
-    max_bytes_before_external_group_by: 8000000000
-    max_bytes_before_external_sort: 8000000000
+    max_memory_usage: 28G
+    max_bytes_before_external_group_by: 15G
+    max_bytes_before_external_sort: 12G
     use_uncompressed_cache: 0
     load_balancing: random
     max_partitions_per_insert_block: 100
     aggregation_memory_efficient_merge_threads: 1
 
   mapping-profile:
-    max_memory_usage: 28000000000
-    max_bytes_before_external_group_by: 8000000000
-    max_bytes_before_external_sort: 8000000000
+    max_memory_usage: 28G
+    max_bytes_before_external_group_by: 15G
+    max_bytes_before_external_sort: 12G
     use_uncompressed_cache: 0
     load_balancing: random
     max_partitions_per_insert_block: 100
