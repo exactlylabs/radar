@@ -15,11 +15,21 @@ export default class extends Controller {
     this.element.addEventListener("mouseleave", this.handleMouseOut.bind(this));
     this.element.addEventListener("mousedown", this.handleDragStart.bind(this));
     this.element.addEventListener("mouseup", this.handleMouseUp.bind(this));
+    // when scrolling the topmost element with overflow, clear the current hovering/dragging state
+    document.querySelector('body > div.application--main-container').addEventListener("scroll", this.handleScroll.bind(this));
     this.isDragging = false;
     this.dragStartX = null;
     this.dragEndX = null;
     this.startDate = new Date(this.element.dataset.startDate);
     this.endDate = new Date(this.element.dataset.endDate);
+  }
+  
+  handleScroll(e) {
+    console.log('scrolling...')
+    this.hideEverything();
+    this.isDragging = false;
+    this.dragEndX = null;
+    this.dragStartX = null;
   }
   
   handleHover(e) {
@@ -179,20 +189,20 @@ export default class extends Controller {
     let dateX;
     let positionalX;
     if(this.isDragging && type === 'start') {
-      positionalX = this.convertPositionFromElementToWindow(this.dragStartX);
+      //positionalX = this.convertPositionFromElementToWindow(this.dragStartX);
       dateX = this.dragStartX;
     } else {
       dateX = this.getMousePositionRelativeToElement(e).mouseX;
-      positionalX = this.getMousePositionRelativeToWindow(e).mouseX;
+      //positionalX = this.getMousePositionRelativeToWindow(e).mouseX;
     }
     const date = this.getDateAtCoordinate(dateX);
     const target = type === 'start' ? this.startDateIndicatorTarget : this.endDateIndicatorTarget;
     target.innerHTML = this.getFormattedDate(date);
-    const { top } = this.element.getBoundingClientRect();
     const { width, height } = target.getBoundingClientRect();
-    if(width > 0) target.style.left = positionalX - width / 2 + 'px';
-    if(height > 0) target.style.top = top
-      + STATUS_BAR_HEIGHT * (type === 'start' ? 1 : 0)
+    if(width > 0) target.style.left = dateX - width / 2 + 'px';
+    
+    if(height > 0) target.style.top =
+        STATUS_BAR_HEIGHT * (type === 'start' ? 1 : 0)
       + INDICATOR_PADDING * (type === 'start' ? 1 : -1)
       + height * (type === 'start' ? 0 : -1)
       + 'px';
