@@ -25,7 +25,6 @@ export default class extends Controller {
   }
   
   handleScroll(e) {
-    console.log('scrolling...')
     this.hideEverything();
     this.isDragging = false;
     this.dragEndX = null;
