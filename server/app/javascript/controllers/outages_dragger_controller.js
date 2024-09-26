@@ -186,13 +186,10 @@ export default class extends Controller {
   
   showHoveredDate(e, type = 'start') {
     let dateX;
-    let positionalX;
     if(this.isDragging && type === 'start') {
-      //positionalX = this.convertPositionFromElementToWindow(this.dragStartX);
       dateX = this.dragStartX;
     } else {
       dateX = this.getMousePositionRelativeToElement(e).mouseX;
-      //positionalX = this.getMousePositionRelativeToWindow(e).mouseX;
     }
     const date = this.getDateAtCoordinate(dateX);
     const target = type === 'start' ? this.startDateIndicatorTarget : this.endDateIndicatorTarget;
