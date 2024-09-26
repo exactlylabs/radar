@@ -27,7 +27,7 @@
 }
 
 .outages--date {
-  position: absolute; // This is necessary so the element can ignore parent's overflow hidden property
+  position: absolute;
   padding: 2px 6px;
   background-color: $subtle-gray;
   color: $gray;
