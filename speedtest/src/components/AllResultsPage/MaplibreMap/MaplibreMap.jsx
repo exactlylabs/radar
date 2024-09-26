@@ -2,7 +2,7 @@ import {useContext, useEffect, useRef} from "react";
 import ReactDOM from 'react-dom/client';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import {VECTOR_TILES_URL} from "../../../vendor/leaflet/leaflet";
+import {VECTOR_TILES_URL} from "../../../utils/leaflet";
 import {
   DEFAULT_DOWNLOAD_FILTER_HIGH,
   DEFAULT_DOWNLOAD_FILTER_LOW,

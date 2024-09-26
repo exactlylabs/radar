@@ -1,5 +1,5 @@
 import {useContext, useEffect, useRef} from "react";
-import {patchVectorLayer, VECTOR_TILES_URL, vectorTileOptions} from "../../../vendor/leaflet/leaflet";
+import {patchVectorLayer, VECTOR_TILES_URL, vectorTileOptions} from "../../../utils/leaflet";
 import L from 'leaflet';
 import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js';
 import 'leaflet/dist/leaflet.css';
@@ -7,7 +7,6 @@ import ConfigContext from "../../../context/ConfigContext";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import ReactDOM from "react-dom/client";
 import MyPopup from "../MyPopup";
-import maplibregl from "maplibre-gl";
 import {Point} from "leaflet/dist/leaflet-src.esm";
 
 const popupOptions = {

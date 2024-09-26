@@ -1,11 +1,10 @@
-import L from 'leaflet';
-import {API_URL} from "../../constants";
+import {API_URL} from "../constants";
 import {
   DEFAULT_DOWNLOAD_FILTER_HIGH,
   DEFAULT_DOWNLOAD_FILTER_LOW,
   DEFAULT_DOWNLOAD_FILTER_MID,
   DEFAULT_DOWNLOAD_FILTER_NONE
-} from "../../utils/colors";
+} from "./colors";
 
 export const VECTOR_TILES_URL = `${API_URL}/tiles/{z}/{x}/{y}`;
 
