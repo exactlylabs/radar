@@ -76,7 +76,7 @@ module ClientApi
         is_global = params[:global] || @widget_client.id == 1
         cache_key = "mvt_#{z}_#{x}_#{y}"
 
-        if REDIS.exists?(cache_key) && false
+        if REDIS.exists?(cache_key)
           data = REDIS.get(cache_key)
         else
           sql_params = {x: x, y: y, z: z}
