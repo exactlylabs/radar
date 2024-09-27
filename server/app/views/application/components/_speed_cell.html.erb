@@ -4,13 +4,19 @@
       <%= svg_tag("#{type}-icon.svg", { width: 16, height: 16, class: "#{ diff.include?('-') ? 'svg--fill-red' : 'svg--fill-green'}" }) %>
       <div class="application--speed-cell-value">
         <span class="forms--label ellipsis application--speed-cell-title"><%= "Avg. #{type}" %></span>
-        <div class="widgets--location-avg-container wrap">
-          <% if avg != "-" %>
-            <span class="application--speed-value-text"><%= avg %></span>
-            <span class="help-dark-text">Mbps</span>
-          <% else %>
-            <span class="help-dark-text"><%= avg %></span>
-          <% end %>
+        <div class="flex flex-column">
+          <div class="widgets--location-avg-container wrap">
+            <% if avg != "-" %>
+              <span class="application--speed-value-text"><%= avg %></span>
+              <span class="help-dark-text">Mbps</span>
+            <% else %>
+              <span class="help-dark-text"><%= avg %></span>
+            <% end %>
+          </div>
+          <!--          Add here the canvas-->
+          <div class="widgets--widget-content">
+            <%= render partial: "dashboard/components/widgets/slim_download_speed" %>
+          </div>
         </div>
       </div>
     </div>

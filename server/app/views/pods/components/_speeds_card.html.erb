@@ -10,7 +10,7 @@
         }
     %>
     <%= turbo_frame_tag "pod-speed-averages" do %>
-      <%= render partial: "pods/components/speed_cells",
+      <%= render partial: "application/components/speed_cells",
           locals: {
             download_avg: @download_avg.present? ? "#{@download_avg.round(2)}" : '-',
             upload_avg: @upload_avg.present? ? "#{@upload_avg.round(2)}" : '-',

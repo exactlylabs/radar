@@ -1,0 +1,7 @@
+<% raise ArgumentError, "url is required" unless local_assigns[:custom_url].present? %>
+<% url = local_assigns[:custom_url] %>
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag 'slim-upload-speed-widget', src: url, loading: 'lazy' do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>

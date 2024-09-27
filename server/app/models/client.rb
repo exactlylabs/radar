@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   include EventSourceable
+  include RangeEvaluator
 
   module STATUSES
     ONLINE = 'Online'
@@ -820,33 +821,40 @@ class Client < ApplicationRecord
     end
   end
 
-  def download_diff(calculated_avg = nil)
-    if calculated_avg == -1
-      return "-"
-    end
-    avg = calculated_avg.present? ? calculated_avg : self.download_avg
-    if avg.nil? || self.location&.expected_mbps_down.nil?
-      return nil
-    end
-    diff = avg - self.location.expected_mbps_down
-    diff_to_human(diff, self.location&.expected_mbps_down)
+  def download_diff(period = nil)
+    avg_and_diff = measurements_avg_and_diff_for_period(period, 'download')
+    avg_and_diff[:diff]
   end
 
-  def upload_diff(calculated_avg = nil)
-    if calculated_avg == -1
-      return "-"
-    end
-    avg = calculated_avg.present? ? calculated_avg : self.upload_avg
-    if avg.nil? || self.location&.expected_mbps_up.nil?
-      return nil
-    end
-    diff = avg - self.location.expected_mbps_up
-    diff_to_human(diff, self.location&.expected_mbps_up)
+  def upload_diff(period = nil)
+    avg_and_diff = measurements_avg_and_diff_for_period(period, 'upload')
+    avg_and_diff[:diff]
   end
-  def diff_to_human(diff, expected_value)
-    sign = diff > 0 ? "+" : "" # Don't need the - for negative values as it will come in the actual calculation
-    rounded_percentage = ((diff / expected_value) * 100).round(2)
-    "#{sign}#{rounded_percentage}%"
+
+  def diff_to_human(curr_avg, prev_avg)
+    # calculate the diff in percentage between the current and previous average
+    return nil if prev_avg.nil? || curr_avg.nil?
+
+    diff = ((curr_avg - prev_avg) / prev_avg) * 100
+    "#{diff.round(2)}%"
+  end
+
+  def measurements_avg_and_diff_for_period(period, type = 'download')
+    measurements_prev_and_current_period = get_current_and_previous_period(period)
+    prev_period_start = measurements_prev_and_current_period[0]
+    current_period_start = measurements_prev_and_current_period[1]
+    current_period_end = measurements_prev_and_current_period[2]
+
+    measurements_avg = nil
+    filtered_measurements = measurements.where(created_at: current_period_start..current_period_end)
+    measurements_avg = filtered_measurements.average(type).to_f.round(2) if filtered_measurements.count > 0
+
+    prev_measurements_avg = nil
+    prev_filtered_measurements = measurements.where(created_at: prev_period_start..current_period_start)
+    prev_measurements_avg = prev_filtered_measurements.average(type).to_f.round(2) if prev_filtered_measurements.count > 0
+
+    diff = diff_to_human(measurements_avg, prev_measurements_avg)
+    { avg: measurements_avg, diff: diff }
   end
 
   def get_current_usage(current_user)

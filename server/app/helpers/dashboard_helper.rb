@@ -1,4 +1,4 @@
-module DashboardHelper
+module  DashboardHelper
 
   DOT_LIMIT = 500
   DOT_MINIMUM = 100
@@ -125,9 +125,9 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
-  def self.get_pod_download_speed_sql(pod_id, from, to, pod_account_id)
-    sql = self.get_base_series_sql("download", nil, nil, pod_id)
-    ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, from: from, to: to}])
+  def self.get_pod_download_speed_sql(pod_id, from, to, pod_account_id, network_ids: nil)
+    sql = self.get_base_series_sql("download", nil, network_ids, pod_id)
+    ActiveRecord::Base.sanitize_sql([sql, {interval_unit: self.get_interval_unit(to, from), account_ids: [pod_account_id], pod_id: pod_id, location_ids: network_ids, from: from, to: to}])
   end
 
   def self.get_compare_download_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_names = nil)

@@ -1,0 +1,17 @@
+<%= turbo_frame_tag 'slim-upload-speed-widget' do %>
+  <% if @upload_speeds.count == 0 %>
+    <p><%= @upload_speeds.count %></p>
+    <%#= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="slim-upload-speed-chart"
+            data-controller="slim-line-chart"
+            data-chart-color= "<%= @chart_color %>"
+            data-line-chart-data="<%= @upload_speeds.to_json %>"
+            data-parent-id="slim-upload-speed-widget"
+            data-skeleton-id="slim-upload-speed-chart-skeleton"
+    ></canvas>
+    <div id="slim-upload-speed-chart-skeleton">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
+  <% end %>
+<% end %>

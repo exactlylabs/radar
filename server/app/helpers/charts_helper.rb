@@ -43,6 +43,16 @@ module ChartsHelper
     params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
+  def slim_download_speed_params(current_account)
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
+    params.merge(client_params)
+  end
+
+  def client_params
+    { client_id: params[:client_id] }
+  end
+
   def compare_download_speeds_params(current_account)
     p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
     p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')

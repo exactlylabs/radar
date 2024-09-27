@@ -4,7 +4,7 @@ class DashboardController < ApplicationController
   include DashboardConcern
   include Paginator
   before_action :authenticate_user!
-  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data, :get_total_data_modal_data]
+  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data, :get_total_data_modal_data, :slim_download_speed]
 
   # GET /dashboard or /dashboard.json
   def index
@@ -133,7 +133,7 @@ class DashboardController < ApplicationController
     end
 
     if params[:isp_id]
-      @locations = @locations.joins(clients: [{autonomous_system: :autonomous_system_org}]).where("autonomous_system_orgs.id = ?", params[:isp_id])
+      @locations = @locations.joins(clients: [{ autonomous_system: :autonomous_system_org }]).where("autonomous_system_orgs.id = ?", params[:isp_id])
     end
 
     if params[:category_name]
@@ -156,6 +156,11 @@ class DashboardController < ApplicationController
     sql = DashboardHelper.get_download_speed_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
     set_query_time_interval(@download_speeds)
+  end
+
+  def slim_download_speed
+    sql = DashboardHelper.get_pod_download_speed_sql(@params[:client_id], @params[:from], @params[:to], @params[:account_id], network_ids: @params[:location_ids])
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def upload_speeds
@@ -224,7 +229,7 @@ class DashboardController < ApplicationController
     if @outages_count > 0
       @outages = OutagesHelper.join_by_parent(@outages)
       @outages = OutagesHelper.group_outages(@outages)
-      @downtime = @outages.map {|_, v| v[:duration] }.sum
+      @downtime = @outages.map { |_, v| v[:duration] }.sum
 
       if @outages[0][:started_at] < params[:from]
         @downtime -= (params[:from] - @outages[0][:started_at])
@@ -258,12 +263,12 @@ class DashboardController < ApplicationController
 
   def filter_entities_by_account_and_network(account_id, network_id)
     if account_id
-      @categories = @categories.joins(:locations).where(locations: {account_id: account_id})
+      @categories = @categories.joins(:locations).where(locations: { account_id: account_id })
       @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['account_id'] == account_id }
     end
 
     if network_id
-      @categories = @categories.joins(:locations).where(locations: {id: network_id})
+      @categories = @categories.joins(:locations).where(locations: { id: network_id })
       @filter_as_orgs = @filter_as_orgs.select { |as_org| as_org['location_id'] == network_id }
     end
   end
@@ -301,6 +306,8 @@ class DashboardController < ApplicationController
       params_fn = method(:total_data_params)
     when get_total_data_modal_data_path
       params_fn = method(:total_data_params)
+    when slim_download_speed_path
+      params_fn = method(:slim_download_speed_params)
     end
     @params = params_fn.call(current_account)
     set_query_interval_type(@params)
@@ -328,8 +335,8 @@ class DashboardController < ApplicationController
 
   def get_categories_for_filter(query, account_id, network_id)
     @options = policy_scope(Category).where("categories.name ILIKE ?", "%#{query}%")
-    @options = @options.joins(:locations).where(locations: {account_id: account_id}) if account_id
-    @options = @options.joins(:locations).where(locations: {id: network_id}) if network_id
+    @options = @options.joins(:locations).where(locations: { account_id: account_id }) if account_id
+    @options = @options.joins(:locations).where(locations: { id: network_id }) if network_id
   end
 
   def get_isps_for_filter(query, account_id, network_id)
