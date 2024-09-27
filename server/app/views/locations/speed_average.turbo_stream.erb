@@ -1,5 +1,5 @@
 <%= turbo_stream.update "network-speed-averages" do %>
-  <%= render partial: "networks/components/speed_cells",
+  <%= render partial: "application/components/speed_cells",
              locals: {
                 download_avg: @download_avg.present? ? "#{@download_avg}" : '-',
                 download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)}" : '-',

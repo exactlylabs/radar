@@ -1,0 +1,5 @@
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag 'slim-download-speed-widget', src: slim_download_speed_url(client_id: params[:id], network_id: params[:network_id], account_id: params[:account_id], from: params[:start], to: params[:end]), loading: 'lazy' do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>

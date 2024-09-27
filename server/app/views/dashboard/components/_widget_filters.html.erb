@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <% accounts = @accounts || policy_scope(Account) %>
 <% locations = @locations || policy_scope(Location) %>
 <% total_networks = @total_networks || locations.count %>
@@ -6,10 +5,7 @@
 <% categories = @categories || policy_scope(Category) %>
 
 <turbo-frame class="dashboard--filters-container" id="dashboard-realtime-filters">
-=======
-<div class="dashboard--filters-container">
   <% this_year_in_days = Date.today.yday %>
->>>>>>> 7805426c (dashboard changes)
   <%= render partial: "dashboard/components/date_filter",
              locals: {
                menu_id: 'date-range-filter-menu',
@@ -29,15 +25,15 @@
   <% if current_account.is_all_accounts? %>
     <%= render layout: "application/components/filters/filter_with_search",
                locals: {
-                  id: 'account-filter',
-                  menu_id: 'account-filter-menu',
-                  key: 'account_id',
-                  default_value: 'all',
-                  default_label: 'All accounts',
-                  current_label: params[:account_id].present? ? accounts.find(params[:account_id]).name : 'All accounts',
-                  pagination: false,
-                  no_z_index: true,
-                  entity: Account.name,
+                 id: 'account-filter',
+                 menu_id: 'account-filter-menu',
+                 key: 'account_id',
+                 default_value: 'all',
+                 default_label: 'All accounts',
+                 current_label: params[:account_id].present? ? accounts.find(params[:account_id]).name : 'All accounts',
+                 pagination: false,
+                 no_z_index: true,
+                 entity: Account.name,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: 'all', label: 'All accounts', active: params[:account_id].nil?, overridden_keys: 'network_id,category_name,isp_id' } %>
       <% accounts.order(:name).each do |account| %>
@@ -97,21 +93,13 @@
                  key: 'isp_id',
                  default_value: 'all',
                  default_label: 'All ISPs',
-<<<<<<< HEAD
                  current_label: params[:isp_id].present? ? isps.filter {|isp| isp['id'] == params[:isp_id].to_i}.first ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id].to_i}.first['name'] : 'All ISPs' : 'All ISPs',
-=======
-                 current_label: params[:isp_id].present? ? @filter_as_orgs.filter { |isp| isp['id'] == params[:isp_id].to_i }.first ? @filter_as_orgs.filter { |isp| isp['id'] == params[:isp_id].to_i }.first['name'] : 'All ISPs' : 'All ISPs',
->>>>>>> 7805426c (dashboard changes)
                  pagination: false,
                  no_z_index: true,
                  entity: 'ISP',
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
-<<<<<<< HEAD
       <% isps.sort_by {|isp| isp['name']}.each do |isp| %>
-=======
-      <% @filter_as_orgs.sort_by { |isp| isp['name'] }.each do |isp| %>
->>>>>>> 7805426c (dashboard changes)
         <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: isp['id'], label: isp['name'], active: params[:isp_id] == isp['id'].to_s } %>
       <% end %>
     <% end %>

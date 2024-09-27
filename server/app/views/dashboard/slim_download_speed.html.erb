@@ -1,0 +1,15 @@
+<%= turbo_frame_tag 'slim-download-speed-widget' do %>
+  <% if @download_speeds.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="slim-download-speed-chart"
+            data-controller="slim-line-chart"
+            data-line-chart-data="<%= @download_speeds.to_json %>"
+            data-parent-id="slim-download-speed-widget"
+            data-skeleton-id="slim-download-speed-chart-skeleton"
+    ></canvas>
+    <div id="slim-download-speed-chart-skeleton">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
+  <% end %>
+<% end %>

@@ -15,7 +15,7 @@ class LocationsController < ApplicationController
     account_id = params[:account_id]
     @locations = policy_scope(Location)
     if category_id
-      @locations = @locations.joins(:categories_locations).where(categories_locations: {category_id: category_id})
+      @locations = @locations.joins(:categories_locations).where(categories_locations: { category_id: category_id })
     end
     if account_id && account_id.to_i != -1
       @locations = @locations.where(account_id: account_id)
@@ -38,8 +38,7 @@ class LocationsController < ApplicationController
 
   # GET /locations/1 or /locations/1.json
   def show
-    start_date = get_range_start_date
-    download_and_upload_averages(@location, start_date)
+    set_download_and_upload_avgs_and_diff_for_period(@location)
   end
 
   # GET /locations/new
@@ -105,9 +104,9 @@ class LocationsController < ApplicationController
     respond_to do |format|
       # By getting the specific locations that get added/deleted
       # we can emit the exact events for each location
-      current_categories_ids = @location.categories.map {|c| c.id}
+      current_categories_ids = @location.categories.map { |c| c.id }
       if params[:categories].present?
-        latest_categories_ids = params[:categories].split(",").map {|id| id.to_i}
+        latest_categories_ids = params[:categories].split(",").map { |id| id.to_i }
       else
         latest_categories_ids = []
       end
@@ -207,9 +206,9 @@ class LocationsController < ApplicationController
         if wants_to_move_tests
           location.record_event(
             Location::Events::DATA_MIGRATION_REQUESTED, {
-              from: old_account.id,
-              to: account.id
-            },
+            from: old_account.id,
+            to: account.id
+          },
             Time.now
           )
           MeasurementMigrationJob.perform_later(location, old_account, account)
@@ -236,8 +235,7 @@ class LocationsController < ApplicationController
   end
 
   def speed_average
-    start_date = get_range_start_date(params[:type]) || @location.created_at
-    download_and_upload_averages(@location, start_date)
+    set_download_and_upload_avgs_and_diff_for_period(@location)
     respond_to do |format|
       format.turbo_stream
     end
@@ -245,56 +243,50 @@ class LocationsController < ApplicationController
 
   private
 
-  def download_and_upload_averages(location, start_date)
-    # Default to network's created at if type is empty (all time)
-    end_date = Time.zone.now
-    filtered_measurements = location.measurements.where(created_at: start_date..end_date)
-    if filtered_measurements.count > 0
-      @download_avg = filtered_measurements.average(:download).to_f.round(2)
-      @upload_avg = filtered_measurements.average(:upload).to_f.round(2)
-    else
-      @download_avg = nil
-      @upload_avg = nil
-    end
+  def set_download_and_upload_avgs_and_diff_for_period(location)
+    download_avg_and_diff = location.measurements_avg_and_diff_for_period(params[:type], :download)
+    @download_avg = download_avg_and_diff[:avg]
+    @download_diff = download_avg_and_diff[:diff]
 
-    @download_diff = location.download_diff(@download_avg || -1)
-    @upload_diff = location.upload_diff(@upload_avg || -1)
+    upload_avg_and_diff = location.measurements_avg_and_diff_for_period(params[:type], :upload)
+    @upload_avg = upload_avg_and_diff[:avg]
+    @upload_diff = upload_avg_and_diff[:diff]
   end
 
-    # We want to allow for a user to access a network if it's within reach of all their accessible accounts,
-    # regardless of the current one not being the network's one. So we need to change the current account to
-    # the network's one if needed
-    def set_location_and_account_if_needed
-      @location = policy_scope(Location).find_by_id(params[:id]) # Don't want to throw on first check
-      return if @location.present?
+  # We want to allow for a user to access a network if it's within reach of all their accessible accounts,
+  # regardless of the current one not being the network's one. So we need to change the current account to
+  # the network's one if needed
+  def set_location_and_account_if_needed
+    @location = policy_scope(Location).find_by_id(params[:id]) # Don't want to throw on first check
+    return if @location.present?
 
-      @location = Location.find(params[:id]) # This is the actual throwable check
-      return if current_user.super_user && !is_super_user_disabled? && current_account.is_all_accounts?
+    @location = Location.find(params[:id]) # This is the actual throwable check
+    return if current_user.super_user && !is_super_user_disabled? && current_account.is_all_accounts?
 
-      has_access_to_network_account = policy_scope(Account).where(id: @location.account_id).exists?
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Network with 'id'=#{params[:id]}", Location.name, params[:id]) unless has_access_to_network_account
+    has_access_to_network_account = policy_scope(Account).where(id: @location.account_id).exists?
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Network with 'id'=#{params[:id]}", Location.name, params[:id]) unless has_access_to_network_account
 
-      set_new_account(@location.account) if current_account.id != @location.account_id
-    end
+    set_new_account(@location.account) if current_account.id != @location.account_id
+  end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_location
-      @location = policy_scope(Location).find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_location
+    @location = policy_scope(Location).find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def location_params
-      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location, :account_id)
-    end
+  # Only allow a list of trusted parameters through.
+  def location_params
+    params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location, :account_id)
+  end
 
-    def check_request_origin
-      is_from_search = params[:origin].present? && params[:origin] == 'search'
-      return if !is_from_search
-      store_recent_search(params[:id], Recents::RecentTypes::LOCATION)
-    end
+  def check_request_origin
+    is_from_search = params[:origin].present? && params[:origin] == 'search'
+    return if !is_from_search
+    store_recent_search(params[:id], Recents::RecentTypes::LOCATION)
+  end
 
-    def set_locations
-      location_ids = JSON.parse(params[:ids])
-      @locations = policy_scope(Location).where(id: location_ids)
-    end
+  def set_locations
+    location_ids = JSON.parse(params[:ids])
+    @locations = policy_scope(Location).where(id: location_ids)
+  end
 end

@@ -14,6 +14,7 @@ module WidgetsHelper
     OUTAGES = 'outages'
     TOTAL_DATA = 'total_data'
     COMPARISON_TOTAL_DATA = 'comparison_total_data'
+    SLIM_DOWNLOAD_SPEED = 'slim_download_speed'
   end
 
   WidgetHeaders = {

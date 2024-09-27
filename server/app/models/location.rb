@@ -2,9 +2,15 @@ require "#{Rails.root}/lib/fips/fips_geocoder.rb"
 require "csv"
 
 class Location < ApplicationRecord
+<<<<<<< HEAD
 include EventSourceable
 include Recents
 include Schedulable
+=======
+  include EventSourceable
+  include Recents
+  include RangeEvaluator
+>>>>>>> 2b8bbff7 (wip: slim download speed chart)
 
   LOCATIONS_PER_COUNTY_GOAL = 25
   LOCATIONS_PER_PLACE_GOAL = 3
@@ -29,8 +35,8 @@ include Schedulable
   on_create applier: :apply_on_create, event_data: :event_data
   notify_change :name, Location::Events::NAME_CHANGED
   notify_change :address, Location::Events::ADDRESS_CHANGED
-  notify_change :online, {false => Location::Events::WENT_OFFLINE, true => Location::Events::WENT_ONLINE}
-  notify_change :deleted_at, {nil => Location::Events::RESTORED, :default => Location::Events::DELETED}
+  notify_change :online, { false => Location::Events::WENT_OFFLINE, true => Location::Events::WENT_ONLINE }
+  notify_change :deleted_at, { nil => Location::Events::RESTORED, :default => Location::Events::DELETED }
   notify_change :account_id, Location::Events::ACCOUNT_CHANGED
 
   validates :name, :address, presence: true
@@ -40,10 +46,10 @@ include Schedulable
   belongs_to :location_group, optional: true
   belongs_to :account
   has_and_belongs_to_many :categories,
-    # Note: Rails only triggers when associating through << statement
-    # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
-    after_add: :after_category_added,
-    after_remove: :after_category_removed
+                          # Note: Rails only triggers when associating through << statement
+                          # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
+                          after_add: :after_category_added,
+                          after_remove: :after_category_removed
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
@@ -65,21 +71,21 @@ include Schedulable
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
-  scope :with_geospaces,  -> { joins("JOIN geospaces ON ST_CONTAINS(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)") }
+  scope :with_geospaces, -> { joins("JOIN geospaces ON ST_CONTAINS(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)") }
 
   def event_data()
     data = self.as_json.transform_keys(&:to_sym)
-    data["labels"] = self.categories.map {|label| label.name}
+    data["labels"] = self.categories.map { |label| label.name }
     return data
   end
 
   def apply_on_create(state, event)
     state.update({
-      name: self.name,
-      address: self.address,
-      labels: self.categories.map {|label| label.name},
-      account_id: self.account_id,
-    })
+                   name: self.name,
+                   address: self.address,
+                   labels: self.categories.map { |label| label.name },
+                   account_id: self.account_id,
+                 })
   end
 
   def after_category_added(category)
@@ -97,7 +103,7 @@ include Schedulable
       id: category.id,
     }
     self.record_event Location::Events::CATEGORY_REMOVED, event_data, Time.now do |state, event|
-       # doing nested if for a bit better readability
+      # doing nested if for a bit better readability
       if state["categories"].present? && state["categories"].include?(category.name)
         state["categories"].delete(category.name)
       end
@@ -123,34 +129,40 @@ include Schedulable
     measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
   end
 
-  def diff_to_human(diff, expected_value)
-    sign = diff > 0 ? "+" : "" # Don't need the - for negative values as it will come in the actual calculation
-    rounded_percentage = ((diff / expected_value) * 100).round(2)
-    "#{sign}#{rounded_percentage}%"
+  def download_diff(period = nil)
+    avg_and_diff = measurements_avg_and_diff_for_period(period, 'download')
+    avg_and_diff[:diff]
   end
 
-  def download_diff(calculated_avg = nil)
-    if calculated_avg == -1
-      return "-"
-    end
-    avg = calculated_avg.present? ? calculated_avg : self.download_avg
-    if avg.nil? || self.expected_mbps_down.nil?
-      return nil
-    end
-    diff = avg - self.expected_mbps_down
-    diff_to_human(diff, self.expected_mbps_down)
+  def upload_diff(period = nil)
+    avg_and_diff = measurements_avg_and_diff_for_period(period, 'upload')
+    avg_and_diff[:diff]
   end
 
-  def upload_diff(calculated_avg = nil)
-    if calculated_avg == -1
-      return "-"
-    end
-    avg = calculated_avg.present? ? calculated_avg : self.upload_avg
-    if avg.nil? || self.expected_mbps_up.nil?
-      return nil
-    end
-    diff = avg - self.expected_mbps_up
-    diff_to_human(diff, self.expected_mbps_up)
+  def diff_to_human(curr_avg, prev_avg)
+    # calculate the diff in percentage between the current and previous average
+    return nil if prev_avg.nil? || curr_avg.nil?
+
+    diff = ((curr_avg - prev_avg) / prev_avg) * 100
+    "#{diff.round(2)}%"
+  end
+
+  def measurements_avg_and_diff_for_period(period, type = 'download')
+    measurements_prev_and_current_period = get_current_and_previous_period(period)
+    prev_period_start = measurements_prev_and_current_period[0]
+    current_period_start = measurements_prev_and_current_period[1]
+    current_period_end = measurements_prev_and_current_period[2]
+
+    measurements_avg = nil
+    filtered_measurements = measurements.where(created_at: current_period_start..current_period_end)
+    measurements_avg = filtered_measurements.average(type).to_f.round(2) if filtered_measurements.count > 0
+
+    prev_measurements_avg = nil
+    prev_filtered_measurements = measurements.where(created_at: prev_period_start..current_period_start)
+    prev_measurements_avg = prev_filtered_measurements.average(type).to_f.round(2) if prev_filtered_measurements.count > 0
+
+    diff = diff_to_human(measurements_avg, prev_measurements_avg)
+    { measurements: filtered_measurements,avg: measurements_avg, diff: diff }
   end
 
   def process_new_measurement!(measurement)
@@ -209,22 +221,22 @@ include Schedulable
       yielder << CSV.generate_line(%w{id name address latitude longitude user_id created_at(UTC+0) expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location})
       includes(:user).find_each do |location|
         yielder << CSV.generate_line([
-          location.id,
-          location.name,
-          location.address,
-          location.latitude,
-          location.longitude,
-          location.user ? location.user.id : "",
-          location.created_at.strftime("%m/%d/%Y %H:%M:%S"),
-          location.expected_mbps_up,
-          location.expected_mbps_down,
-          location.state,
-          location.county,
-          location.manual_lat_long,
-          location.state_fips,
-          location.county_fips,
-          location.automatic_location
-        ])
+                                       location.id,
+                                       location.name,
+                                       location.address,
+                                       location.latitude,
+                                       location.longitude,
+                                       location.user ? location.user.id : "",
+                                       location.created_at.strftime("%m/%d/%Y %H:%M:%S"),
+                                       location.expected_mbps_up,
+                                       location.expected_mbps_down,
+                                       location.state,
+                                       location.county,
+                                       location.manual_lat_long,
+                                       location.state_fips,
+                                       location.county_fips,
+                                       location.automatic_location
+                                     ])
       end
     end
   end
@@ -324,7 +336,7 @@ include Schedulable
   end
 
   def link_to_geospaces
-    if lonlat.present? && (previous_changes.blank? || saved_change_to_lonlat? )
+    if lonlat.present? && (previous_changes.blank? || saved_change_to_lonlat?)
       ReprocessNetworkGeospaceJob.perform_later(self)
     end
   end
@@ -333,8 +345,8 @@ include Schedulable
     if saved_change_to_online?
       if self.online
         LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
-      # else # Deactivated for now due too noisy alerts
-      #   LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
+        # else # Deactivated for now due too noisy alerts
+        #   LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
       end
     end
 

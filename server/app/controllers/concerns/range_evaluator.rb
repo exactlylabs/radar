@@ -30,4 +30,31 @@ module RangeEvaluator
       Time.zone.now - 24.hours
     end
   end
+
+  def get_current_and_previous_period(period = 'last_24_hours')
+    current_period_end_date = Time.zone.now
+    case period
+    when 'last_24_hours'
+      curr_diff = 24.hours
+      prev_diff = curr_diff
+    when 'last_7_days'
+      curr_diff = 7.days
+      prev_diff = curr_diff
+    when 'last_30_days'
+      curr_diff = 30.days
+      prev_diff = curr_diff
+    when 'this_year'
+      curr_diff = Time.zone.now.yday.days
+      prev_diff = 1.year
+    else
+      curr_diff = 24.hours
+      prev_diff = curr_diff
+    end
+
+    current_period_start_date = current_period_end_date - curr_diff
+    previous_period_start_date = current_period_start_date - prev_diff
+
+    [previous_period_start_date, current_period_start_date, current_period_end_date]
+  end
+
 end
