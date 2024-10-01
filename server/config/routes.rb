@@ -65,6 +65,7 @@ Rails.application.routes.draw do
 
   resources :clients do
     collection do
+      get 'get_how_to_add_pod_modal', to: 'clients#get_how_to_add_pod_modal'
       get 'get_add_pod_modal', to: 'clients#get_add_pod_modal'
       post 'check_claimed_pod', to: 'clients#check_claimed_pod'
       delete 'remove_claimed_pod', to: 'clients#remove_claimed_pod'
@@ -74,6 +75,8 @@ Rails.application.routes.draw do
       post 'confirm_moving_claimed_pods_to_account_and_network', to: 'clients#confirm_moving_claimed_pods_to_account_and_network'
       post 'claim_new_pod', to: 'clients#claim_new_pod'
       get 'need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id'
+      get 'get_move_a_pod_modal', to: 'clients#get_move_a_pod_modal'
+      put 'move_a_pod', to: 'clients#move_a_pod'
       get 'crl', to: 'clients#crl'
     end
 

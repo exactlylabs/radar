@@ -1,0 +1,47 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Move a pod to \"#{resource&.name}\"", is_custom: true }
+%>
+
+<%= form_with(url: move_a_pod_clients_path, method: :put) do |form| %>
+  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-resource="clients" data-controller="add-pod-to-network">
+    <div class="modals--form-row mb-4">
+      <label for="pod-to-move-select" class="forms--label">Choose a pod to move</label>
+      <select class="forms--select form-select"
+              id="pod-to-move-select"
+              data-controller="select2"
+              data-placeholder="Choose a pod"
+              name="client_id"
+              data-add-pod-to-network-target="clientSelect"
+              data-action="select2-select->add-pod-to-network#onClientSelectChange"
+      >
+        <% if current_user.super_user && !is_super_user_disabled? %>
+          <option></option>
+          <option>&nbsp;</option>
+        <% end %>
+
+        <% policy_scope(Client).each do |client| %>
+          <%= render partial: "pods/components/pod_select_item", locals: { pod: client } %>
+        <% end %>
+      </select>
+    </div>
+
+    <% unless current_account.is_all_accounts? %>
+        <div class="modals--banner mb-6" data-type="warning" data-add-pod-to-network-target="warningBanner" hidden="hidden">
+        </div>
+    <% end %>
+
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+            data-selected-pods-grid-target="continueButton"
+            <%= @pods.count > 0 ? nil : 'disabled=disabled' %>
+    >Continue
+    </button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>
