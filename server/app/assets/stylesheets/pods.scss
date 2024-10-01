@@ -473,6 +473,16 @@
   font-variation-settings: 'wght' $bold;
 }
 
+.pods--how-to-add-pod-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
 .pods--moving-icon {
   position: absolute;
   bottom: 0;

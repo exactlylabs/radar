@@ -1,0 +1,31 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Add a pod to \"#{resource.name}\"", is_custom: true }
+%>
+<div data-controller="add-pod-to-network">
+  <div class="modal-body modals--body d-flex flex-column justify-content-center align-items-center text-center">
+    <input hidden
+           type="text"
+           name="network_id"
+           value="<%= resource.id %>"
+      />
+    <div class="pods--ask-add-pod-icon-container">
+      <%= image_tag image_url('pod-online-icon.png'), width: 32, height: 32 %>
+    </div>
+    <h3 class="pods--ask-add-pod-title wrap">How do you want to add a pod?</h3>
+
+    <div class="pods--how-to-add-pod-container">
+      <%= render partial: "network_pods/components/add_pod_option", locals: { value: 'move_pod', title: 'Move an existing pod to this network', description: 'Choose an existing pod to add to this network.', url: get_move_a_pod_modal_clients_url } %>
+      <%= render partial: "network_pods/components/add_pod_option", locals: { value: 'new_pod', title: 'Set up a new pod', description: 'Configure a new pod to add to this network.', url: get_add_pod_modal_clients_url } %>
+    </div>
+
+  </div>
+  <div class="modal-footer modals--footer">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <button type="button"
+            class="custom-button custom-button--primary custom-button--sm"
+            data-action="click->add-pod-to-network#continueToSpecificFlow"
+    >
+      Continue
+    </button>
+  </div>
+</div>

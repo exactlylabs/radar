@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus";
+import {Controller} from "@hotwired/stimulus";
 import handleError from './error_handler_controller';
 
 export const ADD_POD_TYPE = {
@@ -7,7 +7,7 @@ export const ADD_POD_TYPE = {
 };
 
 export default class extends Controller {
-  
+
   static targets = [
     "hiddenTypeInput",
     "hiddenNetworkNameInput",
@@ -18,7 +18,7 @@ export default class extends Controller {
     "moveExistingPodButton",
     "warningBanner"
   ];
-  
+
   connect() {
     this.token = document.querySelector('meta[name="csrf-token"]').content;
     this.addPodType = ADD_POD_TYPE.NEW_POD;
@@ -37,19 +37,20 @@ export default class extends Controller {
   selectOption(e) {
     const currentTarget = e.target;
     const type = currentTarget.dataset.type;
-    if(type === this.addPodType) return;
+    if (type === this.addPodType) return;
     this.addPodType = type;
     this.toggleOptions();
   }
 
   toggleOptions() {
+    console.log(this.addPodType);
     const selectedTarget = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.newPodOptionTarget : this.existingPodOptionTarget;
     const otherTarget = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.existingPodOptionTarget : this.newPodOptionTarget;
 
     selectedTarget.dataset.isSelected = true;
     otherTarget.dataset.isSelected = false;
 
-    if(this.addPodType === ADD_POD_TYPE.NEW_POD) {
+    if (this.addPodType === ADD_POD_TYPE.NEW_POD) {
       this.newPodRadioTarget.checked = true;
       this.existingPodRadioTarget.removeAttribute('checked');
     } else {
@@ -62,17 +63,18 @@ export default class extends Controller {
     e.preventDefault();
     e.stopPropagation();
     const nextStepUrl = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.newPodOptionTarget.dataset.nextStepUrl : this.existingPodOptionTarget.dataset.nextStepUrl;
+    console.log(nextStepUrl)
     fetch(nextStepUrl, {
       headers: { 'X-CSRF-Token': this.token }
     })
-    .then(response => {
-      if(response.ok) return response.text()
-      else throw new Error(response.statusText);
-    })
-    .then(html => {
-      Turbo.renderStreamMessage(html);
-    })
-    .catch(error => handleError(error));
+      .then(response => {
+        if (response.ok) return response.text()
+        else throw new Error(response.statusText);
+      })
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+      })
+      .catch(error => handleError(error));
   }
 
   goToInitialStep(e) {
@@ -81,16 +83,16 @@ export default class extends Controller {
     const goBackTarget = e.target;
     const initialStepUrl = goBackTarget.dataset.url;
     fetch(initialStepUrl, {
-      headers: { 'X-CSRF-Token': this.token }
+      headers: {'X-CSRF-Token': this.token}
     })
-    .then(response => {
-      if (response.ok) return response.text()
-      else throw new Error(response.statusText);
-    })
-    .then(html => {
-      Turbo.renderStreamMessage(html);
-    })
-    .catch(error => handleError(error));
+      .then(response => {
+        if (response.ok) return response.text()
+        else throw new Error(response.statusText);
+      })
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+      })
+      .catch(error => handleError(error));
   }
 
   clearPod(e) {
@@ -109,26 +111,25 @@ export default class extends Controller {
       this.disableMovePodButton();
       return;
     }
-    
+
     const podOption = document.querySelector(`option[value="${selectedPod}"]`);
-    
+
     this.enableMovePodButton();
     const locationName = podOption.dataset.locationName;
-    if(locationName) {
+    if (locationName) {
       this.displayWarningBanner(locationName);
     } else {
       this.hideWarningBanner();
     }
   }
 
-  displayWarningBanner(locationName) {
-    const warningMessage = `This pod belongs to "${locationName}". If you continue, it will be moved to "${this.networkName}".`;
+  displayWarningBanner(warningMessage) {
     this.warningBannerTarget.innerText = warningMessage;
-    this.warningBannerTarget.classList.remove('invisible');
+    this.warningBannerTarget.removeAttribute('hidden');
   }
 
   hideWarningBanner() {
-    this.warningBannerTarget.classList.add('invisible');
+    this.warningBannerTarget.addAttribute('hidden', 'hidden');
   }
 
   disableMovePodButton() {
@@ -137,5 +138,12 @@ export default class extends Controller {
 
   enableMovePodButton() {
     this.moveExistingPodButtonTarget.classList.remove('custom-button--disabled');
+  }
+
+  onClientSelectChange(e) {
+    console.log("PRINTEAME")
+    // set the unix_user to the hidden input field
+    this.displayWarningBanner('This pod currently belongs to ~account name~. If you continue, it will be moved to  ~new account\'s name~.')
+    // do a post to check if the pod belongs to a
   }
 }

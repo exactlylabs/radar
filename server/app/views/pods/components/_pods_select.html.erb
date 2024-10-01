@@ -44,12 +44,7 @@
                  data-action="input->multi-pod-select#onCheckboxChange"
                  <%= @pods&.find_by_unix_user(pod.unix_user).present? ? 'checked=checked' : nil %>
             />
-          <div class="pods--select-icon-label-container">
-            <div class="tables--network-icon-container" data-pod-status="online">
-              <%= image_tag image_url('pod-online-icon.png'), width: 24, height: 24 %>
-            </div>
-            <label for="pod--<%= pod.unix_user %>"><%= pod.unix_user %></label>
-          </div>
+          <%= render partial: "pods/components/pod_select_item", locals: { pod: pod } %>
         </div>
       <% end %>
     </div>

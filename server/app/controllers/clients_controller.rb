@@ -587,12 +587,25 @@ class ClientsController < ApplicationController
     end
   end
 
+  def get_how_to_add_pod_modal
+    network_id = params[:network_id]
+    @network = Location.find(network_id)
+  end
+
   def get_add_pod_modal
     pods_ids = params[:pods_ids]
     clients_ids = pods_ids&.split(',') || []
     @clients = Client.where(unix_user: clients_ids)
 
     @unix_user = params[:unix_user]
+  end
+
+  def get_move_a_pod_modal
+    @pods = policy_scope(Client).where(account_id: current_account.id)
+  end
+
+  def move_a_pod
+
   end
 
   def check_claimed_pod

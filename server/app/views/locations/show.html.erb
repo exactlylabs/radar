@@ -18,11 +18,11 @@
     </div>
     <!--end::Info-->
     <div class="pods--header-options-container">
-      <a href="<%= get_add_pod_modal_clients_path %>"
+      <a href="<%= get_how_to_add_pod_modal_clients_path(network_id: @location.id) %>"
          class="custom-button custom-button--primary custom-button--lg"
          data-turbo-frame="add_pod_modal">
         <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
-        Add pod
+        Add a pod
       </a>
       <%= render partial: "application/components/buttons/custom_more_options_button",
                  locals: {
@@ -67,14 +67,4 @@
 %>
 <%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
-%>
-
-<!--begin::AddPodModal-->
-<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal add-pod" data-action="turbo:submit-end->modal#submit">
-  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(location_id: @location.id) do %>
-  <% end %>
-</div>
-<!--end::AddPodModal-->
-<%= render partial: "application/components/modals/turbo_modal",
-           locals: { turbo_frame_tag_id: "pod_id_modal" }
 %>
