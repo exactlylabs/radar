@@ -174,7 +174,6 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, err
 		return nil, errors.W(err)
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "request failed")
