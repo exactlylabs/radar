@@ -173,21 +173,24 @@
     if self.client.debug_enabled? && !data[:tailscale_connected]
       enable_tailscale(self.client.active_tailscale_key)
     end
-    self.connection_status_report({"payload" => data["connections_status"]})
 
-    # Compare the registered SSIDs with what we have internally:
-    #  - Ask it to forget any registered SSID that isn't registered in the (client, location) set
-    #  - Delete any WifiConfiguration that's missing in the pod.
-    #  - Ensure the enabled match
-    pod_ssids = data["registered_ssids"]
-    current_ssid = data["connections_status"]["wlan"]["ssid"]
-    configs = self.client.wifi_configurations
-    configs.each do |conf|
-      if !pod_ssids.include?(conf.ssid) || conf.location != self.client.location
-        conf.destroy
-      elsif conf.location == self.client.location && conf.enabled? && current_ssid != conf.ssid
-        # Enabled network's state differs, re-send.
-        WatchdogChannel.broadcast_wifi_configuration_updated(conf)
+    if data["connections_status"].present?
+      self.connection_status_report({"payload" => data["connections_status"]})
+
+      # Compare the registered SSIDs with what we have internally:
+      #  - Ask it to forget any registered SSID that isn't registered in the (client, location) set
+      #  - Delete any WifiConfiguration that's missing in the pod.
+      #  - Ensure the enabled match
+      pod_ssids = data["registered_ssids"]
+      current_ssid = data["connections_status"]["wlan"]["ssid"]
+      configs = self.client.wifi_configurations
+      configs.each do |conf|
+        if !pod_ssids.include?(conf.ssid) || conf.location != self.client.location
+          conf.destroy
+        elsif conf.location == self.client.location && conf.enabled? && current_ssid != conf.ssid
+          # Enabled network's state differs, re-send.
+          WatchdogChannel.broadcast_wifi_configuration_updated(conf)
+        end
       end
     end
   end

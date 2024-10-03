@@ -784,6 +784,10 @@ class Client < ApplicationRecord
     pod_network_interfaces.where(wireless: true).first
   end
 
+  def default_interface
+    pod_network_interfaces.where(default: true).first
+  end
+
   private
 
   def create_ids

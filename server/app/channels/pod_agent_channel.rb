@@ -157,11 +157,14 @@ class PodAgentChannel < ApplicationCable::Channel
     # Keep the original behavior when not a managed pod
     return nil unless client.has_watchdog?
 
-    ifaces = ["default"] # Default route (We assume it's the wired interface -- eth0/enp4s0/etc...)
-    pod_conn = client.pod_connection
-    if client&.location.wlan_enabled? && client&.location.wlan_selected_client == client && pod_conn.wlan_connected_with_internet?
+    ifaces = [client.default_interface&.name] # Default route (We assume it's the wired interface -- eth0/enp4s0/etc...)
+    return ifaces unless client.location.present?
 
+    pod_conn = client.pod_connection
+    if client.location.wlan_enabled? && client.location.wlan_selected_client_id == client.id && pod_conn.wlan_connected_with_internet?
       ifaces << client.wlan_interface.name unless client.wlan_interface.default
     end
+
+    return ifaces
   end
 end
