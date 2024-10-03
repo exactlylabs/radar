@@ -32,6 +32,7 @@ postgresql-servers:
     db-01.radartoolkit.com:
   vars:
       listen_address: 10.5.0.0/16
+      db_backup_bucket_name: "radar-db-backup-production"
 
 vpn-routers:
   hosts:

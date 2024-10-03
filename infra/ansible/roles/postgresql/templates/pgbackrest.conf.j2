@@ -1,0 +1,24 @@
+[radar]
+pg1-path={{postgresql_data_directory}}
+
+[global]
+repo1-retention-full=3
+repo1-type=s3
+repo1-path=/pgbackrest
+repo1-s3-region=us-west-004
+repo1-s3-endpoint=https://s3.us-west-004.backblazeb2.com
+repo1-s3-bucket={{db_backup_bucket_name}}
+repo1-s3-key={{backblaze_access_key}}
+repo1-s3-key-secret={{backblaze_secret_key}}
+
+# Force a checkpoint to start backup immediately.
+start-fast=y
+# Use delta restore.
+delta=y
+
+# Enable ZSTD compression.
+compress-type=zst
+compress-level=6
+
+log-level-console=info
+log-level-file=debug

@@ -1,6 +1,9 @@
 ---
 - include_tasks: install.apt.yml
-  when: ansible_os_family in ['Debian', 'Ubuntu']
+  when: ansible_os_family in ['Debian', 'Ubuntu'] and not skip_postgres
 
 - include_tasks: configure.yml
+  when: not skip_postgres
 
+- include_tasks: pgbackrest.yml
+  when: ansible_os_family in ['Debian', 'Ubuntu'] and not skip_pgbackrest
