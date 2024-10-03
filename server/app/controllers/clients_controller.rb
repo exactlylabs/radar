@@ -241,7 +241,7 @@ class ClientsController < ApplicationController
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
     @client.ip = request.ip
-    @client.network_interfaces = JSON.parse(params[:network_interfaces]) unless params[:network_interfaces].nil?
+    @client.network_interfaces = params[:network_interfaces]
     @client.os_version = params[:os_version]
     @client.hardware_platform = params[:hardware_platform]
     if !params[:version].nil?
@@ -256,9 +256,7 @@ class ClientsController < ApplicationController
       end
       @client.client_version_id = version_id
     end
-    if @client.test_scheduled_at.nil?
-      @client.schedule_next_test!
-    end
+
     ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
@@ -871,7 +869,14 @@ class ClientsController < ApplicationController
   end
 
   def authenticate_client!
-    @client = Client.find_by_unix_user(params[:id])&.authenticate_secret(params[:secret])
+    client_id = params[:id]
+    secret = params[:secret]
+
+    if request.authorization.present?
+      _, token = request.authorization.split("ClientToken ")
+      client_id, secret = Base64.decode64(token).split(":")
+    end
+    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(secret)
     if !@client
       head(403)
     end
