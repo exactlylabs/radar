@@ -6,14 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net"
 	"net/http"
-	"net/url"
 	"runtime"
-	"strings"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/agent"
@@ -159,20 +156,20 @@ func (c *RadarClient) sendPong() {
 
 func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverURL, c.clientID)
-	form := url.Values{}
-	form.Add("secret", c.secret)
-	form.Add("version", meta.Version)
-	form.Add("distribution", meta.Distribution)
-	form.Add("watchdog_version", meta.WatchdogVersion)
-	form.Add("os_version", runtime.GOOS)
-	form.Add("hardware_platform", runtime.GOARCH)
-	form.Add("service_first_ping", fmt.Sprintf("%t", firstPing))
-	ifaces, err := json.Marshal(meta.NetInterfaces)
-	if err != nil {
-		return nil, errors.Wrap(err, "marshalling NetInterfaces failed").WithMetadata(errors.Metadata{"interfaces": fmt.Sprintf("%v", meta.NetInterfaces)})
+	data := map[string]any{
+		"version":            meta.Version,
+		"distribution":       meta.Distribution,
+		"watchdog_version":   meta.WatchdogVersion,
+		"os_version":         runtime.GOOS,
+		"hardware_platform":  runtime.GOARCH,
+		"service_first_ping": fmt.Sprintf("%t", firstPing),
+		"network_interfaces": meta.NetInterfaces,
 	}
-	form.Add("network_interfaces", string(ifaces))
-	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, strings.NewReader(form.Encode()))
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, bytes.NewReader(dataBytes))
 	if err != nil {
 		return nil, errors.W(err)
 	}
@@ -187,7 +184,7 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, err
 	}
 	firstPing = false
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading response")
 	}
@@ -341,7 +338,7 @@ func (c *RadarClient) AssignPodToAccount(accountToken string, network *agent.Net
 		return nil, errors.W(err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.W(err)
 	}

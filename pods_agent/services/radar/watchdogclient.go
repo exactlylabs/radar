@@ -1,13 +1,12 @@
 package radar
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
@@ -206,10 +205,11 @@ func (c *RadarWatchdogClient) requestSync() {
 
 func (c *RadarWatchdogClient) WatchdogPing(data watchdog.WatchdogSync, token *string) (*watchdog.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverURL, c.clientID)
-	form := url.Values{}
-	form.Add("secret", c.secret)
-	form.Add("version", data.Version)
-	req, err := NewRequest("POST", apiUrl, c.clientID, c.secret, strings.NewReader(form.Encode()))
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	req, err := NewRequest("POST", apiUrl, c.clientID, c.secret, bytes.NewReader(dataBytes))
 	if err != nil {
 		return nil, errors.W(err)
 	}
