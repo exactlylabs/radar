@@ -9,7 +9,7 @@ class WatchdogVersionsController < ApplicationController
             head(404)
             return
         end
-        signed = (params[:signed] || "false") == "true"
+        signed = params[:signed] == "true"
         blob = signed ? v.signed_binary : v.binary
         response.headers["Content-Type"] = blob.content_type
         response.headers["Content-Disposition"] = "attachment; filename=#{blob.filename}"

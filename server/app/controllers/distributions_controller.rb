@@ -7,7 +7,7 @@ class DistributionsController < ApplicationController
     if !@dist
       head(404)
     else
-      signed = (params[:signed] || "false") == "true"
+      signed = params[:signed] == "true"
       blob = signed ? @dist.signed_binary : @dist.binary
       response.headers["Content-Type"] = blob.content_type
       response.headers["Content-Disposition"] = "attachment; filename=#{blob.filename}"
