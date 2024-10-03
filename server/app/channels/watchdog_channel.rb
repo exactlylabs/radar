@@ -173,7 +173,7 @@
     if self.client.debug_enabled? && !data[:tailscale_connected]
       enable_tailscale(self.client.active_tailscale_key)
     end
-    self.connection_status_report("payload" => data["connections_status"])
+    self.connection_status_report({"payload" => data["connections_status"]})
 
     # Compare the registered SSIDs with what we have internally:
     #  - Ask it to forget any registered SSID that isn't registered in the (client, location) set
@@ -213,6 +213,7 @@
 
   def connection_status_report(data)
     connection = self.client.pod_connection
+    Sentry.set_context("Watchdog Message", data)
     wlan_data = data["payload"]["wlan"]
     eth_data = data["payload"]["ethernet"]
     connection.update!(

@@ -536,7 +536,7 @@ class Client < ApplicationRecord
     active_connections = nil
     default_interface = pod_network_interfaces.where(default: true).first
     active_connections = default_interface.wireless ? 'Wi-Fi' : 'Wired' if default_interface.present?
-    if active_connections != 'Wi-Fi' && pod_connection.present? && pod_connection.wlan_status == :connected
+    if active_connections != 'Wi-Fi' && pod_connection.present? && pod_connection.wlan_connected_with_internet?
       active_connections = active_connections.present? ? "#{active_connections} & Wi-Fi" : 'Wi-Fi'
     end
     active_connections
@@ -778,6 +778,10 @@ class Client < ApplicationRecord
 
   def account_measurements
     measurements.where(account_id: account_id)
+  end
+
+  def wlan_interface
+    pod_network_interfaces.where(wireless: true).first
   end
 
   private
