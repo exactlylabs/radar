@@ -1,0 +1,82 @@
+services:
+  app:
+    image: grafana/grafana:10.1.5
+    entrypoint: ["/usr/local/bin/load-swarm-secrets", "/run.sh"]
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel, marcusolsson-treemap-panel, grafana-polystat-panel, grafana-x-ray-datasource, nline-plotlyjs-panel
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=db-01.radartoolkit.com
+      - GF_DATABASE_USER=grafana
+      - GF_DATABASE_NAME=grafana
+      - GF_AUTH_GOOGLE_ENABLED=true
+      - GF_AUTH_GOOGLE_ALLOW_SIGN_UP=true
+      - GF_AUTH_GOOGLE_CLIENT_ID=634388591916-coojhqjrlfpfr15d42plpqu0fq7cghf8.apps.googleusercontent.com
+      - GF_AUTH_GOOGLE_SCOPES=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+      - GF_AUTH_GOOGLE_AUTH_URL=https://accounts.google.com/o/oauth2/auth
+      - GF_AUTH_GOOGLE_TOKEN_URL=https://oauth2.googleapis.com/token
+      - GF_AUTH_GOOGLE_API_URL=https://www.googleapis.com/oauth2/v1/userinfo
+      - GF_AUTH_GOOGLE_ALLOWED_DOMAINS=radartoolkit.com exactlylabs.com
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=smtp.postmarkapp.com:587
+      - GF_SMTP_USER=PM-T-outbound-e06NU5Lmj16jyyKgokKHC9
+      - GF_SERVER_DOMAIN=grafana.apps.radartoolkit.com
+      - GF_SERVER_ROOT_URL=https://%(domain)s/
+
+    secrets:
+      - source: GRAFANA_DB_PASSWORD
+        target: GF_DATABASE_PASSWORD
+      - source: GRAFANA_GOOGLE_SSO_SECRET
+        target: GF_AUTH_GOOGLE_CLIENT_SECRET
+      - source: GRAFANA_SMTP_PASSWORD
+        target: GF_SMTP_PASSWORD
+    networks:
+      - traefik_public
+    volumes:
+      - grafana-data:/var/lib/grafana
+    configs:
+      - source: load-secrets
+        target: /usr/local/bin/load-swarm-secrets
+        mode: 0555
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.network == aws
+      resources:
+        limits:
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana-app.rule=Host(`grafana.apps.radartoolkit.com`) || Host(`grafana.apps.exactlylabs.com`)"
+        - "traefik.http.services.grafana-app.loadbalancer.server.port=3000"
+        - "traefik.http.routers.grafana-app.entrypoints=web,websecure"
+        - "traefik.http.routers.grafana-app.tls.certresolver=myresolver"
+        - "traefik.http.middlewares.forward-headers.headers.sslredirect=true"
+        - "traefik.http.middlewares.forward-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+        - "traefik.http.middlewares.ssl-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.ssl-redirect.redirectscheme.permanent=true"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.regex=^https://grafana.apps.exactlylabs.com/(.*)"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.replacement=https://grafana.apps.radartoolkit.com/$${1}"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.permanent=true"
+        - "traefik.http.routers.grafana-app.middlewares=ssl-redirect@swarm,forward-headers@swarm,grafana-redirect@swarm"
+
+networks:
+  traefik_public:
+    external: true
+
+configs:
+  load-secrets:
+    template_driver: golang
+    file: ./configs/load-swarm-secrets
+
+secrets:
+  GRAFANA_DB_PASSWORD:
+    external: true
+  GRAFANA_GOOGLE_SSO_SECRET:
+    external: true
+  GRAFANA_SMTP_PASSWORD:
+    external: true
+
+volumes:
+  grafana-data:
+
