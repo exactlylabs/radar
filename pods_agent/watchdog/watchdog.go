@@ -183,7 +183,9 @@ func (w *Watchdog) handleSystemEvent(event SystemEvent) {
 			log.Println(err)
 			return
 		}
-		w.cli.ReportConnectionStatus(status)
+		if w.cli.Connected() {
+			w.cli.ReportConnectionStatus(status)
+		}
 
 	case LoginDetected:
 		evt := event.Data.(LoginEvent)
@@ -471,16 +473,17 @@ func (w *Watchdog) getConnectionsStatus() (ConnectionsStatus, error) {
 	}
 	ethIface := ifaces.FindByType(network.Ethernet)
 	wlanIface := ifaces.FindByType(network.Wlan)
-
-	wifiInfo, err := w.wlanCli.ConnectionStatus()
-	if err != nil && !errors.Is(err, wifi.ErrNotConnected) {
-		return status, errors.W(err)
+	if w.wlanCli != nil {
+		wifiInfo, err := w.wlanCli.ConnectionStatus()
+		if err != nil && !errors.Is(err, wifi.ErrNotConnected) {
+			return status, errors.W(err)
+		}
+		status.Wlan.SSID = wifiInfo.SSID
+		status.Wlan.Channel = wifiInfo.Channel
+		status.Wlan.Frequency = wifiInfo.Frequency
+		status.Wlan.LinkSpeed = wifiInfo.TxSpeed
+		status.Wlan.SignalStrength = wifiInfo.Signal
 	}
-	status.Wlan.SSID = wifiInfo.SSID
-	status.Wlan.Channel = wifiInfo.Channel
-	status.Wlan.Frequency = wifiInfo.Frequency
-	status.Wlan.LinkSpeed = wifiInfo.TxSpeed
-	status.Wlan.SignalStrength = wifiInfo.Signal
 
 	if wlanIface != nil {
 		if wlanDetails := wlanIface.Details(); wlanDetails != nil {

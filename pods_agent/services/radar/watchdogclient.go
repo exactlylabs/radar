@@ -205,7 +205,12 @@ func (c *RadarWatchdogClient) requestSync() {
 
 func (c *RadarWatchdogClient) WatchdogPing(data watchdog.WatchdogSync, token *string) (*watchdog.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverURL, c.clientID)
-	dataBytes, err := json.Marshal(data)
+	formData := map[string]any{
+		"version": data.Version,
+		"id":      c.clientID,
+		"secret":  c.secret,
+	}
+	dataBytes, err := json.Marshal(formData)
 	if err != nil {
 		return nil, errors.W(err)
 	}
@@ -215,9 +220,8 @@ func (c *RadarWatchdogClient) WatchdogPing(data watchdog.WatchdogSync, token *st
 	}
 	req.Header.Add("Accept", "application/json")
 	if token != nil {
-		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *token))
+		req.Header.Set("Authorization", fmt.Sprintf("Token %s", *token))
 	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": req.URL, "method": req.Method})
