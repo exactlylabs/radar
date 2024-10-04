@@ -220,6 +220,17 @@ class LocationTest < ActiveSupport::TestCase
     assert pod1.test_requested?
   end
 
+  test "when data cap is above max, but period is due, expect it to be reset" do
+    loc = locations(:empty_location)
+    old_period = 1.month.ago
+    loc.update(data_cap_max_usage: 1000.0, data_cap_current_usage: 900.0, data_cap_current_period: old_period, data_cap_periodicity: :monthly)
+
+    Location.refresh_outdated_data_usage!
+    loc.reload
+    assert 0.0, loc.data_cap_current_usage
+    assert (old_period + 1.month).at_end_of_month, loc.data_cap_current_period
+  end
+
   test "when in scheduling restriction, expect not scheduled" do
     loc = locations(:empty_location)
     pod1 = clients(:pod1)

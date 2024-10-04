@@ -120,7 +120,7 @@ module Schedulable extend ActiveSupport::Concern
     def refresh_outdated_data_usage!
       self.where_outdated_data_cap.each do |obj|
         obj.update(
-          data_cap_current_period: obj.next_data_cap_period(self.data_cap_current_period || Time.current),
+          data_cap_current_period: obj.next_data_cap_period(obj.data_cap_current_period || Time.current),
           data_cap_current_usage: 0.0
         )
       end
