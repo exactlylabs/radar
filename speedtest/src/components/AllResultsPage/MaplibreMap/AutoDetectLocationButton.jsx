@@ -16,7 +16,6 @@ export default function AutoDetectLocationButton({useLocation}) {
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
-          console.log('Latitude: ' + lat + ' Longitude: ' + lng);
           useLocation({lat, lng});
           setLoading(false);
         },
