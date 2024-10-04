@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import ReactDOM from 'react-dom/client';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -6,11 +6,16 @@ import {VECTOR_TILES_URL} from "../../../utils/leaflet";
 import {
   DEFAULT_DOWNLOAD_FILTER_HIGH,
   DEFAULT_DOWNLOAD_FILTER_LOW,
-  DEFAULT_DOWNLOAD_FILTER_MID, DEFAULT_DOWNLOAD_FILTER_NONE
+  DEFAULT_DOWNLOAD_FILTER_MID, DEFAULT_DOWNLOAD_FILTER_NONE, NEW_SPEED_HIGH, NEW_SPEED_LOW, NEW_SPEED_MEDIUM
 } from "../../../utils/colors";
 import ConfigContext from "../../../context/ConfigContext";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import MyPopup from "../MyPopup";
+import CustomModal from "../../common/modals/CustomModal";
+import FTUEMapModal from "../../common/modals/FTUEMapModal";
+import RecentTestTooltip from "../../common/tooltips/RecentTestTooltip";
+import AutoDetectLocationButton from "./AutoDetectLocationButton";
+import ClassificationsModal from "../../common/modals/ClassificationsModal";
 
 const popupOptions = {
   offset: [20, -28],
@@ -30,6 +35,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+
+  const [ftueModalOpen, setFtueModalOpen] = useState(false);
+  const [classificationsModalOpen, setClassificationsModalOpen] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
@@ -57,7 +66,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       zoom: 7
     });
 
-    map.current.addControl(new maplibregl.NavigationControl());
+    map.current.addControl(new maplibregl.NavigationControl({showCompass: false}), 'top-right');
 
     map.current.on('load', () => {
       // Add vector tile source and layer here
@@ -84,11 +93,11 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           'circle-color': [
             'case',
             ['>=', ['get', 'connection_quality'], 2],
-            DEFAULT_DOWNLOAD_FILTER_HIGH, // Color for served
+            NEW_SPEED_HIGH, // Color for served
             ['>=', ['get', 'connection_quality'], 1],
-            DEFAULT_DOWNLOAD_FILTER_MID, // Color for underserved
+            NEW_SPEED_MEDIUM, // Color for underserved
             ['>=', ['get', 'connection_quality'], 0],
-            DEFAULT_DOWNLOAD_FILTER_LOW, // Color for unserved
+            NEW_SPEED_LOW, // Color for unserved
             // Default color for all other cases
             DEFAULT_DOWNLOAD_FILTER_NONE
           ],
@@ -132,11 +141,29 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     else return `calc(${maxHeight} - 70px - 173px - 53px)`;
   }
 
+  const closeFTUEModal = () => { setFtueModalOpen(false); }
+  const closeClassificationsModal = () => { setClassificationsModalOpen(false); }
+
+  const useAutoLocate = ({lat, lng}) => {
+    map.current.flyTo({center: [lng, lat], zoom: 12});
+  }
+
   return (
-    <div id={'speedtest--all-results-page--map-container'}
-         ref={mapContainer}
-         style={{height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden'}}
-    ></div>
+    <>
+      <div id={'speedtest--all-results-page--map-container'}
+           ref={mapContainer}
+           style={{height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden'}}
+      >
+        <AutoDetectLocationButton useLocation={useAutoLocate}/>
+      </div>
+      <CustomModal isOpen={ftueModalOpen} closeModal={closeFTUEModal}>
+        <FTUEMapModal closeModal={closeFTUEModal}/>
+      </CustomModal>
+      <CustomModal isOpen={classificationsModalOpen} closeModal={closeClassificationsModal}>
+        <ClassificationsModal closeModal={closeClassificationsModal}/>
+      </CustomModal>
+      { showTooltip && <RecentTestTooltip /> }
+    </>
   )
 }
 
