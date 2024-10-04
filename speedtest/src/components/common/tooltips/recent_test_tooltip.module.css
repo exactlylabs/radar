@@ -1,0 +1,43 @@
+.tooltip {
+  padding: 1rem 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  outline: solid 1px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  ::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    transform: translateX(-50%) rotate(45deg);
+    bottom: -5px;
+    left: 50%;
+    border-radius: 3px;
+    border-right: solid 1px rgba(0, 0, 0, 0.1);
+    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.title {
+  font-family: MulishBold, Mulish, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #110E4C;
+  margin: 0 auto .5rem;
+  text-align: center;
+}
+
+.subtitle {
+  font-family: Mulish, sans-serif;
+  font-size: 0.9375rem;
+  color: #6D6A94;
+  margin: 0 auto;
+  text-align: center;
+}

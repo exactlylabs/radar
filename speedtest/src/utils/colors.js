@@ -83,3 +83,8 @@ export const WIDGET_SECONDARY_BUTTON_COLOR = DEFAULT_GRAY_BUTTON_TEXT_COLOR;
 export const WIDGET_SECONDARY_BUTTON_BOX_SHADOW = 'rgba(122, 121, 146, 0.05)';
 export const WIDGET_MODAL_BOX_SHADOW = 'rgba(17, 14, 76, 0.05)';
 export const WIDGET_MODAL_OUTLINE = 'rgba(109, 106, 148, 0.1)';
+
+// NEW MAP STYLES
+export const NEW_SPEED_HIGH = 'rgba(49, 179, 108, 0.9)';
+export const NEW_SPEED_MEDIUM = 'rgba(246, 171, 82, 0.9)';
+export const NEW_SPEED_LOW = 'rgba(229, 75, 75, 0.9)';

@@ -7,3 +7,31 @@
   border-radius: 12px;
   outline: solid 1px rgba(17 14 76 / 35%);
 }
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group:not(:empty) {
+  border: solid 1px rgba(0, 0, 0, .1);
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
+  background-color: white;
+}
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group {
+  margin: 42px 10px 0 0;
+  border-radius: 0 0 8px 8px;
+}
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group > .maplibregl-ctrl-zoom-out  > span.maplibregl-ctrl-icon {
+  background-image: url("./assets/map-minus.svg");
+}
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group > .maplibregl-ctrl-zoom-out:hover {
+  background-color: rgba(236, 236, 236, 1);
+  border-radius: 0 0 8px 8px;
+}
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group > .maplibregl-ctrl-zoom-in  > span.maplibregl-ctrl-icon {
+  background-image: url("./assets/map-plus.svg");
+}
+
+.maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group > .maplibregl-ctrl-zoom-in:hover {
+  background-color: rgba(236, 236, 236, 1);
+}

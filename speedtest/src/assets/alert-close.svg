@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>close_icon copy 2@1x</title>
+    <g id="Explore-the-map" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Explore-the-Map---Filters-(Location-access-error)" transform="translate(-1336, -106)" fill="#3F3C70">
+            <g id="Group-53-Copy-19" transform="translate(1013, 94)">
+                <g id="close_icon" transform="translate(323, 12)">
+                    <path d="M6.1767767,-0.176776695 C6.59099026,-0.176776695 6.9267767,0.159009742 6.9267767,0.573223305 L6.9267767,11.0732233 C6.9267767,11.4874369 6.59099026,11.8232233 6.1767767,11.8232233 C5.76256313,11.8232233 5.4267767,11.4874369 5.4267767,11.0732233 L5.4267767,0.573223305 C5.4267767,0.159009742 5.76256313,-0.176776695 6.1767767,-0.176776695 Z" id="Rectangle" transform="translate(6.1768, 5.8232) rotate(-225) translate(-6.1768, -5.8232)"></path>
+                    <path d="M6,3.15303339e-13 C6.41421356,3.15227249e-13 6.75,0.335786438 6.75,0.75 L6.75,11.25 C6.75,11.6642136 6.41421356,12 6,12 C5.58578644,12 5.25,11.6642136 5.25,11.25 L5.25,0.75 C5.25,0.335786438 5.58578644,3.15354066e-13 6,3.15303339e-13 Z" id="Rectangle-Copy" transform="translate(6, 6) rotate(-135) translate(-6, -6)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

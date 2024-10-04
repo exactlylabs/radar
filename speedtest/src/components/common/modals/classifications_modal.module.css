@@ -1,0 +1,23 @@
+.bulletsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  margin-top: -.5rem;
+  margin-inline: auto;
+}
+
+.subtextBullet {
+  font-family: Mulish, sans-serif;
+  font-size: .875rem;
+  color: #6D6A94;
+  margin: 0;
+}
+
+.subtextBullet > span {
+  font-family: Mulish, sans-serif;
+  font-variation-settings: 'wght' 600;
+  font-size: .875rem;
+  color: #6D6A94;
+}

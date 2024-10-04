@@ -1,0 +1,21 @@
+.mainImage {
+  width: 95%;
+  max-width: 290px;
+  aspect-ratio: 1.7;
+  margin: 0 auto;
+}
+
+.header {
+  font-family: 'MulishBold', sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 1rem auto .5rem;
+}
+
+.subtext {
+  font-family: 'Mulish', sans-serif;
+  font-size: .9375rem;
+  margin: 0 auto 2rem;
+  line-height: 1.467;
+  max-width: 360px;
+}
