@@ -14,6 +14,8 @@ backblaze:
   endpoint: https://s3.us-west-004.backblazeb2.com
   bucket: <%= ENV["BUCKET_NAME"] %>
   region: "us-west-004"
+  retry_base_delay: 0.5
+  retry_limit: 5
 
 # Remember not to checkin your GCS keyfile to a repository
 google:

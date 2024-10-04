@@ -5,4 +5,8 @@ Sentry.init do |config|
   config.traces_sample_rate = 0.0
 
   config.enabled_environments = %w[production staging]
+
+  config.excluded_exceptions += [
+    'AWS::S3::Errors::Http408Error', 'AWS::S3::Errors::InternalError', 'AWS::S3::Errors::SlowDown', 'Seahorse::Client::NetworkingError' # No need to alert about Backblaze API failing.
+  ]
 end
