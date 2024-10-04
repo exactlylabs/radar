@@ -873,8 +873,10 @@ class ClientsController < ApplicationController
     secret = params[:secret]
 
     if request.authorization.present?
-      _, token = request.authorization.split("ClientToken ")
-      client_id, secret = Base64.decode64(token).split(":")
+      token_type, token = request.authorization.split(" ")
+      if token_type == "ClientToken"
+        client_id, secret = Base64.decode64(token).split(":")
+      end
     end
     @client = Client.find_by_unix_user(client_id)&.authenticate_secret(secret)
     if !@client
