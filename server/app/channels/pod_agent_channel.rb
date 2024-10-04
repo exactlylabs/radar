@@ -81,6 +81,8 @@ class PodAgentChannel < ApplicationCable::Channel
         default: interface["default"],
       }, unique_by: [:client_id, :name], returning: nil)
     end
+    net_names = data["net_interfaces"].map {|n| n["name"]}
+    self.client.pod_network_interfaces.where.not(name: net_names).delete_all
 
     self.client.update(
       raw_version:  data["version"],
