@@ -17,8 +17,8 @@ class MethodChannelNetworkConnectionInfo extends NetworkConnectionInfoPlatform {
     final networkConnectionInfo =
         await methodChannel.invokeMethod<String>('getNetworkConnectionInfo');
     if (networkConnectionInfo != null) {
-      final jsonResponse = jsonDecode(networkConnectionInfo) as Map<String, dynamic>;
-      return ConnectionInfo.fromJson(jsonResponse);
+      final jsonResponse = jsonDecode(networkConnectionInfo) as Map<String, dynamic>?;
+      return jsonResponse != null ? ConnectionInfo.fromJson(jsonResponse) : null;
     } else {
       return null;
     }
@@ -29,8 +29,8 @@ class MethodChannelNetworkConnectionInfo extends NetworkConnectionInfoPlatform {
     final networkConnectionInfo =
         await methodChannel.invokeMethod<String>('getCellularNetworkConnectionInfo');
     if (networkConnectionInfo != null) {
-      final jsonResponse = jsonDecode(networkConnectionInfo) as Map<String, dynamic>;
-      return ConnectionInfo.fromJson(jsonResponse);
+      final jsonResponse = jsonDecode(networkConnectionInfo) as Map<String, dynamic>?;
+      return jsonResponse != null ? ConnectionInfo.fromJson(jsonResponse) : null;
     } else {
       return null;
     }
