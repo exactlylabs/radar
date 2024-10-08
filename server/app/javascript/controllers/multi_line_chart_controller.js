@@ -22,18 +22,19 @@ export default class MultiLineChartController extends ChartController {
                             .map(i => JSON.parse(i))
       .map(i => ({label: i.label.length > 12 ? i.label.substring(0, 12) + '...' : i.label, hex: i.hex}));
     this.usesQueryIntervalValue = Object.values(QUERY_INTERVALS).includes(this.element.dataset.queryTimeInterval);
+    this.chartData = [];
     super.connect();
     this.responsiveMaxHeight = 220;
   }
-  
+
   getFirstDate() {
     return Number(this.chartData.values().next().value[0].x);
   }
-  
+
   getLastDate() {
     return Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x);
   }
-  
+
   getYValues() {
     let yValues = [];
     this.chartData.forEach((value, _) => {
@@ -41,7 +42,11 @@ export default class MultiLineChartController extends ChartController {
     });
     return yValues;
   }
-  
+
+  getXValues() {
+    return this.chartData.values().next().value.map(entry => entry.x);
+  }
+
   prepareData(rawData) {
     if(!this.isCompareChart) {
       const data = new Map();
@@ -59,10 +64,13 @@ export default class MultiLineChartController extends ChartController {
         });
       });
       this.chartData = data;
+    } else {
+      this.chartData = this.getChartDataForComparison(rawData)
     }
+    this.chartData = this.downsample(this.chartData, "decimate-minmax");
     this.adjustedData = this.adjustData(this.chartData);
   }
-  
+
   adjustData(points) {
     const adjustedDataByHex = new Map();
     points.forEach((linePoints, lineHex) => {
@@ -71,7 +79,7 @@ export default class MultiLineChartController extends ChartController {
     });
     return adjustedDataByHex;
   }
-  
+
   getChartDataForComparison(rawData) {
     let lastHexUsed = 0;
     const data = new Map();
@@ -96,16 +104,26 @@ export default class MultiLineChartController extends ChartController {
       }
       if(!timestamps.includes(x)) timestamps.push(x);
     });
-    data.forEach((linePoints, _) => {
-      if(timestamps.length > linePoints.length) {
-        timestamps.forEach(timestamp => {
-          if(!linePoints.find(linePoint => linePoint.x === timestamp)) {
-            linePoints.push({x: timestamp, y: 0});
-          }
-        });
-        linePoints.sort((a, b) => a.x - b.x);
-      }
+    timestamps.sort();
+
+    // Zip the timestamps array into each line object
+    // The resulting data object will have all lines under the same timestamp axis, with gaps filled using forward-fill rule.
+    data.forEach((linePoints, key, _) => {
+      let merged = [];
+      let lineIndex = 0;
+
+      timestamps.forEach(timestamp  => {
+        if (lineIndex < linePoints.length && Number(linePoints[lineIndex].x) == Number(timestamp)) {
+          merged.push(linePoints[lineIndex]);
+          lineIndex++;
+        } else {
+          const lastValue = lineIndex > 0 ? linePoints[lineIndex-1].y : 0;
+          merged.push({x: timestamp, y: lastValue});
+        }
+      });
+      data.set(key, merged);
     });
+
     if(this.chartId === 'compareDataUsage') {
       data.forEach((linePoints, hex) => {
         data.set(hex, linePoints.map(lp => ({x: lp.x, y: this.convertToPreferredUnit(lp.y)})));
@@ -113,7 +131,7 @@ export default class MultiLineChartController extends ChartController {
     }
     return data;
   }
-  
+
   plotChart() {
     this.clearCanvas();
     for(let [hex, points] of this.adjustedData.entries()) {
@@ -124,7 +142,7 @@ export default class MultiLineChartController extends ChartController {
       }
     }
   }
-  
+
   toggleLine(e) {
     const chartId = e.detail.chartId;
     if(chartId !== this.chartId) return;
@@ -137,21 +155,21 @@ export default class MultiLineChartController extends ChartController {
     this.adjustedData = this.adjustData(this.chartData);
     this.plotChart();
   }
-  
+
   showTooltip(mouseX, mouseY) {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
     const firstEntry = this.adjustedData.entries().next();
     const xDifs = firstEntry.value[1].map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(firstEntry.value[1], index) - mouseX));
-    const minDif = Math.min(...xDifs);
+    const minDif = this.getMin(xDifs);
     let minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
-    
+
     const VERTICAL_DYNAMIC_OFFSET = 12;
     const TOPMOST_Y_COORDINATE = 5;
     const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
     const TOOLTIP_TITLE_TOP_PADDING = 20;
-    
+
     let yValues = [];
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
@@ -168,14 +186,14 @@ export default class MultiLineChartController extends ChartController {
         yValue = currentColorMinDifEntry.ys[0];
       } else {
         const yDifs = currentColorMinDifEntry.ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
-        const minDif = Math.min(...yDifs);
+        const minDif = this.getMin(yDifs);
         const minDifIndex = yDifs.indexOf(minDif);
         if(minDifIndex < 0) return;
         yCoordinate = this.getYCoordinateFromYValue(currentColorMinDifEntry.ys[minDifIndex]);
         yValue = currentColorMinDifEntry.ys[minDifIndex];
       }
       yValues.push(yValue);
-      
+
       this.drawDotOnLine(xCoordinate, yCoordinate, hex);
       i++;
     }
@@ -187,11 +205,11 @@ export default class MultiLineChartController extends ChartController {
     if(this.isCompareChart && hasEllipsis) tooltipWidth = 250;
     else if(hasEllipsis) tooltipWidth = 210;
     else tooltipWidth = 190;
-    
+
     const tooltipTitle = this.formatTime(new Date(Number(minDifIndexEntry.x)));
     const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
     if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
-    
+
     i = 0;
     const X_SIDE_PADDING = 12;
     const DOT_TEXT_SPACING = 8;
@@ -203,10 +221,10 @@ export default class MultiLineChartController extends ChartController {
       if(lineWidth > tooltipWidth) tooltipWidth = lineWidth;
       i++;
     }
-    
+
     const tooltipHeight = this.getDynamicTooltipHeight(yValues.length);
     let tooltipTopYCoordinate = mouseY - tooltipHeight / 2;
-    
+
     if(xCoordinate + offset + tooltipWidth > this.canvasWidth) {
       const tooltipEndX = xCoordinate + offset + tooltipWidth;
       const diff = tooltipEndX - this.canvasWidth + 12;
@@ -218,11 +236,11 @@ export default class MultiLineChartController extends ChartController {
     } else {
       xCoordinate += offset;
     }
-    
+
     if(xCoordinate < 0) {
       xCoordinate = mouseX;
     }
-    
+
     const helperTopYCoordinate = this.canvasHeight - HELPER_HEIGHT;
     if(tooltipTopYCoordinate + tooltipHeight > helperTopYCoordinate) {
       const tooltipEndY = tooltipTopYCoordinate + tooltipHeight;
@@ -231,11 +249,11 @@ export default class MultiLineChartController extends ChartController {
     } else if (tooltipTopYCoordinate < 0) {
       tooltipTopYCoordinate = TOPMOST_Y_COORDINATE;
     }
-    
+
     this.createTooltipShape(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight);
     this.ctx.fillText(tooltipTitle, xCoordinate + offset, tooltipTopYCoordinate + TOOLTIP_TITLE_TOP_PADDING);
     this.drawTooltipDivingLine(xCoordinate, xCoordinate + tooltipWidth, tooltipTopYCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
-    
+
     i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
       if(i >= MAX_TOOLTIP_LINES) break;
@@ -252,7 +270,7 @@ export default class MultiLineChartController extends ChartController {
       xPixel += DOT_SIZE + DOT_TEXT_SPACING;
       const tooltipLineText = this.entitiesAndHexes.find(e => e.hex === hex).label;
       this.ctx.fillText(tooltipLineText, xPixel, TEXT_Y_COORDINATE);
-      
+
       this.ctx.font = '13px MulishSemiBold';
       this.ctx.fillStyle = 'black';
       // start from right to left to force side padding to be contemplated
@@ -264,7 +282,7 @@ export default class MultiLineChartController extends ChartController {
     this.ctx.font = '16px Mulish';
     this.ctx.stroke();
   }
-  
+
   getDynamicTooltipHeight(yValuesLength = 0) {
     const TOOLTIP_HEADER_HEIGHT = 32;
     const VERTICAL_PADDING = 16;
@@ -274,13 +292,13 @@ export default class MultiLineChartController extends ChartController {
     if(rowCountUsed > MAX_VISIBLE_ROWS) return TOOLTIP_HEADER_HEIGHT + VERTICAL_PADDING + ROW_SPACING * MAX_VISIBLE_ROWS;
     return TOOLTIP_HEADER_HEIGHT + VERTICAL_PADDING + ROW_SPACING * rowCountUsed;
   }
-  
+
   getXValueAtIndex(index) {
     const firstEntryValues = this.adjustedData.entries().next().value[1];
     if(index === -1) return firstEntryValues[firstEntryValues.length - 1].x
     return firstEntryValues[index].x;
   }
-  
+
   // incoming value is in bytes, use this.preferredUnit to convert to MB, GB, etc.
   convertToPreferredUnit(value) {
     value = parseFloat(value);
@@ -294,5 +312,16 @@ export default class MultiLineChartController extends ChartController {
       default:
         return value;
     }
+  }
+
+  downsample(data, method="decimate") {
+    if (data instanceof Map) {
+      data.forEach((v, k, map) => {
+        map[k] = super.downsample(v, method)
+      })
+      return data
+    }
+
+    return super.downsample(data, method)
   }
 }
