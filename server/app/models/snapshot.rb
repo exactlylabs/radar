@@ -52,7 +52,7 @@ class Snapshot < ApplicationRecord
 
           last_snap = cached_snapshot[aggregate]
           if last_snap.nil? || last_snap.event.timestamp > event["timestamp"]
-            last_snap = Snapshot.preload(:event).from_aggregate(aggregate).prior_to(event["timestamp"]).ordered_by_event.last
+            last_snap = Snapshot.preload(:event).from_aggregate(aggregate).prior_to_or_at(event["timestamp"]).ordered_by_event.last
           end
           state = last_snap&.state || {}
           event["data"] = JSON.parse(event["data"]).with_indifferent_access
@@ -101,7 +101,7 @@ class Snapshot < ApplicationRecord
           else
             applier = config[:observed_fields].find { |x| (x[:event].is_a?(Hash) && x[:event].has_value?(event.name)) || x[:event] == event.name }&.[](:applier)
           end
-          last_snap = cached_snapshot[aggregate] || Snapshot.from_aggregate(aggregate).prior_to(event.timestamp).ordered_by_event.last
+          last_snap = cached_snapshot[aggregate] || Snapshot.from_aggregate(aggregate).prior_to_or_at(event.timestamp).ordered_by_event.last
           state = last_snap&.state || {}
 
           aggregate.send(applier, state, event) if applier.present?

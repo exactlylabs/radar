@@ -74,61 +74,28 @@ class OnlineClientCountHandler
   end
 
   def handle_client_event!(event)
-    if event["snapshot_id"].nil?
-      return
-    end
-    last_event = @last_clients_events[event["aggregate_id"]]
-    if last_event.present? && last_event["name"] == event["name"] && last_event["data"] == event["data"]
-      return
-    end
-    @last_clients_events[event["aggregate_id"]] = event
+    return if event["snapshot_id"].nil?
+    aggregate_id = event["aggregate_id"]
+    self.with_previous_pod_state(event["snapshot_state"], aggregate_id, event["timestamp"]) do |previous_state, state|
+      online_changed = state["online"] != previous_state&.fetch("online", false)
+      account_changed = state["account_id"] != previous_state&.fetch("account_id", nil)
+      location_changed = state["location_id"] != previous_state&.fetch("location_id", nil)
+      as_changed = state["autonomous_system_id"] != previous_state&.fetch("autonomous_system_id", nil)
+      current_dimension = last_projection(state["account_id"], state["autonomous_system_id"], state["location_id"])
+      if (location_changed || as_changed || account_changed) && state["online"]
+        self.new_record!(current_dimension, event, increment=1)
+        if previous_state.present?
+          previous_dimension = last_projection(previous_state["account_id"], previous_state["autonomous_system_id"], previous_state["location_id"])
+          self.new_record!(previous_dimension, event, increment=-1)
+        end
 
-    state = event["snapshot_state"]
-    last_count = last_projection(state["account_id"], state["autonomous_system_id"], state["location_id"])
-
-    case event["name"]
-    when Client::Events::CREATED
-      if state["online"]
-        self.new_record!(last_count, event, increment=1)
-      end
-
-    when Client::Events::ACCOUNT_CHANGED
-      if state["online"]
-        old_account_count = self.last_projection(event["data"]["from"], state["autonomous_system_id"], state["location_id"])
-        self.new_record!(last_count, event, increment=1)
-        if old_account_count.present?
-          self.new_record!(old_account_count, event, increment=-1)
+      elsif online_changed
+        if state["online"]
+          self.new_record!(current_dimension, event, increment=1)
+        elsif previous_state.present?
+          self.new_record!(current_dimension, event, increment=-1)
         end
       end
-
-    when Client::Events::LOCATION_CHANGED
-      if state["online"]
-        old_location_count = self.last_projection(state["account_id"], state["autonomous_system_id"], event["data"]["from"])
-        self.new_record!(last_count, event, increment=1)
-        if old_location_count.present?
-          self.new_record!(old_location_count, event, increment=-1)
-        end
-      end
-
-    when Client::Events::AS_CHANGED
-      if state["online"]
-        old_as_count = self.last_projection(state["account_id"], event["data"]["from"], state["location_id"])
-        self.new_record!(last_count, event, increment=1)
-        if old_as_count.present?
-          self.new_record!(old_as_count, event, increment=-1)
-        end
-      end
-
-    when Client::Events::WENT_ONLINE
-      return if pod_was_online?(event["aggregate_type"], event["aggregate_id"], event["timestamp"])
-      self.new_record!(last_count, event, increment=1)
-      @pods_status[event["aggregate_id"]] = true
-
-    when Client::Events::WENT_OFFLINE
-      return unless pod_was_online?(event["aggregate_type"], event["aggregate_id"], event["timestamp"])
-      self.new_record!(last_count, event, increment=-1)
-      @pods_status[event["aggregate_id"]] = false
-
     end
   end
 
@@ -357,6 +324,18 @@ class OnlineClientCountHandler
       Rails.logger.info "Insertion took #{Time.now - t} seconds"
     end
     @insertion_queue = []
+  end
+
+  # Compare states with a caching mechanism to avoid duplicated queries
+  def with_previous_pod_state(current_state, aggregate_id, timestamp)
+    @pod_state ||= {}
+    if @pod_state[aggregate_id].nil?
+      previous_event = Event.of(Client).where(aggregate_id: aggregate_id).where("timestamp < ?", timestamp).order(:timestamp => :asc, :version => :asc).last
+      @pod_state[aggregate_id] = previous_event&.snapshot&.state
+    end
+    yield @pod_state[aggregate_id], current_state
+
+    @pod_state[aggregate_id] = current_state
   end
 
 end
