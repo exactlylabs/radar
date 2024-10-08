@@ -86,7 +86,23 @@ class Client < ApplicationRecord
   scope :where_outdated_online, lambda {
     where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))
   }
-
+  scope :where_test_should_be_requested, lambda {
+    where(%{
+      online
+      AND (test_scheduled_at <= NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC') OR test_scheduled_at IS NULL) AND test_requested = false
+      AND (
+        (test_allowed_time_end IS NULL AND test_allowed_time_start IS NULL)
+        OR (
+          CASE WHEN test_allowed_time_end < test_allowed_time_start THEN
+            ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time NOT BETWEEN test_allowed_time_end AND test_allowed_time_start)
+          ELSE
+            ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time BETWEEN test_allowed_time_start AND test_allowed_time_end)
+          END
+        )
+      )
+      AND (data_cap_max_usage IS NULL OR data_cap_current_period_usage < data_cap_max_usage)
+    })
+  }
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where('location_id IS NULL') }
@@ -228,6 +244,126 @@ class Client < ApplicationRecord
     elsif saved_change_to_debug_enabled && !debug_enabled?
       WatchdogChannel.broadcast_debug_disabled(self)
       self.tailscale_auth_keys.where_active.each(&:revoke!)
+    end
+  end
+
+  def data_cap_next_period
+    return Time.current if data_cap_current_period.nil?
+
+    next_period_date = Time.current
+    if daily?
+      next_period_date = data_cap_current_period.tomorrow.at_end_of_day.to_date
+
+    elsif weekly?
+      next_period_date = data_cap_current_period.next_week.at_end_of_week.to_date
+
+    elsif monthly?
+      # For monthly expiration, use -1 if you want the last day of the month
+      # In case of a day that is higher that the current month's, we use the last day of that month
+      next_period_date = data_cap_current_period.next_month
+      day_of_month = data_cap_day_of_month
+
+      # set the day according to the day of the month
+      if day_of_month == -1 || next_period_date.end_of_month.day < day_of_month
+        day_of_month = next_period_date.end_of_month.day
+      end
+      next_period_date = next_period_date.change(day: day_of_month).to_date
+
+    elsif yearly?
+      next_period_date = data_cap_current_period.next_year.at_beginning_of_year.to_date
+
+    end
+
+    if next_period_date < Time.now
+      # Ensures cases where the data_cap_current_period is way behind, making the .next_x_period still behind today
+      next_period_date = Time.now
+    end
+    next_period_date
+  end
+
+  def self.refresh_outdated_data_usage!
+    # For each Client, reset their current period usage in case
+    # the current period is no longer valid (moved to another one)
+    Client.all.each do |c|
+      next unless c.data_cap_next_period.before?(Time.current)
+
+      c.data_cap_current_period = c.data_cap_next_period
+      c.data_cap_current_period_usage = 0.0
+      c.save!
+    end
+  end
+
+  def add_bytes!(period, byte_size)
+    Client.transaction do
+      c = Client.lock('FOR UPDATE').find(id)
+      if c.data_cap_current_period && c.data_cap_next_period&.before?(period)
+        c.data_cap_current_period = period
+        c.data_cap_current_period_usage = 0.0
+      end
+      c.data_cap_current_period_usage += byte_size
+      c.save!
+    end
+    reload(lock: true)
+  end
+
+  def next_schedule_period_end
+    t = nil
+    case scheduling_periodicity
+    when 'scheduler_hourly'
+      t = scheduling_period_end.nil? ? Time.now.at_end_of_hour : scheduling_period_end.advance(hours: 1).at_end_of_hour
+
+    when 'scheduler_daily'
+      t = scheduling_period_end.nil? ? Time.now.at_end_of_day : scheduling_period_end.next_day.at_end_of_day
+
+    when 'scheduler_weekly'
+      t = scheduling_period_end.nil? ? Time.now.at_end_of_week : scheduling_period_end.next_week.at_end_of_week
+
+    when 'scheduler_monthly'
+      t = scheduling_period_end.nil? ? Time.now.at_end_of_month : scheduling_period_end.next_month.at_end_of_the_month
+
+    end
+    if t < Time.now
+      self.scheduling_period_end = nil
+      t = next_schedule_period_end
+    end
+    t
+  end
+
+  def schedule_next_test!(force = false)
+    base_timestamp = Time.now
+    return if test_scheduled_at.present? && test_scheduled_at > base_timestamp && !force
+
+    self.scheduling_tests_in_period += 1
+    if scheduling_period_end.nil?
+      # Set it for the first time
+      self.scheduling_tests_in_period = 0
+      self.scheduling_period_end = next_schedule_period_end
+    end
+
+    if self.scheduling_tests_in_period >= scheduling_amount_per_period
+      # We finished the number of tests for this period, change it to the next one
+      self.scheduling_tests_in_period = 0
+      base_timestamp = scheduling_period_end if scheduling_period_end > base_timestamp
+      self.scheduling_period_end = next_schedule_period_end
+    elsif scheduling_period_end < Time.now
+      # It's time to set the next period
+      self.scheduling_tests_in_period = 0
+      self.scheduling_period_end = next_schedule_period_end
+    end
+
+    # If we were to split the N tests in equal parts, each test should be spaced by max_freq.
+    # Since we want randomly spaced tests, we select the next test in a range between now and the max_freq.
+    # In other words, select a time between the range (base_timestamp, base_timestamp + max_freq]
+    max_freq = (scheduling_period_end - base_timestamp) / (scheduling_amount_per_period - self.scheduling_tests_in_period)
+
+    self.test_scheduled_at = Time.at(base_timestamp + (max_freq * rand))
+    save!
+  end
+
+  def self.request_scheduled_tests!
+    Client.where_test_should_be_requested.each do |client|
+      client.test_requested = true
+      client.save!
     end
   end
 

@@ -57,6 +57,7 @@ class ProcessMeasurementJob < ApplicationJob
     measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
     measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
     measurement.save
+    measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
 
     if measurement.location.present?
       measurement.location.process_new_measurement!(measurement)
