@@ -43,9 +43,9 @@ export const QUERY_INTERVALS = {
 const MAX_STEPS = [1, 2, 5, 10, 15, 25, 50, 100];
 
 export default class ChartController extends Controller {
-  
+
   COMPARISON_HEX = ['#472118', '#960A8B', '#FC3A11', '#58396A', '#D6463E', '#307B2A', '#535FB6', '#77DFB1', '#767698', '#502628', '#EFE7DF', '#A502EF', '#B21BE4', '#88FC76', '#9FADE3', '#B403C4', '#78BCFE', '#686514', '#B2D343', '#CE87CA', '#20E92E', '#C8A3D7', '#161C6C', '#98AE22', '#A8A5CF', '#D72876', '#105F87', '#432B82', '#5462EA', '#86C625', '#9175BF', '#438F36', '#AF3BCF', '#F3ADEF', '#050044', '#5F47D3', '#E11986', '#0C7566', '#A129E0', '#43B2D6', '#A7CB09', '#0C7318', '#9A6E4F', '#81B2A6', '#AE37B2', '#D66E62', '#05F0D9', '#EC1FA4', '#4CAC54', '#F94C42'];
-  
+
   connect() {
     this.responsiveMaxHeight = 250;
     this.queryTimeInterval = this.element.dataset.queryTimeInterval || 'day';
@@ -56,14 +56,12 @@ export default class ChartController extends Controller {
     }
     this.skeleton = document.getElementById(this.element.dataset.skeletonId);
     this.lineToggler = document.getElementById(this.element.dataset.togglerId);
-    this.chartData = [];
     this.prepareInitialState();
   }
-  
+
   paintInitialChart() {
     if(this.lineToggler) this.lineToggler.style.display = 'block';
     this.skeleton.style.display = 'none';
-    this.prepareData(this.chartData);
     window.addEventListener('resize', this.loadChart.bind(this));
     this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
     this.element.addEventListener('mouseleave', this.plotChart.bind(this));
@@ -75,55 +73,99 @@ export default class ChartController extends Controller {
     this.element.addEventListener('touchcancel', this.handleTapCancelled.bind(this));
     this.loadChart();
   }
-  
+
+  loadData(onLoad) {
+    if(window.Worker) {
+      const worker = new Worker('/workers/chart_worker.js');
+      worker.postMessage(this.element.dataset.lineChartData);
+      worker.onmessage = (e) => {
+        this.prepareData(e.data);
+        onLoad()
+      }
+    } else {
+      this.prepareData(JSON.parse(this.element.dataset.lineChartData))
+      onLoad();
+    }
+  }
+
   textWidth(text = '') {
     return this.ctx.measureText(text).width;
   }
-  
+
   prepareInitialState() {
     this.parent = document.getElementById(this.element.dataset.parentId);
     new ResizeObserver(this.loadChart.bind(this)).observe(this.parent); // This will trigger the loadChart method when the parent element changes size
     this.labelSuffix = this.element.dataset.labelSuffix || '';
-    if(this.isCompareChart) {
-      if(window.Worker) {
-        const worker = new Worker('/workers/chart_worker.js');
-        worker.postMessage(this.element.dataset.lineChartData);
-        worker.onmessage = (e) => {
-          this.chartData = this.getChartDataForComparison(e.data);
-          this.paintInitialChart();
-        }
-      } else {
-        this.chartData = this.getChartDataForComparison(JSON.parse(this.element.dataset.lineChartData));
-        this.paintInitialChart();
-      }
-    } else {
-      // run the parse in a dedicated worker is available in the browser
-      if(window.Worker) {
-        const worker = new Worker('/workers/chart_worker.js');
-        worker.postMessage(this.element.dataset.lineChartData);
-        worker.onmessage = (e) => {
-          this.chartData = e.data;
-          this.paintInitialChart();
-        }
-      } else {
-        this.chartData = JSON.parse(this.element.dataset.lineChartData);
-        this.paintInitialChart();
-      }
-    }
+    this.initializeChart()
+    this.loadData(() => {
+      this.paintInitialChart();
+    });
     this.labels = [];
-    
+
     // Specific coordinates for click-drag feature
     this.mouseClickedX = null;
     this.mouseReleasedX = null;
   }
-  
+
+  downsample(data, method="decimate") {
+    if (data.length == 0) {
+      return data;
+    }
+    if (method === "decimate") {
+      return this.decimateData(data);
+    } else if (method === "decimate-minmax") {
+      return this.decimateData(data, "minmax");
+    }
+    return data;
+  }
+
+  /**
+   *
+   * Apply the Decimate downsampling algorithm.
+   * Decimate reduces the size of an array by splitting the data sub-arrays, one for each pixel.
+   * The size of the sub-arrays is the numbe of dots that would fit in a single pixel: (data.length / pixel_length)
+   * For each sub-array, this function applies a given rule:
+   *
+   * * simple:
+   *    Generate a new array of size equal to the number of pixels, where the first item of each sub-array is chosen.
+   *
+   * * minmax:
+   *    Generate a new array of size equal to twice the number of pixels, where each pixel will contain the sub-array's min/max values.
+   *
+   * @param {Array} data
+   * @param {string} rule
+   * @returns {Array}
+   */
+  decimateData(data, rule="simple") {
+    const netWidth = this.netWidth - DOT_SIZE / 2;
+    const pointsPerPixel = Math.floor(data.length / netWidth);
+    if (pointsPerPixel <= 1) {
+      return data;
+    }
+    let newData = [];
+    for (let i = 0; i < data.length; i += pointsPerPixel) {
+      if (rule == "minmax") {
+        let slice = data.slice(i, i+pointsPerPixel-1)
+        let yValues = slice.map(v => v.y);
+        const minValue = this.getMin(yValues);
+        const maxValue = this.getMax(yValues);
+        newData.push(slice[yValues.indexOf(minValue)]);
+        newData.push(slice[yValues.indexOf(maxValue)]);
+      } else {
+        newData.push(data[i]);
+      }
+    }
+
+    return newData;
+  }
+
   handleTapCancelled(e) {
     this.mouseClickedX = null;
     this.isDragging = false;
     this.dragInitialTime = null;
     this.plotChart();
   }
-  
+
   /**
    * This method is a helper method to access position of tap event in mobile devices.
    * @param e Actual triggered TouchEvent
@@ -145,7 +187,7 @@ export default class ChartController extends Controller {
     }
     return { mouseX: clientX - rect.left, mouseY: clientY - rect.top};
   }
-  
+
   getMousePosition(e) {
     const rect = this.element.getBoundingClientRect();
     return {
@@ -153,14 +195,14 @@ export default class ChartController extends Controller {
       mouseY: e.clientY - rect.top
     };
   }
-  
+
   handleMouseMove(e) {
     const { mouseX, mouseY } = this.getMousePosition(e);
     const isOffHorizontally = mouseX < this.horizontalContentStartingPixel - 1 || mouseX > this.canvasWidth - 1;
     const isOffVertically = mouseY < Y_AXIS_OFFSET / 2 || mouseY > this.canvasHeight - Y_AXIS_OFFSET * 2 - BOTTOM_LABELS_HEIGHT;
     if(isOffHorizontally || isOffVertically) {
       this.resetStyles();
-      this.plotChart();
+      // this.plotChart(); TODO: Is this needed? Apparently not.
       return;
     }
     if(this.isDragging) {
@@ -170,7 +212,7 @@ export default class ChartController extends Controller {
     }
     this.showTooltip(mouseX, mouseY);
   }
-  
+
   showVerticalDashedLine(mouseX) {
     this.resetStyles();
     this.ctx.beginPath();
@@ -182,7 +224,7 @@ export default class ChartController extends Controller {
     if(this.chartId === 'compareTotalData') return;
     this.showHelperPopup(mouseX);
   }
-  
+
   handleMouseDown(e) {
     if(this.chartId === 'compareTotalData') return;
     let xPos;
@@ -199,7 +241,7 @@ export default class ChartController extends Controller {
     this.isDragging = true;
     this.dragInitialTime = new Date().getTime();
   }
-  
+
   handleMouseUp(e) {
     let xPos;
     if(e.type === TouchEvents.TOUCH_END) {
@@ -228,24 +270,13 @@ export default class ChartController extends Controller {
       this.calculateDraggedTimeline();
     }
   }
-  
+
   calculateDraggedTimeline() {
     const mouseStart = Math.min(this.mouseClickedX, this.mouseReleasedX);
     const mouseEnd = Math.max(this.mouseClickedX, this.mouseReleasedX);
-    const canvasStart = PADDING + X_AXIS_OFFSET + this.textWidth(this.labelSuffix);
-    const canvasEnd = this.canvasWidth - PADDING - X_AXIS_OFFSET;
-    const canvasWidth = canvasEnd - canvasStart;
-    
-    const normalizedMouseStart = (mouseStart - canvasStart) / canvasWidth;
-    const normalizedMouseEnd = (mouseEnd - canvasStart) / canvasWidth;
-    
-    const currentTimelineStart = Number(this.getXValueAtIndex(0));
-    const currentTimelineEnd = Number(this.getXValueAtIndex(-1)); // ask for last element
-    const fullTimelineDistance = currentTimelineEnd - currentTimelineStart;
-    
-    const normalizedTimelineStart = fullTimelineDistance * normalizedMouseStart + currentTimelineStart;
-    const normalizedTimelineEnd = fullTimelineDistance * normalizedMouseEnd + currentTimelineStart;
-    
+    const normalizedTimelineStart = Number(this.getXValueAtIndex(this.getIndexFromMouseX(mouseStart)));
+    const normalizedTimelineEnd = Number(this.getXValueAtIndex(this.getIndexFromMouseX(mouseEnd)));
+
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('start', normalizedTimelineStart.toFixed(0));
     currentUrl.searchParams.set('end', normalizedTimelineEnd.toFixed(0));
@@ -254,7 +285,7 @@ export default class ChartController extends Controller {
     this.mouseReleasedX = null;
     window.location.replace(currentUrl);
   }
-  
+
   showDragArea(e) {
     let xPos;
     if(e.type === TouchEvents.TOUCH_MOVE) {
@@ -267,7 +298,7 @@ export default class ChartController extends Controller {
       xPos = mouseX;
     }
     const dragAreaVerticalOffset = Y_AXIS_OFFSET / 2 + TOP_CLEARANCE;
-    
+
     // Draw base solid rectangle
     this.ctx.beginPath();
     this.ctx.fillStyle = 'rgba(160, 159, 183, 0.2)';
@@ -275,7 +306,7 @@ export default class ChartController extends Controller {
     this.ctx.roundRect(this.mouseClickedX, dragAreaVerticalOffset, blockWidth, this.netHeight);
     this.ctx.fill();
     this.ctx.stroke();
-    
+
     // Draw outline for rectangle with dashed style (using both in combination doesn't seem to work)
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = '#3F3C70';
@@ -297,11 +328,11 @@ export default class ChartController extends Controller {
     this.showTriangleIndicator(xPos, 'down');
     this.showHelperPopup(xPos, 'top');
   }
-  
+
   prepareData(rawData) {
     // override this method if needed
   }
-  
+
   getPixelRatio() {
     const refCtx = document.createElement('canvas').getContext('2d');
     const dpr = window.devicePixelRatio || 1;
@@ -313,11 +344,11 @@ export default class ChartController extends Controller {
       1;
     return dpr / bsr;
   };
-  
+
   getMaxHeight(possibleHeight) {
     return possibleHeight > this.responsiveMaxHeight ? this.responsiveMaxHeight : possibleHeight;
   }
-  
+
   createHiDPICanvas(w, h) {
     // In comparison charts that have a right-side line toggler, we need to reduce the width of the canvas
     // to make space for the toggler.
@@ -327,30 +358,29 @@ export default class ChartController extends Controller {
       const LINE_TOGGLER_SPACING = 16;
       w = w - LINE_TOGGLER_WIDTH - LINE_TOGGLER_SPACING;
     }
-    
+
     const ratio = this.getPixelRatio();
-    
+
     if(this.lineToggler && !this.isCompareChart) {
       h -= LINE_TOGGLER_HEIGHT;
     }
-    
+
     this.element.height = h * ratio;
     this.element.width = w * ratio;
-    
+
     this.element.style.width = w + 'px';
     if(this.isSmallScreen() && !this.isCompareChart) {
       this.element.style.height = this.getMaxHeight(h) + 'px';
     } else {
       this.element.style.height = h + 'px';
     }
-    
+
     this.canvasWidth = w;
     this.canvasHeight = h;
     return ratio;
   }
-  
-  loadChart() {
-    if(this.chartData.length === 0) return;
+
+  initializeChart() {
     if(this.ctx) {
       this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       this.labels = [];
@@ -362,25 +392,29 @@ export default class ChartController extends Controller {
     this.setNetWidth();
     this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - TOP_CLEARANCE;
     this.chartBottomStart = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET;
+  }
+
+  loadChart() {
+    if(this.getXValues().length === 0) return;
     this.setChartAxis();
     this.plotChart();
   }
-  
+
   setNetWidth() {
     this.netWidth = this.canvasWidth - this.ctx.measureText(this.longestLabel).width - X_AXIS_OFFSET;
     this.horizontalContentStartingPixel = X_AXIS_OFFSET + this.textWidth(this.longestLabel);
   }
-  
+
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.setChartAxis();
   }
-  
+
   setChartAxis() {
     this.setYAxis();
     this.setXAxis();
   }
-  
+
   setXAxis() {
     const dateSet = new Set();
     const firstDate = new Date(this.getFirstDate());
@@ -397,7 +431,7 @@ export default class ChartController extends Controller {
       accumulatedWidth += referenceLabelWidth + MINIMUM_SPACING_BETWEEN_LABELS;
       maxLabels++;
     }
-    
+
     const dateStep = Math.ceil(dateDiff / (maxLabels - 1));
     for(let i = 0 ; i < maxLabels - 1 ; i++) {
       const date = new Date(firstDate.getTime() + dateStep * i);
@@ -406,17 +440,28 @@ export default class ChartController extends Controller {
     dateSet.add(this.formatTime(lastDate, true));
     this.renderLabels(dateSet);
   }
-  
+
   getFirstDate() {
     // to override
     throw new Error('Method not implemented.');
   }
-  
+
   getLastDate() {
     // to override
     throw new Error('Method not implemented.');
   }
-  
+
+
+  getYValues() {
+    // to override
+    throw new Error('Method not implemented');
+  }
+
+  getXValues() {
+    // to override
+    throw new Error('Method not implemented.');
+  }
+
   renderLabels(dateSet) {
     this.labels = [];
     const labelY = this.canvasHeight - Y_AXIS_OFFSET;
@@ -432,25 +477,18 @@ export default class ChartController extends Controller {
       this.labels.push({ label, x: startingPixel });
     });
   }
-  
+
   // This method expects the following format for the chart data:
   // [{x: number, y: number}]
   // If different data format is expected, override this method
   setYAxis() {
     this.resetStyles();
     const totals = this.getYValues();
-    
+
     // If values go over 100, get the closest multiple of 100
-    const maxValue = Math.max(...totals);
+    const maxValue = this.getMax(totals);
     if(maxValue > MAX_STEPS[MAX_STEPS.length - 1]) {
-      // Trying to cover a specific edge case where in the latency chart, the max value is in the millions
-      // so we need to adjust the maxTotal value and unit to something that brings the value down to a more
-      // reasonable range
-      if(this.chartId === CHART_IDS.latency) {
-        this.checkLatencyMaxValue(maxValue);
-      } else {
-        this.maxTotal = Math.ceil(maxValue / 100) * 100;
-      }
+      this.maxTotal = Math.ceil(maxValue / 100) * 100;
     } else {
       const closestIndex = MAX_STEPS.findIndex(step => step > maxValue);
       this.maxTotal = MAX_STEPS[closestIndex];
@@ -458,7 +496,47 @@ export default class ChartController extends Controller {
     this.yStepSize = this.getYStepSize();
     this.drawJumpLines();
   }
-  
+
+  /**
+   * Get maximum value of an array, or an array of arrays.
+   * This function replaces Math.Max(...values) due to a maximum callstack error.
+   * @param {Array<number|Array<number>>} values
+   * @param {number=} initial
+   * @returns {number}
+   */
+  getMax(values, initial) {
+    values.forEach((v) => {
+      if (v instanceof Array) {
+        v = this.getMax(v, max)
+      }
+      if (initial === undefined || v > initial) {
+        initial = v
+      }
+    })
+
+    return initial;
+  }
+
+  /**
+   * Get minimum value of an array, or an array of arrays.
+   * This function replaces Math.Max(...values) due to a maximum callstack error.
+   * @param {Array<number|Array<number>>} values
+   * @param {number=} initial
+   * @returns {number}
+   */
+  getMin(values, initial) {
+    values.forEach((v) => {
+      if (v instanceof Array) {
+        v = this.getMax(v, max)
+      }
+      if (initial === undefined || v < initial) {
+        initial = v
+      }
+    })
+
+    return initial;
+  }
+
   /**
    * This method is used to calculate the step size for the Y axis. All values are rounded to the nearest multiple of 5.
    * And all values here are handpicked to ensure the best possible user experience, but can be adjusted as needed.
@@ -477,11 +555,7 @@ export default class ChartController extends Controller {
     if(this.maxTotal <= 5000) return 1000;
     return 2500;
   }
-  
-  getYValues() {
-    return this.chartData.map(entry => entry.y);
-  }
-  
+
   formatLabelNumericValue(value) {
     if(value === 0) return '0';
     const number = Number(value);
@@ -504,11 +578,11 @@ export default class ChartController extends Controller {
       return twoDigit;
     }
   }
-  
+
   isSmallScreen() {
     return window.innerWidth <= 768;
   }
-  
+
   setLongestLabel() {
     this.longestLabel = this.isSmallScreen() ? "0" : `0 ${this.labelSuffix}`;
     const jumps = Math.ceil(this.maxTotal / this.yStepSize);
@@ -525,7 +599,7 @@ export default class ChartController extends Controller {
       if(rowLabel.length > this.longestLabel.length) this.longestLabel = rowLabel;
     }
   }
-  
+
   drawJumpLines() {
     this.setLongestLabel();
     this.setNetWidth();
@@ -545,7 +619,7 @@ export default class ChartController extends Controller {
     }
     this.maxYLabelValue = jumps * this.yStepSize;
   }
-  
+
   createYAxisLabel(label, x, y) {
     this.setLongestLabel();
     this.resetStyles();
@@ -559,7 +633,7 @@ export default class ChartController extends Controller {
     this.ctx.lineTo(this.canvasWidth, y - GRID_LINE_Y_OFFSET);
     this.ctx.stroke();
   }
-  
+
   drawLine(data, strokeStyle = DEFAULT_BLUE, gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
@@ -579,7 +653,7 @@ export default class ChartController extends Controller {
     });
     this.closeLine(pointY, gradientFirstStopColor);
   }
-  
+
   /**
    * Adjusts data to be grouped by time period
    * @param points {{x: string, y: number}[]} - array of points
@@ -588,11 +662,11 @@ export default class ChartController extends Controller {
   adjustData(points) {
     return this.adjustLineData(points)
   }
-  
+
   adjustLineData(points) {
     return points.map(point => ({ x: point.x, ys: [point.y] }));
   }
-  
+
   closeLine(pointY, gradientFirstStopColor) {
     this.ctx.lineTo(this.canvasWidth, pointY);
     this.ctx.stroke();
@@ -611,7 +685,7 @@ export default class ChartController extends Controller {
     this.ctx.fill();
     this.ctx.stroke();
   }
-  
+
   /**
    * The rules for axis labels are a bit different than the ones for the tooltip.
    *
@@ -628,14 +702,14 @@ export default class ChartController extends Controller {
     const ONE_WEEK_IN_MS = 604_800_000;
     const ONE_DAY_IN_MS = 86_400_000;
     const TEN_MINUTES_IN_MS = 600_000;
-    
+
     // If time dateDiff >= 3 years, show year only
     // If time dateDiff >= 1 year, show month and year
     // If time dateDiff >= 1 week, show month and day
     // If time dateDiff >= 1 day, show day and time in HH:MM AM/PM format
     // If time dateDiff >= 10 min, show time in HH:MM AM/PM format
     // If time dateDiff less than 10 min, show time in HH:MM:SS AM/PM format
-    
+
     if(dateDiff > THREE_YEARS_IN_MS) {
       return date.getFullYear();
     } else if(dateDiff > ONE_YEAR_IN_MS) {
@@ -650,7 +724,7 @@ export default class ChartController extends Controller {
       return `${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
     }
   }
-  
+
   formatTimeBasedOnDateDiff(date, monthWord, hours) {
     const firstDate = new Date(this.getFirstDate());
     const lastDate = new Date(this.getLastDate());
@@ -662,7 +736,7 @@ export default class ChartController extends Controller {
     // If time dateDiff >= 1 week, show month and day
     // If time dateDiff >= 1 day, show month day and time in HH:MM AM/PM format
     // If time dateDiff < 1 day, show month day and time in HH:MM:SS AM/PM format
-    
+
     if(dateDiff >= ONE_YEAR_IN_MS) {
       return `${monthWord} ${date.getDate()}, ${date.getFullYear()}`;
     } else if(dateDiff >= ONE_WEEK_IN_MS) {
@@ -672,9 +746,9 @@ export default class ChartController extends Controller {
     } else {
       return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
     }
-    
+
   }
-  
+
   formatTimeBasedOnQueryInterval(date, monthWord, hours) {
     if (this.queryTimeInterval === QUERY_INTERVALS.DAY) {
       return `${monthWord} ${date.getDate()}`;
@@ -684,7 +758,7 @@ export default class ChartController extends Controller {
       return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
     }
   }
-  
+
   formatTime(timestamp, isInAxis = false) {
     try {
       let date = null;
@@ -697,7 +771,7 @@ export default class ChartController extends Controller {
       let hours = date.getHours() % 12;
       if(hours === 0) hours = 12;
       hours = hours.toString().padStart(2, '0');
-      
+
       if(isInAxis) return this.formatAxisTime(date, monthWord, hours);
       if(this.usesQueryIntervalValue) return this.formatTimeBasedOnQueryInterval(date, monthWord, hours);
       return this.formatTimeBasedOnDateDiff(date, monthWord, hours);
@@ -705,7 +779,7 @@ export default class ChartController extends Controller {
       handleError(e, this.identifier);
     }
   }
-  
+
   getFirstGradientStopColor(hex, opacity = 0.2) {
     // return hex with specified opacity
     const hexColor = hex.replace('#', '');
@@ -714,7 +788,7 @@ export default class ChartController extends Controller {
     const b = parseInt(hexColor.substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
-  
+
   shouldHideTooltip(mouseX, mouseY) {
     return (
       mouseX <= this.horizontalContentStartingPixel ||
@@ -723,23 +797,23 @@ export default class ChartController extends Controller {
       mouseY > this.canvasHeight - Y_AXIS_OFFSET * 2 - BOTTOM_LABELS_HEIGHT
     );
   }
-  
+
   setupTooltipContext(mouseX, mouseY) {
     this.plotChart();
     return !this.shouldHideTooltip(mouseX, mouseY);
   }
-  
+
   showTooltip(mouseX, mouseY) {
     // to override
     throw new Error('Method not implemented.');
   }
-  
+
   resetStrokeStyles() {
     this.ctx.strokeStyle = 'transparent';
     this.ctx.strokeWidth = 0;
     this.ctx.setLineDash([]);
   }
-  
+
   resetStyles() {
     this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
     this.ctx.shadowBlur = 0;
@@ -753,21 +827,30 @@ export default class ChartController extends Controller {
     this.ctx.lineWidth = 1;
     this.ctx.setLineDash([]);
   }
-  
+
   getYCoordinateFromYValue(yValue) {
     const netHeight = this.canvasHeight - 2 * PADDING - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - TOP_CLEARANCE;
     const yAxisBlockHeight = netHeight / this.maxYLabelValue;
     const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING;
     return baseHeight - yValue * yAxisBlockHeight;
   }
-  
-  getXCoordinateFromXValue(data = this.chartData, index) {
+
+  getXCoordinateFromXValue(data, index) {
     const netWidth = this.netWidth - DOT_SIZE / 2;
     const step = netWidth / (data.length - 1 > 0 ? data.length - 1 : 1);
     const baseWidth = PADDING + X_AXIS_OFFSET + this.textWidth(this.longestLabel);
     return baseWidth + step * index;
   }
-  
+
+  getIndexFromMouseX(mouseX) {
+    const xSize = this.getXValues().length;
+    const netWidth = this.netWidth - DOT_SIZE / 2;
+    const baseWidth = PADDING + X_AXIS_OFFSET + this.textWidth(this.longestLabel);
+    const offset = mouseX - baseWidth;
+    const steps = netWidth / (xSize - 1 > 0 ? xSize : 1);
+    return Math.floor(offset / steps);
+  }
+
   drawDotOnLine(x, y, color = DEFAULT_BLUE) {
     this.resetStyles();
     this.ctx.beginPath();
@@ -777,7 +860,7 @@ export default class ChartController extends Controller {
     this.ctx.fill();
     this.ctx.stroke();
   }
-  
+
   showTriangleIndicator(xPosition, direction = 'up') {
     this.resetStyles();
     this.ctx.beginPath();
@@ -799,7 +882,7 @@ export default class ChartController extends Controller {
     this.ctx.fill();
     this.ctx.stroke();
   }
-  
+
   showHelperPopup(mouseX, position = 'bottom') {
     this.resetStyles();
     this.ctx.beginPath();
@@ -808,27 +891,27 @@ export default class ChartController extends Controller {
     const HORIZONTAL_PADDING = 6;
     const VERTICAL_PADDING = 2;
     const yPosition = position === 'bottom' ? this.canvasHeight - HELPER_HEIGHT : 0;
-    const text = this.formatTime(this.getExactXValue(mouseX), true);
+    const text = this.formatTime(this.getXValueAtIndex(this.getIndexFromMouseX(mouseX)), true);
     const textWidth = this.textWidth(text);
     const popupWidth = textWidth + 2 * HORIZONTAL_PADDING;
     let xPosition = mouseX - popupWidth / 2;
-    
+
     if(xPosition + popupWidth > this.canvasWidth) {
       xPosition = this.canvasWidth - popupWidth;
     } else if(xPosition < 0) {
       xPosition = 0;
     }
-    
+
     this.ctx.roundRect(xPosition, yPosition, popupWidth, HELPER_HEIGHT, RADII);
     this.ctx.fill();
-    
+
     this.ctx.fillStyle = '#6d6a94';
     this.ctx.font = '12px MulishBold';
     this.ctx.fillText(text, xPosition + HORIZONTAL_PADDING, yPosition + HELPER_HEIGHT / 2 + VERTICAL_PADDING);
-    
+
     this.ctx.stroke();
   }
-  
+
   getExactXValue(mouseX) {
     const firstDate = this.getFirstDate();
     const lastDate = this.getLastDate();
@@ -840,49 +923,19 @@ export default class ChartController extends Controller {
     const fullTime = dateDiff * ratio;
     return firstDate + fullTime;
   }
-  
-  checkLatencyMaxValue(maxLatencyInMilliseconds) {
-    const secondInMilliseconds = 1_000;
-    const minuteInMilliseconds = 60_000;
-    const hourInMilliseconds = 3_600_000;
-    let biggestUnit = 1;
-    if(maxLatencyInMilliseconds > hourInMilliseconds) {
-      biggestUnit = hourInMilliseconds;
-      this.labelSuffix = 'h';
-    } else if(maxLatencyInMilliseconds > minuteInMilliseconds) {
-      biggestUnit = minuteInMilliseconds;
-      this.labelSuffix = 'm';
-    } else if(maxLatencyInMilliseconds > secondInMilliseconds) {
-      biggestUnit = secondInMilliseconds;
-      this.labelSuffix = 's';
-    }
-    
-    if(biggestUnit === 1) {
-      this.maxTotal = Math.ceil(maxLatencyInMilliseconds / 100) * 100;
-      return;
-    }
-    
-    this.maxTotal = maxLatencyInMilliseconds / biggestUnit;
-    const newChartData = new Map();
-    for(const [key, value] of this.chartData) {
-      newChartData.set(key, value.map(entry => ({ x: entry.x, y: entry.y / biggestUnit })));
-    }
-    this.chartData = newChartData;
-    this.adjustedData = this.adjustData(this.chartData);
-  }
-  
+
   createTooltipShape(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight) {
     // Tooltip drawing section
     this.ctx.beginPath();
     this.ctx.fillStyle = '#fff';
     this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
-    
+
     // create shadow for rect
     this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
     this.ctx.shadowOffsetX = 0;
     this.ctx.shadowOffsetY = 2;
     this.ctx.shadowBlur = 6;
-    
+
     this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
     this.ctx.fill();
     this.ctx.stroke();
@@ -890,7 +943,7 @@ export default class ChartController extends Controller {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
   }
-  
+
   drawTooltipDivingLine(xStart, xEnd, yStart, yEnd = null) {
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -899,7 +952,7 @@ export default class ChartController extends Controller {
     this.ctx.lineTo(xEnd, !yEnd ? yStart : yEnd);
     this.ctx.stroke();
   }
-  
+
   setTooltipContentTextStyle() {
     this.ctx.font = '13px Mulish';
     this.ctx.fillStyle = '#6d6a94';
