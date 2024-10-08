@@ -38,18 +38,22 @@
 </div>
 
 <div class="tables--network-avg-value-diff-container tables--hides-on-small" style="width: <%= widths[3] %>">
-    <p class="tables--network-avg-value ellipsis m-0" data-present="true"><%= row.download_avg.present? ? "#{row.download_avg.round(2)} Mbps" : '-' %></p>
-  <% if row.download_diff.present? && row.download_diff != '-' %>
+  <% download_avg = row.download_avg_and_diff[:avg] %>
+  <% download_diff = row.download_avg_and_diff[:diff] %>
+    <p class="tables--network-avg-value ellipsis m-0" data-present="true"><%= download_avg.present? ? "#{download_avg.round(2)} Mbps" : '-' %></p>
+  <% if download_diff.present? && download_diff != '-' %>
   <span class="widgets--location-diff-text"
-        data-negative="true"><%= row.download_diff.present? ? row.download_diff : '-' %></span>
+        data-negative="<%= download_diff.include?('-') %>"><%= download_diff %></span>
   <% end %>
 </div>
 
 <div class="tables--network-avg-value-diff-container tables--hides-on-small" style="width: <%= widths[3] %>">
-  <p class="tables--network-avg-value ellipsis m-0" data-present="true"><%= row.upload_avg.present? ? "#{row.upload_avg.round(2)} Mbps" : '-' %></p>
-  <% if row.upload_diff.present? && row.upload_diff != '-' %>
+  <% upload_avg = row.upload_avg_and_diff[:avg] %>
+  <% upload_diff = row.upload_avg_and_diff[:diff] %>
+  <p class="tables--network-avg-value ellipsis m-0" data-present="true"><%= upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : '-' %></p>
+  <% if upload_diff.present? && upload_diff != '-' %>
   <span class="widgets--location-diff-text"
-        data-negative="true"><%= row.upload_diff.present? ? row.upload_diff : '-' %></span>
+        data-negative="<%= upload_diff.include?('-') %>"><%= upload_diff %></span>
   <% end %>
 </div>
 

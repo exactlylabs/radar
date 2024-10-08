@@ -3,8 +3,11 @@ class DashboardController < ApplicationController
   include Onboarding
   include DashboardConcern
   include Paginator
+  include RangeEvaluator
   before_action :authenticate_user!
-  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data, :get_total_data_modal_data, :slim_download_speed]
+  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :outages, :data_usage, :total_data, :get_total_data_modal_data]
+  before_action :set_client, only: [:slim_client_download_speed, :slim_client_upload_speed]
+  before_action :set_network, only: [:slim_network_download_speed, :slim_network_upload_speed]
 
   # GET /dashboard or /dashboard.json
   def index
@@ -158,9 +161,41 @@ class DashboardController < ApplicationController
     set_query_time_interval(@download_speeds)
   end
 
-  def slim_download_speed
-    sql = DashboardHelper.get_pod_download_speed_sql(@params[:client_id], @params[:from], @params[:to], @params[:account_id], network_ids: @params[:location_ids])
+  def slim_client_download_speed
+    @chart_color = params[:chart_color]
+    from = get_range_start_date(params[:period])
+    to = Time.zone.now
+    sql = DashboardHelper.get_slim_client_download_speed_sql(@client.account_id, @client.location_id, @client.id, from, to)
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
+    render :slim_download_speed
+  end
+
+  def slim_client_upload_speed
+    @chart_color = params[:chart_color]
+    from = get_range_start_date(params[:period])
+    to = Time.zone.now
+    sql = DashboardHelper.get_slim_client_upload_speed_sql(@client.account_id, @client.location_id, @client.id, from, to)
+    @upload_speeds = ActiveRecord::Base.connection.execute(sql)
+    render :slim_upload_speed
+  end
+
+  def slim_network_download_speed
+    @chart_color = params[:chart_color]
+    from = get_range_start_date(params[:period])
+    to = Time.zone.now
+    sql = DashboardHelper.get_slim_network_download_speed_sql(@network.account_id, @network.id, from, to)
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
+    render :slim_download_speed
+  end
+
+  def slim_network_upload_speed
+    @chart_color = params[:chart_color]
+    from = get_range_start_date(params[:period])
+    to = Time.zone.now
+    sql = DashboardHelper.get_slim_network_upload_speed_sql(@network.account_id, @network.id, from, to)
+    @upload_speeds = ActiveRecord::Base.connection.execute(sql)
+    render :slim_upload_speed
+
   end
 
   def upload_speeds
@@ -221,8 +256,7 @@ class DashboardController < ApplicationController
   end
 
   def outages
-    params = outages_params(current_account)
-    sql = DashboardHelper.get_outages_sql(params[:from], params[:to], params[:account_ids], params[:location_ids], params[:outage_type], params[:as_org_ids])
+    sql = DashboardHelper.get_outages_sql(@params[:from], @params[:to], @params[:account_ids], @params[:location_ids], @params[:outage_type], @params[:as_org_ids])
     @outages = ActiveRecord::Base.connection.execute(sql)
     @outages_count = @outages.count
     @outages_ids = @outages.map { |outage| outage['id'] }
@@ -306,8 +340,8 @@ class DashboardController < ApplicationController
       params_fn = method(:total_data_params)
     when get_total_data_modal_data_path
       params_fn = method(:total_data_params)
-    when slim_download_speed_path
-      params_fn = method(:slim_download_speed_params)
+    when outages_path
+      params_fn = method(:outages_params)
     end
     @params = params_fn.call(current_account)
     set_query_interval_type(@params)
@@ -344,5 +378,19 @@ class DashboardController < ApplicationController
     @options = @filter_as_orgs.select { |as_org| as_org['name'].downcase.include?(query.downcase) }
     @options = @options.select { |as_org| as_org['account_id'] == account_id } if account_id
     @options = @options.select { |as_org| as_org['location_id'] == network_id } if network_id
+  end
+
+  def set_client
+    @client = Client.find_by_unix_user(params[:pod_id] || params[:id])
+    if !@client
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Pod with 'id'=#{params[:pod_id]}", Client.name, params[:pod_id])
+    end
+  end
+
+  def set_network
+    @network = Location.find(params[:id])
+    if !@network
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Network with 'id'=#{params[:id]}", Location.name, params[:id])
+    end
   end
 end

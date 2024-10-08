@@ -1,6 +1,6 @@
 <% today = Time.now %>
-<% days = params[:days] ? params[:days].to_i : 30 %>
-<% start_date = params[:start].present? ? Time.at(params[:start].to_f / 1000) : Time.parse((today - days.days).to_s) %>
+<% days = get_range_start_date(params[:days]) %>
+<% start_date = params[:start].present? ? Time.at(params[:start].to_f / 1000) : days %>
 <% end_date = params[:end].present? ? Time.at(params[:end].to_f / 1000) : Time.parse(today.to_s) %>
 <div class="dashboard--status-bar" data-controller="outages-chart">
   <%= render partial: "outages/components/hover_and_drag_handler", locals: { start_date: start_date, end_date: end_date } %>

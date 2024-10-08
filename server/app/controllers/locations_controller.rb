@@ -244,6 +244,7 @@ class LocationsController < ApplicationController
   private
 
   def set_download_and_upload_avgs_and_diff_for_period(location)
+    @period = params[:type]
     download_avg_and_diff = location.measurements_avg_and_diff_for_period(params[:type], :download)
     @download_avg = download_avg_and_diff[:avg]
     @download_diff = download_avg_and_diff[:diff]

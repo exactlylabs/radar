@@ -4,6 +4,7 @@
   <% else %>
     <canvas id="slim-download-speed-chart"
             data-controller="slim-line-chart"
+            data-chart-color= "<%= @chart_color %>"
             data-line-chart-data="<%= @download_speeds.to_json %>"
             data-parent-id="slim-download-speed-widget"
             data-skeleton-id="slim-download-speed-chart-skeleton"

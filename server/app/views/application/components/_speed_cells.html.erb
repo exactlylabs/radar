@@ -1,16 +1,27 @@
+<% raise "slim_download_dashboard_url is required" unless local_assigns[:slim_download_dashboard_url].present? %>
+<% raise "slim_upload_dashboard_url is required" unless local_assigns[:slim_upload_dashboard_url].present? %>
+<% slim_download_dashboard_url = local_assigns[:slim_download_dashboard_url] %>
+<% slim_upload_dashboard_url = local_assigns[:slim_upload_dashboard_url] %>
+<% download_chart_color = local_assigns[:download_chart_color] %>
+<% upload_chart_color = local_assigns[:upload_chart_color] %>
+
 <%= turbo_frame_tag "speed-cells", class: "application--speed-cells-container" do %>
   <%= render partial: "application/components/speed_cell",
-      locals: {
-        type: 'download',
-        avg: download_avg,
-        diff: download_diff
-      }
+             locals: {
+               type: 'download',
+               avg: download_avg,
+               diff: download_diff,
+               slim_dashboard_url:  slim_download_dashboard_url,
+               color: download_chart_color
+             }
   %>
   <%= render partial: "application/components/speed_cell",
-      locals: {
-        type: 'upload',
-        avg: upload_avg,
-        diff: upload_diff
-      }
+             locals: {
+               type: 'upload',
+               avg: upload_avg,
+               diff: upload_diff,
+               slim_dashboard_url:  slim_upload_dashboard_url,
+                color: upload_chart_color
+             }
   %>
 <% end %>
