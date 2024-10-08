@@ -2,7 +2,7 @@ import ChartController, {
   DOT_SIZE,
   HELPER_HEIGHT,
   QUERY_INTERVALS,
-  RADII,
+  CHART_IDS,
   TOOLTIP_TITLE_PADDING
 } from "./chart_controller";
 
@@ -44,10 +44,12 @@ export default class MultiLineChartController extends ChartController {
   }
 
   getXValues() {
-    return this.chartData.values().next().value.map(entry => entry.x);
+    return this.chartData.values().next().value?.map(entry => entry.x);
   }
 
   prepareData(rawData) {
+    this.maxYValue = 0;
+
     if(!this.isCompareChart) {
       const data = new Map();
       rawData.forEach((line, index) => {
@@ -56,6 +58,9 @@ export default class MultiLineChartController extends ChartController {
           if (key === 'x') return;
           const color = key;
           const y = line[key];
+          if (y > this.maxYValue) {
+            this.maxYValue = y;
+          }
           if (data.has(color)) {
             data.get(color).push({x, y});
           } else {
@@ -66,6 +71,13 @@ export default class MultiLineChartController extends ChartController {
       this.chartData = data;
     } else {
       this.chartData = this.getChartDataForComparison(rawData)
+    }
+
+    if (this.chartId == CHART_IDS.latency) {
+      // Trying to cover a specific edge case where in the latency chart, the max value is in the millions
+      // so we need to adjust the maxTotal value and unit to something that brings the value down to a more
+      // reasonable range
+      this.chartData = this.convertLatencyUnits(this.chartData);
     }
     this.chartData = this.downsample(this.chartData, "decimate-minmax");
     this.adjustedData = this.adjustData(this.chartData);
@@ -97,6 +109,7 @@ export default class MultiLineChartController extends ChartController {
       const hex = this.COMPARISON_HEX[hexIndex % this.COMPARISON_HEX.length];
       const x = line['x'];
       const y = line['y'];
+      if (y > this.maxYValue); this.maxYValue = y;
       if(data.has(hex)) {
         data.get(hex).push({x, y});
       } else {
@@ -323,5 +336,31 @@ export default class MultiLineChartController extends ChartController {
     }
 
     return super.downsample(data, method)
+  }
+
+  convertLatencyUnits(data) {
+    const secondInMilliseconds = 1_000;
+    const minuteInMilliseconds = 60_000;
+    const hourInMilliseconds = 3_600_000;
+
+    let biggestUnit = 1;
+    if(this.maxYValue > hourInMilliseconds) {
+      biggestUnit = hourInMilliseconds;
+      this.labelSuffix = 'h';
+    } else if(this.maxYValue > minuteInMilliseconds) {
+      biggestUnit = minuteInMilliseconds;
+      this.labelSuffix = 'm';
+    } else if(this.maxYValue > secondInMilliseconds) {
+      biggestUnit = secondInMilliseconds;
+      this.labelSuffix = 's';
+    }
+
+    if(biggestUnit === 1) {
+      return;
+    }
+    data.forEach((values, key, _) => {
+      data.set(key, values.map((v) => ({...v, y: v.y / biggestUnit })))
+    });
+    return data
   }
 }
