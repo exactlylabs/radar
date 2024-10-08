@@ -73,26 +73,11 @@ module DashboardHelper
     sql += " AND location_id IN (:location_ids)" if location_ids.present?
     sql += %{
       ),
-        time_filtered AS (
-          SELECT MIN(total_online) as total_online, time FROM (
-            SELECT MIN(total_online) OVER
-              (
-                PARTITION BY TO_TIMESTAMP(
-                                            FLOOR(
-                                                (EXTRACT(EPOCH FROM time) - EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time ASC LIMIT 1))) / :seconds_from_step
-                                            ) * :seconds_from_step
-                                            + EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time LIMIT 1))) ORDER BY time
-                ) AS total_online,
-                TO_TIMESTAMP(
-                  FLOOR(
-                    (EXTRACT(EPOCH FROM time) - EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time ASC LIMIT 1))) / :seconds_from_step) * :seconds_from_step
-                  + EXTRACT(EPOCH FROM (SELECT time FROM base_series ORDER BY time LIMIT 1))
-                ) AS time
-            FROM filtered_dimensions
-            WHERE "time" BETWEEN :from AND :to
-            ORDER BY "time" ASC
-        ) last_values
-        GROUP BY time
+      time_filtered AS (
+        SELECT total_online as total_online, time
+        FROM filtered_dimensions
+        WHERE "time" BETWEEN :from AND :to
+        ORDER BY "time" ASC
       ),
         initial AS (
           SELECT (SELECT time FROM base_series ORDER BY time LIMIT 1) as "time", total_online
@@ -188,13 +173,12 @@ module DashboardHelper
     ),
     data_used_per_day AS (
         SELECT
-          EXTRACT(EPOCH FROM date_trunc(:interval_type, processed_at)) * 1000 as "time",
-          SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "total"
-        FROM measurements
-        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+          EXTRACT(EPOCH FROM date_trunc(:interval_type, time)) * 1000 as "time",
+          SUM(m.download_total_bytes) + SUM(m.upload_total_bytes) AS "total"
+        FROM aggregated_measurements_by_days m
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = m.autonomous_system_org_id
         WHERE
-          processed_at BETWEEN :from AND :to
+          time BETWEEN :from AND :to
           AND account_id IN (:account_ids)
       }
     sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
@@ -238,9 +222,9 @@ module DashboardHelper
 
   def self.get_total_data_amount_sql(from, to, account_ids)
     sql = %{
-      SELECT SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) as "y"
-      FROM measurements
-      WHERE processed_at BETWEEN :from AND :to
+      SELECT SUM(download_total_bytes) + SUM(upload_total_bytes) as "y"
+      FROM aggregated_measurements_by_hours
+      WHERE time BETWEEN :from AND :to
       AND account_id IN (:account_ids)
     }
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, from: from, to: to}])
@@ -252,12 +236,10 @@ module DashboardHelper
         SELECT
           COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
           l.name AS "name"
-        FROM measurements AS m
-          JOIN locations AS l ON l.id = m.location_id
-          LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-          LEFT OUTER JOIN autonomous_system_orgs
-          ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
-        WHERE processed_at BETWEEN :from AND :to
+        FROM aggregated_measurements_by_hours AS m
+        JOIN locations AS l ON l.id = m.location_id
+        LEFT OUTER JOIN autonomous_system_orgs ON autonomous_system_orgs.id = m.autonomous_system_org_id
+        WHERE time BETWEEN :from AND :to
         AND l.deleted_at IS NULL
         AND m.account_id IN (:account_ids)
     }
@@ -303,12 +285,10 @@ module DashboardHelper
         SELECT
           COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
           a.name AS "name"
-        FROM measurements AS m
-          JOIN accounts AS a ON a.id = m.location_id
-          LEFT OUTER JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-          LEFT OUTER JOIN autonomous_system_orgs
-          ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
-        WHERE processed_at BETWEEN :from AND :to
+        FROM aggregated_measurements_by_hours AS m
+        JOIN accounts AS a ON a.id = m.location_id
+        LEFT OUTER JOIN autonomous_system_orgs ON autonomous_system_orgs.id = m.autonomous_system_org_id
+        WHERE time BETWEEN :from AND :to
         AND account_id IN (:account_ids)
     }
 
@@ -318,11 +298,10 @@ module DashboardHelper
 
     sql += %{
        with_no_measurements AS (
-          SELECT DISTINCT 0 AS "y", a.name AS "name", m.id
+          SELECT DISTINCT 0 AS "y", a.name AS "name"
           FROM accounts AS a
-            LEFT JOIN measurements AS m ON a.id = m.account_id
-          WHERE m.id IS NULL
-          AND a.id IN (:account_ids)
+          WHERE
+            a.id IN (:account_ids)
     }
 
     sql += " AND a.name ILIKE :query " if query.present?
@@ -335,7 +314,7 @@ module DashboardHelper
         UNION ALL
         SELECT y, name FROM with_no_measurements
       )
-      SELECT * FROM full_table
+      SELECT SUM(y) as y, name FROM full_table GROUP BY name
     }
 
     sql += " ORDER BY 1 DESC, 2 ASC "
