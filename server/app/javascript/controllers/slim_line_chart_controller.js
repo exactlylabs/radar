@@ -8,7 +8,6 @@ export default class SlimLineChartController extends LineChartController {
     this.chartId = 'slimDownloadSpeed';
     this.usesQueryIntervalValue = false;
     this.color = this.parseColor(this.element.dataset.chartColor);
-    console.log("color", this.color);
     super.connect();
   }
 
@@ -78,7 +77,6 @@ export default class SlimLineChartController extends LineChartController {
   }
   //
   setNetWidth() {
-    console.log(this.canvasWidth);
     this.netWidth = this.canvasWidth;
     this.horizontalContentStartingPixel= 0;
   }

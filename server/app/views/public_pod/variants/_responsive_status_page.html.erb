@@ -83,18 +83,17 @@
   </div>
 
   <div data-public-pod-tabs-target="dashboard" hidden="hidden">
-    <% this_year_in_days = Date.today.yday %>
     <%= render partial: "dashboard/components/date_filter",
                locals: {
                  menu_id: 'date-range-filter-menu-responsive',
                  key: 'days',
-                 default_value: 1,
+                 default_value: 'last_24_hours',
                  default_label: 'Last 24 hours',
                  options: [
-                   { label: 'Last 24 hours', value: '1' },
-                   { label: 'Last 7 days', value: '7' },
-                   { label: 'Last 30 days', value: '30' },
-                   { label: 'This year', value: "#{this_year_in_days}" },
+                   { label: 'Last 24 hours', value: 'last_24_hours' },
+                   { label: 'Last 7 days', value: 'last_7_days' },
+                   { label: 'Last 30 days', value: 'last_30_days' },
+                   { label: 'This year', value: 'this_year' },
                  ],
                  public_use: true
                }
