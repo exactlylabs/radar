@@ -15,11 +15,15 @@ export default class BarChartController extends ChartController {
     this.chartId = this.element.dataset.chartId;
     this.barIdentifiers = [];
     this.selectedHexes = [];
+    this.chartData = [];
     super.connect();
   }
 
   prepareData(rawData) {
-    this.chartData = this.chartData.map((barData) => {
+    if (this.isCompareChart) {
+      rawData = this.getChartDataForComparison(rawData);
+    }
+    this.chartData = rawData.map((barData) => {
       const {x, y, hex} = barData;
       return {x, y: this.convertToPreferredUnit(y), hex};
     });
@@ -32,6 +36,14 @@ export default class BarChartController extends ChartController {
 
   getLastDate() {
     return Number(this.chartData[this.chartData.length - 1].x);
+  }
+
+  getYValues() {
+    return this.chartData.map(entry => entry.y);
+  }
+
+  getXValues() {
+    return this.chartData.map(entry => entry.x);
   }
 
   getChartDataForComparison(rawData) {
