@@ -395,7 +395,8 @@ export default class ChartController extends Controller {
   }
 
   loadChart() {
-    if(this.getXValues().length === 0) return;
+    const xValues = this.getXValues()
+    if(xValues == null || xValues.length === 0) return;
     this.setChartAxis();
     this.plotChart();
   }

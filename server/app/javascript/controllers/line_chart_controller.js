@@ -13,7 +13,7 @@ export default class LineChartController extends ChartController {
       // Trying to cover a specific edge case where in the latency chart, the max value is in the millions
       // so we need to adjust the maxTotal value and unit to something that brings the value down to a more
       // reasonable range
-      this.convertLatencyUnits(rawData);
+      rawData = this.convertLatencyUnits(rawData);
     }
     this.chartData = this.downsample(rawData, "decimate");
     this.adjustedData = this.adjustData(this.chartData);
@@ -38,33 +38,6 @@ export default class LineChartController extends ChartController {
 
   getXValues() {
     return this.chartData.map(entry => entry.x);
-  }
-
-  convertLatencyUnits(data) {
-    const maxLatencyInMilliseconds = this.getMax(data.map(entry => entry.y));
-
-    const secondInMilliseconds = 1_000;
-    const minuteInMilliseconds = 60_000;
-    const hourInMilliseconds = 3_600_000;
-
-    let biggestUnit = 1;
-    if(maxLatencyInMilliseconds > hourInMilliseconds) {
-      biggestUnit = hourInMilliseconds;
-      this.labelSuffix = 'h';
-    } else if(maxLatencyInMilliseconds > minuteInMilliseconds) {
-      biggestUnit = minuteInMilliseconds;
-      this.labelSuffix = 'm';
-    } else if(maxLatencyInMilliseconds > secondInMilliseconds) {
-      biggestUnit = secondInMilliseconds;
-      this.labelSuffix = 's';
-    }
-
-    if(biggestUnit === 1) {
-      return;
-    }
-    data.forEach((values, key, _) => {
-      data[key] = values.map((v) => ({x: v.x, y: v.y / biggestUnit }))
-    })
   }
 
   showTooltip(mouseX, mouseY) {
@@ -142,5 +115,32 @@ export default class LineChartController extends ChartController {
   getXValueAtIndex(index) {
     if(index === -1) return this.adjustedData[this.adjustedData.length - 1].x;
     return this.adjustedData[index].x;
+  }
+
+  convertLatencyUnits(data) {
+    const secondInMilliseconds = 1_000;
+    const minuteInMilliseconds = 60_000;
+    const hourInMilliseconds = 3_600_000;
+    const maxYValue = this.getMax(data.map(entry => entry.y));
+
+    let biggestUnit = 1;
+    if(maxYValue > hourInMilliseconds) {
+      biggestUnit = hourInMilliseconds;
+      this.labelSuffix = 'h';
+    } else if(maxYValue > minuteInMilliseconds) {
+      biggestUnit = minuteInMilliseconds;
+      this.labelSuffix = 'm';
+    } else if(maxYValue > secondInMilliseconds) {
+      biggestUnit = secondInMilliseconds;
+      this.labelSuffix = 's';
+    }
+
+    if(biggestUnit === 1) {
+      return;
+    }
+    data.forEach((values, key, _) => {
+      data[key] = values.map((v) => ({...v, y: v.y / biggestUnit }))
+    });
+    return data
   }
 }
