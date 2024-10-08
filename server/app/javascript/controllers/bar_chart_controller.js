@@ -177,7 +177,7 @@ export default class BarChartController extends ChartController {
     this.showVerticalDashedLine(mouseX);
     this.resetStrokeStyles();
     const xDifs = this.adjustedData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.adjustedData, index) - mouseX));
-    const minDif = Math.min(...xDifs);
+    const minDif = this.getMin(xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
     if(!this.mouseOverBar(mouseX, mouseY, minDifIndex)) return;

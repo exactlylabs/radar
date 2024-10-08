@@ -84,7 +84,7 @@ export default class LineChartController extends ChartController {
       yValue = ys[0];
     } else {
       const yDifs = ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
-      const minDif = Math.min(...yDifs);
+      const minDif = this.getMin(yDifs);
       const index = yDifs.indexOf(minDif);
       if(index < 0) return;
       yCoordinate = this.getYCoordinateFromYValue(ys[index]);
