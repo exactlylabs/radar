@@ -1,10 +1,15 @@
+<% raise "slim_dashboard_url is required" unless local_assigns[:slim_dashboard_url].present? %>
+<% slim_dashboard_url = local_assigns[:slim_dashboard_url] %>
+
+<% color = local_assigns[:color] || "gray" %>
+
 <div class="application--speed-cell">
-  <div class="application--speed-cell-header">
-    <div class="application-speed-cell-icon-title">
-      <%= svg_tag("#{type}-icon.svg", { width: 16, height: 16, class: "#{ diff.include?('-') ? 'svg--fill-red' : 'svg--fill-green'}" }) %>
-      <div class="application--speed-cell-value">
-        <span class="forms--label ellipsis application--speed-cell-title"><%= "Avg. #{type}" %></span>
-        <div class="flex flex-column">
+  <div class="application--speed-cell-data">
+    <div class="application--speed-cell-header">
+      <div class="application-speed-cell-icon-title">
+        <%= svg_tag("#{type}-icon.svg", { width: 16, height: 16, class: "svg--fill-#{color}" }) %>
+        <div class="application--speed-cell-value">
+          <span class="forms--label ellipsis application--speed-cell-title"><%= "Avg. #{type}" %></span>
           <div class="widgets--location-avg-container wrap">
             <% if avg != "-" %>
               <span class="application--speed-value-text"><%= avg %></span>
@@ -13,18 +18,18 @@
               <span class="help-dark-text"><%= avg %></span>
             <% end %>
           </div>
-          <!--          Add here the canvas-->
-          <div class="widgets--widget-content">
-            <%= render partial: "dashboard/components/widgets/slim_download_speed" %>
-          </div>
         </div>
       </div>
-    </div>
-    <% if diff != "-" %>
+      <% if diff != "-" %>
       <span class="widgets--location-diff-text"
             data-negative="<%= diff.include?('-') %>"
             data-neutral="<%= diff == "-" %>"
       ><%= diff %></span>
-    <% end %>
+      <% end %>
+    </div>
+  </div>
+  <div class="application--speed-cell-chart <%= "application--speed-cell-chart-empty" if avg == "-" %>">
+    <%= render partial: "dashboard/components/widgets/slim_#{type}_speed", locals: { custom_url: slim_dashboard_url } %>
   </div>
 </div>
+

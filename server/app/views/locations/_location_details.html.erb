@@ -1,3 +1,6 @@
+<% download_avg_and_diff = location.download_avg_and_diff(params[:days]) %>
+<% upload_avg_and_diff = location.upload_avg_and_diff(params[:days]) %>
+
 <div class="card clients--detail-card" id="location-details">
   <!--begin::Card header-->
   <div class="card-header align-items-center" style="height: 65px">
@@ -64,13 +67,13 @@
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Download</div>
           <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
-              <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
+              <%= download_avg_and_diff[:avg].present? ? "#{download_avg_and_diff[:avg]} Mbps" : 'N/A'%>
             </div>
             <div class="regular-text ms-1">
               <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down.round(0)} Mbps" : ''%>
             </div>
-            <div class="<%= location.download_diff.present? ? location.download_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
-              <%= location.expected_mbps_down.present? ? location.download_diff : ''%>
+            <div class="<%= download_avg_and_diff[:diff].present? ? download_avg_and_diff[:diff].start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
+              <%= location.expected_mbps_down.present? ? download_avg_and_diff[:diff] : ''%>
             </div>
           </div>
         </div>
@@ -78,14 +81,14 @@
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Upload</div>
           <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
-              <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
+              <%= upload_avg_and_diff[:avg].present? ? "#{upload_avg_and_diff[:avg]} Mbps" : 'N/A'%>
             </div>
             <div class="regular-text ms-1">
               <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up.round(0)} Mbps" : ''%>
             </div>
             <div
-              class="<%= location.upload_diff.present? ? location.upload_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
-              <%= location.expected_mbps_up.present? ? location.upload_diff : ''%>
+              class="<%= upload_avg_and_diff[:diff].present? ? upload_avg_and_diff[:diff].start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
+              <%= location.expected_mbps_up.present? ? upload_avg_and_diff[:diff] : ''%>
             </div>
           </div>
         </div>

@@ -1,7 +1,10 @@
+<% download_avg_and_diff = location.download_avg_and_diff(params[:days]) %>
+<% upload_avg_and_diff = location.upload_avg_and_diff(params[:days]) %>
+
 <tr id="<%= dom_id(location) %>">
   <td style="padding-left: 30px">
     <div class="d-flex flex-row align-items-center">
-      <div class="d-flex align-items-center justify-content-center me-5" 
+      <div class="d-flex align-items-center justify-content-center me-5"
            style="border-radius:50%; background-color:#f1faff; min-width: 36px; width: 36px; min-height: 36px; height: 36px">
         <span class="svg-icon svg-icon-2 svg-icon-primary" style="position: relative;">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -13,8 +16,8 @@
       <div class="d-flex flex-column align-items-left justify-content-start">
         <a class="forms--label text-hover-primary"
            style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
-           href="<%= location_path(location)%>" data-turbo-frame="_top">
-            <%= location.name %>
+           href="<%= location_path(location) %>" data-turbo-frame="_top">
+          <%= location.name %>
         </a>
         <div class="additional-text"><%= location.address %></div>
       </div>
@@ -24,27 +27,27 @@
     <td class="regular-text mb-1" style="width: 15vw"><%= location.account.name %></td>
   <% else %>
     <td class="regular-text mb-1" style="width: 15vw">
-      <%= render partial: "categories/components/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
+      <%= render partial: "categories/components/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: row } %>
     </td>
   <% end %>
   <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
     <span>
-      <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
+      <%= download_avg_and_diff[:avg].present? ? "#{download_avg_and_diff[:avg]} Mbps / " : 'Not available / ' %>
       <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down.round(0)} Mbps" : 'Not available' %>
     </span>
     <span class="ms-2"
-          style="color: <%= location.download_diff.present? && location.download_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
-      <%= location.download_diff.present? ? location.download_diff : '' %>
+          style="color: <%= download_avg_and_diff[:diff].present? && download_avg_and_diff[:diff].start_with?('+') ? "#50cd89" : "#f1416c" %>">
+      <%= download_avg_and_diff[:diff].present? ? download_avg_and_diff[:diff] : '' %>
     </span>
   </td>
   <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
     <span>
-      <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
+      <%= upload_avg_and_diff[:avg].present? ? "#{upload_avg_and_diff[:avg]} Mbps / " : 'Not available / ' %>
       <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up.round(0)} Mbps" : 'Not available' %>
     </span>
     <span class="ms-2"
-          style="color: <%= location.upload_diff.present? && location.upload_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
-      <%= location.upload_diff.present? ? location.upload_diff : '' %>
+          style="color: <%= upload_avg_and_diff[:diff].present? && upload_avg_and_diff[:diff].start_with?('+') ? "#50cd89" : "#f1416c" %>">
+      <%= upload_avg_and_diff[:diff].present? ? upload_avg_and_diff[:diff] : '' %>
     </span>
   </td>
   <td class="align-right" style="width: 5vw; padding-right: 30px">
@@ -54,7 +57,7 @@
            aria-labelledby="<%= "options-button-#{location.id}" %>">
         <!--begin::Menu item-->
         <div class="dropdowns--option menu-item">
-          <%= link_to "View", location_path(location), class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: {"turbo-frame" => "_top"} %>
+          <%= link_to "View", location_path(location), class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: { "turbo-frame" => "_top" } %>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->

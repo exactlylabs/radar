@@ -1,22 +1,28 @@
+<% download_chart_color = @download_diff.present? ? (@download_diff.include?('-') ? 'red' : 'green') : 'gray' %>
+<% upload_chart_color = @upload_diff.present? ? (@upload_diff.include?('-') ? 'red' : 'green') : 'gray' %>
 <div class="cards--card-with-header">
   <div class="cards--card-header">
     <span>Average speeds</span>
   </div>
   <div class="cards--card-with-header-content-container">
     <%= render partial: "application/components/speed_filters",
-        locals: {
-          resource_id: pod.unix_user,
-          speed_average_path: method(:speed_average_client_url)
-        }
+               locals: {
+                 resource_id: pod.unix_user,
+                 speed_average_path: method(:speed_average_client_url)
+               }
     %>
     <%= turbo_frame_tag "pod-speed-averages" do %>
       <%= render partial: "application/components/speed_cells",
-          locals: {
-            download_avg: @download_avg.present? ? "#{@download_avg.round(2)}" : '-',
-            upload_avg: @upload_avg.present? ? "#{@upload_avg.round(2)}" : '-',
-            download_diff: @download_diff.present? ? "#{@download_diff}" : '-',
-            upload_diff: @upload_diff.present? ? "#{@upload_diff}" : '-'
-          }
+                 locals: {
+                   download_avg: @download_avg.present? ? "#{@download_avg.round(2)}" : '-',
+                   upload_avg: @upload_avg.present? ? "#{@upload_avg.round(2)}" : '-',
+                   download_diff: @download_diff.present? ? "#{@download_diff}" : '-',
+                   upload_diff: @upload_diff.present? ? "#{@upload_diff}" : '-',
+                   slim_download_dashboard_url: slim_client_download_speed_url(period: @period, pod_id: @client.unix_user, chart_color: download_chart_color),
+                   slim_upload_dashboard_url: slim_client_upload_speed_url(period: @period, pod_id: @client.unix_user, chart_color: upload_chart_color),
+                   download_chart_color: download_chart_color,
+                   upload_chart_color: upload_chart_color
+                 }
       %>
     <% end %>
     <%= link_to "View all measurements", client_measurements_path(pod.unix_user), class: "w-100 custom-button custom-button--secondary custom-button--lg" %>

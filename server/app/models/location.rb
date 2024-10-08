@@ -2,15 +2,10 @@ require "#{Rails.root}/lib/fips/fips_geocoder.rb"
 require "csv"
 
 class Location < ApplicationRecord
-<<<<<<< HEAD
-include EventSourceable
-include Recents
-include Schedulable
-=======
   include EventSourceable
   include Recents
+  include Schedulable
   include RangeEvaluator
->>>>>>> 2b8bbff7 (wip: slim download speed chart)
 
   LOCATIONS_PER_COUNTY_GOAL = 25
   LOCATIONS_PER_PLACE_GOAL = 3
@@ -129,14 +124,12 @@ include Schedulable
     measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
   end
 
-  def download_diff(period = nil)
-    avg_and_diff = measurements_avg_and_diff_for_period(period, 'download')
-    avg_and_diff[:diff]
+  def download_avg_and_diff(period = nil)
+    measurements_avg_and_diff_for_period(period, 'download')
   end
 
-  def upload_diff(period = nil)
-    avg_and_diff = measurements_avg_and_diff_for_period(period, 'upload')
-    avg_and_diff[:diff]
+  def upload_avg_and_diff(period = nil)
+    measurements_avg_and_diff_for_period(period, 'upload')
   end
 
   def diff_to_human(curr_avg, prev_avg)
@@ -162,7 +155,7 @@ include Schedulable
     prev_measurements_avg = prev_filtered_measurements.average(type).to_f.round(2) if prev_filtered_measurements.count > 0
 
     diff = diff_to_human(measurements_avg, prev_measurements_avg)
-    { measurements: filtered_measurements,avg: measurements_avg, diff: diff }
+    { measurements: filtered_measurements, avg: measurements_avg, diff: diff }
   end
 
   def process_new_measurement!(measurement)

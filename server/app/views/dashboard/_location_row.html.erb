@@ -1,13 +1,16 @@
-<div class="d-flex flex-stack mb-6 location-row" 
+<% download_avg_and_diff = location.download_avg_and_diff(params[:days]) %>
+<% upload_avg_and_diff = location.upload_avg_and_diff(params[:days]) %>
+
+<div class="d-flex flex-stack mb-6 location-row"
      data-location-id="<%= location.id %>"
      data-location-name="<%= location.name %>"
-     data-location-download="<%= location.download_avg.present? ? location.download_avg : nil %>"
-     data-location-upload="<%= location.upload_avg.present? ? location.upload_avg : nil %>"
+     data-location-download="<%= download_avg_and_diff[:avg] %>"
+     data-location-upload="<%= upload_avg_and_diff[:avg] %>"
      data-location-online="<%= location.online? %>"
      data-location-latitude="<%= location.latitude %>"
      data-location-longitude="<%= location.longitude %>"
-     data-location-download-diff="<%= location.download_diff.present? ? location.download_diff : nil %>"
-     data-location-upload-diff="<%= location.upload_diff.present? ? location.upload_diff : nil %>"
+     data-location-download-diff="<%= download_avg_and_diff[:diff]  %>"
+     data-location-upload-diff="<%= upload_avg_and_diff[:diff] %>"
      data-location-expected-download="<%= location.expected_mbps_down %>"
      data-location-expected-upload="<%= location.expected_mbps_up %>"
 >

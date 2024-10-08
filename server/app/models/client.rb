@@ -821,14 +821,12 @@ class Client < ApplicationRecord
     end
   end
 
-  def download_diff(period = nil)
-    avg_and_diff = measurements_avg_and_diff_for_period(period, 'download')
-    avg_and_diff[:diff]
+  def download_avg_and_diff(period = nil)
+    measurements_avg_and_diff_for_period(period, 'download')
   end
 
-  def upload_diff(period = nil)
-    avg_and_diff = measurements_avg_and_diff_for_period(period, 'upload')
-    avg_and_diff[:diff]
+  def upload_avg_and_diff(period = nil)
+    measurements_avg_and_diff_for_period(period, 'upload')
   end
 
   def diff_to_human(curr_avg, prev_avg)

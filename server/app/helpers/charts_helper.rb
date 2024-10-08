@@ -1,5 +1,5 @@
 module ChartsHelper
-
+  include RangeEvaluator
   THREE_YEARS = 94_608_000
   ONE_YEAR = 31_536_000
   ONE_WEEK = 604_800
@@ -41,16 +41,6 @@ module ChartsHelper
   def download_speeds_params(current_account)
     params = common_filter_params(current_account).merge(time_filter_params)
     params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
-  end
-
-  def slim_download_speed_params(current_account)
-    params = common_filter_params(current_account).merge(time_filter_params)
-    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
-    params.merge(client_params)
-  end
-
-  def client_params
-    { client_id: params[:client_id] }
   end
 
   def compare_download_speeds_params(current_account)
@@ -115,8 +105,8 @@ module ChartsHelper
   end
 
   def time_filter_params
-    days = params[:days] || 1
-    start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
+    days = params[:days] || "last_24_hours"
+    start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : get_range_start_date(days)
     end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
     { from: start_time.strftime('%Y-%m-%d %H:%M:%S').to_time, to: end_time.strftime('%Y-%m-%d %H:%M:%S').to_time }
   end
