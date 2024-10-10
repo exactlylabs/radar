@@ -87,6 +87,7 @@ class ClientMeasurementsController < ApplicationController
 
     if @client.test_requested
       @client.location&.schedule_next_test!
+      @client.schedule_next_test!
       @client.test_requested = false
       @client.save!
     end

@@ -28,7 +28,7 @@ end
 scheduler.every '15s', overlap: false do
   begin
     # Location.request_scheduled_tests! # TODO: Uncomment after UI has migrated scheduling at Network-level
-    Client.request_scheduled_tests!
+    Client.request_scheduled_tests! # TODO: Remove after UI has migrated scheduling at Network-level
     Rails.application.send_cronjob_heartbeat(BETTERSTACK_KEYS[:request_tests_cron])
   rescue => e
     Sentry.capture_exception(e)
@@ -50,7 +50,7 @@ end
 
 scheduler.every '1h', overlap: false do
   begin
-    # Location.refresh_outdated_data_usage! # TODO: Uncomment after UI has migrated scheduling at Network-level
+    Location.refresh_outdated_data_usage!
     Client.refresh_outdated_data_usage!
     MetricsProjectionJob.perform_later
     RefreshMaterializedViewsJob.perform_later
