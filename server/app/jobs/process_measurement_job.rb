@@ -48,7 +48,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.jitter = result["ping"]["jitter"]
       measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
       measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
-
+      measurement.loss_rate = result["packetLoss"]
       measurement.download_id = result["result"]["id"]
       measurement.upload_id = result["result"]["id"]
     end
