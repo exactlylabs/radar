@@ -3,34 +3,31 @@
 %>
 
 <%= form_with(url: move_a_pod_clients_path, method: :put) do |form| %>
-  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-resource="clients" data-controller="add-pod-to-network">
+  <div class="modals--content-container" data-type="full" data-resource="move-pod" data-controller="move-pod" data-current-account-name="<%= resource.account.name %>">
     <div class="modals--form-row mb-4">
       <label for="pod-to-move-select" class="forms--label">Choose a pod to move</label>
-      <select class="forms--select form-select"
-              id="pod-to-move-select"
-              data-controller="select2"
-              data-placeholder="Choose a pod"
-              name="client_id"
-              data-add-pod-to-network-target="clientSelect"
-              data-action="select2-select->add-pod-to-network#onClientSelectChange"
+      <div class="pods--multi-pod-select-container"
+           data-open="false"
+           data-action="click->move-pod#toggleSelect"
       >
-        <% if current_user.super_user && !is_super_user_disabled? %>
-          <option></option>
-          <option>&nbsp;</option>
-        <% end %>
-
-        <% policy_scope(Client).each do |client| %>
-          <%= render partial: "pods/components/pod_select_item", locals: { pod: client } %>
-        <% end %>
-      </select>
-    </div>
-
-    <% unless current_account.is_all_accounts? %>
-        <div class="modals--banner mb-6" data-type="warning" data-add-pod-to-network-target="warningBanner" hidden="hidden">
+        <%= form.hidden_field :network_id, value: resource.id %>
+        <%= form.hidden_field :unix_user, data: { move_pod_target: "podIdHiddenInput" } %>
+        <p class="text--select" data-move-pod-target="emptyPodSelectedMessage">Choose a pod</p>
+        <div class="pods--selected-pod-to-move-field" data-move-pod-target="podSelectedMessage" hidden="hidden">
+          <%= image_tag image_url('pod-small-icon.png'), width: 16, height: 16 %>
+          <p class="text--select" data-move-pod-target="podSelectedMessageText"></p>
         </div>
-    <% end %>
 
+        <%= image_tag image_url('arrow-down-dark.png'), width: 16, height: 16 %>
+        <%= render partial: "pods/modals/move_a_pod/pods_dropdown" %>
+      </div>
+    </div>
+    <% if current_account.is_all_accounts? %>
+      <div class="modals--banner mb-6" data-move-pod-target="warningBanner" hidden="hidden" data-type="warning">
+      </div>
+    <% end %>
   </div>
+
   <div class="modals--footer-container">
     <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
     <!--begin::ContinueButton-->
@@ -39,7 +36,6 @@
             data-controller="loading-feedback"
             data-action="click->loading-feedback#replaceContent"
             data-selected-pods-grid-target="continueButton"
-            <%= @pods.count > 0 ? nil : 'disabled=disabled' %>
     >Continue
     </button>
     <!--end::ContinueButton-->

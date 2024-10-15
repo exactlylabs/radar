@@ -16,7 +16,8 @@ export default class extends Controller {
     "existingPodOption",
     "existingPodRadio",
     "moveExistingPodButton",
-    "warningBanner"
+    "warningBanner",
+    "hiddenNetworkIdInput",
   ];
 
   connect() {
@@ -63,9 +64,12 @@ export default class extends Controller {
     e.preventDefault();
     e.stopPropagation();
     const nextStepUrl = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.newPodOptionTarget.dataset.nextStepUrl : this.existingPodOptionTarget.dataset.nextStepUrl;
-    console.log(nextStepUrl)
-    fetch(nextStepUrl, {
-      headers: { 'X-CSRF-Token': this.token }
+    const url = new URL(nextStepUrl);
+    if (this.addPodType !== ADD_POD_TYPE.NEW_POD) {
+      url.searchParams.append('network_id', this.hiddenNetworkIdInputTarget.value);
+    }
+    fetch(url, {
+      headers: {'X-CSRF-Token': this.token},
     })
       .then(response => {
         if (response.ok) return response.text()
@@ -141,7 +145,6 @@ export default class extends Controller {
   }
 
   onClientSelectChange(e) {
-    console.log("PRINTEAME")
     // set the unix_user to the hidden input field
     this.displayWarningBanner('This pod currently belongs to ~account name~. If you continue, it will be moved to  ~new account\'s name~.')
     // do a post to check if the pod belongs to a

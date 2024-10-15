@@ -1,10 +1,12 @@
+<%= turbo_stream.remove 'ask_add_pod_modal' %>
 <%= turbo_stream.update "add_pod_modal" do %>
   <%= render partial: "application/components/modals/empty_custom_modal",
              locals: {
                modal_title: "Add new pod",
                modal_partial_path: "pods/modals/add_pod/claim_pods_step",
                custom_submit_end_handler: nil,
-               resource: nil
+               resource: nil,
+               needs_overflow: true
              }
   %>
 <% end %>

@@ -17,13 +17,10 @@
     <!--end::Info-->
     <div class="pods--index-button-options-container">
       <% if @clients.count >= 1 %>
-        <a href="<%= get_add_pod_modal_clients_path %>"
-           class="custom-button custom-button--primary custom-button--lg"
-           data-turbo-frame="add_pod_modal"
-        >
+        <%= link_to get_add_pod_modal_clients_path, data: { method: :get, turbo_stream: true }, class: "custom-button custom-button--primary custom-button--lg" do %>
           <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
           Add Pod
-        </a>
+        <% end %>
       <% end %>
       <%= render partial: "application/components/buttons/custom_more_options_button",
                  locals: {

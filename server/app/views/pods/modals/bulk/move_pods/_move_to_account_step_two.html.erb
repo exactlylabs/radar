@@ -30,7 +30,7 @@
           ><%= account.name %></option>
         <% end %>
       </select>
-      <span class="additional-text wrap" data-multi-pod-select-target="accountAdditionalText">Your pods will be available to everyone at <%= all_accounts.first.name %>.</span>
+      <span class="additional-text wrap" data-multi-pod-select-target="accountAdditionalText">Your pods will be available to everyone at <%= all_accounts.first&.name %>.</span>
     </div>
   </div>
   <div class="modals--footer-container">

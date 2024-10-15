@@ -1,0 +1,5 @@
+<% clients = policy_scope(Client).where(account: current_account).order(:location_id, :unix_user) %>
+
+<% clients.each do |client| %>
+  <%= render partial: "pods/modals/move_a_pod/pod_select_row", locals: { client: client } %>
+<% end %>

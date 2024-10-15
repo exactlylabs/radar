@@ -1,0 +1,11 @@
+<% clients_by_account = policy_scope(Client).order(:account_id, :unix_user).group_by(&:account) %>
+<% clients_by_account.each do |account, clients| %>
+  <% if clients.count > 0 %>
+    <% if account.present? %>
+      <div class="pods--account-name"><%= account.name %></div>
+    <% end %>
+    <% clients.map do |client| %>
+      <%= render partial: "pods/modals/move_a_pod/pod_select_row", locals: { client: client } %>
+    <% end %>
+  <% end %>
+<% end %>
