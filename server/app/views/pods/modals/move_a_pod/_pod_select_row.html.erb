@@ -1,0 +1,22 @@
+<div class="pods--select-option-container"
+     data-move-pod-target="podSelectOption"
+     data-action="click->move-pod#selectPod"
+     data-pod-id="<%= client.unix_user %>"
+     data-pod-location="<%= client.location&.name %>"
+     data-pod-account="<%= client.account&.name %>"
+>
+  <div class="pods--select-option-name">
+    <div class="tables--network-icon-container me-2"
+         data-network-status="<%= client.location.nil? ? 'unassigned' : 'online' %>"
+    >
+      <%= image_tag image_url(client.location.nil? ? 'pod-unassigned-icon.png' : 'pod-online-icon.png'), width: 24, height: 24 %>
+      <% if client.online %>
+        <div class="tables--network-online-dot"></div>
+      <% end %>
+    </div>
+    <%= render partial: "pods/components/pod_select_item", locals: { pod: client } %>
+  </div>
+  <div class="pods--select-pod-info">
+    <%= client.location&.name %>
+  </div>
+</div>

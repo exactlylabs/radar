@@ -601,11 +601,17 @@ class ClientsController < ApplicationController
   end
 
   def get_move_a_pod_modal
-    @pods = policy_scope(Client).where(account_id: current_account.id)
+    @network = Location.find(params[:network_id])
   end
 
   def move_a_pod
-
+    @network = Location.find(params[:network_id])
+    @client = Client.find_by_unix_user(params[:unix_user])
+    if @client.update(location_id: @network.id, account_id: @network.account.id)
+      @notice = "Your pod has been successfully moved to #{@network.name}"
+    else
+      @notice = there_has_been_an_error('moving your pod')
+    end
   end
 
   def check_claimed_pod

@@ -486,5 +486,63 @@
 .pods--moving-icon {
   position: absolute;
   bottom: 0;
-    right: 0;
+  right: 0;
+}
+
+.pods--select-option-container {
+  width: 100%;
+  border-radius: .5rem;
+  padding: .5rem 0.625rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+
+  label {
+    font-variation-settings: 'wght' $semi-bold;
+    font-size: 0.875rem;
+    color: $dark-gray;
+  }
+
+  &:hover {
+    background-color: $subtle-gray;
+  }
+}
+
+.pods--select-option-name {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.pods--select-pod-info {
+  max-width: 50%;
+  font-size: 0.875rem;
+  color: $light-gray;
+  font-variation-settings: 'wght' $medium;
+  pointer-events: none;
+}
+
+.pods--selected-pod-to-move-field {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.pods--account-name {
+  padding-left: 1rem;
+  padding-top: 0.75em;
+  padding-bottom: 0.5rem;
+  font-size: 14px;
+  font-variation-settings: 'wght' $semi-bold;
+  color: #A09FB7;
+  line-height: 21px;
 }

@@ -6,11 +6,8 @@
   </div>
   <h3 class="pods--empty-card-title wrap">Your dashboard is still empty.</h3>
   <span class="additional-text wrap">Add a pod to your network to start collecting data and building up your dashboard.</span>
-  <a href="<%= get_add_pod_modal_clients_path %>"
-     data-turbo-frame="add_pod_modal"
-     class="custom-button custom-button--primary custom-button--lg mt-8"
-  >
-    <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
-    Add pod
-  </a>
+  <%= link_to get_add_pod_modal_clients_path, data: { method: :get, turbo_stream: true }, class: "custom-button custom-button--primary custom-button--lg" do %>
+    <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
+    Add Pod
+  <% end %>
 </div>

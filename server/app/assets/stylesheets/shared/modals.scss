@@ -230,7 +230,8 @@
     text-align: center;
   }
 
-  &[data-resource="bulk-move-pods"] {
+  &[data-resource="bulk-move-pods"],
+  &[data-resource="move-pod"] {
     padding: 1.5rem;
     overflow-y: visible;
     min-width: 500px;
@@ -288,7 +289,8 @@
       min-width: unset;
     }
 
-    &[data-resource="bulk-move-pods"] {
+    &[data-resource="bulk-move-pods"],
+    &[data-resource="move-pod"] {
       padding: 2.5rem 2rem;
       overflow-y: visible;
       min-width: unset;

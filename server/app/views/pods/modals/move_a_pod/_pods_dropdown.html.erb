@@ -1,0 +1,25 @@
+<div hidden="hidden"
+     data-move-pod-target="podSelectContainer"
+     id="pods-list"
+>
+  <div class="pods--select-search-container">
+    <div class="pods--select-search-content-container">
+      <%= image_tag image_url("search.png"), class: "pods--select-search-icon" %>
+      <input type="text" data-move-pod-target="searchInput" class="pods--select-search-input" placeholder="Search..." data-action="input->move-pod#search"/>
+      <%= image_tag image_url("cancel.png"), id: "pods--select-clear-icon-ref", class: "category--search-clear-icon invisible", data: { controller: "search", action: "click->search#clearSearch" } %>
+    </div>
+  </div>
+
+  <div class="category--horizontal-divider"></div>
+
+  <div class="pods--select-items-container">
+
+    <div class="pods--select-pod-list-container">
+      <% if current_account.is_all_accounts? %>
+        <%= render partial: "pods/modals/move_a_pod/all_accounts_pod_select" %>
+      <% else %>
+        <%= render partial: "pods/modals/move_a_pod/pod_select"%>
+      <% end %>
+    </div>
+  </div>
+</div>
