@@ -23,7 +23,7 @@ class ProcessMeasurementJob < ApplicationJob
           extended_info = row["Value"]["TCPInfo"]
         end
         if row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["TCPInfo"] && measurement.loss_rate.nil?
-          measurement.loss_rate = (row["Value"]["TCPInfo"]["BytesRetrans"] / row["Value"]["TCPInfo"]["BytesSent"]) * 100.0
+          measurement.loss_rate = (row["Value"]["TCPInfo"]["BytesRetrans"].to_f / row["Value"]["TCPInfo"]["BytesSent"].to_f) * 100.0
         end
         if row["Key"] == "measurement" && row["Value"]["Test"] == "upload" && row["Value"]["AppInfo"] && (measurement.upload_total_bytes.nil? || measurement.upload_total_bytes == 0)
           measurement.upload_total_bytes = row["Value"]["AppInfo"]["NumBytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
