@@ -41,6 +41,7 @@ scheduler.every '5m', overlap: false do
     ProcessOutages.perform_later
     FillClientCountProjection.perform_later
     DeliverPartialPublicPageSubmissionsJob.perform_later
+    ProcessNetworkStatusHistoryProjectorJob.perform_later
   rescue => e
     Sentry.capture_exception(e)
     raise e
