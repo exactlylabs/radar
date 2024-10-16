@@ -637,7 +637,7 @@ class Client < ApplicationRecord
   end
 
   def has_ethernet_interface?
-    pod_network_interfaces.where(wireless: false).count > 0
+    pod_network_interfaces.where("wireless IS NULL or NOT wireless").count > 0
   end
 
   def has_wifi_interface?
@@ -645,12 +645,12 @@ class Client < ApplicationRecord
   end
 
   def get_default_interface
-    network_interfaces.filter { |i| i.present? && i["default_route"] == true }
+    pod_network_interfaces.where(default: true).first
   end
 
   def get_ethernet_mac_address
     if has_ethernet_interface?
-      pod_network_interfaces.where(wireless: false).first.mac_address
+      pod_network_interfaces.where("wireless IS NULL or NOT wireless").first.mac_address
     else
       'Not Available'
     end
@@ -679,23 +679,14 @@ class Client < ApplicationRecord
   end
 
   def get_mac_address
-    return 'Not Available' if network_interfaces.nil?
+    return 'Not Available' if pod_network_interfaces.empty?
 
-    default_interface = get_default_interface
-    if default_interface.size == 0
-      network_interfaces[0]['mac'].upcase # Just defaulting to the first one if no actual default_interface present?
-    elsif default_interface.size == 1
-      default_interface[0]['mac'].upcase
-    else
-      possible_interface = network_interfaces.filter { |i| i.present? && is_eth?(i) }
-      return possible_interface[0]['mac'].upcase if possible_interface.size >= 1
-
-      possible_interface = network_interfaces.filter { |i| i.present? && is_en?(i) }
-      return possible_interface[0]['mac'].upcase if possible_interface.size >= 1
-
-      possible_interface = network_interfaces.filter { |i| i.present? && is_enps?(i) }
-      possible_interface[0]['mac'].upcase # if we get to this point, we don't need to check for the length of filter result because it must be enps type
+    iface = get_default_interface
+    if iface.nil?
+      iface = pod_network_interfaces.first
     end
+
+    return iface&.mac_address&.upcase
   end
 
   # We suggest the nearest 10K based rounding up.
