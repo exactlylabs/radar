@@ -22,17 +22,6 @@ export default class extends Controller {
 
   connect() {
     this.token = document.querySelector('meta[name="csrf-token"]').content;
-    this.addPodType = ADD_POD_TYPE.NEW_POD;
-    this.networkName = '';
-  }
-
-  hiddenTypeInputTargetConnected(target) {
-    this.addPodType = target.value;
-    this.toggleOptions();
-  }
-
-  hiddenNetworkNameInputTargetConnected(target) {
-    this.networkName = target.value;
   }
 
   selectOption(e) {
@@ -44,7 +33,6 @@ export default class extends Controller {
   }
 
   toggleOptions() {
-    console.log(this.addPodType);
     const selectedTarget = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.newPodOptionTarget : this.existingPodOptionTarget;
     const otherTarget = this.addPodType === ADD_POD_TYPE.NEW_POD ? this.existingPodOptionTarget : this.newPodOptionTarget;
 
@@ -142,11 +130,5 @@ export default class extends Controller {
 
   enableMovePodButton() {
     this.moveExistingPodButtonTarget.classList.remove('custom-button--disabled');
-  }
-
-  onClientSelectChange(e) {
-    // set the unix_user to the hidden input field
-    this.displayWarningBanner('This pod currently belongs to ~account name~. If you continue, it will be moved to  ~new account\'s name~.')
-    // do a post to check if the pod belongs to a
   }
 }

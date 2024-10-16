@@ -14,6 +14,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
   before_action :set_client_and_change_account_if_needed, only: :show
+  before_action :set_client_network, only: %i[ get_how_to_add_pod_modal get_move_a_pod_modal move_a_pod ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -588,8 +589,6 @@ class ClientsController < ApplicationController
   end
 
   def get_how_to_add_pod_modal
-    network_id = params[:network_id]
-    @network = Location.find(network_id)
   end
 
   def get_add_pod_modal
@@ -601,11 +600,9 @@ class ClientsController < ApplicationController
   end
 
   def get_move_a_pod_modal
-    @network = Location.find(params[:network_id])
   end
 
   def move_a_pod
-    @network = Location.find(params[:network_id])
     @client = Client.find_by_unix_user(params[:unix_user])
     if @client.update(location_id: @network.id, account_id: @network.account.id)
       @notice = "Your pod has been successfully moved to #{@network.name}"
@@ -1011,5 +1008,9 @@ class ClientsController < ApplicationController
     upload_avg_and_diff = client.measurements_avg_and_diff_for_period(params[:type], :upload)
     @upload_avg = upload_avg_and_diff[:avg]
     @upload_diff = upload_avg_and_diff[:diff]
+  end
+
+  def set_client_network
+    @network = Location.find(params[:network_id])
   end
 end
