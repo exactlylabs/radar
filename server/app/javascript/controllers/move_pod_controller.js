@@ -69,7 +69,6 @@ export default class extends Controller {
     if (!!networkName) {
       moveTo = `${accountName} (${networkName})`
     }
-    console.log(moveTo)
     this.warningBannerTarget.innerText = `This pod currently belongs to ${moveTo}. If you continue, it will be moved to ${this.currentAccountName}.`
     this.warningBannerTarget.removeAttribute('hidden');
   }

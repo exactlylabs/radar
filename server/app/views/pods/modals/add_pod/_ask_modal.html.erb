@@ -1,7 +1,6 @@
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: "Add a pod", is_custom: true }
 %>
-<%#= form_with(url: get_add_pod_modal_clients_path, method: :get, data: { turbo: true, turbo_stream: true }) do |form| %>
 <div class="modal-body modals--body d-flex flex-column justify-content-center align-items-center text-center">
   <input hidden
          type="text"
@@ -20,12 +19,5 @@
     <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
     Add Pod
   <% end %>
-  <!--    <button type="submit"-->
-  <!--            class="custom-button custom-button--primary custom-button--sm"-->
-  <!--    >-->
-  <%#= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
-  <!--      Add Pod-->
-  <!--    </button>-->
 </div>
-<%# end %>
 
