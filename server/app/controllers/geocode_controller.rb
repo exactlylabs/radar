@@ -3,13 +3,12 @@ class Suggestion
 
   def initialize(full_object)
     @full_address = full_object.address
-    address_data = full_object.data['address']
-    @city = address_data["city"] || nil
-    @postcode = address_data["postcode"] || nil
-    @street = address_data["road"] || nil
-    @house_number = address_data["house_number"] || nil
-    @state = address_data["state"] || nil
-    @country = address_data["country"] || nil
+    @city = full_object.city || nil
+    @postcode = full_object.postal_code || nil
+    @street = full_object.street || nil
+    @house_number = full_object.house_number || nil
+    @state = full_object.state || nil
+    @country = full_object.country || nil
     @top_level_address = "#{house_number}"
     @top_level_address += " " if @top_level_address != ""
     @top_level_address += "#{@street}"
