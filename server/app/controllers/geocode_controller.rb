@@ -2,7 +2,7 @@ class Suggestion
   attr_accessor :full_address, :city, :postcode, :street, :house_number, :state, :country, :coordinates, :top_level_address, :lower_level_address
 
   def initialize(full_object)
-    @full_address = full_object.display_name
+    @full_address = full_object.address
     address_data = full_object.data['address']
     @city = address_data["city"] || nil
     @postcode = address_data["postcode"] || nil
