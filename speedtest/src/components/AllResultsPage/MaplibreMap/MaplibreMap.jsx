@@ -4,19 +4,17 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {VECTOR_TILES_URL} from "../../../utils/leaflet";
 import {
-  DEFAULT_DOWNLOAD_FILTER_HIGH,
-  DEFAULT_DOWNLOAD_FILTER_LOW,
-  DEFAULT_DOWNLOAD_FILTER_MID, DEFAULT_DOWNLOAD_FILTER_NONE, NEW_SPEED_HIGH, NEW_SPEED_LOW, NEW_SPEED_MEDIUM
+  DEFAULT_DOWNLOAD_FILTER_NONE, NEW_SPEED_HIGH, NEW_SPEED_LOW, NEW_SPEED_MEDIUM
 } from "../../../utils/colors";
 import ConfigContext from "../../../context/ConfigContext";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import MyPopup from "../MyPopup";
 import CustomModal from "../../common/modals/CustomModal";
 import FTUEMapModal from "../../common/modals/FTUEMapModal";
 import RecentTestTooltip from "../../common/tooltips/RecentTestTooltip";
 import AutoDetectLocationButton from "./AutoDetectLocationButton";
 import ClassificationsModal from "../../common/modals/ClassificationsModal";
 import NewPopup from "../NewPopup";
+import FiltersPanel from "./FiltersPanel";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -40,6 +38,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
@@ -171,6 +170,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     map.current.flyTo({center: [lng, lat], zoom: 12});
   }
 
+  const toggleFiltersPanel = () => {
+    setFiltersPanelOpen(!filtersPanelOpen);
+  }
+
   return (
     <>
       <div id={'speedtest--all-results-page--map-container'}
@@ -178,6 +181,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
            style={{height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden'}}
       >
         <AutoDetectLocationButton useLocation={useAutoLocate}/>
+        <FiltersPanel isOpen={filtersPanelOpen} togglePanel={toggleFiltersPanel}/>
       </div>
       <CustomModal isOpen={ftueModalOpen} closeModal={closeFTUEModal}>
         <FTUEMapModal closeModal={closeFTUEModal}/>
