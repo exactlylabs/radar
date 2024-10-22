@@ -9,14 +9,14 @@
              locals: {
                menu_id: 'date-range-filter-menu',
                key: 'days',
-               default_value: 'last_24_hours',
+               default_value: RangeEvaluator::LAST_24_HOURS,
                default_label: 'Last 24 hours',
                no_z_index: true,
                options: [
-                 { label: 'Last 24 hours', value: 'last_24_hours' },
-                 { label: 'Last 7 days', value: 'last_7_days' },
-                 { label: 'Last 30 days', value: 'last_30_days' },
-                 { label: 'This year', value: "this_year" },
+                 { label: 'Last 24 hours', value: RangeEvaluator::LAST_24_HOURS },
+                 { label: 'Last 7 days', value: RangeEvaluator::LAST_7_DAYS },
+                 { label: 'Last 30 days', value: RangeEvaluator::LAST_30_DAYS },
+                 { label: 'This year', value: RangeEvaluator::THIS_YEAR },
                ],
              }
   %>
