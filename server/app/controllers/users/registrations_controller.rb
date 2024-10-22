@@ -11,7 +11,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     error = false
     begin
       User.transaction do
-        @user = User.create! user_params
+        @user = User.find_by(pods_access: false, email: user_params[:email])
+        if @user.present?
+          _params = {pods_access: true}.merge(user_params)
+          @user.update!(_params)
+        else
+          @user = User.create! user_params
+        end
         # Nit: no need to actually call @user.avatar.attach
         # because it actually already does it in the create statement.
         # What's more, it actually creates a PurgeJob if you do both
@@ -36,7 +42,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     error = false
     begin
       User.transaction do
-        @user = User.create! user_params
+        @user = User.find_by(pods_access: false, email: user_params[:email])
+        if @user.present?
+          _params = {pods_access: true}.merge(user_params)
+          @user.update!(_params)
+        else
+          @user = User.create! user_params
+        end
         # Link account and new user together
         @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
         @invite.destroy!
@@ -266,7 +278,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     respond_to do |format|
       if email.blank?
         format.json { render json: { status: 400, msg: 'The email is required.' } }
-      elsif possible_user.nil?
+      elsif possible_user.nil? || !possible_user.pods_access?
         format.json { render json: { status: 200 } }
       else
         format.json { render json: { status: 422, msg: 'A user with the given email already exists.' } }
