@@ -35,3 +35,7 @@
 .maplibregl-ctrl-top-right > .maplibregl-ctrl.maplibregl-ctrl-group > .maplibregl-ctrl-zoom-in:hover {
   background-color: rgba(236, 236, 236, 1);
 }
+
+.maplibregl-popup.maplibregl-popup-anchor-top-left {
+  border-radius: 12px;
+}
