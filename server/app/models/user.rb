@@ -3,8 +3,8 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :lockable
-  validates :first_name, :last_name, presence: true
-  validates_acceptance_of :terms
+  validates :first_name, :last_name, presence: true, if: Proc.new { |user| user.pods_access? }
+  validates_acceptance_of :terms, if: Proc.new { |user| user.pods_access? }
 
   has_one_attached :avatar
   has_many_attached :downloads
@@ -18,6 +18,10 @@ class User < ApplicationRecord
   has_many :notification_settings
 
   after_save :check_pending_downloads
+
+  def password_required?
+    self.pods_access? ? super : false
+  end
 
   def prefers_gb_unit
     self.data_cap_unit == "GB"

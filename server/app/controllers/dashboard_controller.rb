@@ -14,7 +14,7 @@ class DashboardController < ApplicationController
     end
     @accounts = policy_scope(Account)
     @categories = policy_scope(Category)
-    unless current_account.is_all_accounts?
+    unless current_account.nil? || current_account.is_all_accounts?
       @categories = @categories.where(account_id: current_account.id).select("DISTINCT ON(categories.name) categories.*")
     end
 
