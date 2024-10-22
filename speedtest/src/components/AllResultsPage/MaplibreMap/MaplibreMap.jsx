@@ -16,12 +16,13 @@ import FTUEMapModal from "../../common/modals/FTUEMapModal";
 import RecentTestTooltip from "../../common/tooltips/RecentTestTooltip";
 import AutoDetectLocationButton from "./AutoDetectLocationButton";
 import ClassificationsModal from "../../common/modals/ClassificationsModal";
+import NewPopup from "../NewPopup";
 
 const popupOptions = {
-  offset: [20, -28],
+  offset: [-165, -350],
   closeButton: false,
   closeOnMove: false,
-  closeOnClick: true,
+  closeOnClick: false,
   anchor: 'top-left',
   maxWidth: 'none',
   subpixelPositioning: true
@@ -37,7 +38,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
-  const [classificationsModalOpen, setClassificationsModalOpen] = useState(true);
+  const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
@@ -108,16 +109,39 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
     map.current.on('click', (e) => {
       const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
-      if(!features.length) return;
+      if(!features.length) {
+        if(popupRef.current) popupRef.current.remove();
+        return;
+      }
       const feature = features[0];
       const popupNode = document.createElement('div');
+      popupNode.style.borderRadius = '12px';
       const popupRoot = ReactDOM.createRoot(popupNode);
-      popupRoot.render(<MyPopup measurement={feature.properties} provider={'maplibre'}/>);
+      popupRoot.render(<NewPopup test={feature.properties} />);
+      if(popupRef.current) popupRef.current.remove();
+      console.log(popupRoot);
       popupRef.current
         .setLngLat([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])
         .setDOMContent(popupNode)
         .addTo(map.current);
-      map.current.flyTo({center: [feature.geometry.coordinates[0], feature.geometry.coordinates[1]], zoom: 12});
+      requestAnimationFrame(() => {
+        const renderedPopupHeight = popupNode.clientHeight;
+        const renderedPopupWidth = popupNode.clientWidth;
+        const popupOffset = [-renderedPopupWidth / 2 - 2, -renderedPopupHeight - 16];
+        popupRef.current.setOffset(popupOffset);
+        let clickedFeaturePixelPoint = map.current.project(feature.geometry.coordinates);
+        const mapHeight = map.current.getContainer().clientHeight;
+        const targetYPosition = mapHeight * 0.8;
+        let delta = clickedFeaturePixelPoint.y - targetYPosition;
+        let currentCenterPixel = map.current.project(map.current.getCenter());
+        let newCenterPixel = {x: clickedFeaturePixelPoint.x, y: currentCenterPixel.y + delta};
+        let newCenterCoordinates = map.current.unproject(newCenterPixel);
+        map.current.easeTo({
+          center: newCenterCoordinates,
+          duration: 1000,
+          zoom: map.current.getZoom()
+        });
+      });
     });
 
     map.current.on('mouseenter', 'circle-layer', () => {

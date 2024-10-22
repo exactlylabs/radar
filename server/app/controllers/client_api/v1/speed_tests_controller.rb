@@ -114,7 +114,7 @@ module ClientApi
                 ELSE 0
               END AS download_quality,
               CASE
-                WHEN upload_avg > 25 THEN 2
+                WHEN upload_avg > 20 THEN 2
                 WHEN upload_avg > 3 THEN 1
                 ELSE 0
               END AS upload_quality

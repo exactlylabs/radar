@@ -1,0 +1,222 @@
+.popup {
+  width: 330px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.popup::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: rotate(45deg) translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 1);
+  border-bottom: solid 1px rgba(17, 14, 76, 0.35);
+  border-right: solid 1px rgba(17, 14, 76, 0.35);
+  border-bottom-right-radius: 6px;
+}
+
+.addressContainer {
+  --gradient-starting-color: rgba(49, 179, 108, 0.1);
+  padding: 1rem 1.5rem;
+  text-align: left;
+  background: linear-gradient(0,
+    var(--gradient-starting-color) 0%,
+    var(--gradient-starting-color) 10%,
+    rgba(255, 255, 255, 0) 100%);
+}
+
+.addressContainer[data-test-connection-quality="0"] {
+  --gradient-starting-color: rgba(229, 75, 75, 0.1);
+}
+
+.addressContainer[data-test-connection-quality="1"] {
+  --gradient-starting-color: rgba(246, 171, 82, 0.1);
+}
+
+.addressContainer[data-test-connection-quality="2"] {
+  --gradient-starting-color: rgba(49, 179, 108, 0.1);
+}
+
+.firstAddressLine {
+  font-family: Mulish, sans-serif;
+  color: #110E4CFF;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: 0;
+  text-align: left;
+  margin: 0 0 4px 0;
+}
+
+.secondAddressLine {
+  font-family: Mulish, sans-serif;
+  color: #3F3C70;
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-align: left;
+  margin: 0 0 8px 0;
+}
+
+.qualityBadge {
+  --bg-color: #3F3C70;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-family: Mulish, sans-serif;
+  color: white;
+  font-variation-settings: 'wght' 600;
+  background-color: var(--bg-color);
+}
+
+.qualityBadge[data-test-connection-quality="0"] {
+  --bg-color: rgba(229, 75, 75);
+}
+
+.qualityBadge[data-test-connection-quality="1"] {
+  --bg-color: rgba(246, 171, 82);
+}
+
+.qualityBadge[data-test-connection-quality="2"] {
+  --bg-color: rgba(49, 179, 108);
+}
+
+.dataContainer {
+  border-top: solid 1px rgba(160, 159, 183, 0.2);
+  border-bottom: solid 1px rgba(160, 159, 183, 0.2);
+  display: grid;
+  grid-template-columns: 130px 130px;
+  place-items: center;
+  gap: 1rem 1.5rem;
+  padding: 1rem 1.5rem;
+}
+
+.dataContainer[data-has-content-below="false"] {
+  border-bottom: none;
+}
+
+.dataCell {
+  width: 130px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.dataCellFirstRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.dataCellFirstRowTitle {
+  font-family: Mulish, sans-serif;
+  font-size: 0.875rem;
+  font-variation-settings: 'wght' 600;
+  color: #3F3C70;
+  margin: 0;
+}
+
+.dataCellSecondRow {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 4px;
+  padding-left: 1.5rem;
+}
+
+.dataCellUnit {
+  font-family: Mulish, sans-serif;
+  font-size: .8125rem;
+  color: #110E4C;
+  margin: 0;
+}
+
+.dataCellValue {
+  font-family: Mulish, sans-serif;
+  font-size: 1.25rem;
+  font-variation-settings: 'wght' 700;
+  color: #110E4C;
+  margin: 0;
+}
+
+.dataCellIcon,
+.dataCellIcon > * {
+  --icon-color: rgb(109, 106, 148);
+  stroke: var(--icon-color);
+}
+
+.dataCellIcon > path:not([fill="none"]) {
+  fill: var(--icon-color);
+}
+
+.dataCellIcon[data-variant="high"],
+.dataCellIcon[data-variant="high"] > * {
+  --icon-color: rgba(49, 179, 108);
+}
+
+.dataCellIcon[data-variant="medium"],
+.dataCellIcon[data-variant="medium"] > * {
+  --icon-color: rgb(246, 171, 82);
+}
+
+.dataCellIcon[data-variant="low"],
+.dataCellIcon[data-variant="low"] > * {
+  --icon-color: rgb(229, 75, 75);
+}
+
+.propertiesContainer {
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .75rem;
+}
+
+.connectionDataContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.connectionDataCell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.connectionDataCell[data-full-width="true"] {
+  width: 100%;
+}
+
+.connectionDataValue {
+  font-family: Mulish, sans-serif;
+  font-size: 0.875rem;
+  color: #3F3C70;
+  margin: 0;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cellDivider {
+  height: 1rem;
+  width: 1px;
+  background-color: rgba(160, 159, 183, 0.3);
+}
