@@ -10,7 +10,6 @@ import wiredIcon from '../../assets/wired-icon.svg';
 import cellularIcon from '../../assets/cellular-icon.svg';
 import priceIcon from '../../assets/price-icon.svg';
 import ispIcon from '../../assets/isp-icon.svg';
-
 import {
   CONNECTION_QUALTY_VALUES,
   DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD,
