@@ -58,15 +58,14 @@ export default class extends Controller {
     }
     fetch(url, {
       headers: {'X-CSRF-Token': this.token},
-    })
-      .then(response => {
-        if (response.ok) return response.text()
+    }).then(response => {
+        if (response.ok) return response.text();
         else throw new Error(response.statusText);
-      })
-      .then(html => {
+      }).then(html => {
         Turbo.renderStreamMessage(html);
-      })
-      .catch(error => handleError(error));
+      }).catch((err) => {
+      handleError(err, this.identifier);
+    });
   }
 
   goToInitialStep(e) {
@@ -76,15 +75,14 @@ export default class extends Controller {
     const initialStepUrl = goBackTarget.dataset.url;
     fetch(initialStepUrl, {
       headers: {'X-CSRF-Token': this.token}
-    })
-      .then(response => {
-        if (response.ok) return response.text()
+    }).then(response => {
+        if (response.ok) return response.text();
         else throw new Error(response.statusText);
-      })
-      .then(html => {
+      }).then(html => {
         Turbo.renderStreamMessage(html);
+      }).catch((err) => {
+        handleError(err, this.identifier);
       })
-      .catch(error => handleError(error));
   }
 
   clearPod(e) {
