@@ -6,8 +6,8 @@
   data-action="select2-select->speed-filters#switchDropdownFilter"
   id="speed-filters-select"
 >
-  <option value="last_24_hours" label="Last 24 hours" data-speed-filters-target="dropdownFilter" selected>Last 24 hours</option>
-  <option value="last_7_days" label="Last 7 days" data-speed-filters-target="dropdownFilter">Last 7 days</option>
-  <option value="last_30_days" label="Last 30 days" data-speed-filters-target="dropdownFilter">Last 30 days</option>
-  <option value="this_year" label="This year" data-speed-filters-target="dropdownFilter">This year</option>
+  <option value="<%= RangeEvaluator::LAST_24_HOURS %>" label="Last 24 hours" data-speed-filters-target="dropdownFilter" selected>Last 24 hours</option>
+  <option value="<%= RangeEvaluator::LAST_7_DAYS %>" label="Last 7 days" data-speed-filters-target="dropdownFilter">Last 7 days</option>
+  <option value="<%= RangeEvaluator::LAST_30_DAYS %>" label="Last 30 days" data-speed-filters-target="dropdownFilter">Last 30 days</option>
+  <option value="<%= RangeEvaluator::THIS_YEAR %>" label="This year" data-speed-filters-target="dropdownFilter">This year</option>
 </select>

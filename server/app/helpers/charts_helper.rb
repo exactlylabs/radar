@@ -105,7 +105,7 @@ module ChartsHelper
   end
 
   def time_filter_params
-    days = params[:days] || "last_24_hours"
+    days = params[:days] || RangeEvaluator::LAST_24_HOURS
     start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : get_range_start_date(days)
     end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
     { from: start_time.strftime('%Y-%m-%d %H:%M:%S').to_time, to: end_time.strftime('%Y-%m-%d %H:%M:%S').to_time }

@@ -36,7 +36,7 @@
                    key: 'days',
                    value: option[:value],
                    label: option[:label],
-                   active: params[:days] == option[:value] || (option[:value] == 'last_24_hours' && params[:days].nil? && params[:start].nil? && params[:end].nil?),
+                   active: params[:days] == option[:value] || (option[:value] == RangeEvaluator::LAST_24_HOURS && params[:days].nil? && params[:start].nil? && params[:end].nil?),
                    overridden_keys: "start, end"
                  }
       %>

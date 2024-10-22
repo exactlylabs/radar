@@ -25,10 +25,8 @@ export default class SlimLineChartController extends LineChartController {
     this.chartBottomStart = this.canvasHeight
     this.plotChart();
   }
-  //
-  showTooltip(mouseX, mouseY) {}
 
-  // createYAxisLabel() {}
+  showTooltip(mouseX, mouseY) {}
 
   setChartAxis() {
     this.setYAxis();
@@ -50,8 +48,6 @@ export default class SlimLineChartController extends LineChartController {
   closeLine(pointY, gradientFirstStopColor) {
     this.ctx.lineTo(this.canvasWidth, pointY);
     this.ctx.stroke();
-    // close shape to create fill
-    // reset line color to be invisible
     this.ctx.strokeStyle = 'rgba(0,0,0,0)';
     this.ctx.lineWidth = 0;
     this.ctx.lineTo(this.canvasWidth, this.canvasHeight);
@@ -75,12 +71,12 @@ export default class SlimLineChartController extends LineChartController {
     if(isNaN(jumps)) jumps = 1;
     this.maxYLabelValue = jumps * this.yStepSize;
   }
-  //
+
   setNetWidth() {
     this.netWidth = this.canvasWidth;
     this.horizontalContentStartingPixel= 0;
   }
-  //
+
   paintInitialChart() {
     if(this.lineToggler) this.lineToggler.style.display = 'block';
     this.skeleton.style.display = 'none';
@@ -88,7 +84,7 @@ export default class SlimLineChartController extends LineChartController {
     window.addEventListener('resize', this.loadChart.bind(this));
     this.loadChart();
   }
-  //
+
   showVerticalDashedLine(mouseX) {}
 
   parseColor(color) {

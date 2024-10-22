@@ -1,7 +1,6 @@
 <%= turbo_frame_tag 'slim-upload-speed-widget' do %>
   <% if @upload_speeds.count == 0 %>
-    <p><%= @upload_speeds.count %></p>
-    <%#= render partial: "dashboard/components/widgets/no_data" %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
   <% else %>
     <canvas id="slim-upload-speed-chart"
             data-controller="slim-line-chart"

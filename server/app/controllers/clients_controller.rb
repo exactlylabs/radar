@@ -218,7 +218,7 @@ class ClientsController < ApplicationController
           format.turbo_stream { redirect_to clients_path, notice: notice }
           format.html { redirect_to clients_path, notice: notice }
         else
-          format.turbo_stream {}
+          format.turbo_stream { }
           format.html { redirect_back fallback_location: root_path, notice: notice }
         end
         format.json { head :no_content }

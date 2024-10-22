@@ -1,33 +1,33 @@
 <div class="application--speed-filters-container" data-controller="speed-filters">
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_24_hours') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: RangeEvaluator::LAST_24_HOURS) %>"
     class="application--speed-filter selected"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
-    data-filter="last_24_hours"
+    data-filter=<%= RangeEvaluator::LAST_24_HOURS %>
   >
     Last 24 hours
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_7_days') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: RangeEvaluator::LAST_7_DAYS) %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
-    data-filter="last_7_days"
+    data-filter=<%= RangeEvaluator::LAST_7_DAYS %>
   >
     Last 7 days
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'last_30_days') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: RangeEvaluator::LAST_30_DAYS) %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
-    data-filter="last_30_days"
+    data-filter=<%= RangeEvaluator::LAST_30_DAYS %>
   >
     Last 30 days
   </a>
-  <a href="<%= speed_average_path.call(id: resource_id, type: 'this_year') %>"
+  <a href="<%= speed_average_path.call(id: resource_id, type: RangeEvaluator::THIS_YEAR) %>"
     class="application--speed-filter"
     data-turbo-frame="speed-cells"
     data-action="click->speed-filters#switchFilter"
-    data-filter="this_year"
+    data-filter=<%= RangeEvaluator::THIS_YEAR %>
   >
     This year
   </a>
