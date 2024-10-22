@@ -20,7 +20,7 @@ These permissions are required to use the **TelephonyManager** and **WifiManager
         "connectionInfo": Map<String, Any?>,
     }
     ```
-    As I said before, the information returned may vary depending on whether the connection is WiFi or Cellular. The **connectionInfo** field will contain the information of the connection, which may vary depending on the connection type.<br>
+    As mentioned before, the information returned may vary depending on whether the connection is WiFi or Cellular. The **connectionInfo** field will contain the information of the connection, which may vary depending on the connection type.<br>
     If the connection is `WiFi` the Map will contain the following fields:
     ```kotlin
     {
