@@ -104,3 +104,18 @@
   background-color: #E3E3E8;
   margin: 4px 0;
 }
+
+.emptyText {
+  font-size: 0.9375rem;
+  color: #110E4C;
+  text-align: left;
+  padding-left: 1rem;
+}
+
+.searchInputContainer {
+
+}
+
+.searchInput {
+
+}
