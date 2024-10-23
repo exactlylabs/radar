@@ -90,6 +90,7 @@ export default function ConnectionTypeFilter() {
         <button className={styles.button}
                 data-active={activeFilters.includes(key)}
                 onClick={() => toggleFilter(key)}
+                key={key}
         >
           {connectionTypeIcon(key, activeFilters.includes(key))}
           {key}
