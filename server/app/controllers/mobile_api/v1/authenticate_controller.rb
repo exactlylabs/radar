@@ -3,7 +3,7 @@ module MobileApi::V1
     skip_before_action :authenticate!, only: [:new_code, :get_token, :resend_code]
 
     def new_code
-      existing_code = EmailVerificationCode.pending_for_device(new_code_params[:email], new_code_params[:device_id])
+      existing_code = EmailVerificationCode.pending_new_token_for_device(new_code_params[:email], new_code_params[:device_id])
       if existing_code.present?
         existing_code.expire!
       end
@@ -20,7 +20,10 @@ module MobileApi::V1
     def get_token
       code = EmailVerificationCode.find_by(code: get_token_params[:code], device_id: get_token_params[:device_id])
       if code.nil?
-        head(401)
+        render json: { 
+          "error" => "Validation code is invalid.", "error_code" => "invalid" 
+        }, status: 401
+        
         return
       end
       if code.expired?
