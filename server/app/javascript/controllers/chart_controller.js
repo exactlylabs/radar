@@ -40,6 +40,11 @@ export const QUERY_INTERVALS = {
   SECOND: 'second',
 }
 
+export const DOWNSAMPLE_METHODS = {
+  DECIMATE: "decimate",
+  DECIMATE_MIN_MAX: 'decimate-minmax',
+}
+
 const MAX_STEPS = [1, 2, 5, 10, 15, 25, 50, 100];
 
 export default class ChartController extends Controller {
@@ -107,13 +112,13 @@ export default class ChartController extends Controller {
     this.mouseReleasedX = null;
   }
 
-  downsample(data, method="decimate") {
+  downsample(data, method=DOWNSAMPLE_METHODS.DECIMATE) {
     if (data.length == 0) {
       return data;
     }
-    if (method === "decimate") {
+    if (method === DOWNSAMPLE_METHODS.DECIMATE) {
       return this.decimateData(data);
-    } else if (method === "decimate-minmax") {
+    } else if (method === DOWNSAMPLE_METHODS.DECIMATE_MIN_MAX) {
       return this.decimateData(data, "minmax");
     }
     return data;
@@ -395,7 +400,7 @@ export default class ChartController extends Controller {
   }
 
   loadChart() {
-    const xValues = this.getXValues()
+    const xValues = this.getXValues();
     if(xValues == null || xValues.length === 0) return;
     this.setChartAxis();
     this.plotChart();
@@ -475,7 +480,7 @@ export default class ChartController extends Controller {
     labels.forEach((label, index) => {
       if(index > 0) startingPixel += this.ctx.measureText(labels[index - 1]).width + spaceBetweenLabels;
       this.ctx.fillText(label, startingPixel, labelY);
-      this.labels.push({ label, x: startingPixel });
+    this.labels.push({ label, x: startingPixel });
     });
   }
 
@@ -528,10 +533,10 @@ export default class ChartController extends Controller {
   getMin(values, initial) {
     values.forEach((v) => {
       if (v instanceof Array) {
-        v = this.getMax(v, max)
+        v = this.getMin(v, max);
       }
       if (initial === undefined || v < initial) {
-        initial = v
+        initial = v;
       }
     })
 
