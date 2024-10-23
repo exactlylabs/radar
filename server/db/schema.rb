@@ -320,7 +320,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   end
 
   create_table "email_verification_codes", force: :cascade do |t|
-    t.bigint "user_id"
+    t.bigint "mobile_user_device_id"
     t.string "reason"
     t.string "email"
     t.string "code"
@@ -328,7 +328,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.datetime "valid_until"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_email_verification_codes_on_user_id"
+    t.index ["mobile_user_device_id"], name: "index_email_verification_codes_on_mobile_user_device_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -981,7 +981,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "clients", "watchdog_versions"
   add_foreign_key "clients", "watchdog_versions", column: "target_watchdog_version_id"
   add_foreign_key "distributions", "client_versions"
-  add_foreign_key "email_verification_codes", "users"
+  add_foreign_key "email_verification_codes", "mobile_user_devices"
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
   add_foreign_key "isp_outages", "autonomous_systems"
