@@ -3,7 +3,8 @@ import ChartController, {
   HELPER_HEIGHT,
   QUERY_INTERVALS,
   CHART_IDS,
-  TOOLTIP_TITLE_PADDING
+  TOOLTIP_TITLE_PADDING,
+  DOWNSAMPLE_METHODS
 } from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
@@ -44,7 +45,7 @@ export default class MultiLineChartController extends ChartController {
   }
 
   getXValues() {
-    return this.chartData.values().next().value?.map(entry => entry.x);
+    return this.chartData.values().next().value?.map(entry => entry.x) ?? [];
   }
 
   prepareData(rawData) {
@@ -79,7 +80,7 @@ export default class MultiLineChartController extends ChartController {
       // reasonable range
       this.chartData = this.convertLatencyUnits(this.chartData);
     }
-    this.chartData = this.downsample(this.chartData, "decimate-minmax");
+    this.chartData = this.downsample(this.chartData, DOWNSAMPLE_METHODS.DECIMATE_MIN_MAX);
     this.adjustedData = this.adjustData(this.chartData);
   }
 
@@ -109,7 +110,7 @@ export default class MultiLineChartController extends ChartController {
       const hex = this.COMPARISON_HEX[hexIndex % this.COMPARISON_HEX.length];
       const x = line['x'];
       const y = line['y'];
-      if (y > this.maxYValue); this.maxYValue = y;
+      if (y > this.maxYValue) this.maxYValue = y;
       if(data.has(hex)) {
         data.get(hex).push({x, y});
       } else {
@@ -126,7 +127,7 @@ export default class MultiLineChartController extends ChartController {
       let lineIndex = 0;
 
       timestamps.forEach(timestamp  => {
-        if (lineIndex < linePoints.length && Number(linePoints[lineIndex].x) == Number(timestamp)) {
+        if (lineIndex < linePoints.length && Number(linePoints[lineIndex].x) === Number(timestamp)) {
           merged.push(linePoints[lineIndex]);
           lineIndex++;
         } else {
@@ -327,7 +328,7 @@ export default class MultiLineChartController extends ChartController {
     }
   }
 
-  downsample(data, method="decimate") {
+  downsample(data, method=DOWNSAMPLE_METHODS.DECIMATE) {
     if (data instanceof Map) {
       data.forEach((v, k, map) => {
         map[k] = super.downsample(v, method)
@@ -356,7 +357,7 @@ export default class MultiLineChartController extends ChartController {
     }
 
     if(biggestUnit === 1) {
-      return;
+      return data;
     }
     data.forEach((values, key, _) => {
       data.set(key, values.map((v) => ({...v, y: v.y / biggestUnit })))

@@ -1,4 +1,4 @@
-import ChartController, {HELPER_HEIGHT, CHART_IDS, TOOLTIP_TITLE_PADDING} from "./chart_controller";
+import ChartController, {HELPER_HEIGHT, CHART_IDS, TOOLTIP_TITLE_PADDING, DOWNSAMPLE_METHODS} from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -15,7 +15,7 @@ export default class LineChartController extends ChartController {
       // reasonable range
       rawData = this.convertLatencyUnits(rawData);
     }
-    this.chartData = this.downsample(rawData, "decimate");
+    this.chartData = this.downsample(rawData, DOWNSAMPLE_METHODS.DECIMATE_MIN_MAX);
     this.adjustedData = this.adjustData(this.chartData);
   }
 
@@ -136,7 +136,7 @@ export default class LineChartController extends ChartController {
     }
 
     if(biggestUnit === 1) {
-      return;
+      return data;
     }
     data.forEach((values, key, _) => {
       data[key] = values.map((v) => ({...v, y: v.y / biggestUnit }))
