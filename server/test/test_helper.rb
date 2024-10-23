@@ -50,4 +50,16 @@ class ActiveSupport::TestCase
       ]
     )
   end
+
+  def mobile_put(m_user, url, **params)
+    put url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  end
+
+  def mobile_post(m_user, url, **params)
+    post url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  end
+
+  def mobile_patch(m_user, url, **params)
+    patch url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  end
 end
