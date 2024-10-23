@@ -66,7 +66,7 @@
   padding: 8px 4px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   gap: 8px;
   cursor: pointer;
@@ -75,6 +75,7 @@
   background-color: transparent;
   border: none;
   outline: none;
+  border-radius: 6px;
 }
 
 /* Special case for options with no check icon when active */
@@ -84,10 +85,11 @@
 
 .option > img {
   visibility: hidden;
+  margin-top: 2px;
 }
 
 .option:hover {
-  opacity: 0.8;
+  background-color: #F6F7FA;
 }
 
 .option[data-selected="true"] {
@@ -113,9 +115,62 @@
 }
 
 .searchInputContainer {
-
+  width: 100%;
+  background-color: #F6F7FA;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: .75rem;
+  box-sizing: border-box;
+  margin-bottom: 4px;
 }
 
 .searchInput {
+  width: calc(100% - 16px - 8px);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: #110E4C;
+}
 
+.searchInput::placeholder {
+  color: #A09FB7;
+}
+
+.searchInput:focus {
+  border: none;
+  outline: none;
+}
+
+.multiRowLabelContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.multiRowLabelContainer[data-selected="true"] > .optionLabel {
+  font-variation-settings: 'wght' 700;
+}
+
+.optionLabel {
+  font-size: 0.9375rem;
+  color: #110E4C;
+  margin: 0;
+}
+
+.optionSubLabel {
+  font-size: 0.8125rem;
+  color: #6D6A94;
+  margin: 0;
+}
+
+.scrollableContainer {
+  max-height: 250px;
+  overflow-y: auto;
 }
