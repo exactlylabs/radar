@@ -16,6 +16,8 @@ class User < ApplicationRecord
   has_many :accounts, through: :users_accounts
   has_and_belongs_to_many :feature_flags
   has_many :notification_settings
+  has_many :mobile_user_devices
+  has_many :email_verification_codes
 
   after_save :check_pending_downloads
 
