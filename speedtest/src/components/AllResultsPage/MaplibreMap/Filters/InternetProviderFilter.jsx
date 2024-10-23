@@ -10,10 +10,12 @@ export default function InternetProviderFilter() {
     value: 'all_providers',
     default: true
   }
+  // TODO: Replace this with actual data, leaving mock for now for following work
   const options = [
     {label: 'AT&T Internet Services', subLabel: '430,000 results', value: '1', default: false},
     {label: 'Bigriver', subLabel: '290,100 results', value: '2', default: false},
     {label: 'Comcast (Xfinity)', subLabel: '130,940 results', value: '3', default: false},
+    {label: 'Lumen Technologies', subLabel: '90,300 results', value: '4', default: false},
   ];
 
   const [currentFilter, setCurrentFilter] = useState(allProvidersOption);
@@ -59,7 +61,10 @@ export default function InternetProviderFilter() {
                 key={option.value}
         >
           <img src={checkIcon} width={16} height={16} alt={'check icon'}/>
-          {option.label}
+          <div className={dropdownStyles.multiRowLabelContainer} data-selected={option.value === currentFilter.value}>
+            <p className={dropdownStyles.optionLabel}>{option.label}</p>
+            {option.subLabel && <p className={dropdownStyles.optionSubLabel}>{option.subLabel}</p>}
+          </div>
         </button>
       ))}
       {filteredOptions.length === 0 && <p className={dropdownStyles.emptyText}>No providers found.</p>}
