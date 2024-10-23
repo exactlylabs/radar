@@ -33,7 +33,7 @@ export default function FiltersPanel({isOpen, togglePanel}) {
             <h5 className={styles.filterSectionTitle}>Connection</h5>
           </section>
           <section className={styles.filterSection}>
-            <h5 className={styles.filterSectionTitle}>Internet provider</h5>
+            <h5 className={styles.filterSectionTitle}>Internet Provider</h5>
           </section>
           <section className={styles.filterSection}>
             <h5 className={styles.filterSectionTitle}>Date range</h5>
