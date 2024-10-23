@@ -6,7 +6,7 @@ module MobileApi::V1
       render json: {
         errors: model.errors,
         error_code: "validation_error"
-      }, status: 400
+      }, status: 422
     end
 
     def authenticate!
@@ -21,11 +21,12 @@ module MobileApi::V1
         return
       end
 
-      @session = MobileDeviceSession.find_by_token(token)
-      if @session.nil?
+      @current_user_device = MobileUserDevice.find_by_token(token)
+      if @current_user_device.nil?
         head(401)
         return
       end
+      @current_user = @current_user_device.user
     end
   end
 end
