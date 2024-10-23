@@ -29,6 +29,18 @@ export default function FiltersPanel({isOpen, togglePanel}) {
               <img src={closeIcon} width={12} height={12} alt={'close icon'}/>
             </button>
           </section>
+          <section className={styles.filterSection}>
+            <h5 className={styles.filterSectionTitle}>Connection</h5>
+          </section>
+          <section className={styles.filterSection}>
+            <h5 className={styles.filterSectionTitle}>Internet provider</h5>
+          </section>
+          <section className={styles.filterSection}>
+            <h5 className={styles.filterSectionTitle}>Date range</h5>
+          </section>
+          <section className={styles.filterSection}>
+            <h5 className={styles.filterSectionTitle}>Cost range</h5>
+          </section>
         </div>
         <div className={styles.applySection}>
           <button className={styles.applyButton}>Apply</button>
