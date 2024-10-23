@@ -340,6 +340,16 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace 'mobile_api', defaults: { format: :json } do
+    namespace 'v1' do
+      scope path: 'authenticate' do
+        post 'new_code', to: 'authenticate#new_code'
+        post 'get_token', to: "authenticate#get_token"
+        post 'resend_code', to: "authenticate#resend_code"
+      end      
+    end
+  end
+
   get 'search', to: 'search#index'
 
   # Public access pages - Pod status from labels
