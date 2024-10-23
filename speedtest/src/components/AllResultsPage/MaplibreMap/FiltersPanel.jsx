@@ -1,5 +1,6 @@
 import styles from './filters_panel.module.css';
 import closeIcon from '../../../assets/alert-close.svg';
+import ConnectionTypeFilter from "./Filters/ConnectionTypeFilter";
 
 function filtersIcon() {
   return (
@@ -31,6 +32,7 @@ export default function FiltersPanel({isOpen, togglePanel}) {
           </section>
           <section className={styles.filterSection}>
             <h5 className={styles.filterSectionTitle}>Connection</h5>
+            <ConnectionTypeFilter/>
           </section>
           <section className={styles.filterSection}>
             <h5 className={styles.filterSectionTitle}>Internet Provider</h5>
