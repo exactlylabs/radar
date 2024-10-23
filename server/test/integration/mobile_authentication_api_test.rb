@@ -5,7 +5,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
     User.create!(email: email, pods_access: false)
   end
 
-  def mobile_session(email, device_id)
+  def mobile_user_device(email, device_id)
     user = mobile_user(email)
     MobileUserDevice.create!(user: user, device_id: device_id)
   end
@@ -26,7 +26,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
     post "/mobile_api/v1/authenticate/new_code", params: {email: "test@email.com", device_id: device_id}  
     
     assert_response :accepted
-    code = EmailVerificationCode.pending_for_device("test@email.com", device_id)
+    code = EmailVerificationCode.pending_new_token_for_device("test@email.com", device_id)
     assert code.present?
     assert_not_nil code.code
     assert !code.expired?
@@ -44,7 +44,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
     previous_code = verification_code("test@email.com", device_id)
     post "/mobile_api/v1/authenticate/new_code", params: {email: "test@email.com", device_id: device_id}  
 
-    new_code = EmailVerificationCode.pending_for_device("test@email.com", device_id)
+    new_code = EmailVerificationCode.pending_new_token_for_device("test@email.com", device_id)
     previous_code.reload
     assert previous_code.expired?
     assert_not_equal new_code, previous_code
@@ -72,6 +72,17 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
     assert_equal({ "error" => "Validation code has expired.", "error_code" => "expired" }, @response.parsed_body)
   end
 
+  test "when code token requested, and invalid, expect error" do
+    device_id = SecureRandom.uuid
+    code = verification_code("test@email.com", device_id)
+    code.update(code: '111111')
+    
+    post "/mobile_api/v1/authenticate/get_token", params: { device_id: device_id, code: '000000' }
+    assert_response :unauthorized
+
+    assert_equal({ "error" => "Validation code is invalid.", "error_code" => "invalid" }, @response.parsed_body)
+  end
+
   test "when token requested, expect user and session created" do
     device_id = SecureRandom.uuid
     code = verification_code("test@email.com", device_id)
@@ -85,7 +96,8 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
     device = MobileUserDevice.find_by(user: user, device_id: device_id)
     assert device.present?
     assert_not_nil device.token
-    
+
+    assert user.mobile_account_settings.present?
   end
 
 end
