@@ -24,7 +24,6 @@ module Radar
     # in config/environments, which are processed later.
 
     # config.eager_load_paths << Rails.root.join("extras")
-    # config.autoload_paths << Rails.root.join("app", "models", "mobile")
     config.eager_load_paths << Rails.root.join("app", "models", "mobile")
 
     config.assets.paths << Rails.root.join("vendor", "assets", "javascripts", "fonts")
