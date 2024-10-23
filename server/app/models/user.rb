@@ -17,7 +17,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :feature_flags
   has_many :notification_settings
   has_many :mobile_user_devices
-  has_many :email_verification_codes
 
   after_save :check_pending_downloads
 
@@ -78,6 +77,14 @@ class User < ApplicationRecord
     else
       self.email[0].upcase
     end
+  end
+
+  def mobile_account_settings
+    settings = MobileAccountSettings.find_by(user: self)
+    if settings.nil?
+      settings = MobileAccountSettings.create!(user: self)
+    end
+    settings
   end
 
   private

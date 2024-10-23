@@ -342,11 +342,17 @@ Rails.application.routes.draw do
 
   namespace 'mobile_api', defaults: { format: :json } do
     namespace 'v1' do
-      scope path: 'authenticate' do
-        post 'new_code', to: 'authenticate#new_code'
-        post 'get_token', to: "authenticate#get_token"
-        post 'resend_code', to: "authenticate#resend_code"
-      end      
+      namespace 'authenticate' do
+        post 'new_code'
+        post 'get_token'
+        post 'resend_code'
+      end  
+      
+      namespace 'user' do
+        post 'email', action: 'change_email'
+        post 'email/validate', action: 'validate_code'
+        patch 'settings', action: 'patch_settings'
+      end
     end
   end
 

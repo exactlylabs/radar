@@ -79,7 +79,7 @@ class CreateMobileAppTables < ActiveRecord::Migration[6.1]
     end
 
     create_table :email_verification_codes do |t|
-      t.references :user, foreign_key: true
+      t.references :mobile_user_device, foreign_key: true
       t.string :reason
 
       t.string :email
