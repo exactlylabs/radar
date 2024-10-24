@@ -1,0 +1,84 @@
+// WifiScan proto file declares the messages sent by the mobile app to the server when in wifi scanning mode.
+//
+// Ruby Generated code: https://protobuf.dev/reference/ruby/ruby-generated/
+// Generate a new Ruby code by calling:
+//  - protoc --proto_path=app/messages --ruby_out=app/messages app/messages/scan_package.proto
+//
+// Parse message with:
+//  - Message.decode(str)
+//
+
+
+syntax = "proto3";
+package scan_package_pb;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+
+enum SignalType {
+    WIFI = 0;
+    CELL = 1;
+}
+
+message SignalId {
+    string id = 1;
+    SignalType type = 2; 
+}
+
+
+enum CellType {
+    CDMA = 0;
+    GSM = 1;
+    LTE = 2;
+    NR = 3;
+    TDSCDMA = 4;
+    WCDMA = 5;
+}
+
+// Cell is the static information of a Cell emitter.
+message Cell {
+    string id = 1; // Used to track back to a SignalId in the SignalMeasurement message -- bsid (base station id) or cid (cell id)
+    CellType type = 2;
+    google.protobuf.Struct cell_identity = 3; // Depends on the CellType
+}
+
+
+// AccessPoint is the static information of a wifi access point
+message AccessPoint {
+    string id = 1; // Used to track back to a SignalId in the SignalMeasurement message (possibly BSSID + SSID?)
+    string bssid = 2;
+    string ssid = 3;
+    string capabilities = 4;
+    int32 center_freq0 = 5;
+    int32 center_freq1 = 6;
+    bool is80211mc_responder = 7;
+    int32 channel_width = 8;
+    bool is_passpoint_network = 9;
+    repeated bytes information_elements = 10;
+    int32 wifi_standard = 11;
+}
+
+
+// SignalMeasurement of a specific emitter in a point in time
+message SignalMeasurement {
+    SignalId signal_id = 1; // Used to trace back to its Cell or AccessPoint object
+    float latitude_before = 2;
+    float longitude_before = 3;
+    float accuracy_before = 4;
+    float latitude_after = 5;
+    float longitude_after = 6;
+    float accuract_after = 7;
+    google.protobuf.Timestamp timestamp_before = 8;
+    google.protobuf.Timestamp timestamp_after = 9;
+    google.protobuf.Struct measurement = 10;
+}
+
+
+// ScanPackage is the root element to be sent through the wire
+//  it holds a list of all access points, cells, and their signal measurements
+message ScanPackage {
+    repeated AccessPoint access_points = 1;
+    repeated Cell cells = 2;
+    // To save bandwidth, it's expected from the sender to filter out duplicated measurements (measurements of equal signal strength in the same position)
+    repeated SignalMeasurement measurements = 3;
+}
