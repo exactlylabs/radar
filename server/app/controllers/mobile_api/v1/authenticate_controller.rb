@@ -2,6 +2,16 @@ module MobileApi::V1
   class AuthenticateController < ApiController
     skip_before_action :authenticate!, only: [:new_code, :get_token, :resend_code]
 
+    resource_description do 
+      name "Authentication"
+      api_base_url "/authenticate"
+      formats ['json']
+    end
+
+    api :POST, '/new_code', "Request a new token code"
+    param :email, String, required: true
+    param :device_id, String, required: true
+    returns :code => 202
     def new_code
       existing_code = EmailVerificationCode.pending_new_token_for_device(new_code_params[:email], new_code_params[:device_id])
       if existing_code.present?
@@ -17,6 +27,13 @@ module MobileApi::V1
       head(202)
     end
 
+    api :POST, '/get_token', "Retrieve Token" do
+      param :code, String, required: true
+      param :device_id, String, required: true
+      returns code: 200 do
+        property :token, String
+      end
+    end
     def get_token
       code = EmailVerificationCode.find_by(code: get_token_params[:code], device_id: get_token_params[:device_id])
       if code.nil?
