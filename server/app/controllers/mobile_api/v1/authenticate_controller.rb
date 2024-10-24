@@ -38,10 +38,7 @@ module MobileApi::V1
         end
         device_session = user.mobile_user_devices.find_by_device_id(code.device_id)
         if device_session.nil?
-          device_session = MobileUserDevice.create(user: user, device_id: code.device_id)
-          if device_session.errors.present?
-            return render_error_for(device_session)
-          end
+          device_session = MobileUserDevice.create!(user: user, device_id: code.device_id)
         end
         render json: {
           token: device_session.token
