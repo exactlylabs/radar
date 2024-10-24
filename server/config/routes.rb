@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  apipie
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
   devise_scope :user do
