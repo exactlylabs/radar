@@ -225,9 +225,11 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.string "client_email"
     t.string "client_phone"
     t.boolean "gzip"
+    t.bigint "mobile_scan_session_id"
     t.index ["latitude"], name: "client_speed_tests_latitude_idx"
     t.index ["lonlat"], name: "client_speed_tests_gist_lonlat_idx", using: :gist
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
+    t.index ["mobile_scan_session_id"], name: "index_client_speed_tests_on_mobile_scan_session_id"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -570,8 +572,8 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.index ["user_id"], name: "index_mobile_account_settings_on_user_id", unique: true
   end
 
-  create_table "mobile_scan_network_observations", force: :cascade do |t|
-    t.bigint "mobile_scan_session_id"
+  create_table "mobile_scan_network_measurements", force: :cascade do |t|
+    t.bigint "mobile_scan_session_post_id"
     t.bigint "mobile_scan_network_id"
     t.integer "signal_strength"
     t.float "noise"
@@ -581,13 +583,14 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.float "accuracy_before"
     t.geography "lonlat_after", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.float "accuracy_after"
-    t.index ["mobile_scan_network_id"], name: "index_mobile_scan_network_obs_network_id"
-    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_network_obs_session_id"
+    t.index ["mobile_scan_network_id"], name: "index_mobile_scan_network_meas_network_id"
+    t.index ["mobile_scan_session_post_id"], name: "index_mobile_scan_network_meas_session_id"
   end
 
   create_table "mobile_scan_networks", force: :cascade do |t|
-    t.string "type"
+    t.string "network_type"
     t.string "network_id"
+    t.string "name"
     t.string "cell_network_type"
     t.string "cell_network_data_type"
     t.string "cell_channel"
@@ -607,15 +610,6 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["found_by_session_id"], name: "index_mobile_scan_networks_on_found_by_session_id"
     t.index ["network_id"], name: "index_mobile_scan_networks_on_network_id", unique: true
-  end
-
-  create_table "mobile_scan_networks_sessions", id: false, force: :cascade do |t|
-    t.bigint "mobile_scan_session_id", null: false
-    t.bigint "mobile_scan_network_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["mobile_scan_network_id", "mobile_scan_session_id"], name: "index_mobile_scan_session_network_reverse"
-    t.index ["mobile_scan_session_id", "mobile_scan_network_id"], name: "index_mobile_scan_session_network_forward"
   end
 
   create_table "mobile_scan_result_aps", force: :cascade do |t|
@@ -648,17 +642,27 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.jsonb "raw_decoded_message"
   end
 
-  create_table "mobile_scan_session_post", force: :cascade do |t|
+  create_table "mobile_scan_session_networks", force: :cascade do |t|
     t.bigint "mobile_scan_session_id"
+    t.bigint "mobile_scan_network_id"
+    t.boolean "is_new", default: false
+    t.datetime "last_seen_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_session_post_on_mobile_scan_session_id"
+    t.index ["mobile_scan_network_id"], name: "index_mobile_scan_session_networks_on_mobile_scan_network_id"
+    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_session_networks_on_mobile_scan_session_id"
+  end
+
+  create_table "mobile_scan_session_posts", force: :cascade do |t|
+    t.bigint "mobile_scan_session_id"
+    t.datetime "processed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_session_posts_on_mobile_scan_session_id"
   end
 
   create_table "mobile_scan_sessions", force: :cascade do |t|
     t.bigint "mobile_user_device_id"
-    t.datetime "started_at"
-    t.datetime "finished_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["mobile_user_device_id"], name: "index_mobile_scan_sessions_on_mobile_user_device_id"
@@ -972,6 +976,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
   add_foreign_key "client_speed_tests", "autonomous_systems"
+  add_foreign_key "client_speed_tests", "mobile_scan_sessions"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "autonomous_systems"
@@ -1004,11 +1009,13 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "metrics_projections", "study_aggregates"
   add_foreign_key "metrics_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "mobile_account_settings", "users"
-  add_foreign_key "mobile_scan_network_observations", "mobile_scan_networks"
-  add_foreign_key "mobile_scan_network_observations", "mobile_scan_sessions"
+  add_foreign_key "mobile_scan_network_measurements", "mobile_scan_networks"
+  add_foreign_key "mobile_scan_network_measurements", "mobile_scan_session_posts"
   add_foreign_key "mobile_scan_networks", "mobile_scan_sessions", column: "found_by_session_id"
   add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
-  add_foreign_key "mobile_scan_session_post", "mobile_scan_sessions"
+  add_foreign_key "mobile_scan_session_networks", "mobile_scan_networks"
+  add_foreign_key "mobile_scan_session_networks", "mobile_scan_sessions"
+  add_foreign_key "mobile_scan_session_posts", "mobile_scan_sessions"
   add_foreign_key "mobile_scan_sessions", "mobile_user_devices"
   add_foreign_key "ndt7_diagnose_reports", "clients"
   add_foreign_key "network_outages", "autonomous_systems"
