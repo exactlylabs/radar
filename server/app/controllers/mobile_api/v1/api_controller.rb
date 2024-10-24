@@ -1,6 +1,8 @@
 module MobileApi::V1
-  class ApiController < ActionController::Base
+  class ApiController < ActionController::API
     before_action :authenticate!
+
+    DEFAULT_LIMIT = 100
 
     def render_error_for(model)
       render json: {
@@ -14,6 +16,27 @@ module MobileApi::V1
         error: "Unauthorized Request",
         error_code: "unauthorized"
       }, status: 401
+    end
+
+    def render_paginated_response(items, &block)
+      count = items.count
+      offset = params[:offset] || 0
+      limit = params[:limit] || DEFAULT_LIMIT
+      items = items
+        .offset(offset)
+        .limit(limit)
+        .map { |item| block.present? ? block.call(item) : item.to_json }
+      render json: {
+        count: count,
+        items: items
+      }, status: 200
+    end
+
+    def render_not_found()
+      render json: {
+        "error": "Record not Found",
+        "error_code": "not_found"
+      }, status: 404
     end
 
     def authenticate!
