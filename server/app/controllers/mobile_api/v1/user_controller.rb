@@ -1,6 +1,12 @@
 module MobileApi::V1
  class UserController < ApiController
 
+  resource_description do 
+    name "User"
+    api_base_url "/user"
+
+  end
+
   # POST /mobile_api/v1/user/email
   def change_email
     existing_code = EmailVerificationCode.pending_change_email_for_user(@current_user_device)
