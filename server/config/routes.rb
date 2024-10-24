@@ -350,13 +350,17 @@ Rails.application.routes.draw do
       namespace 'authenticate' do
         post 'new_code'
         post 'get_token'
-        post 'resend_code'
       end  
       
       namespace 'user' do
         post 'email', action: 'change_email'
         post 'email/validate', action: 'validate_code'
         patch 'settings', action: 'patch_settings'
+      end
+
+      resources :mobile_scan_sessions, controller: 'scan_sessions', path: 'scan_sessions', only: [:index, :show, :create] do
+        post 'posts', to: 'scan_sessions#new_post'
+        get "history"
       end
     end
   end
