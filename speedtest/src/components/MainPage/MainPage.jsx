@@ -10,7 +10,7 @@ import NoInternetModal from "../common/NoInternetModal";
 import OverviewPage from "../OverviewPage/OverviewPage";
 import UserDataContext from "../../context/UserData";
 import AlertsContext from "../../context/AlertsContext";
-import {Alert, Snackbar} from "@mui/material";
+import CustomSnackbar from "../common/CustomSnackbar/CustomSnackbar";
 
 const MainPage = ({config}) => {
 
@@ -98,19 +98,7 @@ const MainPage = ({config}) => {
     <Frame config={config} setStep={setStep} step={step}>
       {renderContent()}
       <NoInternetModal isOpen={noInternet} closeModal={() => setNoInternet(false)}/>
-      <Snackbar open={isSnackbarVisible}
-                onClose={closeSnackbar}
-                autoHideDuration={3000}
-      >
-        <Alert severity={snackbarType}
-               variant={'filled'}
-               sx={{width: '100%'}}
-               color={snackbarType}
-               onClose={closeSnackbar}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar message={snackbarMessage} type={snackbarType} open={isSnackbarVisible} duration={5000} onClose={closeSnackbar} />
     </Frame>
   )
 }
