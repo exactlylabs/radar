@@ -51,6 +51,29 @@ class ActiveSupport::TestCase
     )
   end
 
+  def mobile_user(email)
+    User.create!(email: email, pods_access: false)
+  end
+
+  def mobile_user_device(email, device_id=nil)
+    device_id = device_id || SecureRandom.uuid
+    user = mobile_user(email)
+    MobileUserDevice.create!(user: user, device_id: device_id)
+  end
+
+  def scan_session(m_user)
+    MobileScanSession.create(mobile_user_device: m_user)
+  end
+
+  def verification_code(email, m_user: nil, device_id: nil, reason: :new_token)
+    device_id = device_id || m_user&.device_id
+    EmailVerificationCode.create!(mobile_user_device: m_user, email: email, device_id: device_id, reason: reason)
+  end
+
+  def mobile_get(m_user, url, **params)
+    get url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  end
+
   def mobile_put(m_user, url, **params)
     put url, headers: {"Authorization": "Token #{m_user.token}"}, **params
   end
@@ -61,5 +84,9 @@ class ActiveSupport::TestCase
 
   def mobile_patch(m_user, url, **params)
     patch url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  end
+
+  def serialize_datetime(dt)
+    dt.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%S.%LZ")
   end
 end

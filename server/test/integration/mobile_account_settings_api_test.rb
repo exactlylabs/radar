@@ -1,20 +1,6 @@
 require "test_helper"
 
 class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
-  def mobile_user(email)
-    User.create!(email: email, pods_access: false)
-  end
-
-  def mobile_user_device(email)
-    device_id = SecureRandom.uuid
-    user = mobile_user(email)
-    MobileUserDevice.create!(user: user, device_id: device_id)
-  end
-
-  def verification_code(new_email, m_user)
-    EmailVerificationCode.create!(mobile_user_device: m_user, email: new_email, device_id: m_user.device_id, reason: :change_email)
-  end
-
   test "when change email requested without auth, expect 401" do
     post "/mobile_api/v1/user/email", params: { email: "test+new@test.com" }
     assert_response :unauthorized
@@ -39,7 +25,7 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
 
   test "when change email requested, and previous code sent. Expect it to expire" do
     m_user = mobile_user_device("test@test.com")
-    previous_code = verification_code("test+new@test.com", m_user)
+    previous_code = verification_code("test+new@test.com", m_user: m_user, reason: :change_email)
 
     mobile_post(m_user, "/mobile_api/v1/user/email", params: {email: "test+new@test.com"})
     
@@ -52,7 +38,7 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
 
   test "when change email code sent, and code valid, expect user email changed" do
     m_user = mobile_user_device("test@test.com")
-    code = verification_code("test+new@test.com", m_user)
+    code = verification_code("test+new@test.com", m_user: m_user, reason: :change_email)
 
     mobile_post(m_user, "/mobile_api/v1/user/email/validate", params: {code: code.code})
   
@@ -66,7 +52,7 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
 
   test "when change email code sent, and code invalid, expect 404 with not_found code error" do
     m_user = mobile_user_device("test@test.com")
-    code = verification_code("test+new@test.com", m_user)
+    code = verification_code("test+new@test.com", m_user: m_user, reason: :change_email)
 
     mobile_post(m_user, "/mobile_api/v1/user/email/validate", params: {code: code})
     assert_response :not_found

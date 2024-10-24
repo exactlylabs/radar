@@ -1,19 +1,6 @@
 require "test_helper"
 
 class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
-  def mobile_user(email)
-    User.create!(email: email, pods_access: false)
-  end
-
-  def mobile_user_device(email, device_id)
-    user = mobile_user(email)
-    MobileUserDevice.create!(user: user, device_id: device_id)
-  end
-
-  def verification_code(email, device_id)
-    EmailVerificationCode.create!(email: email, device_id: device_id)
-  end
-
   test "when authenticate called, expect 202" do
     device_id = SecureRandom.uuid
     post "/mobile_api/v1/authenticate/new_code", params: {email: "test@email.com", device_id: device_id}  
@@ -41,7 +28,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
 
   test "when new code requested, expect existing expired" do
     device_id = SecureRandom.uuid
-    previous_code = verification_code("test@email.com", device_id)
+    previous_code = verification_code("test@email.com", device_id: device_id)
     post "/mobile_api/v1/authenticate/new_code", params: {email: "test@email.com", device_id: device_id}  
 
     new_code = EmailVerificationCode.pending_new_token_for_device("test@email.com", device_id)
@@ -53,7 +40,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
 
   test "when code token requested, and code valid, expect success" do
     device_id = SecureRandom.uuid
-    code = verification_code("test@email.com", device_id)
+    code = verification_code("test@email.com", device_id: device_id)
 
     post "/mobile_api/v1/authenticate/get_token", params: { device_id: device_id, code: code.code }
     assert_response :success
@@ -63,7 +50,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
 
   test "when code token requested, and expired, expect error" do
     device_id = SecureRandom.uuid
-    code = verification_code("test@email.com", device_id)
+    code = verification_code("test@email.com", device_id: device_id)
     code.update!(valid_until: Time.current)
 
     post "/mobile_api/v1/authenticate/get_token", params: { device_id: device_id, code: code.code }
@@ -74,7 +61,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
 
   test "when code token requested, and invalid, expect error" do
     device_id = SecureRandom.uuid
-    code = verification_code("test@email.com", device_id)
+    code = verification_code("test@email.com", device_id: device_id)
     code.update(code: '111111')
     
     post "/mobile_api/v1/authenticate/get_token", params: { device_id: device_id, code: '000000' }
@@ -85,7 +72,7 @@ class MobileAuthenticationApiTest < ActionDispatch::IntegrationTest
 
   test "when token requested, expect user and session created" do
     device_id = SecureRandom.uuid
-    code = verification_code("test@email.com", device_id)
+    code = verification_code("test@email.com", device_id: device_id)
 
     post "/mobile_api/v1/authenticate/get_token", params: { device_id: device_id, code: code.code }
 
