@@ -227,7 +227,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);
         notifyError(err);
-        showSnackbarMessage('There has been an error fetching speedtests!', SNACKBAR_TYPES.ERROR);
+        showSnackbarMessage('An error has occurred while loading the results. Please try again later.', SNACKBAR_TYPES.ERROR);
       })
       .finally(() => setFetchingResults(false));
   }
