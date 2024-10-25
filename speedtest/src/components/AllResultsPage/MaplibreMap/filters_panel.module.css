@@ -119,6 +119,7 @@
 
 .filtersSection {
   height: calc(100% - 3rem - var(--button-height));
+  overflow-y: auto;
 }
 
 .applySection {
