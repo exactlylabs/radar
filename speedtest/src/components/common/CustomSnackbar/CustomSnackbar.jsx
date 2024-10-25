@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './custom_snackbar.module.css';
 import snackbarError from '../../../assets/snackbar-error-icon.svg';
 import snackbarClose from '../../../assets/snackbar-close-icon.svg';
 import { SNACKBAR_TYPES } from '../../../context/AlertsContext';
 
 const CustomSnackbar = ({ message, type, open, duration, onClose }) => {
-  const [visible, setVisible] = useState(open);
+
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (open) {
-      setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
         if (onClose) onClose();
       }, duration);
-
-      return () => clearTimeout(timer);
     }
-  }, [open, duration, onClose]);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    }
+  }, [open]);
 
   const getTypeIcon = () => {
     switch (type) {
@@ -28,7 +33,7 @@ const CustomSnackbar = ({ message, type, open, duration, onClose }) => {
     }
   };
 
-  if (!visible) return null;
+  if (!open) return null;
 
   return (
     <div className={styles.container} data-type={type}>
@@ -36,7 +41,7 @@ const CustomSnackbar = ({ message, type, open, duration, onClose }) => {
         <img src={getTypeIcon()} width={24} height={24} alt={'snackbar icon'}/>
         <div className={styles.message}>{message}</div>
       </div>
-      <img src={snackbarClose} width={16} height={16} alt={'close snackbar'} onClick={() => { setVisible(false); if (onClose) onClose(); }}/>
+      <img src={snackbarClose} className={styles.closeButton} width={16} height={16} alt={'close snackbar'} onClick={() => { if (onClose) onClose(); }}/>
     </div>
   );
 };

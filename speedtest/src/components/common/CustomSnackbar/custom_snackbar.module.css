@@ -1,49 +1,49 @@
 .container {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    padding: 12px;
-    border-radius: 8px;
-    border-width: 1px;
-    border-style: solid;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-width: 582px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
-    animation: fadeIn 500ms;
-    z-index: 10000;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px;
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-width: 582px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+  animation: fadeIn 500ms;
+  z-index: 10000;
 }
 
 @media (max-width: 768px) {
-    .container {
-        right: 0;
-        left: 0;
-        min-width: unset;    
-        max-width: 100%;
-        margin: 0 16px;
-    }
+  .container {
+    right: 0;
+    left: 0;
+    min-width: unset;    
+    max-width: 100%;
+    margin: 0 16px;
+  }
 }
 
 @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
-  
-    100% {
-      opacity: 1;
-    }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .container[data-type="error"] {
-    border-color: #E54B4B4D;
-    background-color: #FEECF0;
+  border-color: #E54B4B4D;
+  background-color: #FEECF0;
 }
 
 .messageContainer {
-    display: flex;
-    align-items: start;
-    gap: 12px;
+  display: flex;
+  align-items: start;
+  gap: 12px;
 }
   
 .message {
@@ -52,4 +52,13 @@
   font-family: 'Mulish', sans-serif;
   line-height: 1.467rem;
   color: #110E4C;
+}
+
+.closeButton {
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.closeButton:hover {
+  opacity: 0.8;
 }
