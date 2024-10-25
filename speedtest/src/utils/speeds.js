@@ -4,9 +4,15 @@ export const DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
 };
 
 export const UPLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
-  HIGH: 19,
-  MID: 2,
+  HIGH: 20,
+  MID: 3,
 };
+
+export const CONNECTION_QUALTY_VALUES = {
+  SERVED: 2,
+  UNDERSERVED: 1,
+  UNSERVED: 0,
+}
 
 export const SPEED_FILTERS = {
   NONE: 'none',
