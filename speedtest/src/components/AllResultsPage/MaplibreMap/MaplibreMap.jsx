@@ -119,7 +119,6 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       const popupRoot = ReactDOM.createRoot(popupNode);
       popupRoot.render(<NewPopup test={feature.properties} />);
       if(popupRef.current) popupRef.current.remove();
-      console.log(popupRoot);
       popupRef.current
         .setLngLat([feature.geometry.coordinates[0], feature.geometry.coordinates[1]])
         .setDOMContent(popupNode)

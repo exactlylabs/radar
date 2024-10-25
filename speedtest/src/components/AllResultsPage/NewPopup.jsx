@@ -10,25 +10,11 @@ import wiredIcon from '../../assets/wired-icon.svg';
 import cellularIcon from '../../assets/cellular-icon.svg';
 import priceIcon from '../../assets/price-icon.svg';
 import ispIcon from '../../assets/isp-icon.svg';
-
-/**
- * {
- *     "id": 194042,
- *     "download_avg": 5.327264784553066,
- *     "upload_avg": 9.483505038360654,
- *     "latitude": 3.8744117238676425,
- *     "longitude": 11.489979727993525,
- *     "network_location": "Home",
- *     "network_type": "Wifi",
- *     "state": "Centre",
- *     "city": "Yaoundé",
- *     "street": "Rue 2.705",
- *     "autonomous_system_org_name": "CAMTEL",
- *     "loss": 0,
- *     "latency": 454.023,
- *     "connection_quality": 0
- * }
- */
+import {
+  CONNECTION_QUALTY_VALUES,
+  DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD,
+  UPLOAD_SPEED_LOW_TO_MID_THRESHOLD
+} from "../../utils/speeds";
 
 function DownloadIcon({variant}) {
   return (
@@ -90,20 +76,19 @@ export default function NewPopup({test}) {
 
   const getIconColor = (value, type) => {
     if(type === 'download') {
-      if(value < 25) return 'low';
-      else if(value < 100) return 'medium';
+      if(value < DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID) return 'low';
+      else if(value < DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH) return 'medium';
       else return 'high';
     } else {
-      if(value < 3) return 'low';
-      else if(value < 20) return 'medium';
+      if(value < UPLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID) return 'low';
+      else if(value < UPLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH) return 'medium';
       else return 'high';
     }
   }
 
   const getAddressFirstLine = () => {
-    let line = '';
-    if(test.house_number && test.street) line += `${test.house_number} ${test.street}`;
-    else if(test.street) line = `${test.street}`;
+    let line = `${test.street}`;
+    if(test.house_number) line = `${test.house_number} ${line}`;
     return line;
   }
 
@@ -116,7 +101,7 @@ export default function NewPopup({test}) {
     }
     if(test.postal_code) {
       if(line !== '') {
-        if(!line.includes(',')) line += ", ";
+        if(!line.includes(',')) line += ",";
         line += ' ';
       }
       line += test.postal_code;
@@ -125,8 +110,8 @@ export default function NewPopup({test}) {
   }
 
   const getConnectionQuality = () => {
-    if(test.connection_quality === 0) return 'Unserved';
-    else if(test.connection_quality === 1) return 'Underserved';
+    if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNSERVED) return 'Unserved';
+    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNDERSERVED) return 'Underserved';
     else return 'Served';
   }
 
@@ -142,7 +127,6 @@ export default function NewPopup({test}) {
   }
 
   const getNetworkTypeIcon = () => {
-    console.log(test.network_type);
     switch(test.network_type.toLowerCase()) {
       case 'wifi':
         return wifiIcon;
