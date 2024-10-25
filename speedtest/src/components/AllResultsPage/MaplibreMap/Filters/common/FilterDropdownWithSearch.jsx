@@ -10,7 +10,7 @@ export default function FilterDropdownWithSearch({label, iconSrc, handleOnChange
              width={16}
              height={16}
              alt={'search icon'}
-             style={{opacity: 0.5}}
+             className={styles.opaqueImage}
         />
         <input type={'text'}
                onChange={handleOnChange}

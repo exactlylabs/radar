@@ -174,3 +174,7 @@
   max-height: 250px;
   overflow-y: auto;
 }
+
+.opaqueImage {
+  opacity: 0.5;
+}
