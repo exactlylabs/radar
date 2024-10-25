@@ -118,13 +118,14 @@ export default class BarChartController extends ChartController {
     const PADDING = 8;
     const TOOLTIP_TITLE_BOTTOM_PADDING = 4;
     const TOOLTIP_DIVIDING_LINE_HEIGHT = 1;
+    const TOOLTIP_MAX_WIDTH = 210;
 
     const {barX, barY, barHeight, barWidth} = hoveredBarProperties;
     let yCoordinate = barY - SPACING_BETWEEN_TOOLTIP_AND_BAR - TOOLTIP_HEIGHT;
     let tooltipIdentifier = hoveredBarData.x;
     const tooltipText = Number(hoveredBarData.y).toFixed(2) + " " + this.labelSuffix;
     let tooltipWidth = Math.max(this.textWidth(tooltipIdentifier), this.textWidth(tooltipText)) + PADDING * 2;
-    tooltipWidth = tooltipWidth > 210 ? 210 : tooltipWidth;
+    tooltipWidth = tooltipWidth > TOOLTIP_MAX_WIDTH ? TOOLTIP_MAX_WIDTH : tooltipWidth;
     if (tooltipIdentifier.length > 30) {
       tooltipIdentifier = tooltipIdentifier.substring(0, 27) + "...";
     }
