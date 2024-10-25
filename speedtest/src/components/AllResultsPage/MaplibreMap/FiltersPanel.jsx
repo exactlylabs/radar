@@ -3,6 +3,7 @@ import closeIcon from '../../../assets/alert-close.svg';
 import ConnectionTypeFilter from "./Filters/ConnectionTypeFilter";
 import DateRangeFilter from "./Filters/DateRangeFilter";
 import InternetProviderFilter from "./Filters/InternetProviderFilter";
+import CostFilter from "./Filters/CostFilter/CostFilter";
 
 function filtersIcon() {
   return (
@@ -46,6 +47,7 @@ export default function FiltersPanel({isOpen, togglePanel}) {
           </section>
           <section className={styles.filterSection} style={{zIndex: 1}}>
             <h5 className={styles.filterSectionTitle}>Cost range</h5>
+            <CostFilter/>
           </section>
         </div>
         <div className={styles.applySection}>
