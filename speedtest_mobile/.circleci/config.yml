@@ -37,7 +37,7 @@ commands:
 
   setup_backblaze_client:
     steps:
-      - run: curl -o b2 https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+      - run: curl -L -o b2 https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
       - run: chmod +x b2
       - run: sudo mv b2 /usr/bin/b2
       - run: b2 account authorize ${BACKBLAZE_ACCESS_KEY} ${BACKBLAZE_SECRET_KEY}
@@ -97,6 +97,7 @@ jobs:
       - setup_backblaze_client
       - run: |
           for file in $(find ~/workspace/android -type f); do
+            echo "Uploading ${file} to ${file#~/workspace/}"
             b2 file upload radar-mobile-distributions $file ${file#~/workspace/}
           done
 
