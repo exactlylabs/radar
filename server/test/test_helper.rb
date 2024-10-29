@@ -70,20 +70,11 @@ class ActiveSupport::TestCase
     EmailVerificationCode.create!(mobile_user_device: m_user, email: email, device_id: device_id, reason: reason)
   end
 
-  def mobile_get(m_user, url, **params)
-    get url, headers: {"Authorization": "Token #{m_user.token}"}, **params
-  end
-
-  def mobile_put(m_user, url, **params)
-    put url, headers: {"Authorization": "Token #{m_user.token}"}, **params
-  end
-
-  def mobile_post(m_user, url, **params)
-    post url, headers: {"Authorization": "Token #{m_user.token}"}, **params
-  end
-
-  def mobile_patch(m_user, url, **params)
-    patch url, headers: {"Authorization": "Token #{m_user.token}"}, **params
+  [:get, :post, :put, :patch, :delete].each do |method|
+    define_method "mobile_#{method}" do |m_user, url, **params|
+      headers = params.fetch(:headers, {}).merge({"Authorization": "Token #{m_user.token}"})
+      send(method, url, headers: headers, **params.except(:headers))
+    end
   end
 
   def serialize_datetime(dt)

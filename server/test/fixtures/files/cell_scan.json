@@ -1,0 +1,71 @@
+[
+  {
+      "platform": "Android",
+      "connectionType": "Cellular",
+      "connectionInfo": {
+          "networkCountryIso": "br",
+          "phoneType": "GSM",
+          "dataNetworkType": "LTE",
+          "networkOperator": "72403",
+          "networkSpecifier": "1",
+          "signalStrength": {
+              "rssi": -51,
+              "rsrq": -14,
+              "asuLevel": 58,
+              "level": 4,
+              "cqi": 2147483647,
+              "rsrp": -82,
+              "rssnr": 2147483647,
+              "timingAdvance": 2147483647,
+              "dbm": -82
+          },
+          "cellIdentity": {
+              "operatorAlphaShort": "TIM",
+              "mnc": "03",
+              "bandwidth": 15000,
+              "pci": 368,
+              "tac": 31172,
+              "mcc": "724",
+              "mobileNetworkOperator": "72403",
+              "operatorAlphaLong": "TIM",
+              "earfcn": 1276,
+              "cid": 17286410
+          },
+          "networkOperatorName": "TIM"
+      },
+      "rssi": -82
+  },
+  {
+      "platform": "Android",
+      "connectionType": "Cellular",
+      "connectionInfo": {
+          "networkCountryIso": "br",
+          "phoneType": "GSM",
+          "dataNetworkType": "LTE",
+          "networkOperator": "72403",
+          "networkSpecifier": "1",
+          "signalStrength": {
+              "rssi": -59,
+              "rsrq": -20,
+              "asuLevel": 49,
+              "level": 3,
+              "cqi": 2147483647,
+              "rsrp": -91,
+              "rssnr": 2147483647,
+              "timingAdvance": 2147483647,
+              "dbm": -91
+          },
+          "cellIdentity": {
+              "operatorAlphaShort": "",
+              "bandwidth": 2147483647,
+              "pci": 266,
+              "tac": 2147483647,
+              "operatorAlphaLong": "",
+              "earfcn": 1276,
+              "cid": 2147483647
+          },
+          "networkOperatorName": "TIM"
+      },
+      "rssi": -91
+  }
+]
