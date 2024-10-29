@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@2.5.0
+  android: circleci/android@3.0.1
   flutter: circleci/flutter@2.0.4
   aws-s3: circleci/aws-s3@4.0.0
   aws-cli: circleci/aws-cli@4.0
@@ -62,7 +62,7 @@ jobs:
         enum: ["dev", "staging", "prod"]
     executor:
       name: android/android-docker
-      tag: 2023.03.1
+      tag: 2023.02.1
     resource_class: large
     steps:
       - checkout
