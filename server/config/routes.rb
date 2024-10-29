@@ -350,8 +350,8 @@ Rails.application.routes.draw do
       namespace 'authenticate' do
         post 'new_code'
         post 'get_token'
-      end  
-      
+      end
+
       namespace 'user' do
         post 'email', action: 'change_email'
         post 'email/validate', action: 'validate_code'
@@ -361,6 +361,9 @@ Rails.application.routes.draw do
       resources :mobile_scan_sessions, controller: 'scan_sessions', path: 'scan_sessions', only: [:index, :show, :create] do
         post 'posts', to: 'scan_sessions#new_post'
         get "history"
+      end
+
+      resources :mobile_scan_networks, controller: 'networks', path: 'networks', only: [:index, :show] do
       end
     end
   end
