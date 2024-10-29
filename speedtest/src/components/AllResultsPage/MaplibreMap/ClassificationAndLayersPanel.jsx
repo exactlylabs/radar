@@ -1,0 +1,50 @@
+import styles from './classification_and_layers_panel.module.css';
+import ClassificationFilter from './Filters/ClassificationFilter';
+import LayersPopup from './Filters/LayersPopup';
+import {useState} from "react";
+
+import { useViewportSizes } from "../../../hooks/useViewportSizes";
+
+function layersIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      width="16"
+      height="16"
+      className={styles.layersIcon}
+    >
+      <path fill="#3F3C70" transform="translate(1.00353 1)" d="M0.54202825 4.2676749L6.283524 6.7510681C6.7392416 6.9489923 7.257225 6.9489923 7.7129421 6.7510681L13.460394 4.2676749C13.788883 4.1216502 13.999308 3.7959151 13.996455 3.4379017C13.997429 3.0830612 13.783508 2.7625699 13.454438 2.6259093L7.7129421 0.14844324C7.257225 -0.049481079 6.7392416 -0.049481079 6.283524 0.14844324L0.54202825 2.6377633C0.21693757 2.7727492 0.0038174491 3.0873792 0 3.4379017C-0.0033829017 3.7977786 0.21014595 4.1246872 0.54202825 4.2676749Z" />
+      <path fill="#3F3C70" transform="translate(1 6.8244)" d="M13.457972 0.36953649L12.71944 0.049481079C12.567533 -0.016493693 12.394872 -0.016493693 12.242967 0.049481079L7.0017667 2.3135769L1.7605671 0.049481079C1.6086614 -0.016493693 1.4360001 -0.016493693 1.2840945 0.049481079L0.54556173 0.36953649C0.21515584 0.50679517 0 0.82819331 0 1.1844925C0 1.5407915 0.21515584 1.8621897 0.54556173 1.9994483L6.2870579 4.4828415C6.742775 4.6807656 7.2607584 4.6807656 7.716476 4.4828415L13.457972 1.9994483C13.789854 1.8564607 14.003383 1.5295519 14 1.169675C13.996182 0.81915265 13.783062 0.50452262 13.457972 0.36953649L13.457972 0.36953649Z" />
+      <path fill="#3F3C70" transform="translate(1.00353 10.3509)" d="M13.454438 0.36953649L12.715905 0.049481079C12.564 -0.016493693 12.391338 -0.016493693 12.239433 0.049481079L6.9982333 2.3195038L1.7570336 0.049481079C1.6051279 -0.016493693 1.4324666 -0.016493693 1.280561 0.049481079L0.54202825 0.36953649C0.21014595 0.51252419 -0.0033829017 0.83943295 0 1.1993098C-0.00096277962 1.5541502 0.2129584 1.8746417 0.54202825 2.0113022L6.283524 4.5006223C6.7392416 4.6985464 7.257225 4.6985464 7.7129421 4.5006223L13.454438 2.0113022C13.783508 1.8746417 13.997429 1.5541502 13.996467 1.1993098C13.999849 0.83943295 13.786321 0.51252419 13.454438 0.36953649L13.454438 0.36953649Z" />
+    </svg>
+  );
+}
+
+
+
+
+export default function ClassificationAndLayersPanel({ isOpen, togglePanel }) {
+
+  const { isSmallSizeScreen, isMediumSizeScreen } = useViewportSizes();
+
+  const [layersPopupOpen, setLayersPopupOpen] = useState(!isSmallSizeScreen);
+
+  const toggleLayersPopup = () => {
+    setLayersPopupOpen(!layersPopupOpen);
+  }
+  return (
+    <>
+      <div className={styles.classificationAndLayersPanel}>
+        <div className={styles.classificationContainer}>
+          <ClassificationFilter />
+        </div>
+        <div className={styles.layersContainer}>
+          <div className={styles.layersIconContainer} onClick={toggleLayersPopup}>
+            {layersIcon()}
+          </div>
+        </div>
+      </div>
+      <LayersPopup/>
+    </>
+  );
+}

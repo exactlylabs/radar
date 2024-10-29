@@ -1,0 +1,44 @@
+.container {
+    display: flex;
+    gap: 0;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 0;
+    align-items: center;
+}
+
+.divider {
+    width: 1px;
+    max-height: 24px;
+    height: 100%;
+    background-color: #E3E3E8;
+    margin-inline: 8px;
+}
+  
+.button {
+    padding: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-variation-settings: 'wght' 500;
+    color: #110e4c;
+    cursor: pointer;
+}
+  
+.button:hover {
+    border-radius: 8px;
+    border: none;
+    background-color: #F6F7FA;
+}
+
+.checkboxLabel {
+    font-size: 0.875rem;
+    font-variation-settings: 'wght' 500;
+    color: #110e4c;
+    cursor: pointer;
+}

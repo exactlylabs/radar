@@ -16,6 +16,8 @@ import ClassificationsModal from "../../common/modals/ClassificationsModal";
 import NewPopup from "../NewPopup";
 import FiltersPanel from "./FiltersPanel";
 import CalendarModal from "./Filters/CalendarModal";
+import ClassificationAndLayersPanel from "./ClassificationAndLayersPanel";
+import LayersPopup from "./Filters/LayersPopup";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -189,6 +191,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           togglePanel={toggleFiltersPanel}
           openCalendarModal={() => setCalendarModalOpen(true)}
         />
+        <ClassificationAndLayersPanel />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}
