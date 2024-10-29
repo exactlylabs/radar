@@ -109,5 +109,3 @@ gem 'opentelemetry-instrumentation-rails'
 gem 'opentelemetry-instrumentation-redis'
 gem 'opentelemetry-instrumentation-sidekiq'
 gem 'opentelemetry-instrumentation-all'
-
-gem "apipie-rails", "~> 1.4"
