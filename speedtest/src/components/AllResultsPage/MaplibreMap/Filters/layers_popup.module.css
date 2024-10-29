@@ -1,0 +1,50 @@
+.container {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    margin: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    z-index: 1000;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
+    padding: 16px 8px 0px;
+    gap: 0;
+}
+
+.title {
+    padding-left: 8px;
+    font-size: 14px;
+    font-variation-settings: 'wght' 600;
+    color: #6D6A94;
+}
+
+.optionsContainer {
+    padding: 8px 0;
+}
+
+.option {
+    width: 176px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #110E4C;
+}
+
+.option[data-active='true'] {
+    font-variation-settings: 'wght' 700;
+}
+
+.helpContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 12px;
+    cursor: pointer;
+}
