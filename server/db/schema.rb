@@ -573,18 +573,18 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   end
 
   create_table "mobile_scan_network_measurements", force: :cascade do |t|
-    t.bigint "mobile_scan_session_post_id"
+    t.bigint "mobile_scan_session_id"
     t.bigint "mobile_scan_network_id"
     t.integer "signal_strength"
     t.float "noise"
-    t.float "frequency"
-    t.datetime "observed_at"
+    t.datetime "timestamp_before"
+    t.datetime "timestamp_after"
     t.geography "lonlat_before", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.float "accuracy_before"
     t.geography "lonlat_after", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.float "accuracy_after"
     t.index ["mobile_scan_network_id"], name: "index_mobile_scan_network_meas_network_id"
-    t.index ["mobile_scan_session_post_id"], name: "index_mobile_scan_network_meas_session_id"
+    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_network_meas_session_id"
   end
 
   create_table "mobile_scan_networks", force: :cascade do |t|
@@ -596,9 +596,11 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.string "cell_channel"
     t.string "wifi_security"
     t.string "wifi_mac"
-    t.integer "wifi_channel"
+    t.integer "wifi_channel_width"
     t.integer "wifi_frequency"
-    t.integer "times_seen"
+    t.integer "wifi_center_freq0"
+    t.integer "wifi_center_freq1"
+    t.jsonb "extra_information"
     t.datetime "last_seen_at"
     t.datetime "first_seen_at"
     t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
@@ -609,7 +611,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["found_by_session_id"], name: "index_mobile_scan_networks_on_found_by_session_id"
-    t.index ["network_id"], name: "index_mobile_scan_networks_on_network_id", unique: true
+    t.index ["network_type", "network_id"], name: "index_mobile_scan_networks_on_network_type_and_network_id", unique: true
   end
 
   create_table "mobile_scan_result_aps", force: :cascade do |t|
@@ -647,18 +649,11 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.bigint "mobile_scan_network_id"
     t.boolean "is_new", default: false
     t.datetime "last_seen_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", precision: 6, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["mobile_scan_network_id"], name: "index_mobile_scan_session_networks_on_mobile_scan_network_id"
+    t.index ["mobile_scan_session_id", "mobile_scan_network_id"], name: "index_mobile_scan_session_networks_unique", unique: true
     t.index ["mobile_scan_session_id"], name: "index_mobile_scan_session_networks_on_mobile_scan_session_id"
-  end
-
-  create_table "mobile_scan_session_posts", force: :cascade do |t|
-    t.bigint "mobile_scan_session_id"
-    t.datetime "processed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["mobile_scan_session_id"], name: "index_mobile_scan_session_posts_on_mobile_scan_session_id"
   end
 
   create_table "mobile_scan_sessions", force: :cascade do |t|
@@ -1010,12 +1005,11 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "metrics_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "mobile_account_settings", "users"
   add_foreign_key "mobile_scan_network_measurements", "mobile_scan_networks"
-  add_foreign_key "mobile_scan_network_measurements", "mobile_scan_session_posts"
+  add_foreign_key "mobile_scan_network_measurements", "mobile_scan_sessions"
   add_foreign_key "mobile_scan_networks", "mobile_scan_sessions", column: "found_by_session_id"
   add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
   add_foreign_key "mobile_scan_session_networks", "mobile_scan_networks"
   add_foreign_key "mobile_scan_session_networks", "mobile_scan_sessions"
-  add_foreign_key "mobile_scan_session_posts", "mobile_scan_sessions"
   add_foreign_key "mobile_scan_sessions", "mobile_user_devices"
   add_foreign_key "ndt7_diagnose_reports", "clients"
   add_foreign_key "network_outages", "autonomous_systems"
@@ -1049,28 +1043,6 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "wifi_configurations", "clients"
   add_foreign_key "wifi_configurations", "locations"
 
-  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
-    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
-    ORDER BY (date_trunc('d'::text, measurements.processed_at));
-  SQL
   create_view "aggregated_measurements_by_hours", materialized: true, sql_definition: <<-SQL
       SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
       measurements.account_id,
@@ -1084,14 +1056,30 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
       max(measurements.upload) AS upload_max,
       percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
       min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
+      max(measurements.latency) AS latency_max
      FROM (measurements
        LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
     GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
     ORDER BY (date_trunc('h'::text, measurements.processed_at));
+  SQL
+  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
+    ORDER BY (date_trunc('d'::text, measurements.processed_at));
   SQL
   create_view "aggregated_pod_measurements_by_hours", materialized: true, sql_definition: <<-SQL
       SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
@@ -1107,12 +1095,9 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
       max(measurements.upload) AS upload_max,
       percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
       min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
+      max(measurements.latency) AS latency_max
      FROM (measurements
        LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
     GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
     ORDER BY (date_trunc('h'::text, measurements.processed_at));
   SQL
@@ -1130,12 +1115,9 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
       max(measurements.upload) AS upload_max,
       percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
       min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
+      max(measurements.latency) AS latency_max
      FROM (measurements
        LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
     GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
     ORDER BY (date_trunc('d'::text, measurements.processed_at));
   SQL

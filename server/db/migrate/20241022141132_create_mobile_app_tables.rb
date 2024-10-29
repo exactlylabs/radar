@@ -1,7 +1,7 @@
 class CreateMobileAppTables < ActiveRecord::Migration[6.1]
   def change
     add_column :users, :pods_access, :boolean, default: true
-    
+
     create_table :mobile_user_devices do |t|
       t.references :user
       t.uuid :device_id, index: { unique: true }
@@ -24,15 +24,9 @@ class CreateMobileAppTables < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    create_table :mobile_scan_session_posts do |t|
-      t.references :mobile_scan_session, foreign_key: true
-      t.timestamp :processed_at
-      t.timestamps
-    end
-
     create_table :mobile_scan_networks do |t|
       t.string :network_type
-      t.string :network_id, index: { unique: true }
+      t.string :network_id
       t.string :name
 
       t.string :cell_network_type
@@ -41,10 +35,13 @@ class CreateMobileAppTables < ActiveRecord::Migration[6.1]
 
       t.string :wifi_security
       t.string :wifi_mac
-      t.integer :wifi_channel
+      t.integer :wifi_channel_width
       t.integer :wifi_frequency
-      
-      t.integer :times_seen
+      t.integer :wifi_center_freq0
+      t.integer :wifi_center_freq1
+
+      t.jsonb :extra_information
+
       t.timestamp :last_seen_at
       t.timestamp :first_seen_at
       t.st_point :lonlat, geographic: true
@@ -54,30 +51,36 @@ class CreateMobileAppTables < ActiveRecord::Migration[6.1]
       t.references :found_by_session, foreign_key: { to_table: :mobile_scan_sessions }
 
       t.timestamps
+
+      t.index [:network_type, :network_id], unique: true
     end
 
     create_table :mobile_scan_session_networks do |t|
       t.references :mobile_scan_session, foreign_key: true
       t.references :mobile_scan_network, foreign_key: true
-      
+
       t.boolean :is_new, default: false
       t.timestamp :last_seen_at
 
-      t.timestamps
+      t.timestamps default: -> { "CURRENT_TIMESTAMP" }
+
+      t.index [:mobile_scan_session_id, :mobile_scan_network_id], unique: true, name: "index_mobile_scan_session_networks_unique"
     end
 
     create_table :mobile_scan_network_measurements do |t|
-      t.references :mobile_scan_session_post, foreign_key: true, index: { name: "index_mobile_scan_network_meas_session_id" }
+      t.references :mobile_scan_session, foreign_key: true, index: { name: "index_mobile_scan_network_meas_session_id" }
       t.references :mobile_scan_network, foreign_key: true, index: { name: "index_mobile_scan_network_meas_network_id" }
+
       t.integer :signal_strength
       t.float :noise
-      t.float :frequency
-      t.timestamp :observed_at
+
+      t.timestamp :timestamp_before
+      t.timestamp :timestamp_after
+
       t.st_point :lonlat_before, geographic: true
       t.float :accuracy_before
       t.st_point :lonlat_after, geographic: true
       t.float :accuracy_after
-
     end
 
     create_table :email_verification_codes do |t|
