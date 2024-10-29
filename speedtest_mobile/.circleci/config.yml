@@ -96,8 +96,8 @@ jobs:
           at: ~/workspace
       - setup_backblaze_client
       - run: |
-          for file in $(find ~/worspace/android -type f); do
-            b2 file upload radar-mobile-distributions $file $file
+          for file in $(find ~/workspace/android -type f); do
+            b2 file upload radar-mobile-distributions $file ${file#~/workspace/}
           done
 
   release-android:
