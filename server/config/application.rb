@@ -6,6 +6,7 @@ require "./lib/geotools/asns.rb"
 require "./lib/events_notifier/notifier.rb"
 require "./lib/tailscale/client.rb"
 require "./lib/geotools/custom_geocoder.rb"
+require 'google/protobuf/well_known_types' # Include some extra helper methods to Timestamp protobuff
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.

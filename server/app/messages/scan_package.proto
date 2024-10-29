@@ -22,10 +22,11 @@ enum SignalType {
 
 message SignalId {
     string id = 1;
-    SignalType type = 2; 
+    SignalType signal_type = 2;
 }
 
 
+// CellType covers both the phone and data network types
 enum CellType {
     CDMA = 0;
     GSM = 1;
@@ -33,29 +34,48 @@ enum CellType {
     NR = 3;
     TDSCDMA = 4;
     WCDMA = 5;
+    GPRS = 6;
+    EDGE = 7;
+    ONExRTT = 8;
+    IDEN = 9;
+    UMTS = 10;
+    EVDO_0 = 11;
+    EVDO_A = 12;
+    HSDPA = 13;
+    HSUPA = 14;
+    HSPA = 15;
+    EVDO_B = 16;
+    EHRPD = 17;
+    HSPAP = 18;
+    SCDMA = 19;
 }
 
 // Cell is the static information of a Cell emitter.
 message Cell {
     string id = 1; // Used to track back to a SignalId in the SignalMeasurement message -- bsid (base station id) or cid (cell id)
-    CellType type = 2;
-    google.protobuf.Struct cell_identity = 3; // Depends on the CellType
+    string operator = 2;
+    CellType phone_type = 3;
+    CellType data_network_type = 4;
+    google.protobuf.Struct cell_identity = 5; // Depends on the CellType, make sure to exclude duplicated fields
 }
 
 
 // AccessPoint is the static information of a wifi access point
 message AccessPoint {
-    string id = 1; // Used to track back to a SignalId in the SignalMeasurement message (possibly BSSID + SSID?)
-    string bssid = 2;
-    string ssid = 3;
-    string capabilities = 4;
-    int32 center_freq0 = 5;
-    int32 center_freq1 = 6;
-    bool is80211mc_responder = 7;
-    int32 channel_width = 8;
-    bool is_passpoint_network = 9;
-    repeated bytes information_elements = 10;
-    int32 wifi_standard = 11;
+   // Used to track back to a SignalId in the SignalMeasurement message (possibly BSSID + SSID?)
+   // BSSIDs were supposed to be unique, but it appears that's not the case with many manufacturers.
+  string id = 1;
+  string bssid = 2;
+  string ssid = 3;
+  string capabilities = 4; // Will contain the security type
+  int32 center_freq0 = 5;
+  int32 center_freq1 = 6;
+  bool is80211mc_responder = 7;
+  int32 channel_width = 8;
+  int32 frequency = 9;
+  bool is_passpoint_network = 10;
+  repeated bytes information_elements = 11;
+  int32 wifi_standard = 12;
 }
 
 
@@ -67,10 +87,13 @@ message SignalMeasurement {
     float accuracy_before = 4;
     float latitude_after = 5;
     float longitude_after = 6;
-    float accuract_after = 7;
-    google.protobuf.Timestamp timestamp_before = 8;
-    google.protobuf.Timestamp timestamp_after = 9;
-    google.protobuf.Struct measurement = 10;
+    float accuracy_after = 7;
+    int32 dbm = 8; // Signal Strength -- all emitters should have this data
+    int32 snr = 9; // Signal to Noise Ratio -- some emitters can have this data
+    google.protobuf.Timestamp timestamp_before = 10;
+    google.protobuf.Timestamp timestamp_after = 11;
+    // Any remaining data specific to the technology -- Avoid duplicates with dbm and snr!
+    google.protobuf.Struct measurement = 12;
 }
 
 

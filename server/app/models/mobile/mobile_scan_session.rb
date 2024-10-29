@@ -4,7 +4,7 @@ class MobileScanSession < ApplicationRecord
   has_many :mobile_scan_session_networks
   has_many :mobile_scan_networks, through: :mobile_scan_session_networks
   has_many :client_speed_tests
-  has_many :mobile_scan_session_posts
+  has_many :mobile_scan_network_measurements
 
   def wifi_networks
     mobile_scan_networks.wifi
