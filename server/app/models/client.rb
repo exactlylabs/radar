@@ -637,7 +637,7 @@ class Client < ApplicationRecord
   end
 
   def has_ethernet_interface?
-    pod_network_interfaces.where("wireless IS NULL or NOT wireless").count > 0
+    pod_network_interfaces.where("mac_address != '' AND (wireless IS NULL or NOT wireless)").count > 0
   end
 
   def has_wifi_interface?
@@ -650,7 +650,7 @@ class Client < ApplicationRecord
 
   def get_ethernet_mac_address
     if has_ethernet_interface?
-      pod_network_interfaces.where("wireless IS NULL or NOT wireless").first.mac_address
+      pod_network_interfaces.where("mac_address != '' AND (wireless IS NULL or NOT wireless)").first.mac_address
     else
       'Not Available'
     end
