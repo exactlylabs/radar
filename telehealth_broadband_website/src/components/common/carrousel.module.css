@@ -1,0 +1,53 @@
+.carrouselContainer {
+  width: 100%;
+  overflow-x: visible;
+}
+
+.carrousel {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 2rem;
+  width: max-content;
+  transition: margin-left 0.5s ease;
+}
+
+.carrousel > astro-slot > div {
+  scroll-snap-align: start;
+}
+
+.buttonsContainer {
+  width: max-content;
+  margin-right: 0;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding-top: 2.5rem;
+}
+
+.button {
+  height: 40px;
+  width: 40px;
+  border: solid 1.5px white;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:not([disabled]):hover {
+  opacity: 0.8;
+}
+
+.button[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.button[data-direction="left"] {
+  transform: rotate(180deg);
+}
