@@ -35,7 +35,7 @@ void callback() async {
   );
 
   await GetIt.I<LocalStorage>().setLocalStorage();
-  EndlessService.setListener(WifiTrackerServiceListener());
+  EndlessService.setListener(WifiTrackerServiceListener(), "wifi_tracker");
 }
 
 IStringResource _loadStringResource(String flavor) {
@@ -53,7 +53,8 @@ class WifiTrackerService {
     try {
       EndlessService.setup(
         callback: callback,
-        options: EndlessServiceOptions(frequency: frequency, forceHandler: true, wifiLock: true),
+        options: EndlessServiceOptions(
+            name: "wifi_tracker", frequency: frequency, forceHandler: true, wifiLock: true),
         androidNotificationOptions: AndroidNotificationOptions(
           id: 600,
           title: 'Wifi Tracker enabled',
@@ -81,7 +82,7 @@ class WifiTrackerService {
 
   static Future<bool> stop() async {
     try {
-      return await EndlessService.stop();
+      return await EndlessService.stop("wifi_tracker");
     } catch (exception, stackTrace) {
       Sentry.captureException(exception, stackTrace: stackTrace);
       return false;
