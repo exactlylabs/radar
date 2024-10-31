@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import styles from './navbar.module.css';
+import logo from '../../assets/images/navbar-logo.webp';
+---
+
+<nav class={styles.nav}>
+  <a href="/">
+    <Image
+      src={logo}
+      densities={[1,2,4]}
+      alt="Main navbar TBP logo"
+      height={28}
+      loading={'eager'}
+    />
+  </a>
+  <ul class={styles.links}>
+    <li><a href="/approach">Our Approach</a></li>
+    <li><a href="/findings">Findings</a></li>
+    <li><a href="/stories">Stories</a></li>
+    <li><a href="/opportunities">Opportunities</a></li>
+    <li><a href="/resources">Resources</a></li>
+  </ul>
+</nav>

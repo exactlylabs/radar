@@ -1,0 +1,59 @@
+:root {
+  --max-width: 1250px;
+  --text-color: #ACAFCD;
+  --heading-color: #FFFFFF;
+}
+
+@font-face {
+  font-family: 'Mulish';
+  src: url("/fonts/Mulish-VariableFont_wght.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-family: 'Mulish', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: white;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border: none;
+}
+
+* {
+  -ms-overflow-style: none;
+}
+
+body {
+  background-color: #0A081C;
+}
+
+a {
+  cursor: pointer;
+}
+
+a:hover:not(:has(img)) {
+  opacity: 0.8;
+  text-decoration: none;
+  text-underline: none;
+}
