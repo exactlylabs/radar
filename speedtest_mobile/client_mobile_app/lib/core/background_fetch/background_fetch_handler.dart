@@ -36,7 +36,7 @@ void callback() async {
   );
 
   await GetIt.I<LocalStorage>().setLocalStorage();
-  EndlessService.setListener(BackgroundFetchListener());
+  EndlessService.setListener(BackgroundFetchListener(), "background_mode");
 }
 
 IStringResource _loadStringResource(String flavor) {
@@ -54,7 +54,7 @@ class BackgroundFetchHandler {
     try {
       EndlessService.setup(
         callback: callback,
-        options: EndlessServiceOptions(frequency: frequency * 60000),
+        options: EndlessServiceOptions(name: "background_mode", frequency: frequency * 60000),
         androidNotificationOptions: AndroidNotificationOptions(
           id: 500,
           title: 'Background mode enabled',
@@ -83,7 +83,7 @@ class BackgroundFetchHandler {
 
   static Future<bool> stop() async {
     try {
-      return await EndlessService.stop();
+      return await EndlessService.stop("background_mode");
     } catch (exception, stackTrace) {
       Sentry.captureException(exception, stackTrace: stackTrace);
       return false;
