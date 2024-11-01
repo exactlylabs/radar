@@ -12,7 +12,6 @@ module MobileApi::V1
       email: change_email_params[:email],
       mobile_user_device: @current_user_device,
       reason: :change_email,
-      device_id: @current_user_device.device_id,
     )
     if code.errors.present?
       return render_error_for(code)
@@ -31,12 +30,12 @@ module MobileApi::V1
       }, status: 404
       return
     end
-    
+
     User.transaction do
       @current_user.update(email: code.email)
       code.expire!
     end
-    
+
     if @current_user.errors.present?
      return render_error_for(@current_user)
     end
@@ -49,7 +48,7 @@ module MobileApi::V1
   # PATCH /mobile_api/v1/user/settings
   def patch_settings
     account_settings = @current_user.mobile_account_settings
-    
+
     _params = patch_settings_params.to_h
 
     if _params[:home_latitude].present? && _params[:home_longitude].present?
@@ -77,11 +76,11 @@ module MobileApi::V1
 
   def patch_settings_params
     params.permit(
-      :home_latitude, 
-      :home_longitude, 
-      :mobile_monthly_cost, 
-      :fixed_expected_download, 
-      :fixed_expected_upload, 
+      :home_latitude,
+      :home_longitude,
+      :mobile_monthly_cost,
+      :fixed_expected_download,
+      :fixed_expected_upload,
       :fixed_monthly_cost
     )
   end
