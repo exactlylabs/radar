@@ -26,7 +26,9 @@ export default class SlimLineChartController extends LineChartController {
     this.plotChart();
   }
 
-  showTooltip(mouseX, mouseY) {}
+  showTooltip(mouseX, mouseY) {
+    return;
+  }
 
   setChartAxis() {
     this.setYAxis();
@@ -85,7 +87,9 @@ export default class SlimLineChartController extends LineChartController {
     this.loadChart();
   }
 
-  showVerticalDashedLine(mouseX) {}
+  showVerticalDashedLine(mouseX) {
+    return;
+  }
 
   parseColor(color) {
     if (color === 'green') {
