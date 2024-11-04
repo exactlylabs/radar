@@ -45,7 +45,7 @@ module MobileApi::V1
       end
 
       token_type, token = request.authorization.split(" ")
-      if token_type != "Token"
+      if token_type != "Bearer"
         return render_unauthorized_error
       end
 

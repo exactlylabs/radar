@@ -28,7 +28,7 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
     previous_code = verification_code("test+new@test.com", m_user: m_user, reason: :change_email)
 
     mobile_post(m_user, "/mobile_api/v1/user/email", params: {email: "test+new@test.com"})
-    
+
     new_code = EmailVerificationCode.pending_change_email_for_user(m_user)
     previous_code.reload
 
@@ -41,7 +41,7 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
     code = verification_code("test+new@test.com", m_user: m_user, reason: :change_email)
 
     mobile_post(m_user, "/mobile_api/v1/user/email/validate", params: {code: code.code})
-  
+
     code.reload
     m_user.reload
 
@@ -94,5 +94,28 @@ class MobileAccountSettingsApiTest < ActionDispatch::IntegrationTest
     assert_equal 500.0, m_user.user.mobile_account_settings.fixed_expected_download
     assert_equal 300.0, m_user.user.mobile_account_settings.fixed_expected_upload
     assert_equal 49.99, m_user.user.mobile_account_settings.fixed_monthly_cost
+  end
+
+  test "when get user settings, expect response" do
+    m_user = mobile_user_device("test@test.com")
+    m_user.user.mobile_account_settings.update(
+      home_lonlat: 'POINT(11.9 23.4)',
+      mobile_monthly_cost: 14.4,
+      fixed_expected_download: 500.0,
+      fixed_expected_upload: 300.0,
+      fixed_monthly_cost: 49.99,
+    )
+
+    mobile_get(m_user, "/mobile_api/v1/user/settings")
+
+    assert_response :success
+    assert_equal({
+      "home_latitude" => 23.4,
+      "home_longitude" => 11.9,
+      "mobile_monthly_cost" => 14.4,
+      "fixed_expected_download" => 500.0,
+      "fixed_expected_upload" => 300.0,
+      "fixed_monthly_cost" => 49.99,
+    }, @response.parsed_body)
   end
 end

@@ -72,7 +72,7 @@ class ActiveSupport::TestCase
 
   [:get, :post, :put, :patch, :delete].each do |method|
     define_method "mobile_#{method}" do |m_user, url, **params|
-      headers = params.fetch(:headers, {}).merge({"Authorization": "Token #{m_user.token}"})
+      headers = params.fetch(:headers, {}).merge({"Authorization": "Bearer #{m_user.token}"})
       send(method, url, headers: headers, **params.except(:headers))
     end
   end

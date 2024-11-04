@@ -45,6 +45,11 @@ module MobileApi::V1
     }, status: 200
   end
 
+  # GET /mobile_api/v1/user/settings
+  def get_settings
+    render_account_settings(@current_user.mobile_account_settings)
+  end
+
   # PATCH /mobile_api/v1/user/settings
   def patch_settings
     account_settings = @current_user.mobile_account_settings
@@ -61,7 +66,7 @@ module MobileApi::V1
       return render_error_for(account_settings)
     end
 
-    render json: account_settings.to_json
+    render_account_settings(account_settings)
   end
 
   private
@@ -83,6 +88,13 @@ module MobileApi::V1
       :fixed_expected_upload,
       :fixed_monthly_cost
     )
+  end
+
+  def render_account_settings(settings)
+    data = settings.as_json(except: [:home_lonlat, :id, :user_id])
+    data[:home_latitude] = settings.home_lonlat.latitude
+    data[:home_longitude] = settings.home_lonlat.longitude
+    return render json: data, status: 200
   end
  end
 end
