@@ -16,7 +16,6 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
     contentIds.forEach((contentId: string, index: number) => {
       const intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
         entries.forEach((entry: IntersectionObserverEntry) => {
-          console.log(entry.target.id, entry.intersectionRatio);
           const opacity = Math.max(0.3, entry.intersectionRatio);
           (entry.target as HTMLElement).style.opacity = `${opacity}`;
           
