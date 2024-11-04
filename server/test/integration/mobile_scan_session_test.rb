@@ -92,8 +92,8 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
         ScanPackagePb::AccessPoint.new(id: "AP1", bssid: "AP1", ssid: "TestNet", capabilities: "[WPA2-PSK]"),
       ],
       cells: [
-        ScanPackagePb::Cell.new(id: "Cell1", phone_type: 1, data_network_type: 2),
-        ScanPackagePb::Cell.new(id: "Cell2", phone_type: 1, data_network_type: 3),
+        ScanPackagePb::Cell.new(id: "Cell1", operator: "AT&T", phone_type: 1, data_network_type: 2),
+        ScanPackagePb::Cell.new(id: "Cell2", operator: "T-Mobile", phone_type: 1, data_network_type: 3),
       ],
       measurements: [
         ScanPackagePb::SignalMeasurement.new(
@@ -307,9 +307,9 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     assert_equal({
       "count" => 3,
       "items" => [
-        {"id" => n1.id, "network_type" => "cell", "name" => "Cell 1", "is_new" => false, "last_seen_at" => serialize_datetime(last_seen)},
-        {"id" => n2.id, "network_type" => "cell", "name" => "Cell 2", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
-        {"id" => n3.id, "network_type" => "wifi", "name" => "Wifi 1", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n1.id, "network_type" => "cell", "network_id" => "Cell1", "name" => "Cell 1", "is_new" => false, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n2.id, "network_type" => "cell", "network_id" => "Cell2", "name" => "Cell 2", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n3.id, "network_type" => "wifi", "network_id" => "Wifi1", "name" => "Wifi 1", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
       ],
     }, @response.parsed_body)
   end
@@ -335,8 +335,8 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     assert_equal({
       "count" => 2,
       "items" => [
-        {"id" => n1.id, "network_type" => "cell", "name" => "Cell 1", "is_new" => false, "last_seen_at" => serialize_datetime(last_seen)},
-        {"id" => n2.id, "network_type" => "cell", "name" => "Cell 2", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n1.id, "network_type" => "cell", "network_id" => "Cell1", "name" => "Cell 1", "is_new" => false, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n2.id, "network_type" => "cell", "network_id" => "Cell2", "name" => "Cell 2", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
       ],
     }, @response.parsed_body)
   end
@@ -362,7 +362,7 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     assert_equal({
       "count" => 1,
       "items" => [
-        {"id" => n3.id, "network_type" => "wifi", "name" => "Wifi 1", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
+        {"id" => n3.id, "network_type" => "wifi", "network_id" => "Wifi1", "name" => "Wifi 1", "is_new" => true, "last_seen_at" => serialize_datetime(last_seen)},
       ],
     }, @response.parsed_body)
   end

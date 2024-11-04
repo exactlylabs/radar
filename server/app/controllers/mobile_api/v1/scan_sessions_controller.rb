@@ -89,7 +89,7 @@ module MobileApi::V1
       return render_paginated_response(networks) do |item|
         is_new = item.is_new
         last_seen_at = item.last_seen_at
-        item.mobile_scan_network.as_json(only: [:id, :network_type, :name]).merge({is_new: is_new, last_seen_at: last_seen_at})
+        item.mobile_scan_network.as_json(only: [:id, :network_id, :network_type, :name]).merge({is_new: is_new, last_seen_at: last_seen_at})
       end
     end
 
