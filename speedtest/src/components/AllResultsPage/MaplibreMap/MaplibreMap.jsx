@@ -15,6 +15,7 @@ import AutoDetectLocationButton from "./AutoDetectLocationButton";
 import ClassificationsModal from "../../common/modals/ClassificationsModal";
 import NewPopup from "../NewPopup";
 import FiltersPanel from "./FiltersPanel";
+import CalendarModal from "./Filters/CalendarModal";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -39,6 +40,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
+  const [calendarModalOpen, setCalendarModalOpen] = useState(false);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
@@ -165,6 +167,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const closeFTUEModal = () => { setFtueModalOpen(false); }
   const closeClassificationsModal = () => { setClassificationsModalOpen(false); }
+  const closeCalendarModal = () => { setCalendarModalOpen(false); }
 
   const useAutoLocate = ({lat, lng}) => {
     map.current.flyTo({center: [lng, lat], zoom: 12});
@@ -181,8 +184,18 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
            style={{height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden'}}
       >
         <AutoDetectLocationButton useLocation={useAutoLocate}/>
-        <FiltersPanel isOpen={filtersPanelOpen} togglePanel={toggleFiltersPanel}/>
+        <FiltersPanel
+          isOpen={filtersPanelOpen}
+          togglePanel={toggleFiltersPanel}
+          openCalendarModal={() => setCalendarModalOpen(true)}
+        />
       </div>
+      <CustomModal isOpen={calendarModalOpen}
+        closeModal={closeCalendarModal}
+        responsive
+      >
+        <CalendarModal closeModal={closeCalendarModal}/>
+      </CustomModal>
       <CustomModal isOpen={ftueModalOpen} closeModal={closeFTUEModal}>
         <FTUEMapModal closeModal={closeFTUEModal}/>
       </CustomModal>

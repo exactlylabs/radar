@@ -21,7 +21,7 @@ function filtersIcon() {
   );
 }
 
-export default function FiltersPanel({isOpen, togglePanel}) {
+export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
   return (
     <>
       <div className={styles.filtersPanel} data-open={isOpen.toString()}>
@@ -43,7 +43,7 @@ export default function FiltersPanel({isOpen, togglePanel}) {
           </section>
           <section className={styles.filterSection} style={{zIndex: 2}}>
             <h5 className={styles.filterSectionTitle}>Date range</h5>
-            <DateRangeFilter/>
+            <DateRangeFilter openCalendarModal={openCalendarModal}/>
           </section>
           <section className={styles.filterSection} style={{zIndex: 1}}>
             <h5 className={styles.filterSectionTitle}>Cost range</h5>

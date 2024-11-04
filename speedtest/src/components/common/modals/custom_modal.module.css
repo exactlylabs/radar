@@ -25,6 +25,33 @@
   }
 }
 
+@media (max-width: 550px) {
+  .modal[data-responsive="true"] {
+    width: 100vw;
+    top: unset;
+    bottom: 0;
+    transform: translateX(-50%);
+    max-width: unset;
+    animation: slideIn 500ms;
+    box-sizing: border-box;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 3rem 1.5rem 1.5rem;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    bottom: -100%;
+    opacity: 0;
+  }
+
+  100% {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+
 .underlay {
   background-color: transparent;
   width: 100%;
@@ -35,7 +62,7 @@
 
 .modalContainer {
   background-color: rgba(17, 14, 76, 0.3);
-  z-index: 1000;
+  z-index: 10000;
   position: absolute;
   left: 0;
 }
