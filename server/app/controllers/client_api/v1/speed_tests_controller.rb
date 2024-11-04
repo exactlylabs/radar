@@ -280,14 +280,11 @@ module ClientApi
           # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
           # zoom levels, the tiles are so big that the chance of a miss is pretty low
           if zoom >= 6
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1]}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1]}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] + 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] + 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] + 1}")
+            x_range = (x_y[0] - 1..x_y[0] + 1).to_a
+            y_range = (x_y[1] - 1..x_y[1] + 1).to_a
+            x_range.product(y_range).each do |x, y|
+              REDIS.del("mvt_#{zoom}_#{x}_#{y}")
+            end
           end
         end
       end
