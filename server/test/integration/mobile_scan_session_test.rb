@@ -82,7 +82,7 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "when post content, expect measurements registered" do
+  test "when post content, expect measurements registered and cache created" do
     m_user = mobile_user_device("test@test.com")
     scan = scan_session(m_user)
     # 2 Cell signals found -- 1 measurement each
@@ -123,6 +123,7 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     mobile_post(m_user, "/mobile_api/v1/scan_sessions/#{scan.id}/posts", headers: headers, params: pkg)
 
     assert_equal 3, scan.mobile_scan_network_measurements.count
+    assert_equal [-80], Rails.cache.read("#{scan.id}:wifi:AP1;47.61239,-122.28207")
   end
 
   test "when post with one cache hit, expect measurement not saved" do
@@ -214,6 +215,32 @@ class MobileScanSessionTest < ActionDispatch::IntegrationTest
     Rails.cache.write("#{scan.id}:wifi:AP1-TestNet;47.61238,-122.2820", [-30])
 
     headers = {"Content-Type" => "application/protobuf"}
+    mobile_post(m_user, "/mobile_api/v1/scan_sessions/#{scan.id}/posts", headers: headers, params: pkg)
+
+    assert_equal 1, scan.mobile_scan_network_measurements.count
+  end
+
+  test "when post same content, expect nothing new" do
+    m_user = mobile_user_device("test@test.com")
+    scan = scan_session(m_user)
+    # 1 Access Point found -- 1 measurement
+    pkg = ScanPackagePb::ScanPackage.encode(ScanPackagePb::ScanPackage.new(
+      access_points: [
+        ScanPackagePb::AccessPoint.new(id: "AP1-TestNet", bssid: "AP1", ssid: "TestNet", capabilities: "[WPA2-PSK]"),
+      ],
+      measurements: [
+        ScanPackagePb::SignalMeasurement.new(
+          signal_id: ScanPackagePb::SignalId.new(id: "AP1-TestNet", signal_type: ScanPackagePb::SignalType::WIFI),
+          latitude_before: 47.6123896, longitude_before: -122.282069, accuracy_before: 10.699000358581543,
+          latitude_after: 47.611294, longitude_after: -122.2827178, accuracy_after: 11.600000381469727,
+          timestamp_before: Time.parse("2024-10-01T09:59:00Z"), timestamp_after: Time.parse("2024-10-01T09:59:10Z"),
+          dbm: -80, snr: 2147483647
+        ),
+      ]
+    ))
+
+    headers = {"Content-Type" => "application/protobuf"}
+    mobile_post(m_user, "/mobile_api/v1/scan_sessions/#{scan.id}/posts", headers: headers, params: pkg)
     mobile_post(m_user, "/mobile_api/v1/scan_sessions/#{scan.id}/posts", headers: headers, params: pkg)
 
     assert_equal 1, scan.mobile_scan_network_measurements.count

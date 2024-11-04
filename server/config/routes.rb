@@ -355,6 +355,7 @@ Rails.application.routes.draw do
         post 'email', action: 'change_email'
         post 'email/validate', action: 'validate_code'
         patch 'settings', action: 'patch_settings'
+        get 'settings', action: 'get_settings'
       end
 
       resources :mobile_scan_sessions, controller: 'scan_sessions', path: 'scan_sessions', only: [:index, :show, :create] do

@@ -57,7 +57,7 @@ module MobileApi::V1
 
         data = {mobile_scan_session_id: @scan_session.id, mobile_scan_network_id: network.id, last_seen_at: network_post_data[:last_seen]}
         data[:is_new] = true if is_new # Only set if true
-        @scan_session.mobile_scan_session_networks.upsert(data)
+        @scan_session.mobile_scan_session_networks.upsert(data, unique_by: [:mobile_scan_session_id, :mobile_scan_network_id])
 
         # Store measurements
         network_post_data[:measurements].each do |measurement|
@@ -152,7 +152,7 @@ module MobileApi::V1
         stored_signals = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
           @scan_session.mobile_scan_network_measurements
             .where_network_external_id(measurement.signal_id.signal_type, measurement.signal_id.id)
-            .at_coordinates(measurement.longitude_before.round(5), measurement.latitude_before.round(5))
+            .around_location(measurement.longitude_before, measurement.latitude_before, 1e-5) # 5 decimal places precision
             .pluck(:signal_strength)
         end
 
@@ -160,7 +160,7 @@ module MobileApi::V1
           stored_signals << measurement.dbm
           network_measurements[key][:measurements] << measurement
           # Update the cache for any upcoming measurement at the same point to be skipped
-          Rails.cache.write(key, stored_signals, expires_in: 1.hour)
+          Rails.cache.write(cache_key, stored_signals, expires_in: 1.hour)
         end
       end
 
