@@ -31,27 +31,8 @@ module ClientApi
           render json: { error: e.message }, status: :unprocessable_entity
           return
         end
-        # Invalidate Redis cache for all keys that have the XYZ
-        # combination that holds the lonlat point within its bounds
-        # to force a refresh considering there is a new test
-        (MIN_ZOOM..MAX_ZOOM).each do |zoom|
-          x_y = get_xy_from_coordinates_and_zoom(@speed_test.latitude, @speed_test.longitude, zoom)
-          REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}")
-          # I'm clearing some adjacent tiles just to make sure the area is covered
-          # as sometimes the calculation gives a result which is right at the edge
-          # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
-          # zoom levels, the tiles are so big that the chance of a miss is pretty low
-          if zoom >= 6
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1]}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1]}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1] + 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] - 1}_#{x_y[1] + 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] - 1}")
-            REDIS.del("mvt_#{zoom}_#{x_y[0] + 1}_#{x_y[1] + 1}")
-          end
-        end
+
+        invalidate_cache(@speed_test) if @speed_test.latitude && @speed_test.longitude
         render json: @speed_test, status: :created
       end
 
@@ -285,6 +266,27 @@ module ClientApi
         x_tile = ((lng + 180.0) / 360.0 * n).floor
         y_tile = ((1.0 - Math.log(Math.tan(lat * Math::PI / 180.0) + 1.0 / Math.cos(lat * Math::PI / 180.0)) / Math::PI) / 2.0 * n).floor
         [x_tile, y_tile]
+      end
+
+      # Invalidate Redis cache for all keys that have the XYZ
+      # combination that holds the lonlat point within its bounds
+      # to force a refresh considering there is a new test
+      def invalidate_cache(speed_test)
+        (MIN_ZOOM..MAX_ZOOM).each do |zoom|
+          x_y = get_xy_from_coordinates_and_zoom(speed_test.latitude, speed_test.longitude, zoom)
+          REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}")
+          # I'm clearing some adjacent tiles just to make sure the area is covered
+          # as sometimes the calculation gives a result which is right at the edge
+          # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
+          # zoom levels, the tiles are so big that the chance of a miss is pretty low
+          if zoom >= 6
+            x_range = (x_y[0] - 1..x_y[0] + 1).to_a
+            y_range = (x_y[1] - 1..x_y[1] + 1).to_a
+            x_range.product(y_range).each do |x, y|
+              REDIS.del("mvt_#{zoom}_#{x}_#{y}")
+            end
+          end
+        end
       end
     end
   end
