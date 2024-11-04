@@ -4,7 +4,7 @@ import ConfigContext from "../../../context/ConfigContext";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import closeModalIcon from '../../../assets/close-icon.png';
 
-const CustomModal = ({isOpen, closeModal, children}) => {
+const CustomModal = ({isOpen, closeModal, responsive, children}) => {
 
   const {isExtraSmallSizeScreen, isSmallSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
@@ -39,7 +39,7 @@ const CustomModal = ({isOpen, closeModal, children}) => {
          style={getModalAvailableSpace()}
     >
       <div className={styles.underlay} onClick={closeModal}></div>
-      <div className={styles.modal}>
+      <div className={styles.modal} data-responsive={responsive?.toString() ?? 'false'}>
         {children}
         <button className={styles.closeButton} onClick={closeModal}>
           <img src={closeModalIcon} height={12} width={12} alt={'close modal button'}/>

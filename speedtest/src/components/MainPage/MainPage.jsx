@@ -29,7 +29,7 @@ const MainPage = ({config}) => {
     return [userLat, userLng];
   }
 
-  const [step, setStep] = useState(getConfigTab(config.tab) ?? TABS.SPEED_TEST);
+  const [step, setStep] = useState(TABS.ALL_RESULTS);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.INITIAL);

@@ -4,7 +4,7 @@ import FilterDropdown from "./common/FilterDropdown";
 import calendarIcon from '../../../../assets/calendar-icon.svg';
 import checkIcon from '../../../../assets/check-icon.svg';
 
-export default function DateRangeFilter() {
+export default function DateRangeFilter({openCalendarModal}) {
 
   const options = [
     {label: 'Last 6 months', value: 'last_6_months', default: true},
@@ -13,9 +13,6 @@ export default function DateRangeFilter() {
   ];
 
   const [currentFilter, setCurrentFilter] = useState(options.find(option => option.default));
-
-  // TODO: once component exists
-  const openCustomDatesComponent = () => {}
 
   return (
     <FilterDropdown label={currentFilter.label} iconSrc={calendarIcon}>
@@ -31,7 +28,7 @@ export default function DateRangeFilter() {
       ))}
       <div className={dropdownStyles.divider}></div>
       <button className={dropdownStyles.option}
-              onClick={openCustomDatesComponent}
+              onClick={openCalendarModal}
       >
         Custom dates
       </button>
