@@ -5,8 +5,8 @@ class MobileScanNetworkMeasurement < ApplicationRecord
   scope :at_coordinates, -> (lon, lat) { where("ST_Equals(lonlat_before::geometry, ST_SetSRID(ST_Point(?, ?), 4326))", lon, lat) }
   scope :around_location, ->(longitude, latitude, precision) {
     where("ST_Equals(
-      ST_SnapToGrid(lonlat_before::geometry, :precision, :precision),
-      ST_SnapToGrid(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :precision, :precision)
+      ST_ReducePrecision(lonlat_before::geometry, :precision),
+      ST_ReducePrecision(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), :precision)
     )", {lon: longitude, lat: latitude, precision: precision})
   }
 end
