@@ -41,6 +41,12 @@
         display: none;
     }
 }
+
+@media (max-width: 700px) {
+    .divider {
+        display: none;
+    }
+}
   
 .button {
     padding: .5rem;
