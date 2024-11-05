@@ -1,3 +1,7 @@
+:root {
+    --slider-max-height: 0;
+    --slider-thumb-width: 0;
+  }
 .container {
     display: flex;
     gap: 0;
@@ -6,15 +10,15 @@
 @media (max-width: 700px) {
     .container {
         flex-direction: column;
-        gap: 16px;
+        gap: 1rem;
     }
 }
 
 .layersContainer {
-    padding: 16px 20px 8px;
+    padding: 1rem 1.25rem .5rem;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: .5rem;
     align-items: start;
 }
 
@@ -26,10 +30,10 @@
 
 .divider {
     width: 1px;
-    max-height: 24px;
+    max-height: 1.5rem;
     height: 100%;
     background-color: #E3E3E8;
-    margin-inline: 8px;
+    margin-inline: .5rem;
 }
 
 @media (max-width: 700px) {
@@ -39,7 +43,7 @@
 }
   
 .button {
-    padding: 8px;
+    padding: .5rem;
     border: none;
     display: flex;
     align-items: center;
@@ -52,7 +56,7 @@
 }
   
 .button:hover {
-    border-radius: 8px;
+    border-radius: .5rem;
     border: none;
     background-color: #F6F7FA;
 }

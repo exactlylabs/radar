@@ -2,7 +2,7 @@ import styles from './classification_filter.module.css';
 import { useState } from "react";
 import checkboxStyle from './common/checkbox.module.css';
 
-export default function ConnectionTypeFilter() {
+export default function ClassificationFilter() {
 
   // TODO: have a filter context object shared across the app
   // this is just for testing toggling and styles at first
@@ -18,7 +18,7 @@ export default function ConnectionTypeFilter() {
     }
   }
 
-  const calificationColor = (key) => {
+  const classificationColor = (key) => {
     if (key === 'No Internet') {
       return 'gray';
     } else if (key === 'Unserved') {
@@ -35,7 +35,7 @@ export default function ConnectionTypeFilter() {
       {filters.map((key, idx) => (
         <div key={key} className={styles.buttonContainer}>
           <div className={checkboxStyle.checkboxContainer}>
-            <input id={key} type={'checkbox'} className={checkboxStyle.checkbox} onChange={toggleFilter} data-color={calificationColor(key)} />
+            <input id={key} type={'checkbox'} className={checkboxStyle.checkbox} onChange={toggleFilter} data-color={classificationColor(key)} />
             <label htmlFor={key} className={styles.checkboxLabel}>{key}</label>
           </div>
           {

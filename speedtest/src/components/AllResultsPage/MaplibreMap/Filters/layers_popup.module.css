@@ -6,13 +6,13 @@
   position: absolute;
   bottom: 80px;
   right: 0;
-  margin: 24px;
+  margin: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: start;
   z-index: 1000;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: .5rem;
   background-color: white;
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
   gap: 0;
@@ -35,7 +35,7 @@
     box-sizing: border-box;
     border: none;
     margin: 0;
-    gap: 24px;
+    gap: 1.5rem;
     border-radius: 0;
     transition: right 0.5s ease-in-out;
   }
@@ -59,8 +59,8 @@
     box-sizing: border-box;
     border: none;
     margin: 0;
-    gap: 24px;
-    border-radius: 12px 12px 0 0;
+    gap: 1.5rem;
+    border-radius: .75rem .75rem 0 0;
     transition: bottom 0.5s ease-in-out;
   }
 
@@ -82,8 +82,8 @@
   .closeButtonContainer {
     display: block;
     position: absolute;
-    top: 24px;
-    right: 16px;
+    top: 1.5rem;
+    right: 1rem;
 
   }
 }
@@ -95,7 +95,7 @@
   display: flex;
   flex-direction: column;
   align-items: start;
-  gap: 8px;
+  gap: .5rem;
 }
 
 @media (max-width: 700px) {
@@ -106,7 +106,7 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: .875rem;
   font-variation-settings: 'wght' 600;
   color: #6D6A94;
 }
@@ -122,9 +122,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: .5rem 0;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 1rem;
   color: #110E4C;
 }
 
@@ -147,20 +147,20 @@
     display: flex;
     flex-direction: column;
     align-items: start;
-    gap: 16px;
+    gap: 1rem;
   }
 }
 
 .helpContainer {
   display: flex;
   padding: 0.75rem;
-  gap: 8px;
+  gap: .5rem;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   background-color: #F6F7FA;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: .5rem;
+  border-bottom-right-radius: .5rem;
 }
 
 .helpContainer:hover {
@@ -180,7 +180,7 @@
 
 .helpText {
   color: #6D6A94;
-  font-size: 13px;
+  font-size: .875rem;
   font-variation-settings: 'wght' 600;
 }
 
@@ -208,7 +208,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-width: 60px;
+    min-width: 3.75rem;
     margin-inline: auto;
     height: var(--button-height);
     padding: 0 0.75rem;
