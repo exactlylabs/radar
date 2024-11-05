@@ -23,18 +23,11 @@ function layersIcon() {
 
 
 
-export default function ClassificationAndLayersPanel({ isOpen, togglePanel }) {
+export default function ClassificationAndLayersPanel({ isOpen, toggleLayersPopup, layerSelected }) {
 
-  const { isSmallSizeScreen, isMediumSizeScreen } = useViewportSizes();
-
-  const [layersPopupOpen, setLayersPopupOpen] = useState(!isSmallSizeScreen);
-
-  const toggleLayersPopup = () => {
-    setLayersPopupOpen(!layersPopupOpen);
-  }
   return (
     <>
-      <div className={styles.classificationAndLayersPanel}>
+      <div className={styles.classificationAndLayersPanel} data-open={isOpen.toString()}>
         <div className={styles.classificationContainer}>
           <ClassificationFilter />
         </div>
@@ -44,7 +37,7 @@ export default function ClassificationAndLayersPanel({ isOpen, togglePanel }) {
           </div>
         </div>
       </div>
-      <LayersPopup/>
+      <LayersPopup isOpen={isOpen} toggleLayersPopup={toggleLayersPopup} layerSelected={layerSelected}/>
     </>
   );
 }

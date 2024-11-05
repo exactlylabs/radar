@@ -23,7 +23,7 @@
   overflow: hidden;
 }
 
-.filtersPanel[data-open='open'] {
+.filtersPanel[data-open='true'] {
   margin-left: 0;
 }
 
@@ -39,7 +39,7 @@
     margin-left: 0;
   }
 
-  .filtersPanel[data-open='open'] {
+  .filtersPanel[data-open='true'] {
     top: 0;
     margin-left: 0;
   }
@@ -71,7 +71,7 @@
   left: 1.5rem;
 }
 
-.filtersButton[data-open='open'] {
+.filtersButton[data-open='true'] {
   left: calc(var(--filters-panel-width) + 1.5rem);
 }
 
@@ -93,7 +93,7 @@
     left: 1rem;
   }
 
-  .filtersButton[data-open='open'] {
+  .filtersButton[data-open='true'] {
     left: 1rem;
   }
 }
@@ -192,30 +192,6 @@
 
 .resetFiltersButton:hover {
   opacity: 0.8;
-}
-
-.closeButton {
-  display: none;
-}
-
-@media (max-width: 550px) {
-  .closeButton {
-    background-color: rgba(160, 159, 183, 0.2);
-    border: none;
-    outline: none;
-    cursor: pointer;
-    border-radius: 50%;
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: -.5rem;
-  }
-
-  .closeButton:hover {
-    opacity: 0.8;
-  }
 }
 
 .filterSection {
