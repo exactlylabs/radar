@@ -264,12 +264,11 @@ class DashboardController < ApplicationController
       @outages = OutagesHelper.join_by_parent(@outages)
       @outages = OutagesHelper.group_outages(@outages)
       @downtime = @outages.map { |_, v| v[:duration] }.sum
-
-      if @outages[0][:started_at] < params[:from]
-        @downtime -= (params[:from] - @outages[0][:started_at])
+      if @outages[0][:started_at] < @params[:from]
+        @downtime -= (@params[:from] - @outages[0][:started_at])
       end
 
-      downtime_percentage = @downtime / (params[:to] - params[:from]) * 100
+      downtime_percentage = @downtime / (@params[:to] - @params[:from]) * 100
       @uptime_percentage = (100 - downtime_percentage).round(2)
       @uptime_percentage = 0 if @uptime_percentage < 0
     else
