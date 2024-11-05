@@ -1,50 +1,229 @@
+:root {
+  --layers-panel-width: 375px;
+}
+
 .container {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  margin: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  z-index: 1000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
+  gap: 0;
+}
+
+.container[data-open='false'] {
+  bottom: 100%;
+}
+
+.container[data-open='true'] {
+  bottom: 80px;
+}
+
+@media (max-width: 700px) {
+
+  .container {
+    width: var(--layers-panel-width);
+    height: 100%;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    border: none;
+    margin: 0;
+    gap: 24px;
+    border-radius: 0;
+    transition: right 0.5s ease-in-out;
+  }
+
+  .container[data-open='true'] {
+    right:0;
+    bottom: 0;
+  }
+
+  .container[data-open='false'] {
+    right: -100%;
+  }
+}
+
+@media (max-width: 550px) {
+  .container {
+    right: none;
+    width: 100%;
+    height: unset;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    border: none;
+    margin: 0;
+    gap: 24px;
+    border-radius: 12px 12px 0 0;
+    transition: bottom 0.5s ease-in-out;
+  }
+
+  .container[data-open='true'] {
+    bottom: 0;
+  }
+
+  .container[data-open='false'] {
+    bottom: -100%;
+  }
+}
+
+
+.closeButtonContainer {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .closeButtonContainer {
+    display: block;
     position: absolute;
-    bottom: 80px;
-    right: 0;
-    margin: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    z-index: 1000;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    background-color: white;
-    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
-    padding: 16px 8px 0px;
-    gap: 0;
+    top: 24px;
+    right: 16px;
+
+  }
+}
+
+.layersContainer {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .layersContainer {
+    padding: 0;
+  }
+
 }
 
 .title {
-    padding-left: 8px;
-    font-size: 14px;
-    font-variation-settings: 'wght' 600;
-    color: #6D6A94;
+  font-size: 14px;
+  font-variation-settings: 'wght' 600;
+  color: #6D6A94;
 }
 
 .optionsContainer {
-    padding: 8px 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .option {
-    width: 176px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 15px;
-    color: #110E4C;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 15px;
+  color: #110E4C;
+}
+
+@media (max-width: 700px) {
+  .option {
+    border-bottom: solid 1px #E3E3E8;
+  }
 }
 
 .option[data-active='true'] {
-    font-variation-settings: 'wght' 700;
+  font-variation-settings: 'wght' 700;
+}
+
+.classificationContainer {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .classificationContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 16px;
+  }
 }
 
 .helpContainer {
+  display: flex;
+  padding: 0.75rem;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #F6F7FA;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.helpContainer:hover {
+  background-color: #E9E9F4;
+}
+
+@media (max-width: 700px) {
+  .helpContainer {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .helpContainer:hover {
+    background-color: transparent;
+  }
+}
+
+.helpText {
+  color: #6D6A94;
+  font-size: 13px;
+  font-variation-settings: 'wght' 600;
+}
+
+.applyContainer {
+  display: none;
+}
+
+.applyButton {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .applyContainer {
+    display: flex;
+    width: 100%;
+    margin-bottom: 0;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: solid 1px #E3E3E8;
+    box-sizing: border-box;
+  }
+
+  .applyButton {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 12px;
+    width: 100%;
+    min-width: 60px;
+    margin-inline: auto;
+    height: var(--button-height);
+    padding: 0 0.75rem;
+    border-radius: 1.5rem;
+    background-color: #4B7BE5;
+    color: white;
+    box-shadow: 0 4px 15px -2px rgba(75, 123, 229, 0.5);
+    font-family: 'MulishBold', sans-serif;
+    border: none;
+    outline: none;
     cursor: pointer;
+  }
+
+  .applyButton:hover {
+    opacity: 0.8;
+  }
+
 }

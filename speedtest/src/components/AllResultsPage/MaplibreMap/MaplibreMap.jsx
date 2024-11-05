@@ -43,6 +43,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
+  const [layersPopupOpen, setLayersPopupOpen] = useState(false);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
@@ -179,6 +180,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     setFiltersPanelOpen(!filtersPanelOpen);
   }
 
+  const toggleLayersPopup = () => {
+    setLayersPopupOpen(!layersPopupOpen);
+  }
+
   return (
     <>
       <div id={'speedtest--all-results-page--map-container'}
@@ -191,7 +196,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           togglePanel={toggleFiltersPanel}
           openCalendarModal={() => setCalendarModalOpen(true)}
         />
-        <ClassificationAndLayersPanel />
+        <ClassificationAndLayersPanel isOpen={layersPopupOpen} toggleLayersPopup={toggleLayersPopup} layerSelected={"classification"} />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}

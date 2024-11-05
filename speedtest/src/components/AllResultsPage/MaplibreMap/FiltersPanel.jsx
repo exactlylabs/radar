@@ -1,9 +1,9 @@
 import styles from './filters_panel.module.css';
-import closeIcon from '../../../assets/alert-close.svg';
 import ConnectionTypeFilter from "./Filters/ConnectionTypeFilter";
 import DateRangeFilter from "./Filters/DateRangeFilter";
 import InternetProviderFilter from "./Filters/InternetProviderFilter";
 import CostFilter from "./Filters/CostFilter/CostFilter";
+import CloseModalButton from './Filters/common/CloseModalButton';
 
 function filtersIcon() {
   return (
@@ -29,9 +29,7 @@ export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
           <section className={styles.header}>
             <h3 className={styles.headerTitle}>Filters</h3>
             <button className={styles.resetFiltersButton}>Reset filters</button>
-            <button className={styles.closeButton} onClick={togglePanel}>
-              <img src={closeIcon} width={12} height={12} alt={'close icon'}/>
-            </button>
+            <CloseModalButton onClick={togglePanel}/>
           </section>
           <section className={styles.filterSection}>
             <h5 className={styles.filterSectionTitle}>Connection</h5>

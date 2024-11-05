@@ -33,7 +33,7 @@ export default function ConnectionTypeFilter() {
   return (
     <div className={styles.container}>
       {filters.map((key, idx) => (
-        <div className={styles.buttonContainer}>
+        <div key={key} className={styles.buttonContainer}>
           <div className={checkboxStyle.checkboxContainer}>
             <input id={key} type={'checkbox'} className={checkboxStyle.checkbox} onChange={toggleFilter} data-color={calificationColor(key)} />
             <label htmlFor={key} className={styles.checkboxLabel}>{key}</label>
