@@ -67,6 +67,12 @@
   }
 }
 
+@media (max-width: 700px) {
+    .layersContainer {
+        max-width: fit-content;
+    }
+}
+
 .layersIconContainer {
   display: flex;
   padding: .5rem;

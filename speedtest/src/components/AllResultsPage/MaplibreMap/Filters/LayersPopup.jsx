@@ -31,6 +31,9 @@ export default function LayersPopup({isOpen, toggleLayersPopup, layerSelected, o
       <div className={styles.applyContainer}>
         <button className={styles.applyButton}>Apply</button>
       </div>
+      <div className={styles.applyContainer}>
+        <button className={styles.applyButton}>Apply</button>
+      </div>
     </div>
   );
 }
