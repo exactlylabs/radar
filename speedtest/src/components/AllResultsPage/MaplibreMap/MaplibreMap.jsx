@@ -187,7 +187,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   }
 
   const toggleResultsTab = () => {
-    const tab = resultsTabSelected === 'all-results' ? 'your-results' : 'all-results';
+    const tab = resultsTabSelected === TABS.ALL_RESULTS ? TABS.YOUR_RESULTS : TABS.ALL_RESULTS;
     setResultsTabSelected(tab);
   }
 
