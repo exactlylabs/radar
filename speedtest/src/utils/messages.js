@@ -10,3 +10,7 @@ export const warnings = {
   NOT_ENOUGH_DATA:
     'Please note that the speed test will be counted against your current data plan which may have a data cap.',
 };
+
+export const capitalize = word => {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
