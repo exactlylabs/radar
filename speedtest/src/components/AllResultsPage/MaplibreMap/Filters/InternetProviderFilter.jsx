@@ -1,8 +1,9 @@
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import calendarIcon from "../../../../assets/calendar-icon.svg";
 import dropdownStyles from "./common/filter_dropdown.module.css";
 import checkIcon from "../../../../assets/check-icon.svg";
 import FilterDropdownWithSearch from "./common/FilterDropdownWithSearch";
+import FiltersContext from "../../../../context/FiltersContext";
 
 export default function InternetProviderFilter() {
   const allProvidersOption = {
@@ -10,25 +11,36 @@ export default function InternetProviderFilter() {
     value: 'all_providers',
     default: true
   }
-  // TODO: Replace this with actual data, leaving mock for now for following work
-  const options = [
-    {label: 'AT&T Internet Services', subLabel: '430,000 results', value: '1', default: false},
-    {label: 'Bigriver', subLabel: '290,100 results', value: '2', default: false},
-    {label: 'Comcast (Xfinity)', subLabel: '130,940 results', value: '3', default: false},
-    {label: 'Lumen Technologies', subLabel: '90,300 results', value: '4', default: false},
-  ];
 
+  const { visibleIspList } = useContext(FiltersContext);
   const [currentFilter, setCurrentFilter] = useState(allProvidersOption);
   const [allProvidersVisible, setAllProvidersVisible] = useState(true);
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+
+
+  useEffect(() => {
+    setFilteredOptions(getAllIspOptions());
+  }, [visibleIspList]);
+
+  const getAllIspOptions = () => {
+    let options = [];
+    for(const [key, value] of visibleIspList) {
+      options.push({
+        label: key,
+        value: key,
+        default: false
+      })
+    }
+    return options;
+  }
 
   const handleInputChange = (event) => {
     const value = event.target.value;
     if(value === '') {
-      setFilteredOptions(options);
+      setFilteredOptions(getAllIspOptions());
       setAllProvidersVisible(true);
     } else {
-      const filteredOptions = options.filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
+      const filteredOptions = getAllIspOptions().filter(option => option.label.toLowerCase().includes(value.toLowerCase()));
       setFilteredOptions(filteredOptions);
       setAllProvidersVisible(false);
     }
@@ -38,7 +50,7 @@ export default function InternetProviderFilter() {
     <FilterDropdownWithSearch
       label={currentFilter.label}
       iconSrc={calendarIcon}
-      options={options}
+      options={getAllIspOptions()}
       handleOnChange={handleInputChange}
     >
       {

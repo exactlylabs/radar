@@ -1,5 +1,7 @@
 import styles from './connection_type_filter.module.css';
-import {useState} from "react";
+import {useContext} from "react";
+import FiltersContext, {CONNECTION_TYPES} from "../../../../context/FiltersContext";
+import {capitalize} from "../../../../utils/messages";
 
 function wiredIcon(active) {
   return (
@@ -59,11 +61,11 @@ function cellularIcon(active) {
 
 function connectionTypeIcon(key, active) {
   switch (key) {
-    case 'Wired':
+    case CONNECTION_TYPES.WIRED:
       return wiredIcon(active);
-    case 'Wifi':
+    case CONNECTION_TYPES.WIFI:
       return wifiIcon(active);
-    case 'Cellular':
+    case CONNECTION_TYPES.CELLULAR:
       return cellularIcon(active);
     default:
       throw new Error('Invalid icon key');
@@ -72,28 +74,27 @@ function connectionTypeIcon(key, active) {
 
 export default function ConnectionTypeFilter() {
 
-  // TODO: have a filter context object shared across the app
-  // this is just for testing toggling and styles at first
-  const [activeFilters, setActiveFilters] = useState([]);
+  const { filters, setConnectionTypes } = useContext(FiltersContext);
+  const { connectionTypes } = filters;
 
   const toggleFilter = (key) => {
-    if (activeFilters.includes(key)) {
-      setActiveFilters(activeFilters.filter((item) => item !== key));
+    if (connectionTypes.includes(key)) {
+      setConnectionTypes(connectionTypes.filter((item) => item !== key));
     } else {
-      setActiveFilters([...activeFilters, key]);
+      setConnectionTypes([...connectionTypes, key]);
     }
   }
 
   return (
     <div className={styles.container}>
-      {['Wired', 'Wifi', 'Cellular'].map(key => (
+      {[CONNECTION_TYPES.WIRED, CONNECTION_TYPES.WIFI, CONNECTION_TYPES.CELLULAR].map(key => (
         <button className={styles.button}
-                data-active={activeFilters.includes(key)}
+                data-active={connectionTypes.includes(key)}
                 onClick={() => toggleFilter(key)}
                 key={key}
         >
-          {connectionTypeIcon(key, activeFilters.includes(key))}
-          {key}
+          {connectionTypeIcon(key, connectionTypes.includes(key))}
+          {capitalize(key)}
         </button>
       ))}
     </div>

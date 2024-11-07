@@ -19,6 +19,7 @@ import CalendarModal from "./Filters/CalendarModal";
 import ClassificationAndLayersPanel from "./ClassificationAndLayersPanel";
 import LayersPopup from "./Filters/LayersPopup";
 import {ResultsTabs, TABS} from "./ResultsTabs";
+import FiltersContext from "../../../context/FiltersContext";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -38,6 +39,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {setVisibleIspList} = useContext(FiltersContext);
 
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
@@ -157,6 +159,27 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       map.current.getCanvas().style.cursor = 'default';
     });
 
+    map.current.on('sourcedata', (e) => {
+      if (e.isSourceLoaded) {
+        //check if circle-layer exists in the current map
+        let ispMap = new Map();
+        if (map.current.getLayer('circle-layer')) {
+          const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
+          features.forEach(feature => {
+            if(!!feature.properties.autonomous_system_org_name && feature.properties.autonomous_system_org_name !== '') {
+              if (ispMap.has(feature.properties.autonomous_system_org_name)) {
+                ispMap.set(feature.properties.autonomous_system_org_name, ispMap.get(feature.properties.autonomous_system_org_name) + 1);
+              } else {
+                ispMap.set(feature.properties.autonomous_system_org_name, 1);
+              }
+            }
+          });
+
+        }
+        setVisibleIspList(ispMap);
+      }
+    });
+
     return () => {
       map.current.remove();
     }
@@ -203,10 +226,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           togglePanel={toggleFiltersPanel}
           openCalendarModal={() => setCalendarModalOpen(true)}
         />
-        <ClassificationAndLayersPanel 
-        isOpen={layersPopupOpen} 
-        toggleLayersPopup={toggleLayersPopup} 
-        layerSelected={"classification"} 
+        <ClassificationAndLayersPanel
+        isOpen={layersPopupOpen}
+        toggleLayersPopup={toggleLayersPopup}
+        layerSelected={"classification"}
         onHelpClick={() => setClassificationsModalOpen(true)}
         />
         <ResultsTabs tabSelected={resultsTabSelected} onTabChanged={toggleResultsTab}  />
