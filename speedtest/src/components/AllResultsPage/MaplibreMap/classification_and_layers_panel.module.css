@@ -30,7 +30,6 @@
 }
 
 @media (max-width: 550px) {
-
   .classificationAndLayersPanel[data-open='true'] {
     right: 0;
   }
