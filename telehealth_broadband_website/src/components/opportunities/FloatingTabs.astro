@@ -1,10 +1,111 @@
 ---
-const { ids } = Astro.props;
+import styles from './floating_tabs.module.css';
+const { ids, labels, scrollToId } = Astro.props;
 ---
-
-<div
-  style="position: sticky; top: 2rem; padding-bottom: 100px; width: max-content; margin: 0 auto; z-index: 10">
-  {ids.map((id: string) => (
-    <a style="scroll-margin-top: 3rem;" href={`#${id}`}>{id}</a>
-  ))}
+<div class={styles.container}>
+  <button class={styles.tab}
+    id="top-scroller"
+    data-scroll-to-id={scrollToId}
+    data-hide-off-scroll="true"
+    hidden="hidden"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+      <path fill="#ACAFCD" transform="translate(1 7.25)" d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+      <path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.5 2.5)" d="M0 0L5.5023718 5.5L0 11" fill-rule="evenodd"/>
+    </svg>
+  </button>
+  <div class={styles.divider} data-hide-off-scroll="true" hidden="hidden"></div>
+  <div class={styles.staticContainer}>
+    {ids.map((id: string, index: number) => (
+      <a data-active={(index === 0).toString()} class={styles.tab} href={`#${id}`}>
+        {labels[index] ?? id}
+      </a>
+    ))}
+  </div>
 </div>
+
+<script>
+  import styles from './floating_tabs.module.css';
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const id = entry.target.id;
+      const tab = document.querySelector(`a[href="#${id}"]`)!;
+      if (entry.isIntersecting) {
+        tab.setAttribute('data-active', 'true');
+        tab.setAttribute('data-intersection', entry.intersectionRatio.toString());
+      } else {
+        tab.setAttribute('data-active', 'false');
+        tab.removeAttribute('data-intersection');
+      }
+    });
+    const activeElements = document.querySelectorAll(`.${styles.tab}[data-active="true"]`);
+    if(activeElements.length > 1) {
+      let highestIntersection = Number(activeElements[0].getAttribute('data-intersection'));
+      let highestIntersectionIndex = 0;
+      activeElements.forEach((element, index) => {
+        const intersection = Number(element.getAttribute('data-intersection'));
+        if(intersection >= highestIntersection) {
+          highestIntersection = intersection;
+          highestIntersectionIndex = index;
+          element.setAttribute('data-active', 'true');
+          element.setAttribute('data-intersection', intersection.toString());
+        } else {
+          element.setAttribute('data-active', 'false');
+          element.removeAttribute('data-intersection');
+        }
+      });
+      activeElements.forEach((element, index) => {
+        if(index !== highestIntersectionIndex) {
+          element.setAttribute('data-active', 'false');
+          element.removeAttribute('data-intersection');
+        }
+      });
+    }
+  }, { threshold: Array.from({ length: 100 }, (_, i) => i / 100) });
+
+  setTimeout(() => {
+    const tabs = document.querySelectorAll(`.${styles.tab}:not(#top-scroller)`);
+    if(tabs.length > 0) {
+      tabs.forEach((tab) => {
+        const tabId = tab.getAttribute('href')!;
+        const target = document.querySelector(tabId)!;
+        observer.observe(target);
+      });
+    }
+  }, 500); // quick dirty trick to wait for the content to be rendered in the dom
+  
+  const scrollToTop = (e: any) => {
+    const target = e.target;
+    const element = document.querySelector(`#${target.dataset.scrollToId}`)!;
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  
+  const topScroller = document.querySelector('#top-scroller')!;
+  topScroller.addEventListener('click', scrollToTop);
+  
+  const tabsContainer = document.querySelector(`.${styles.container}`)!;
+  const toShowElements = tabsContainer.querySelectorAll('[data-hide-off-scroll="true"]');
+  window.addEventListener('scroll', () => {
+    if(tabsContainer) {
+      toShowElements.forEach(elem => {
+        if(tabsContainer.getBoundingClientRect().top === 0) {
+          const staticContainer = tabsContainer.querySelector(`.${styles.staticContainer}`)!;
+          if(!staticContainer.hasAttribute('shifted')) {
+            staticContainer.style.paddingLeft = '74px';
+            staticContainer.setAttribute('shifted', 'true');
+          }
+          setTimeout(() => {
+            if(staticContainer.hasAttribute('shifted')) staticContainer.style.paddingLeft = '0';
+            elem.removeAttribute('hidden');
+          }, 500);
+        } else {
+          elem.setAttribute('hidden', 'hidden');
+          const staticContainer = tabsContainer.querySelector(`.${styles.staticContainer}`)!;
+          staticContainer.style.paddingLeft = '0';
+          staticContainer.removeAttribute('shifted');
+        }
+      });
+    }
+  })
+</script>

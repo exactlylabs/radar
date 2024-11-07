@@ -1,0 +1,14 @@
+---
+import styles from './bullet_point.module.css';
+const { icon, title, content } = Astro.props;
+---
+
+<div class={styles.container}>
+  <div class={styles.iconCircle}>
+    <slot/>
+  </div>
+  <div class={styles.textContainer}>
+    <h5 class={styles.title}>{title}</h5>
+    <p class={styles.content}>{content}</p>
+  </div>
+</div>

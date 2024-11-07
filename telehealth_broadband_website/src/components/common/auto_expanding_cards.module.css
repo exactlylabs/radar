@@ -49,6 +49,11 @@
   transition: --initial-color 250ms, --end-color 250ms;
 }
 
+.card:not([data-open="true"]):hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 .card[data-open="false"][data-first-closed="true"] {
   --initial-color: rgba(82, 93, 135, 0.2);
   --end-color: rgba(28, 35, 61, 0.2);
@@ -74,6 +79,10 @@
   margin-bottom: 1rem;
 }
 
+.title[data-open="true"] {
+  animation: text-appear 3.125s forwards;
+}
+
 .card[data-open="false"] > .title {
   margin-bottom: 2rem;
   max-width: 225px;
@@ -84,10 +93,10 @@
   font-weight: 400;
   color: var(--text-color);
   line-height: 1.529;
-  animation: textAppear 3s forwards;
+  animation: text-appear 3s forwards;
 }
 
-@keyframes textAppear {
+@keyframes text-appear {
   0% {
     opacity: 0;
   }
@@ -125,6 +134,10 @@
 .card[data-open="true"] .loadingBar {
   display: block;
   animation: loading 5s linear forwards;
+}
+
+.card[data-open="true"]:hover .loadingBar {
+  display: none;
 }
 
 @keyframes loading {

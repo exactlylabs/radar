@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import styles from './auto_expanding_cards.module.css';
-import plusIcon from '../../assets/images/plus-icon.svg';
+import plusIcon from '../../assets/icons/plus.svg';
 import type {CardContent} from "./types.ts";
 
 interface AutoExpandingCardsProps {
@@ -36,15 +36,31 @@ function AutoExpandingCard({content, isOpen, index, openCard, openNext, firstClo
     }
   }, [isOpen]);
   
+  const handleMouseOver = () => {
+    if(isOpen) {
+      if(timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+  }
+  
+  const handleMouseOut = () => {
+    if(isOpen) {
+      if(timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(openNext, 5000);
+    }
+  }
+  
   return (
     <div className={styles.card}
       data-open={isOpen.toString()}
       data-index={index.toString()}
       data-first-closed={firstClosed}
       data-second-closed={secondClosed}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      onClick={openCard}
     >
       <p className={styles.head}>{content.head}</p>
-      <p className={styles.title}>{content.title}</p>
+      <p data-open={isOpen.toString()} className={styles.title}>{content.title}</p>
       {
         isOpen ?
           <p className={styles.content}>{content.content}</p> :

@@ -5,3 +5,9 @@
   position: relative;
   padding-inline: 2rem;
 }
+
+@media (min-width: 1300px) {
+  .paddedSection {
+    padding-inline: 0;
+  }
+}
