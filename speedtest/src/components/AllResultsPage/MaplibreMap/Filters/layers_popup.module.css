@@ -186,10 +186,13 @@
   }
 }
 
-.helpText {
+.helpButton {
   color: #6D6A94;
   font-size: .875rem;
   font-variation-settings: 'wght' 600;
+  text-decoration: underline;
+  border: none;
+  background-color: transparent;
 }
 
 .applyContainer {

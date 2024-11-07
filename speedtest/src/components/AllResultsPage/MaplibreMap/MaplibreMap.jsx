@@ -196,7 +196,12 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           togglePanel={toggleFiltersPanel}
           openCalendarModal={() => setCalendarModalOpen(true)}
         />
-        <ClassificationAndLayersPanel isOpen={layersPopupOpen} toggleLayersPopup={toggleLayersPopup} layerSelected={"classification"} />
+        <ClassificationAndLayersPanel 
+        isOpen={layersPopupOpen} 
+        toggleLayersPopup={toggleLayersPopup} 
+        layerSelected={"classification"} 
+        onHelpClick={() => setClassificationsModalOpen(true)}
+        />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}

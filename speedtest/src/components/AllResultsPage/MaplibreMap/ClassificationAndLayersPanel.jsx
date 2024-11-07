@@ -23,7 +23,7 @@ function layersIcon() {
 
 
 
-export default function ClassificationAndLayersPanel({ isOpen, toggleLayersPopup, layerSelected }) {
+export default function ClassificationAndLayersPanel({ isOpen, toggleLayersPopup, layerSelected, onHelpClick }) {
 
   return (
     <>
@@ -37,7 +37,7 @@ export default function ClassificationAndLayersPanel({ isOpen, toggleLayersPopup
           </div>
         </div>
       </div>
-      <LayersPopup isOpen={isOpen} toggleLayersPopup={toggleLayersPopup} layerSelected={layerSelected}/>
+      <LayersPopup isOpen={isOpen} toggleLayersPopup={toggleLayersPopup} layerSelected={layerSelected} onHelpClick={onHelpClick} />
     </>
   );
 }
