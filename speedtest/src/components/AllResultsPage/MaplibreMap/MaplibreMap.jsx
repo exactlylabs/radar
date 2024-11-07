@@ -18,7 +18,7 @@ import FiltersPanel from "./FiltersPanel";
 import CalendarModal from "./Filters/CalendarModal";
 import ClassificationAndLayersPanel from "./ClassificationAndLayersPanel";
 import LayersPopup from "./Filters/LayersPopup";
-import ResultsTabs from "./ResultsTabs";
+import {ResultsTabs, TABS} from "./ResultsTabs";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -45,7 +45,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
   const [layersPopupOpen, setLayersPopupOpen] = useState(false);
-  const [resultsTabSelected, setResultsTabSelected] = useState('all-results');
+  const [resultsTabSelected, setResultsTabSelected] = useState(TABS.ALL_RESULTS);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
