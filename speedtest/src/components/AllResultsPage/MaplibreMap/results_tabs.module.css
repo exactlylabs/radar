@@ -13,9 +13,9 @@
 
 .tabContainer {
     width: 140px;
-    padding: .5rem 1.5rem 0,5625rem 1.5rem;
+    padding: .5rem 1.5rem 0.5625rem 1.5rem;
     border-radius: 18px;
-    font-size: 0,9375rem;
+    font-size: 0.9375rem;
     font-variation-settings: 'wght' 700;
     font-family: 'MulishBold', sans-serif;
     border: none;
@@ -36,21 +36,21 @@
 
 .pill {
     position: absolute;
-    width: calc(50% - 0,125rem);
+    width: calc(50% - 0.125rem);
     height: 36px;
     border-radius: 1.125rem;
     font-size: 0.9375rem;
     font-variation-settings: 'wght' 700;
     cursor: pointer;
     z-index: -1;
-    background-color: rgb(17, 14, 76);;
+    background-color: rgb(17, 14, 76);
     transition: right 0.3s ease-in-out;
 }
 
 .pill[data-selected="all-results"] {
-    right: calc(50% - 0,125rem);
+    right: calc(50% - 0.125rem);
 }
 
 .pill[data-selected="your-results"] {
-    right: 0,125rem;
+    right: 0.125rem;
 }

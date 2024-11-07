@@ -209,6 +209,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
         layerSelected={"classification"} 
         onHelpClick={() => setClassificationsModalOpen(true)}
         />
+        <ResultsTabs tabSelected={resultsTabSelected} onTabChanged={toggleResultsTab}  />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}
