@@ -1,75 +1,76 @@
 :root {
-    --slider-max-height: 0;
-    --slider-thumb-width: 0;
-  }
+  --slider-max-height: 0;
+  --slider-thumb-width: 0;
+}
+
 .container {
-    display: flex;
-    gap: 0;
+  display: flex;
+  gap: 0;
 }
 
 @media (max-width: 700px) {
-    .container {
-        flex-direction: column;
-        gap: 1rem;
-    }
+  .container {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .layersContainer {
-    padding: 1rem 1.25rem .5rem;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    align-items: start;
+  padding: 1rem 1.25rem .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: start;
 }
 
 .buttonContainer {
-    display: flex;
-    gap: 0;
-    align-items: center;
+  display: flex;
+  gap: 0;
+  align-items: center;
 }
 
 .divider {
-    width: 1px;
-    max-height: 1.5rem;
-    height: 100%;
-    background-color: #E3E3E8;
-    margin-inline: .5rem;
+  width: 1px;
+  max-height: 1.5rem;
+  height: 100%;
+  background-color: #E3E3E8;
+  margin-inline: .5rem;
 }
 
 @media (max-width: 700px) {
-    .divider {
-        display: none;
-    }
+  .divider {
+    display: none;
+  }
 }
 
 @media (max-width: 700px) {
-    .divider {
-        display: none;
-    }
+  .divider {
+    display: none;
+  }
 }
-  
+
 .button {
-    padding: .5rem;
-    border: none;
-    display: flex;
-    align-items: center;
-    background-color: transparent;
-    justify-content: center;
-    font-size: 0.875rem;
-    font-variation-settings: 'wght' 500;
-    color: #110e4c;
-    cursor: pointer;
+  padding: .5rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-variation-settings: 'wght' 500;
+  color: #110e4c;
+  cursor: pointer;
 }
-  
+
 .button:hover {
-    border-radius: .5rem;
-    border: none;
-    background-color: #F6F7FA;
+  border-radius: .5rem;
+  border: none;
+  background-color: #F6F7FA;
 }
 
 .checkboxLabel {
-    font-size: 0.875rem;
-    font-variation-settings: 'wght' 500;
-    color: #110e4c;
-    cursor: pointer;
+  font-size: 0.875rem;
+  font-variation-settings: 'wght' 500;
+  color: #110e4c;
+  cursor: pointer;
 }
