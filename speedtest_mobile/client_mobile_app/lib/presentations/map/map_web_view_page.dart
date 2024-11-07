@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:client_mobile_app/core/flavors/app_config.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
@@ -114,17 +115,22 @@ class _MapWebViewPageState extends State<MapWebViewPage> {
 
   Future<void> getCurrentLocation() async {
     final webEndpoint = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
-    final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      final permission = await Geolocator.requestPermission();
+    try {
+      final permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        setState(() => initialUrl = webEndpoint!);
-        return;
+        final permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          setState(() => initialUrl = webEndpoint!);
+          return;
+        }
       }
+      final position = await Geolocator.getCurrentPosition();
+      setState(() => initialUrl =
+          '$webEndpoint&userLat=${position.latitude}&userLng=${position.longitude}&zoom=17');
+    } catch (failure) {
+      setState(() => initialUrl = '$webEndpoint&zoom=17');
     }
-    final position = await Geolocator.getCurrentPosition();
-    setState(() => initialUrl =
-        '$webEndpoint&userLat=${position.latitude}&userLng=${position.longitude}&zoom=17');
   }
 }
