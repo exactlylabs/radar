@@ -5,27 +5,50 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Carrousel from '../components/common/Carrousel';
 import AutoExpandingCards from '../components/common/AutoExpandingCards';
 import ExpansibleRows from '../components/common/ExpansibleRows';
+import HeroWithText from "../components/common/HeroWithText.astro";
+import PrimaryButton from "../components/common/buttons/PrimaryButton.astro";
+import SecondaryButton from "../components/common/buttons/SecondaryButton.astro";
+import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 ---
 
 <BaseLayout>
-  <section class={styles.paddedSection}>
-    <div style="margin-bottom: 24px">
-      <Carrousel client:only="react" elementCount={5}>
-        {[1,2,3,4,5].map((i, index) => (
-          <div style={{width: '352px', height: '462px', outline: 'solid 1px'}}
-               data-index={index}
-          >Item {index}</div>
-        ))}
-      </Carrousel>
+  <section style="height: 700px; padding-top: 140px; width: 100%; text-align: center; max-width: 668px; margin-inline: auto; box-sizing: border-box;">
+    <HeroWithText head=""
+                  title="Uncovering Rural America's Internet Reallity"
+                  content="The Telehealth Broadband Pilot partnered with communities in Alaska, Michigan, Texas, and West Virginia to gather data on rural broadband access and its impact on healthcare, education, and daily life."
+    />
+    <div style="padding-top: 2.5rem; display: flex; gap: 1.5rem; align-items: center; justify-content: center;">
+      <PrimaryButton href="/findings">Explore our findings</PrimaryButton>
+      <TransparentSecondaryButton href="/stories">Read the Stories</TransparentSecondaryButton>
     </div>
-    <div style="margin-bottom: 24px">
+  </section>
+  <section class={styles.paddedSection}>
+    <div style="padding-block: 24px;">
+      <h1 style="font-size: 2.5rem; font-style: italic;">BUTTONS</h1>
+      <div style="display: flex; flex-direction: row; align-items: center;
+      gap: 1rem">
+        <PrimaryButton>Primary</PrimaryButton>
+        <SecondaryButton>Secondary</SecondaryButton>
+        <TransparentSecondaryButton>Transparent Secondary</TransparentSecondaryButton>
+      </div>
+    </div>
+    <div style="padding-block: 24px;">
+      <h1 style="font-size: 2.5rem; font-style: italic;">HERO WITH TEXT</h1>
+      <HeroWithText head="Our approach"
+        title="Uncovering Rural Connectivity Challenges"
+        content="The Telehealth Broadband Pilot partnered with local leaders to understand connectivity issues, using community engagement and monitoring tools to identify broadband gaps, inform telehealth policy, and support infrastructure improvements."
+      />
+    </div>
+    <div style="padding-block: 24px;">
+      <h1 style="font-size: 2.5rem; font-style: italic;">EXPANDING CARDS</h1>
       <AutoExpandingCards client:only="react" content={[
         {head: '01', title: 'Community Engagement Efforts', content: 'We worked closely with local partners and community leaders to understand rural connectivity needs. By engaging directly with residents through surveys, interviews, and events, we ensured the data collected reflected the real challenges faced bt these communities.'},
         {head: '02', title: 'Tools and Methods for Data Collection', content: 'The project developed a variety of tools to measure broadband performance, including monitoring Pods, speed test widgets, and mobile data collection. These tools provided reliable data on internet quality, helping to map connectivity gaps in rural regions accurately.'},
         {head: '03', title: 'Analyzing Connectivity Challenges', content: 'Our analysis focused on understanding how connectivity issues impact rural communities. By examining the collected data, we identified patterns in broadband performance and barriers to telehealth adoption, offering communities insights into their unique digital landscape.'},
       ]}/>
     </div>
-    <div style="margin-bottom: 24px">
+    <div style="padding-block: 24px;">
+      <h1 style="font-size: 2.5rem; font-style: italic;">EXPANSIBLE ROWS</h1>
       <ExpansibleRows client:only="react" content={[
         {head: '01', title: 'Pod Data Collection', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
         {head: '02', title: 'ISP and Mobile Provider Data', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
@@ -35,4 +58,20 @@ import ExpansibleRows from '../components/common/ExpansibleRows';
       ]}/>
     </div>
   </section>
+  <div style="width: 100%; padding-block: 24px;">
+    <h1 style="font-style: italic; font-size: 2.5rem; padding-left: var(--side-padding)">CARROUSEL</h1>
+    <Carrousel client:only="react" elementCount={5} itemWidth={352}>
+      {[1,2,3,4,5].map((i, index) => (
+              <div style={{width: '352px', height: '462px', outline: 'solid 1px'}}
+                   data-index={index}
+              >Item {index}</div>
+      ))}
+    </Carrousel>
+  </div>
 </BaseLayout>
+
+
+<script>
+  const heroImage = document.getElementById('hero-image');
+  if(heroImage) heroImage.style.height = '700px';
+</script>

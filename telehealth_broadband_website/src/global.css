@@ -2,6 +2,7 @@
   --max-width: 1250px;
   --text-color: #ACAFCD;
   --heading-color: #FFFFFF;
+  --bg-color: #0A081C;
 }
 
 @font-face {
@@ -45,7 +46,9 @@
 }
 
 body {
-  background-color: #0A081C;
+  background-color: var(--bg-color);
+  position: relative;
+  overflow-x: clip;
 }
 
 a {

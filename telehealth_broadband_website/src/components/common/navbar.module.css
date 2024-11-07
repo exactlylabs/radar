@@ -9,6 +9,12 @@
   margin: 0 auto;
 }
 
+@media (min-width: 1300px) {
+  .nav {
+    padding-inline: 0;
+  }
+}
+
 .links {
   display: flex;
   flex-direction: row;

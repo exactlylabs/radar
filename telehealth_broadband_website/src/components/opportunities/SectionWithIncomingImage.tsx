@@ -19,7 +19,7 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
           const opacity = Math.max(0.3, entry.intersectionRatio);
           (entry.target as HTMLElement).style.opacity = `${opacity}`;
           
-          if(opacity >= 0.75) {
+          if(opacity >= 0.9) {
             setCurrentSectionInView(index);
           }
         });
