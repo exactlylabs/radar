@@ -1,56 +1,56 @@
 .container {
-    position: absolute;
-    top: 1.5rem;
-    right: 50%;
-    z-index: 10000;
-    display: flex;
-    border-radius: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: .125rem;
+  position: absolute;
+  top: 1.5rem;
+  right: 50%;
+  z-index: 10000;
+  display: flex;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: .125rem;
 }
 
 .tabContainer {
-    width: 140px;
-    padding: .5rem 1.5rem 0.5625rem 1.5rem;
-    border-radius: 18px;
-    font-size: 0.9375rem;
-    font-variation-settings: 'wght' 700;
-    font-family: 'MulishBold', sans-serif;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    background-color: transparent;
-    transition: color 0.3s ease-in-out;
+  width: 140px;
+  padding: .5rem 1.5rem 0.5625rem 1.5rem;
+  border-radius: 18px;
+  font-size: 0.9375rem;
+  font-variation-settings: 'wght' 700;
+  font-family: 'MulishBold', sans-serif;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.3s ease-in-out;
 
 }
 
 .tabContainer[data-selected="true"] {
-    color: white;
+  color: white;
 }
 
 .tabContainer[data-selected="false"] {
-    color: rgb(17, 14, 76);
+  color: #110E4C;
 }
 
 .pill {
-    position: absolute;
-    width: calc(50% - 0.125rem);
-    height: 36px;
-    border-radius: 1.125rem;
-    font-size: 0.9375rem;
-    font-variation-settings: 'wght' 700;
-    cursor: pointer;
-    z-index: -1;
-    background-color: rgb(17, 14, 76);
-    transition: right 0.3s ease-in-out;
+  position: absolute;
+  width: calc(50% - 0.125rem);
+  height: 36px;
+  border-radius: 1.125rem;
+  font-size: 0.9375rem;
+  font-variation-settings: 'wght' 700;
+  cursor: pointer;
+  z-index: -1;
+  background-color: #110E4C;
+  transition: right 0.3s ease-in-out;
 }
 
 .pill[data-selected="all-results"] {
-    right: calc(50% - 0.125rem);
+  right: calc(50% - 0.125rem);
 }
 
 .pill[data-selected="your-results"] {
-    right: 0.125rem;
+  right: 0.125rem;
 }

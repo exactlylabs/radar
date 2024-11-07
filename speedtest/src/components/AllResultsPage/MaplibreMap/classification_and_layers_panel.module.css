@@ -30,7 +30,7 @@
 }
 
 @media (max-width: 550px) {
-  
+
   .classificationAndLayersPanel[data-open='true'] {
     right: 0;
   }
@@ -68,9 +68,9 @@
 }
 
 @media (max-width: 700px) {
-    .layersContainer {
-        max-width: fit-content;
-    }
+  .layersContainer {
+    max-width: fit-content;
+  }
 }
 
 .layersIconContainer {
