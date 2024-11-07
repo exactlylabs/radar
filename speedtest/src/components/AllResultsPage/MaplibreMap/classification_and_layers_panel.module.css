@@ -1,102 +1,79 @@
 :root {
-    --layers-panel-width: 375px;
+  --layers-panel-width: 375px;
 }
 
 .classificationAndLayersPanel {
-    position: absolute;
-    bottom: 1.5rem;
-    right: 0;
-    z-index: 1000;
-    border-radius: .5rem;
-    margin: 1.5rem;
-    display: flex;
-    gap: .5rem;
-    max-height: 40px;
+  position: absolute;
+  bottom: 1.5rem;
+  right: 0;
+  z-index: 1000;
+  border-radius: .5rem;
+  margin: 1.5rem;
+  display: flex;
+  gap: .5rem;
+  max-height: 40px;
 
 }
 
 @media (max-width: 700px) {
-    .classificationAndLayersPanel {
-        position: absolute;
-        bottom: 1.5rem;
-        z-index: 1000;
-        border-radius: .5rem;
-        margin: 1.5rem;
-        display: flex;
-        gap: .5rem;
-        max-height: 40px;
-        transition: right 0.5s ease-in-out;
-    }
+  .classificationAndLayersPanel {
+    transition: right 0.5s ease-in-out;
+  }
 
-    .classificationAndLayersPanel[data-open='true'] {
-        right: calc(var(--layers-panel-width));
-    }
+  .classificationAndLayersPanel[data-open='true'] {
+    right: calc(var(--layers-panel-width));
+  }
 
-    .classificationAndLayersPanel[data-open='false'] {
-        right: 0;
-    }
+  .classificationAndLayersPanel[data-open='false'] {
+    right: 0;
+  }
 }
 
 @media (max-width: 550px) {
-    .classificationAndLayersPanel {
-        position: absolute;
-        bottom: 1.5rem;
-        right: 0;
-        z-index: 1000;
-        border-radius: .5rem;
-        margin: 1.5rem;
-        display: flex;
-        gap: .5rem;
-        max-height: 40px;
-    }
-
-    .classificationAndLayersPanel[data-open='true'] {
-        right: 0;
-    }
-
-    .classificationAndLayersPanel[data-open='false'] {
-        right: 0;
-    }
+  
+  .classificationAndLayersPanel[data-open='true'] {
+    right: 0;
+  }
 }
 
 
 .classificationContainer {
-    display: flex;
-    padding: .25rem .75rem;
-    border-radius: .5rem;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: white;
+  display: flex;
+  padding: .25rem .75rem;
+  border-radius: .5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
 
 @media (max-width: 700px) {
-    .classificationContainer {
-        display: none;
-    }
+  .classificationContainer {
+    display: none;
+  }
 }
 
 .layersContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: .25rem;
-    border-radius: .5rem;
-    background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .25rem;
+  border-radius: .5rem;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 700px) {
-    .layersContainer {
-        max-width: fit-content;
-    }
+  .layersContainer {
+    max-width: fit-content;
+  }
 }
 
 .layersIconContainer {
-    display: flex;
-    padding: .5rem;
-    border-radius: .5rem;
-    cursor: pointer;
+  display: flex;
+  padding: .5rem;
+  border-radius: .5rem;
+  cursor: pointer;
 }
 
 .layersIconContainer:hover {
-    background-color: #F6F7FA;
+  background-color: #F6F7FA;
 }
