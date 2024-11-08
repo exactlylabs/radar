@@ -1,5 +1,6 @@
-import {useEffect, useRef} from "react";
+import {useContext, useEffect, useRef} from "react";
 import styles from './cost_slider.module.css';
+import FiltersContext from "../../../../../context/FiltersContext";
 
 
 const distributionMock = [
@@ -35,17 +36,27 @@ const distributionMock = [
  * All values are mocked and just for initial testing purposes for now, until we have the
  * real data coming from our backend.
  */
-export default function CostSlider({minPrice, maxPrice, setMinPrice, setMaxPrice}) {
+export default function CostSlider() {
+
+  const { filters, setMinPrice, setMaxPrice } = useContext(FiltersContext);
+  const { minPrice, maxPrice, maxCost } = filters;
 
   const minSliderRef = useRef(null);
   const maxSliderRef = useRef(null);
   const minInputRef = useRef(null);
   const maxInputRef = useRef(null);
+  let distribution = [];
+
   const distributionMax = Math.max(...distributionMock.map(distribution => distribution.count));
 
+  const {costDistributionList, setCostDistributionList} = useContext(FiltersContext);
+
   useEffect(() => {
-    paintSpaceInBetween();
-  }, []);
+    if(maxCost) {
+      createDistribution();
+      paintSpaceInBetween();
+    }
+  }, [maxCost]);
 
   const handleSlide = event => {
     const slider = event.target.getAttribute('data-slider');
@@ -167,7 +178,7 @@ export default function CostSlider({minPrice, maxPrice, setMinPrice, setMaxPrice
       <div className={styles.slidersContainer}>
         <input type={'range'}
                min={'0'}
-               max={'100'}
+               max={maxCost}
                value={minPrice === '' ? minSliderRef.current.value : minPrice}
                className={styles.slider}
                data-slider={'min'}
@@ -176,7 +187,7 @@ export default function CostSlider({minPrice, maxPrice, setMinPrice, setMaxPrice
         />
         <input type={'range'}
                min={'0'}
-               max={'100'}
+               max={maxCost}
                value={maxPrice === '' ? maxSliderRef.current.value : maxPrice}
                className={styles.slider}
                data-slider={'max'}

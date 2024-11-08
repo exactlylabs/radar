@@ -44,7 +44,7 @@ const FloatingExploreButton = ({
 
   const getFloatingButtonStyle = () => {
     const element = document.getElementById('speedtest--main-frame');
-    const {x, y, width, height} = element.getBoundingClientRect();
+    const {width, height} = element.getBoundingClientRect();
     if(config.widgetMode) {
       return {...floatingButtonStyle, bottom: null, right: null, top: (height - 220), left: (width - 70)}
     } else if(config.webviewMode) {

@@ -126,6 +126,14 @@
   cursor: pointer;
   font-size: 1rem;
   color: #110E4C;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+}
+
+.option:hover {
+  opacity: 0.8;
 }
 
 .option>img {

@@ -14,22 +14,12 @@ import CustomSnackbar from "../common/CustomSnackbar/CustomSnackbar";
 
 const MainPage = ({config}) => {
 
-  const getConfigTab = (tab) => {
-    if(!tab) return TABS.SPEED_TEST;
-    switch (tab) {
-      case 0: return TABS.SPEED_TEST;
-      case 1: return TABS.HISTORY;
-      case 2: return TABS.ALL_RESULTS;
-      default: return TABS.SPEED_TEST;
-    }
-  }
-
   const getGivenLocationIfPresent = (userLat, userLng) => {
     if(userLat === undefined || userLng === undefined) return null;
     return [userLat, userLng];
   }
 
-  const [step, setStep] = useState(TABS.ALL_RESULTS);
+  const [step, setStep] = useState(TABS.SPEED_TEST);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.INITIAL);
