@@ -9,12 +9,14 @@ class LocalStorage {
   late Box<String> _deviceInfoBox;
   late Box<Map> _speedTestResultsBox;
   late Box<Map> _pendingSpeedTestResultsBox;
+  late Box<List<int>> _pendingWifiTrackerResultsBox;
 
   static const String _preferencesBoxName = 'preferences';
   static const String _backgroundModeSettingsBoxName = 'background_mode_settings';
   static const String _deviceInfoBoxName = 'device_info';
   static const String _speedTestResultsBoxName = 'speed_test_results';
   static const String _pendingSpeedTestResultsBoxName = 'pending_speed_test_results';
+  static const String _pendingWifiTrackerResultsBoxName = 'pending_wifi_tracker_results';
 
   static const String _preferencesFTUEMap = 'preferences_ftue_map';
   static const String _preferencesTermsAccepted = 'preferences_terms_accepted';
@@ -50,6 +52,7 @@ class LocalStorage {
     _pendingSpeedTestResultsBox = await Hive.openBox(_pendingSpeedTestResultsBoxName,
         compactionStrategy: (entries, deletedEntries) =>
             deletedEntries > _MAX_PENDING_SPEED_TEST_RESULTS_DELETED_ENTRIES);
+    _pendingWifiTrackerResultsBox = await Hive.openBox(_pendingWifiTrackerResultsBoxName);
   }
 
   bool getFTUEMap() => _preferencesBox.get(_preferencesFTUEMap, defaultValue: true)!;
@@ -79,6 +82,8 @@ class LocalStorage {
     return _pendingSpeedTestResultsBox.toMap();
   }
 
+  Map<dynamic, List<int>> getPendingWifiTrackerResults() => _pendingWifiTrackerResultsBox.toMap();
+
   Future<void> setFTUEMap() async {
     const ftueMap = false;
     await _preferencesBox.put(_preferencesFTUEMap, ftueMap);
@@ -106,8 +111,16 @@ class LocalStorage {
     await _pendingSpeedTestResultsBox.add(speedTestResult);
   }
 
+  Future<void> addPendingWifiTrackerResult(List<int> wifiTrackerResult) async {
+    await _pendingWifiTrackerResultsBox.add(wifiTrackerResult);
+  }
+
   Future<void> removePendingSpeedTestResult(dynamic key) async {
     await _pendingSpeedTestResultsBox.delete(key);
+  }
+
+  Future<void> removePendingWifiTrackerResult(dynamic key) async {
+    await _pendingWifiTrackerResultsBox.delete(key);
   }
 
   Future<void> setWifiTrackerFrequency(int frequency) async {

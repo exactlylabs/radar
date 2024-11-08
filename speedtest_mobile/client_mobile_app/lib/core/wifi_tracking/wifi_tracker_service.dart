@@ -111,8 +111,8 @@ class WifiTrackerServiceListener implements Listener {
   late final WifiTracker _wifiTracker;
 
   @override
-  void onStart() {
-    _wifiTracker.setupWifiTracking();
+  void onStart() async {
+    await _wifiTracker.setupWifiTracking();
   }
 
   @override

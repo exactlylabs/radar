@@ -18,16 +18,21 @@ class WebSocketClient {
   Timer? pendingReopen;
   String? accessToken;
   WebSocketChannel? socket;
+  bool isConnected = false;
+  bool reconnect = false;
   Map<String, StreamController<dynamic>> requests = <String, StreamController<dynamic>>{};
 
-  void open() {
+  Future<void> open({bool reconnect = false}) async {
     Uri connectEndpoint = _getConnectEndpoint(endpoint, accessToken);
+    this.reconnect = reconnect;
 
     try {
       socket = WebSocketChannel.connect(connectEndpoint);
-      socket!.stream.listen(_handleMessages,
-          onError: _handleError, onDone: _handleError, cancelOnError: true);
+      await socket!.ready;
+      isConnected = true;
+      socket!.stream.listen(_handleMessages, onError: _handleError, onDone: _handleError);
     } catch (exception, stackTrace) {
+      isConnected = false;
       Sentry.captureException(exception, stackTrace: stackTrace);
     }
   }
@@ -37,7 +42,6 @@ class WebSocketClient {
     pingTimer = null;
     socket?.sink.close(_getClosure);
     socket = null;
-    // TODO: throw for outstanding requests
   }
 
   void _handleMessages(dynamic event) {
@@ -64,15 +68,20 @@ class WebSocketClient {
   }
 
   void _handleError([dynamic err]) {
-    // TODO: If no longer opened by public interface, shouldn't reopen
-    _reopen();
+    isConnected = false;
+    if (reconnect) {
+      _reopen();
+    }
   }
 
   bool isOpen() {
-    return socket != null;
+    return isConnected;
   }
 
   bool send(dynamic request) {
+    if (!isOpen()) {
+      return false;
+    }
     try {
       socket?.sink.add(request);
       return true;

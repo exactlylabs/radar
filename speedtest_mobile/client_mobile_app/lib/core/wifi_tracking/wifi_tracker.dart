@@ -53,9 +53,9 @@ class WifiTracker {
     _position = null;
   }
 
-  void setupWifiTracking() {
+  Future<void> setupWifiTracking() async {
     if (Platform.isIOS) return;
-    _webSocketClient.open();
+    await _webSocketClient.open();
 
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.bestForNavigation,
@@ -82,17 +82,33 @@ class WifiTracker {
       Sentry.captureException(Exception('Failed to get scanned wifi results'));
       return;
     }
-    final scanResultSent = _webSocketClient.send(scanResult);
 
+    if (!_webSocketClient.isOpen()) {
+      await _webSocketClient.open();
+    }
+
+    final scanResultSent = _webSocketClient.send(scanResult);
     if (!scanResultSent) {
-      Sentry.captureException(Exception('Failed to send scanned wifi results'));
+      _localStorage.addPendingWifiTrackerResult(scanResult);
     } else {
-      _responses.clear();
+      await _uploadOfflineReports();
+    }
+
+    _responses.clear();
+  }
+
+  Future<void> _uploadOfflineReports() async {
+    final pendingWifiTrackerResults = _localStorage.getPendingWifiTrackerResults();
+    for (final pendingWifiTrackerResultKey in pendingWifiTrackerResults.keys) {
+      final scanResultSent =
+          _webSocketClient.send(pendingWifiTrackerResults[pendingWifiTrackerResultKey]);
+      if (scanResultSent) {
+        await _localStorage.removePendingWifiTrackerResult(pendingWifiTrackerResultKey);
+      }
     }
   }
 
   Future<List<int>?> getScannedWifiResults() async {
-    print('Scanned wifi results: $_responses');
     try {
       final wsMessage = WSMessage(
         event: Events.SCAN_RESULT,
@@ -129,7 +145,6 @@ class WifiTracker {
       final wsMessageToByteArray = wsMessage.writeToBuffer();
       return wsMessageToByteArray;
     } catch (e) {
-      print('Failed to get scanned wifi results: $e');
       Sentry.captureException(e);
       return null;
     }
