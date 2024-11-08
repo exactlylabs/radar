@@ -4,6 +4,8 @@ import DateRangeFilter from "./Filters/DateRangeFilter";
 import InternetProviderFilter from "./Filters/InternetProviderFilter";
 import CostFilter from "./Filters/CostFilter/CostFilter";
 import CloseModalButton from './Filters/common/CloseModalButton';
+import FiltersContext from "../../../context/FiltersContext";
+import {useContext} from "react";
 
 function filtersIcon() {
   return (
@@ -21,7 +23,10 @@ function filtersIcon() {
   );
 }
 
-export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
+export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, applyFilters}) {
+
+  const { maxCost } = useContext(FiltersContext);
+
   return (
     <>
       <div className={styles.filtersPanel} data-open={isOpen.toString()}>
@@ -48,8 +53,9 @@ export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
             <CostFilter/>
           </section>
         </div>
+        <pre>{maxCost}</pre>
         <div className={styles.applySection}>
-          <button className={styles.applyButton}>Apply</button>
+          <button className={styles.applyButton} onClick={applyFilters}>Apply</button>
         </div>
       </div>
       <button className={styles.filtersButton}

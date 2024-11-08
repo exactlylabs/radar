@@ -25,7 +25,7 @@
   opacity: 0.8;
 }
 
-button[data-active="true"] {
+.button[data-active="true"] {
   outline: solid 2px #4B7BE5;
   background-color: rgba(75, 123, 229, 0.1);
   font-variation-settings: 'wght' 700;
