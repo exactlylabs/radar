@@ -3,20 +3,15 @@ import calendarIcon from "../../../../assets/calendar-icon.svg";
 import dropdownStyles from "./common/filter_dropdown.module.css";
 import checkIcon from "../../../../assets/check-icon.svg";
 import FilterDropdownWithSearch from "./common/FilterDropdownWithSearch";
-import FiltersContext from "../../../../context/FiltersContext";
+import FiltersContext, {ALL_PROVIDERS_OPTION} from "../../../../context/FiltersContext";
 
 export default function InternetProviderFilter() {
-  const allProvidersOption = {
-    label: 'All providers',
-    value: 'all_providers',
-    default: true
-  }
 
-  const { visibleIspList } = useContext(FiltersContext);
-  const [currentFilter, setCurrentFilter] = useState(allProvidersOption);
+
+  const { visibleIspList, filters, setIsp } = useContext(FiltersContext);
+  const { isp } = filters;
   const [allProvidersVisible, setAllProvidersVisible] = useState(true);
   const [filteredOptions, setFilteredOptions] = useState([]);
-
 
   useEffect(() => {
     setFilteredOptions(getAllIspOptions());
@@ -26,9 +21,8 @@ export default function InternetProviderFilter() {
     let options = [];
     for(const [key, value] of visibleIspList) {
       options.push({
-        label: key,
-        value: key,
-        default: false
+        label: value.label,
+        value: key
       })
     }
     return options;
@@ -48,7 +42,7 @@ export default function InternetProviderFilter() {
 
   return (
     <FilterDropdownWithSearch
-      label={currentFilter.label}
+      label={isp.label}
       iconSrc={calendarIcon}
       options={getAllIspOptions()}
       handleOnChange={handleInputChange}
@@ -57,8 +51,8 @@ export default function InternetProviderFilter() {
         allProvidersVisible &&
         <>
           <button className={dropdownStyles.option}
-                  data-selected={'all_providers' === currentFilter.value}
-                  onClick={() => setCurrentFilter(allProvidersOption)}
+                  data-selected={ALL_PROVIDERS_OPTION.value === isp.value}
+                  onClick={() => setIsp(ALL_PROVIDERS_OPTION)}
           >
             <img src={checkIcon} width={16} height={16} alt={'check icon'}/>
             All providers
@@ -68,12 +62,12 @@ export default function InternetProviderFilter() {
       }
       {filteredOptions.map(option => (
         <button className={dropdownStyles.option}
-                data-selected={option.value === currentFilter.value}
-                onClick={() => setCurrentFilter(option)}
+                data-selected={option.value === isp.value}
+                onClick={() => setIsp(option)}
                 key={option.value}
         >
           <img src={checkIcon} width={16} height={16} alt={'check icon'}/>
-          <div className={dropdownStyles.multiRowLabelContainer} data-selected={option.value === currentFilter.value}>
+          <div className={dropdownStyles.multiRowLabelContainer} data-selected={option.value === isp.value}>
             <p className={dropdownStyles.optionLabel}>{option.label}</p>
             {option.subLabel && <p className={dropdownStyles.optionSubLabel}>{option.subLabel}</p>}
           </div>

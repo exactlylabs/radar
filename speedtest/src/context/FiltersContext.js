@@ -1,8 +1,23 @@
 import {createContext, useState} from "react";
+import {
+  firstDayOfCurrentYear,
+  firstDayOfLastYear, getRangeLabel,
+  getToday,
+  lastDayOfLastYear,
+  sixMonthsFromToday
+} from "../utils/dates";
 
-export const CLASSIFICATIONS = {
+export const VIEW_BY = {
+  CLASSIFICATION: 'classification',
   DOWNLOAD: 'download',
   UPLOAD: 'upload',
+}
+
+export const CLASSIFICATIONS = {
+  NO_INTERNET: 'no-internet',
+  UNSERVED: 'unserved',
+  UNDERSERVED: 'underserved',
+  SERVED: 'served',
 }
 
 export const SPEED_RANGE = {
@@ -18,16 +33,29 @@ export const CONNECTION_TYPES = {
   CELLULAR: 'cellular',
 }
 
+export const DATE_RANGE_LABELS = {
+  LAST_6_MONTHS: 'Last 6 months',
+  THIS_YEAR: 'This year',
+  LAST_YEAR: 'Last year',
+}
+
+export const ALL_PROVIDERS_OPTION = {
+  label: 'All providers',
+  value: 'all_providers',
+  default: true
+}
+
 const defaultFilters = {
   connectionTypes: [],
-  isp: null,
-  from: null,
-  to: null,
+  isp: ALL_PROVIDERS_OPTION,
+  from: sixMonthsFromToday(),
+  to: getToday(),
+  rangeLabel: DATE_RANGE_LABELS.LAST_6_MONTHS,
   minPrice: 0,
-  maxPrice: undefined,
+  maxPrice: 100,
   includeNoCost: true, // based on default design
-  classification: CLASSIFICATIONS.DOWNLOAD,
-  speedRange: [SPEED_RANGE.NO_INTERNET, SPEED_RANGE.LOW, SPEED_RANGE.MID, SPEED_RANGE.HIGH],
+  viewBy: VIEW_BY.CLASSIFICATION,
+  viewByFilters: [CLASSIFICATIONS.NO_INTERNET, CLASSIFICATIONS.UNSERVED, CLASSIFICATIONS.UNDERSERVED, CLASSIFICATIONS.SERVED]
 }
 
 const FiltersContext = createContext(defaultFilters);
@@ -36,6 +64,9 @@ export const FiltersContextProvider = ({children}) => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [visibleIspList, setVisibleIspList] = useState(new Map());
+  const [maxCost, setMaxCost] = useState(undefined);
+  const [costDistributionList, setCostDistributionList] = useState([]);
+  const [lastManualMapUpdate, setLastManualMapUpdate] = useState(new Date());
 
   const setConnectionTypes = connectionTypes => setFilters(prevState => ({...prevState, connectionTypes}));
   const setIsp = isp => setFilters(prevState => ({...prevState, isp}));
@@ -44,12 +75,66 @@ export const FiltersContextProvider = ({children}) => {
   const setMinPrice = minPrice => setFilters(prevState => ({...prevState, minPrice}));
   const setMaxPrice = maxPrice => setFilters(prevState => ({...prevState, maxPrice}));
   const setIncludeNoCost = includeNoCost => setFilters(prevState => ({...prevState, includeNoCost}));
-  const setClassification = classification => setFilters(prevState => ({...prevState, classification}));
-  const setSpeedRange = speedRange => setFilters(prevState => ({...prevState, speedRange}));
-  const clearFilters = () => setFilters(defaultFilters);
+  const setRangeLabel = rangeLabel => setFilters(prevState => ({...prevState, rangeLabel}));
+
+  const clearFilters = () => {
+    setFilters(defaultFilters);
+    setLastManualMapUpdate(new Date());
+  }
+
+  const setViewByFilters = viewByFilters => {
+    setFilters(prevState => ({...prevState, viewByFilters}));
+    setLastManualMapUpdate(new Date());
+  }
+
+  const setDateLabel = label => {
+    if(label === DATE_RANGE_LABELS.LAST_6_MONTHS) {
+      setFrom(sixMonthsFromToday());
+      setTo(new Date());
+    } else if (label === DATE_RANGE_LABELS.THIS_YEAR) {
+      setFrom(firstDayOfCurrentYear());
+      setTo(new Date());
+    } else if (label === DATE_RANGE_LABELS.LAST_YEAR) {
+      setFrom(firstDayOfLastYear());
+      setTo(lastDayOfLastYear());
+    }
+    setRangeLabel(label);
+  }
+
+  const setDates = (from, to) => {
+    setFrom(from);
+    setTo(to);
+    setDateLabel(getRangeLabel(from, to));
+  }
+
+  const setViewBy = viewBy => {
+    setFilters(prevState => ({
+      ...prevState,
+      viewBy,
+      viewByFilters:
+        viewBy === VIEW_BY.CLASSIFICATION ? Object.values(CLASSIFICATIONS) :
+        viewBy === VIEW_BY.DOWNLOAD ? Object.values(SPEED_RANGE) :
+        Object.values(SPEED_RANGE),
+    }));
+    setLastManualMapUpdate(new Date());
+  }
+
+  const getFiltersAsSearchParams = () => {
+    const params = new URLSearchParams();
+    filters.connectionTypes.forEach(ct => params.append('connection_type[]', ct));
+    params.append('isp', filters.isp.value);
+    params.append('from', filters.from.getTime());
+    params.append('to', filters.to.getTime());
+    params.append('min_price', filters.minPrice);
+    params.append('max_price', filters.maxPrice);
+    params.append('include_no_cost', filters.includeNoCost);
+    params.append('view_by', filters.viewBy);
+    filters.viewByFilters.forEach(vbf => params.append('view_by_filters[]', vbf));
+    return params;
+  }
 
   return (
-    <FiltersContext.Provider value={{filters, clearFilters, setConnectionTypes, setIsp, setFrom, setTo, setMinPrice, setMaxPrice, setIncludeNoCost, setClassification, setSpeedRange, visibleIspList, setVisibleIspList}}>
+    <FiltersContext.Provider value={{filters, maxCost, setMaxCost, costDistributionList, setCostDistributionList, lastManualMapUpdate, clearFilters, setConnectionTypes, setIsp, setDateLabel, setDates, setMinPrice, setMaxPrice, setIncludeNoCost, setViewByFilters, setViewBy, visibleIspList, setVisibleIspList, getFiltersAsSearchParams}}>
       {children}
     </FiltersContext.Provider>
   );
