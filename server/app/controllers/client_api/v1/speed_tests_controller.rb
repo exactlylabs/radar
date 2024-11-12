@@ -87,6 +87,7 @@ module ClientApi
               longitude,
               network_location,
               network_type,
+              network_cost,
               state,
               city,
               street,
@@ -133,7 +134,7 @@ module ClientApi
           sql += " AND tested_by = #{@widget_client.id}" unless is_global
 
           sql += %{
-            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
           ), }
 
           sql += apply_view_by_filters(filters)
@@ -156,6 +157,7 @@ module ClientApi
               street,
               autonomous_system_org_name,
               autonomous_system_org_id,
+              network_cost,
               loss,
               latency,
               -- Pulling this here to reduce complexity on the client side, plus, the mapbox/maplibre
@@ -164,7 +166,7 @@ module ClientApi
               -- the correct representation for the dot's color.
               LEAST(download_quality, upload_quality) AS connection_quality
             FROM view_by_filtered_tests
-            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
           ) AS tile_data;
           }
 
@@ -234,7 +236,7 @@ module ClientApi
       end
 
       def max_cost
-        render json: { max_cost: ClientSpeedTest.where("network_cost != 'Nan' AND network_cost IS NOT NULL").maximum(:network_cost) }
+        render json: { max_cost: ClientSpeedTest.where("network_cost != 'Nan' AND network_cost IS NOT NULL AND network_cost <= 2000").maximum(:network_cost) }
       end
 
       private
@@ -285,6 +287,7 @@ module ClientApi
       # - to: End date for the tests, numeric timestamp
       # - min_price: Minimum price for the connection given for the speed test
       # - max_price: Maximum price for the connection given for the speed test
+      # - maxed_out: Boolean to check if the max price is maxed out and we should ignore it
       # - include_no_cost: Boolean to include tests with no cost
       # - view_by: View by filter {'classification' | 'download' | 'upload'}
       # - view_by_filters: Which filters to apply for the view_by filter. This determines the color of the dots to show.
@@ -299,7 +302,7 @@ module ClientApi
         filters[:from] = valid_params[:from].to_i / 1000
         filters[:to] = valid_params[:to].to_i / 1000
         filters[:min_price] = valid_params[:min_price].to_i
-        filters[:max_price] = valid_params[:max_price].to_i
+        filters[:max_price] = valid_params[:maxed_out] == 'true' ? "'/'Infinity/'::float8'" : valid_params[:max_price].to_i
         filters[:include_no_cost] = valid_params[:include_no_cost] == 'true'
         filters[:view_by] = valid_params[:view_by]
         filters[:view_by_filters] = view_by_filters_to_values(valid_params[:view_by], valid_params[:view_by_filters])
@@ -364,7 +367,7 @@ module ClientApi
       end
 
       def vector_tile_params
-        params.permit(:isp, :from, :to, :min_price, :max_price, :include_no_cost, :view_by, view_by_filters: [], connection_type: [])
+        params.permit(:isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
       end
 
       def contact_params
