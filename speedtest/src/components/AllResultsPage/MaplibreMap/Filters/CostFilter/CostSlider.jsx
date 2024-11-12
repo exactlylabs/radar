@@ -2,35 +2,6 @@ import {useContext, useEffect, useRef} from "react";
 import styles from './cost_slider.module.css';
 import FiltersContext from "../../../../../context/FiltersContext";
 
-
-const distributionMock = [
-  { count: 0, value: 0, visible: true },
-  { count: 0, value: 5, visible: true },
-  { count: 0, value: 10, visible: true },
-  { count: 3, value: 15, visible: true },
-  { count: 4, value: 20, visible: true },
-  { count: 2, value: 25, visible: true },
-  { count: 10, value: 30, visible: true },
-  { count: 10, value: 35, visible: true },
-  { count: 8, value: 40, visible: true },
-  { count: 8, value: 43, visible: true },
-  { count: 8, value: 47, visible: true },
-  { count: 23, value: 48, visible: true },
-  { count: 34, value: 50, visible: true },
-  { count: 50, value: 52, visible: true },
-  { count: 75, value: 53, visible: true },
-  { count: 45, value: 55, visible: true },
-  { count: 34, value: 58, visible: true },
-  { count: 23, value: 59, visible: true },
-  { count: 14, value: 60, visible: true },
-  { count: 12, value: 65, visible: true },
-  { count: 4, value: 70, visible: true },
-  { count: 18, value: 75, visible: true },
-  { count: 20, value: 80, visible: true },
-  { count: 7, value: 85, visible: true },
-  { count: 9, value: 90, visible: true },
-]
-
 /**
  * CostSlider Component
  * All values are mocked and just for initial testing purposes for now, until we have the
@@ -39,24 +10,19 @@ const distributionMock = [
 export default function CostSlider() {
 
   const { filters, setMinPrice, setMaxPrice } = useContext(FiltersContext);
-  const { minPrice, maxPrice, maxCost } = filters;
+  const { minPrice, maxPrice } = filters;
 
   const minSliderRef = useRef(null);
   const maxSliderRef = useRef(null);
   const minInputRef = useRef(null);
   const maxInputRef = useRef(null);
-  let distribution = [];
-
-  const distributionMax = Math.max(...distributionMock.map(distribution => distribution.count));
 
   const {costDistributionList, setCostDistributionList} = useContext(FiltersContext);
+  const distributionMax = Math.max(...costDistributionList.map(distribution => distribution.count));
 
   useEffect(() => {
-    if(maxCost) {
-      createDistribution();
-      paintSpaceInBetween();
-    }
-  }, [maxCost]);
+    paintSpaceInBetween();
+  }, []);
 
   const handleSlide = event => {
     const slider = event.target.getAttribute('data-slider');
@@ -150,7 +116,7 @@ export default function CostSlider() {
   const setInvisibleBars = () => {
     const minPrice = Number(minSliderRef.current.value);
     const maxPrice = Number(maxSliderRef.current.value);
-    distributionMock.forEach(distribution => {
+    costDistributionList.forEach(distribution => {
       distribution.visible = distribution.value >= minPrice && distribution.value <= maxPrice;
     });
   }
@@ -178,7 +144,7 @@ export default function CostSlider() {
       <div className={styles.slidersContainer}>
         <input type={'range'}
                min={'0'}
-               max={maxCost}
+               max={'500'}
                value={minPrice === '' ? minSliderRef.current.value : minPrice}
                className={styles.slider}
                data-slider={'min'}
@@ -187,7 +153,7 @@ export default function CostSlider() {
         />
         <input type={'range'}
                min={'0'}
-               max={maxCost}
+               max={'500'}
                value={maxPrice === '' ? maxSliderRef.current.value : maxPrice}
                className={styles.slider}
                data-slider={'max'}
@@ -196,14 +162,14 @@ export default function CostSlider() {
         />
         { maxSliderRef.current &&
           <div className={styles.barsContainer}>
-            {distributionMock.map((distribution, index) => (
+            {costDistributionList.map((distribution, index) => (
               <div key={distribution.value}
                    style={{
                      height: distribution.count * 1.0 / distributionMax * 100 + '%',
-                     width: 1 / distributionMock.length * 100 + '%',
+                     width: 1 / costDistributionList.length * 100 + '%',
                      minWidth: 2,
                      maxWidth: 4,
-                     minHeight: 2,
+                     minHeight: 0,
                      left: distribution.value / maxSliderRef.current.max * 100 + '%',
                    }}
                    data-visible={distribution.visible}

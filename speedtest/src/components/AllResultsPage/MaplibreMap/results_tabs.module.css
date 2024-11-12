@@ -1,7 +1,12 @@
+:root {
+  --tabs-width: 286px;
+}
+
 .container {
   position: absolute;
   top: 1.5rem;
   left: 50%;
+  right: unset;
   transform: translateX(-50%);
   z-index: 1000;
   display: flex;
@@ -10,6 +15,42 @@
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
   background-color: rgba(255, 255, 255, 0.9);
   padding: .125rem;
+}
+
+@media (min-width: 900px) and (max-width: 1080px) {
+  .container[data-filters-panel-open="true"] {
+    left: calc(var(--filters-panel-width) + 1rem + var(--tabs-width));
+    animation: shift-from-left 0.5s ease-in-out;
+  }
+}
+
+@keyframes shift-from-left {
+  from {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  to {
+    left: calc(var(--filters-panel-width) + 1rem + var(--tabs-width));
+  }
+}
+
+@media (min-width: 750px) and (max-width: 900px) {
+  .container[data-filters-panel-open="true"] {
+    left: unset;
+    right: 3rem;
+    transform: unset;
+    animation: shift-right 0.5s ease-in-out;
+  }
+}
+
+@keyframes shift-right {
+  from {
+    right: 50%;
+    transform: translateX(50%);
+  }
+  to {
+    right: 3rem;
+  }
 }
 
 .tabContainer {

@@ -52,8 +52,9 @@ const defaultFilters = {
   to: getToday(),
   rangeLabel: DATE_RANGE_LABELS.LAST_6_MONTHS,
   minPrice: 0,
-  maxPrice: 100,
+  maxPrice: 500,
   includeNoCost: true, // based on default design
+  maxedOut: true,
   viewBy: VIEW_BY.CLASSIFICATION,
   viewByFilters: [CLASSIFICATIONS.NO_INTERNET, CLASSIFICATIONS.UNSERVED, CLASSIFICATIONS.UNDERSERVED, CLASSIFICATIONS.SERVED]
 }
@@ -64,7 +65,6 @@ export const FiltersContextProvider = ({children}) => {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [visibleIspList, setVisibleIspList] = useState(new Map());
-  const [maxCost, setMaxCost] = useState(undefined);
   const [costDistributionList, setCostDistributionList] = useState([]);
   const [lastManualMapUpdate, setLastManualMapUpdate] = useState(new Date());
 
@@ -74,6 +74,7 @@ export const FiltersContextProvider = ({children}) => {
   const setTo = to => setFilters(prevState => ({...prevState, to}));
   const setMinPrice = minPrice => setFilters(prevState => ({...prevState, minPrice}));
   const setMaxPrice = maxPrice => setFilters(prevState => ({...prevState, maxPrice}));
+  const setMaxedOut = maxedOut => setFilters(prevState => ({...prevState, maxedOut}));
   const setIncludeNoCost = includeNoCost => setFilters(prevState => ({...prevState, includeNoCost}));
   const setRangeLabel = rangeLabel => setFilters(prevState => ({...prevState, rangeLabel}));
 
@@ -128,13 +129,14 @@ export const FiltersContextProvider = ({children}) => {
     params.append('min_price', filters.minPrice);
     params.append('max_price', filters.maxPrice);
     params.append('include_no_cost', filters.includeNoCost);
+    params.append('maxed_out', filters.maxedOut);
     params.append('view_by', filters.viewBy);
     filters.viewByFilters.forEach(vbf => params.append('view_by_filters[]', vbf));
     return params;
   }
 
   return (
-    <FiltersContext.Provider value={{filters, maxCost, setMaxCost, costDistributionList, setCostDistributionList, lastManualMapUpdate, clearFilters, setConnectionTypes, setIsp, setDateLabel, setDates, setMinPrice, setMaxPrice, setIncludeNoCost, setViewByFilters, setViewBy, visibleIspList, setVisibleIspList, getFiltersAsSearchParams}}>
+    <FiltersContext.Provider value={{filters, setMaxedOut, costDistributionList, setCostDistributionList, lastManualMapUpdate, clearFilters, setConnectionTypes, setIsp, setDateLabel, setDates, setMinPrice, setMaxPrice, setIncludeNoCost, setViewByFilters, setViewBy, visibleIspList, setVisibleIspList, getFiltersAsSearchParams}}>
       {children}
     </FiltersContext.Provider>
   );
