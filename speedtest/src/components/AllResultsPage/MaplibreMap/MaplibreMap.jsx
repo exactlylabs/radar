@@ -19,7 +19,6 @@ import CalendarModal from "./Filters/CalendarModal";
 import ClassificationAndLayersPanel from "./ClassificationAndLayersPanel";
 import {ResultsTabs, TABS} from "./ResultsTabs";
 import FiltersContext from "../../../context/FiltersContext";
-import {getMaxCost} from "../../../utils/apiRequests";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -39,12 +38,12 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const {lastManualMapUpdate, setVisibleIspList, getFiltersAsSearchParams, setMaxPrice, setMaxCost, setCostDistributionList} = useContext(FiltersContext);
+  const {lastManualMapUpdate, setVisibleIspList, getFiltersAsSearchParams, setMaxPrice, setMaxCost, costDistributionList, setCostDistributionList} = useContext(FiltersContext);
 
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
+  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isMediumSizeScreen && !isSmallSizeScreen);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
   const [layersPopupOpen, setLayersPopupOpen] = useState(false);
   const [resultsTabSelected, setResultsTabSelected] = useState(TABS.ALL_RESULTS);
@@ -81,7 +80,6 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     map.current.on('load', () => {
       loadLayers('initial');
       setInitialLoadFinished(true);
-      getMaxNetworkCost();
     });
 
     map.current.on('click', (e) => {
@@ -132,7 +130,13 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       if (e.isSourceLoaded) {
         //check if circle-layer exists in the current map
         let ispMap = new Map();
-        let distributions = setCostDistributionList.map(distribution => ({...distribution, count: 0}));
+        let distributions = [];
+        const desiredBarCount = 10;
+        const maxCost = 500;
+        const idealStep = maxCost / desiredBarCount;
+        for (let i = 0; i <= maxCost; i += idealStep) {
+          distributions.push({count: 0, value: i, visible: true});
+        }
         if (map.current.getLayer('circle-layer')) {
           const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
           features.forEach(feature => {
@@ -144,6 +148,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
                 ispMap.set(autonomous_system_org_id, {label: autonomous_system_org_name, count: 1});
               }
             }
+            let cost = Number(feature.properties.network_cost);
+            if(isNaN(cost)) return;
+            const distribution = distributions.find(distribution => distribution.value >= cost);
+            if(distribution) distribution.count++;
           });
         }
         setVisibleIspList(ispMap);
@@ -161,19 +169,6 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       loadLayers('update');
     }
   }, [updateFiltersDate, lastManualMapUpdate]);
-
-  const getMaxNetworkCost = async () => {
-    const { max_cost } = await getMaxCost();
-    setMaxCost(max_cost);
-    setMaxPrice(max_cost);
-    let distribution = [];
-    const desiredBarCount = 100;
-    const idealStep = max_cost / desiredBarCount;
-    for (let i = 0; i <= max_cost; i += idealStep) {
-      distribution.push({count: 0, value: i, visible: true});
-    }
-    setCostDistributionList(distribution);
-  }
 
   const loadLayers = (source) => {
     if(source !== 'initial' && !initialLoadFinished) return;
@@ -288,7 +283,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           toggleLayersPopup={toggleLayersPopup}
           onHelpClick={handleOnHelpClicked}
         />
-        <ResultsTabs tabSelected={resultsTabSelected} onTabChanged={toggleResultsTab}  />
+        <ResultsTabs filtersPanelOpen={filtersPanelOpen}
+          tabSelected={resultsTabSelected}
+          onTabChanged={toggleResultsTab}
+        />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}

@@ -56,18 +56,30 @@ function PopupDataCell({title, value, unit, icon}) {
         <p className={styles.dataCellFirstRowTitle}>{title}</p>
       </div>
       <div className={styles.dataCellSecondRow}>
-        <p className={styles.dataCellValue}>{value}</p>
-        <span className={styles.dataCellUnit}>{unit}</span>
+        <p className={styles.dataCellValue}>{isNaN(value) ? 'N/A' : value}</p>
+        { !isNaN(value) && <span className={styles.dataCellUnit}>{unit}</span> }
       </div>
     </div>
   );
 }
 
-function ConnectionDataCell({value, icon, fullWidth}) {
+function ConnectionDataCell({value, icon, fullWidth, isCost}) {
+
+  const prettyPrintMoney = (value) => {
+    const number = Number(value);
+    // show 1 decimal place if the number is not an integer
+    // show K for thousands, M for millions, B for billions
+    if(number % 1 !== 0) return number.toFixed(1);
+    if(number >= 1e9) return (number / 1e9).toFixed(1) + 'B';
+    if(number >= 1e6) return (number / 1e6).toFixed(1) + 'M';
+    if(number >= 1e3) return (number / 1e3).toFixed(1) + 'K';
+    return number;
+  }
+
   return (
     <div className={styles.connectionDataCell} data-full-width={fullWidth}>
       <img src={icon} width={16} height={16} alt={`${value} icon`}/>
-      <p className={styles.connectionDataValue}>{value}</p>
+      <p className={styles.connectionDataValue}>{isCost ? `$${prettyPrintMoney(value)}/month` : value}</p>
     </div>
   )
 }
@@ -140,7 +152,7 @@ export default function NewPopup({test}) {
   }
 
   const hasContentBelow = () => {
-    return test.network_location || test.network_type || test.price || test.autonomous_system_org_name;
+    return test.network_location || test.network_type || test.network_cost || test.autonomous_system_org_name;
   }
 
   const formatNetworkType = (type) => {
@@ -153,9 +165,9 @@ export default function NewPopup({test}) {
   return (
     <div className={styles.popup}>
       <section className={styles.addressContainer} data-test-connection-quality={test.connection_quality}>
-        <p className={styles.firstAddressLine}>{getAddressFirstLine()}</p>
-        <p className={styles.secondAddressLine}>{getAddressSecondLine()}</p>
-        <span className={styles.qualityBadge} data-test-connection-quality={test.connection_quality}>{getConnectionQuality()}</span>
+        { <p className={styles.firstAddressLine}>{(!test.street && !test.house_number) ? getAddressSecondLine() : getAddressFirstLine()}</p> }
+        { (test.street || test.house_number) && <p className={styles.secondAddressLine}>{getAddressSecondLine()}</p> }
+        <div className={styles.qualityBadge} data-test-connection-quality={test.connection_quality}>{getConnectionQuality()}</div>
       </section>
       <section className={styles.dataContainer} data-has-content-below={hasContentBelow()}>
         <PopupDataCell title={'Download'}
@@ -176,10 +188,10 @@ export default function NewPopup({test}) {
         <section className={styles.propertiesContainer}>
           <div className={styles.connectionDataContainer}>
             { test.network_location && <ConnectionDataCell value={upcaseFirstLetter(test.network_location)} icon={getNetworkLocationIcon()}/>}
-            { test.network_location && ( test.network_type || test.price ) && <div className={styles.cellDivider}></div> }
+            { test.network_location && ( test.network_type || !!test.network_cost && test.network_cost > 0 ) && <div className={styles.cellDivider}></div> }
             { test.network_type && <ConnectionDataCell value={formatNetworkType(test.network_type)} icon={getNetworkTypeIcon()} /> }
-            { test.network_type && test.price && <div className={styles.cellDivider}></div> }
-            { test.price && <ConnectionDataCell value={test.price} icon={priceIcon}/> }
+            { test.network_type && !!test.network_cost && test.network_cost > 0 && <div className={styles.cellDivider}></div> }
+            { !!test.network_cost && test.network_cost > 0 && <ConnectionDataCell value={test.network_cost} icon={priceIcon} isCost/> }
           </div>
           { test.autonomous_system_org_name && <ConnectionDataCell value={test.autonomous_system_org_name} icon={ispIcon} fullWidth={true}/> }
         </section>

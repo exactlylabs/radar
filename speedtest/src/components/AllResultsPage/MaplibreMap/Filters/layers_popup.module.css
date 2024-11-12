@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   align-items: start;
-  z-index: 1000;
+  z-index: 1001;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: .5rem;
   background-color: white;
@@ -26,33 +26,9 @@
   bottom: 80px;
 }
 
-@media (max-width: 700px) {
-
+@media (max-width: 750px) {
   .container {
-    width: var(--layers-panel-width);
-    height: 100%;
-    padding: 2rem 1.5rem;
-    box-sizing: border-box;
-    border: none;
-    margin: 0;
-    gap: 1.5rem;
-    border-radius: 0;
-    transition: right 0.5s ease-in-out;
-  }
-
-  .container[data-open='true'] {
-    right: 0;
-    bottom: 0;
-  }
-
-  .container[data-open='false'] {
-    right: -100%;
-  }
-}
-
-@media (max-width: 550px) {
-  .container {
-    right: none;
+    right: unset;
     width: 100%;
     height: unset;
     padding: 2rem 1.5rem;
@@ -78,13 +54,12 @@
   display: none;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .closeButtonContainer {
     display: block;
     position: absolute;
     top: 1.5rem;
     right: 1rem;
-
   }
 }
 
@@ -98,7 +73,7 @@
   gap: .5rem;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .layersContainer {
     padding: 0;
   }
@@ -144,7 +119,7 @@
   visibility: visible;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .option {
     border-bottom: solid 1px #E3E3E8;
   }
@@ -158,7 +133,7 @@
   display: none;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .classificationContainer {
     display: flex;
     flex-direction: column;
@@ -183,7 +158,7 @@
   background-color: #E9E9F4;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .helpContainer {
     padding: 0;
     background-color: transparent;
@@ -211,7 +186,7 @@
   display: none;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   .applyContainer {
     display: flex;
     width: 100%;

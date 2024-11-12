@@ -1,14 +1,6 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
 
-export const getMaxCost = () => {
-  return fetch(`${API_URL}/max_cost`)
-    .then(res => {
-      if(!res.ok) throw new Error('Error fetching max cost!');
-      return res.json()
-    });
-}
-
 export const persistContactData = (data, speedTestId) => {
   return fetch(`${API_URL}/speed_tests/${speedTestId}`, {
     method: 'PUT',
