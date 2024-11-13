@@ -1,8 +1,7 @@
 module ClientApi
   module V1
     class SpeedTestsController < ApiController
-      MIN_ZOOM = 0  # Default min zoom for most maps
-      MAX_ZOOM = 24 # Default max zoom for most maps
+      include VectorTiles
 
       def create
         begin
@@ -32,7 +31,7 @@ module ClientApi
           return
         end
 
-        invalidate_cache(@speed_test) if @speed_test.latitude && @speed_test.longitude
+        invalidate_cache(Namespaces.SPEED_TESTS, @speed_test.latitude, @speed_test.longitude) if @speed_test.latitude && @speed_test.longitude
         render json: @speed_test, status: :created
       end
 
@@ -58,12 +57,8 @@ module ClientApi
         z = params[:z].to_i
         is_global = params[:global] || @widget_client.id == 1
         filters = get_vt_filters
-        cache_key = "mvt_#{z}_#{x}_#{y}-#{filters.to_s}"
 
-      if REDIS.exists?(cache_key) && !Rails.env.development?
-          data = REDIS.get(cache_key)
-        else
-          sql_params = {
+        sql_params = {
             x: x,
             y: y,
             z: z,
@@ -167,16 +162,8 @@ module ClientApi
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
           ) AS tile_data;
           }
-
-          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([sql, sql_params]))
-          data = query_response[0]['mvt']
-
-          # Not sure if 1 hour is the best TTL for this cache
-          # I'm open to suggestions
-          REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
-        end
-
-        @tiles = ActiveRecord::Base.connection.unescape_bytea(data)
+        sql = ApplicationRecord.sanitize_sql([sql, sql_params])
+        @tiles = get_vector_tile(Namespaces::SPEED_TESTS, sql)
 
         response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
         response.headers['Content-Length'] = @tiles.length.to_s
@@ -364,7 +351,7 @@ module ClientApi
       end
 
       def vector_tile_params
-        params.permit(:isp, :from, :to, :min_price, :max_price, :include_no_cost, :view_by, view_by_filters: [], connection_type: [])
+        params.permit(:global, :z, :x, :y, :isp, :from, :to, :min_price, :max_price, :include_no_cost, :view_by, view_by_filters: [], connection_type: [])
       end
 
       def contact_params
@@ -414,43 +401,6 @@ module ClientApi
           :heading_before, :heading_after, :speed, :speed_before, :speed_after, :speed_accuracy, :speed_accuracy_before,
           :speed_accuracy_after, :session_id
         )
-      end
-
-      # Given lat, lng and zoom level, get XY tile combination
-      def get_xy_from_coordinates_and_zoom(lat, lng, zoom)
-        n = 2.0 ** zoom
-        x_tile = ((lng + 180.0) / 360.0 * n).floor
-        y_tile = ((1.0 - Math.log(Math.tan(lat * Math::PI / 180.0) + 1.0 / Math.cos(lat * Math::PI / 180.0)) / Math::PI) / 2.0 * n).floor
-        [x_tile, y_tile]
-      end
-
-      # Invalidate Redis cache for all keys that have the XYZ
-      # combination that holds the lonlat point within its bounds
-      # to force a refresh considering there is a new test
-      def invalidate_cache(speed_test)
-        (MIN_ZOOM..MAX_ZOOM).each do |zoom|
-          x_y = get_xy_from_coordinates_and_zoom(speed_test.latitude, speed_test.longitude, zoom)
-          pattern = "mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}-*"
-          keys = REDIS.keys(pattern)
-          keys.each do |key|
-            REDIS.del(key)
-          end
-          # I'm clearing some adjacent tiles just to make sure the area is covered
-          # as sometimes the calculation gives a result which is right at the edge
-          # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
-          # zoom levels, the tiles are so big that the chance of a miss is pretty low
-          if zoom >= 6
-            x_range = (x_y[0] - 1..x_y[0] + 1).to_a
-            y_range = (x_y[1] - 1..x_y[1] + 1).to_a
-            x_range.product(y_range).each do |x, y|
-              pattern = "mvt_#{zoom}_#{x}_#{y}-*"
-              keys = REDIS.keys(pattern)
-              keys.each do |key|
-                REDIS.del(key)
-              end
-            end
-          end
-        end
       end
     end
   end

@@ -365,6 +365,17 @@ Rails.application.routes.draw do
       end
 
       resources :mobile_scan_networks, controller: 'networks', path: 'networks', only: [:index, :show] do
+        collection do
+          get 'tiles/:z/:x/:y', to: "networks#tiles"
+          get 'carriers', to: "networks#carriers"
+        end
+      end
+
+      resources :speed_tests, controller: 'speed_tests', path: 'speed_tests', only: [:create, :show] do
+        collection do
+          get 'tiles/:z/:x/:y', to: "speed_tests#tiles"
+          get 'isps', to: "speed_tests#isps"
+        end
       end
     end
   end
