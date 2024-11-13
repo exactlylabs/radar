@@ -1,8 +1,7 @@
 module ClientApi
   module V1
     class SpeedTestsController < ApiController
-      MIN_ZOOM = 0  # Default min zoom for most maps
-      MAX_ZOOM = 24 # Default max zoom for most maps
+      include VectorTiles
 
       def create
         begin
@@ -32,7 +31,7 @@ module ClientApi
           return
         end
 
-        invalidate_cache(@speed_test) if @speed_test.latitude && @speed_test.longitude
+        invalidate_cache(Namespaces.SPEED_TESTS, @speed_test.latitude, @speed_test.longitude) if @speed_test.latitude && @speed_test.longitude
         render json: @speed_test, status: :created
       end
 
@@ -143,16 +142,8 @@ module ClientApi
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
           ) AS tile_data;
           }
-
-          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([sql, sql_params]))
-          data = query_response[0]['mvt']
-
-          # Not sure if 1 hour is the best TTL for this cache
-          # I'm open to suggestions
-          REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
-        end
-
-        @tiles = ActiveRecord::Base.connection.unescape_bytea(data)
+        sql = ApplicationRecord.sanitize_sql([sql, sql_params])
+        @tiles = get_vector_tile(Namespaces::SPEED_TESTS, sql)
 
         response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
         response.headers['Content-Length'] = @tiles.length.to_s
