@@ -3,3 +3,8 @@ outage_as1:
 
 as_1:
   name: "Autonomous System 1"
+  autonomous_system_org: :as_org1
+
+as_2:
+  name: "Autonomous System 2"
+  autonomous_system_org: :as_org2

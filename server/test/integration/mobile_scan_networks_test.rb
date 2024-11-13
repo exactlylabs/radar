@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class MobileScanNetworksTest < ActionDispatch::IntegrationTest
+  setup do
+    Rails.cache.clear
+  end
+
   def serialize_network(network, details: false)
     data = {
       "id" => network.id,
@@ -106,5 +110,86 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
 
     mobile_get(m_user, "/mobile_api/v1/networks/0")
     assert_response :not_found
+  end
+
+  test "when show carrier names, expect response" do
+    m_user = mobile_user_device("test@test.com")
+    scan = scan_session(m_user)
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test1", name: "Test1", lonlat: "POINT(-120 45)",
+      found_by_session: scan,
+    )
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test2", name: "Test2", lonlat: "POINT(-122 45)",
+      found_by_session: scan,
+    )
+
+    mobile_get(m_user, "/mobile_api/v1/networks/carriers")
+
+    assert_response :success
+
+    assert_equal(
+      {"items" => [{"name" => "Test1"}, {"name" => "Test2"}]},
+      response.parsed_body
+    )
+  end
+
+  test "when show carrier names with bounding box, expect filtered" do
+    m_user = mobile_user_device("test@test.com")
+    scan = scan_session(m_user)
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test1", name: "Test1", lonlat: "POINT(-120 45)",
+      found_by_session: scan,
+    )
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test2", name: "Test2", lonlat: "POINT(-122 45)",
+      found_by_session: scan,
+    )
+
+    mobile_get(m_user, "/mobile_api/v1/networks/carriers", params: {bbox: [-120, 70, 120, -70]})
+
+    assert_response :success
+
+    assert_equal(
+      {"items" => [{"name" => "Test1"}]},
+      response.parsed_body
+    )
+  end
+
+  test "when vector tiles requested, expect response" do
+    m_user = mobile_user_device("test@test.com")
+    scan = scan_session(m_user)
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test1", name: "Test1", lonlat: "POINT(-120 45)",
+      found_by_session: scan,
+    )
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test2", name: "Test2", lonlat: "POINT(-122 45)",
+      found_by_session: scan,
+    )
+
+    mobile_get(m_user, "/mobile_api/v1/networks/tiles/0/0/0")
+
+    assert_response :success
+    assert_equal 'application/vnd.mapbox-vector-tile', response.content_type
+    assert_not_nil response.body
+  end
+
+  test "when vector tiles requested, expect response cached" do
+    m_user = mobile_user_device("test@test.com")
+    scan = scan_session(m_user)
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test1", name: "Test1", lonlat: "POINT(-120 45)",
+      found_by_session: scan,
+    )
+    MobileScanNetwork.create!(
+      network_type: :cell, network_id: "Test2", name: "Test2", lonlat: "POINT(-122 45)",
+      found_by_session: scan,
+    )
+
+    mobile_get(m_user, "/mobile_api/v1/networks/tiles/0/0/0")
+
+    keys = Rails.cache.delete_matched("/mvt/networks/0/0/0/*")
+    assert_equal 1, keys.length
   end
 end
