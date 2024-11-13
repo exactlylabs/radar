@@ -101,7 +101,7 @@ if [ $GOARCH = "arm" ]; then
 fi
 
 echo "Building $OUTPUT_FILE for $DISTRIBUTION "
-echo "Version: $1"
+echo "Version: $VERSION"
 echo "Commit: $COMMIT"
 
 echo "Building Ookla binary"
@@ -114,14 +114,14 @@ LDFLAGS="-s -X 'github.com/exactlylabs/radar/pods_agent/internal/info.version=$V
 
 # Go to module root directory
 cd $SCRIPT_DIR/..
-GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -tags $TAGS -ldflags="$LDFLAGS" $BUILD_PROJECT
+GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -tags="$TAGS" -ldflags="$LDFLAGS" $BUILD_PROJECT
 
 echo "------"
 echo ""
 echo "Finished Build of $BUILD_PROJECT"
 echo "Architecture: $GOARCH $GOARM"
 echo "OS: $GOOS"
-echo "Version: $1"
+echo "Version: $VERSION"
 echo "Commit: $COMMIT"
 echo "Build At: $BUILT_AT"
 echo "Distribution: $DISTRIBUTION"
