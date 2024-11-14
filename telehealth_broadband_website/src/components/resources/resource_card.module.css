@@ -1,0 +1,90 @@
+.card {
+  width: 356px;
+  height: 456px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  transition: background-size 0.3s ease, background-position 0.3s ease;
+  margin-block: 1rem;
+  cursor: pointer;
+  background-position: 50% 10%;
+  background-size: 225%;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 0;
+  overflow: clip;
+}
+
+.card:hover {
+  opacity: 0.8;
+  background-size: 230%;
+  background-position: 50% 15%;
+}
+
+.gradient {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.2) 40%,
+    rgba(0, 0, 0, 0.2) 70%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+.textContainer {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  text-align: left;
+  z-index: 1;
+}
+
+.head {
+  font-size: 0.875rem;
+  color: white;
+  /*letter-spacing: 0.6px;*/
+  letter-spacing: 0.4px;
+  line-height: 2.286;
+  text-transform: uppercase;
+  /*font-weight: 700;*/
+  font-variation-settings: 'wght' 700;
+  margin: 0 0 8px;
+}
+
+.title {
+  font-size: 1.75rem;
+  color: white;
+  /*letter-spacing: calc(-0.56px / 1.5);*/
+  letter-spacing: -0.56px;
+  /*font-weight: 700;*/
+  font-variation-settings: 'wght' 700;
+  margin: 0;
+}
+
+.openButton {
+  border-radius: .25rem;
+  text-decoration: none;
+  padding: .75rem;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-variation-settings: 'wght' 700;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  bottom: 1.5rem;
+  right: 1.5rem;
+}
+
+.openButton > * {
+  pointer-events: none;
+}

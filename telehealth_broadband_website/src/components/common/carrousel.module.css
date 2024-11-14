@@ -1,9 +1,10 @@
-.scrollContainer {
+.carrousel {
   width: 100%;
   overflow-x: scroll;
   scroll-snap-type: x mandatory;
   height: max-content;
   scroll-padding: var(--side-padding);
+  padding-inline: 1px;
 }
 
 .itemContainer {

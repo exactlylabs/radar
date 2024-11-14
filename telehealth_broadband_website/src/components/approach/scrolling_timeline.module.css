@@ -102,7 +102,7 @@
 
 .timelineItemTitle {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   color: white;
   letter-spacing: -0.4px;
   margin-bottom: 0.75rem;

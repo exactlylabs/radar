@@ -1,0 +1,47 @@
+---
+import styles from './stories_grid.module.css';
+import { Image } from 'astro:assets';
+import HeroWithText from "../common/HeroWithText.astro";
+import pipes from '../../assets/images/pipes-stories.webp';
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+---
+
+<div class={styles.grid}>
+  <div class={`${styles.tallBox} ${styles.box}`}>
+    <Image src={pipes} alt={'pipes image'} class={styles.tallImage}/>
+    <div class={styles.tallHeroContainer}>
+      <HeroWithText title="Healthcare Sites Go Dark"
+                    content="When a major internet cable was cut in Alaska, healthcare sites flipped from high-speed fiber to slow satellite connections. Suddenly, doctors couldn't get the same level of services and communities had to wait months before things were restored."
+                    small
+      />
+      <ReadMoreButton href="/stories"/>
+    </div>
+  </div>
+  <div class={`${styles.wideBox} ${styles.box}`}>
+    <div class={styles.tallHeroContainer}>
+      <HeroWithText title="Healthcare Sites Go Dark"
+                    content="When a major internet cable was cut in Alaska, healthcare sites flipped from high-speed fiber to slow satellite connections. Suddenly, doctors couldn't get the same level of services and communities had to wait months before things were restored."
+                    small
+      />
+      <ReadMoreButton href="/stories"/>
+    </div>
+  </div>
+  <div class={`${styles.leftRegularBox} ${styles.box}`}>
+    <div class={styles.tallHeroContainer}>
+      <HeroWithText title="Healthcare Sites Go Dark"
+                    content="When a major internet cable was cut in Alaska, healthcare sites flipped from high-speed fiber to slow satellite connections. Suddenly, doctors couldn't get the same level of services and communities had to wait months before things were restored."
+                    small
+      />
+      <ReadMoreButton href="/stories"/>
+    </div>
+  </div>
+  <div class={`${styles.rightRegularBox} ${styles.box}`}>
+    <div class={styles.tallHeroContainer}>
+      <HeroWithText title="Healthcare Sites Go Dark"
+                    content="When a major internet cable was cut in Alaska, healthcare sites flipped from high-speed fiber to slow satellite connections. Suddenly, doctors couldn't get the same level of services and communities had to wait months before things were restored."
+                    small
+      />
+      <ReadMoreButton href="/stories"/>
+    </div>
+  </div>
+</div>

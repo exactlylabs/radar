@@ -1,0 +1,12 @@
+---
+import styles from './homepage_stories_card.module.css';
+import HeroWithText from "../common/HeroWithText.astro";
+
+const { head, title, content, image } = Astro.props;
+---
+
+<div class={styles.card} data-carrousel-card>
+  <div>
+    <HeroWithText head={head} title={title} content={content} small/>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 :root {
   --navbar-height: 65px;
   --footer-height: 240px;
-  --side-padding: max(2rem, calc((100% - var(--max-width)) / 2));
+  --side-padding: calc((100% - var(--max-width)) / 2);
 }
 
 .main {
@@ -13,7 +13,6 @@
   --shadow-spread: 50px;
   width: calc(100vw + 2 * var(--shadow-spread));
   max-width: calc(var(--max-width) + 8 * var(--shadow-spread));
-  height: 500px;
   z-index: -1;
   position: absolute;
   top: 0;

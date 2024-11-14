@@ -2,27 +2,38 @@
 import Navbar from "../components/common/Navbar.astro";
 import Footer from "../components/common/Footer.astro";
 import styles from './layout.module.css';
-import testImage from '../assets/images/DELETE-header-test-image.webp';
 ---
 
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <title>Telehealth Broadband Project</title>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content={Astro.generator} />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <title>Telehealth Broadband Project</title>
 </head>
 <body>
-  <div class={styles.heroImage}
-    style={`background-image: url(${testImage.src})`}
-    id="hero-image"
-  ></div>
+  <div class={styles.heroImage} id="hero-image"></div>
   <Navbar/>
   <main class={styles.main}>
     <slot />
   </main>
   <Footer/>
+  
+  <script>
+    import womanPhoneImage from '../assets/images/woman-phone.webp';
+    
+    const heroImage = document.getElementById('hero-image');
+    if(heroImage) {
+      const pathname = window.location.pathname;
+      if(pathname === '/') {
+        heroImage.style.backgroundImage = `url(${womanPhoneImage.src})`;
+        heroImage.style.backgroundPositionY = '75%';
+        heroImage.style.height = '765px';
+      }
+    }
+  </script>
+  
 </body>
 </html>

@@ -1,0 +1,14 @@
+---
+import styles from './homepage_findings_card.module.css';
+import arrow from '../../assets/icons/arrow.svg';
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+const { title, href, image, maxTextWidth } = Astro.props;
+---
+
+<div class={styles.card} style={`background-image: url(${image})`}>
+  <div class={styles.gradient}></div>
+  <h4 class={styles.title} style={`max-width: ${maxTextWidth ?? '260px'}`}>{title}</h4>
+  <div class={styles.buttonContainer}>
+    <ReadMoreButton href={href}/>
+  </div>
+</div>
