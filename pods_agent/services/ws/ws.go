@@ -106,16 +106,24 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 		defer close(readerStopped)
 		defer sentry.NotifyIfPanic()
 		for {
-			mType, data, err := conn.ReadMessage()
-			if err != nil {
-				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					log.Println(errors.Wrap(err, "ReadJSON failed"))
-				} else {
-					log.Println(errors.Wrap(err, "server closed connection"))
-				}
+			select {
+			case <-innerCtx.Done():
+				// Do not try to read any message if the system is closing otherwise it could trigger some code that tries
+				// to answer back to the client, and end up trying to send to a closed channel (c.wCh).
 				return
+
+			default:
+				mType, data, err := conn.ReadMessage()
+				if err != nil {
+					if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+						log.Println(errors.Wrap(err, "ReadJSON failed"))
+					} else {
+						log.Println(errors.Wrap(err, "server closed connection"))
+					}
+					return
+				}
+				c.rCh <- ReceivedMessage{Data: data, MessageType: MessageType(mType)}
 			}
-			c.rCh <- ReceivedMessage{Data: data, MessageType: MessageType(mType)}
 		}
 	}()
 
