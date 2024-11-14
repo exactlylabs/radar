@@ -17,10 +17,13 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     exit 1
 fi
 
-if [[ "$#" -ne 2 ]]; then
-    echo "usage: ./flash.sh <AUTHORIZED_KEYS_FILE> <DEVICE>"
+if [[ "$#" -lt 2 ]]; then
+    echo "usage: ./flash.sh <AUTHORIZED_KEYS_FILE> <DEVICE> [ConfigFilePath]"
     echo "  Where <AUTHORIZED_KEYS_FILE> is a SSH authorized_keys key file to place on this device"
     echo "  and <DEVICE> is the block device to write the image to e.g. /dev/sdc"
+    echo " "
+    echo "Optional"
+    echo "  ConfigFilePath: Flash with the given config file."
     exit 1
 fi
 
@@ -39,6 +42,12 @@ cp $1 tmp/home/radar/.ssh/authorized_keys
 # Set owner and group to radar
 chown 1000:1000 tmp/home/radar/.ssh/authorized_keys
 chmod 644 tmp/home/radar/.ssh/authorized_keys
+
+if [ ! -z $3 ]; then
+  echo "Setting $3 as the config file"
+  cp $3 tmp/home/radar/.config/radar/config.conf
+  chown 1000:1000 tmp/home/radar/.config/radar/config.conf
+fi
 
 umount tmp/boot
 umount tmp

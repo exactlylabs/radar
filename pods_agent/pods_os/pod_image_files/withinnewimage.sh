@@ -16,3 +16,5 @@ systemctl enable radar_agent
 systemctl mask getty@tty1
 systemctl mask getty@
 systemctl enable podwatchdog@
+echo $(date +'%Y-%m-%d %H:%M:%S') > /etc/fake-hwclock.data
+ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
