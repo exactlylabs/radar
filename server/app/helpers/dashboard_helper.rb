@@ -252,49 +252,36 @@ module DashboardHelper
 
   def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil, limit: nil, query: nil)
     sql = %{
-      with with_measurements AS (
+      WITH filtered_locations AS (
         SELECT
+          id, name
+        FROM locations l
+        WHERE
+          l.deleted_at is NULL
+          AND l.account_id IN (:account_ids)
+          #{" AND l.id IN (:location_ids) " if location_ids.present?}
+          #{" AND l.name ILIKE :query " if query.present?}
+
+      ), locations_measurements AS (
+        SELECT
+          l.id,
           COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes), 0) AS "y",
           l.name AS "name"
         FROM aggregated_measurements_by_hours AS m
-        JOIN locations AS l ON l.id = m.location_id
+        JOIN filtered_locations AS l ON l.id = m.location_id
         LEFT OUTER JOIN autonomous_system_orgs ON autonomous_system_orgs.id = m.autonomous_system_org_id
-        WHERE time BETWEEN :from AND :to
-        AND l.deleted_at IS NULL
-        AND m.account_id IN (:account_ids)
-    }
-
-    sql += " AND autonomous_system_orgs.id IN (:as_org_ids) " if as_org_ids.present?
-    sql += " AND location_id IN (:location_ids) " if location_ids.present?
-    sql += " AND l.name ILIKE :query " if query.present?
-
-    sql += " GROUP BY l.name ), "
-
-    sql += %{
-       with_no_measurements AS (
-          SELECT DISTINCT 0 AS "y", l.name AS "name", m.id
-          FROM locations AS l
-          LEFT JOIN measurements AS m ON l.id = m.location_id
-          WHERE m.id IS NULL
-          AND l.deleted_at IS NULL
-          AND l.account_id IN (:account_ids)
-    }
-
-    sql += " AND l.name ILIKE :query " if query.present?
-
-    sql += " ), "
-
-    sql += %{
-      full_table AS (
-        SELECT * FROM with_measurements
-        UNION ALL
-        SELECT y, name FROM with_no_measurements
+        WHERE
+          time BETWEEN :from AND :to
+          AND m.account_id IN (:account_ids)
+          #{'AND autonomous_system_orgs.id IN (:as_org_ids) ' if as_org_ids.present?}
+        GROUP BY l.id, l.name
       )
-      SELECT * FROM full_table
-    }
 
-    sql += " ORDER BY 1 DESC, 2 ASC "
-    sql += " LIMIT :limit" if limit.present?
+      SELECT COALESCE(locations_measurements.y, 0) as "y", l.name as "name"
+      FROM filtered_locations l
+      LEFT JOIN locations_measurements ON l.id = locations_measurements.id
+      ORDER BY 1 DESC, 2 ASC  LIMIT 3;
+    }
 
     ActiveRecord::Base.sanitize_sql([sql, { account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to, limit: limit, query: query }])
   end
