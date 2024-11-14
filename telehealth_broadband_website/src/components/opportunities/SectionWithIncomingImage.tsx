@@ -17,9 +17,10 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
       const intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
         entries.forEach((entry: IntersectionObserverEntry) => {
           const opacity = Math.max(0.3, entry.intersectionRatio);
+          console.log("intersectionRatio", entry.intersectionRatio);
           (entry.target as HTMLElement).style.opacity = `${opacity}`;
           
-          if(opacity >= 0.9) {
+          if(opacity >= 0.45) {
             setCurrentSectionInView(index);
           }
         });
@@ -36,7 +37,7 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
       {children}
       {imageSrcs.map((src, index) => (
         <img src={src}
-              width="469"
+              width="366"
               alt="section image"
               className={styles.incomingImage}
               style={{display: index === currentSectionInView ? 'block' : 'none'}}
