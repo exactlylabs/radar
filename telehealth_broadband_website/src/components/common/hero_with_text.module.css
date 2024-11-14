@@ -10,7 +10,7 @@
 
 .head {
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   text-transform: uppercase;
   line-height: 2.133;
   letter-spacing: 0.9375px;
@@ -21,7 +21,7 @@
 
 .title {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   letter-spacing: -0.8px;
   color: white;
   text-align: inherit;
@@ -34,4 +34,14 @@
   color: var(--text-color);
   max-width: 100%;
   text-align: inherit;
+}
+
+.heroContainer[data-small="true"] > .title {
+  font-size: 1.5rem;
+  letter-spacing: -0.48px;
+}
+
+.heroContainer[data-small="true"] > .content {
+  font-size: 1rem;
+  line-height: 1.5;
 }

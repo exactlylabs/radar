@@ -1,0 +1,52 @@
+---
+import '../global.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Carrousel from '../components/common/Carrousel';
+import Modal from '../components/common/Modal.astro';
+import BroadbandModal from "../components/resources/BroadbandModal.astro";
+import ResourceCard from "../components/resources/ResourceCard.astro";
+
+import broadbandCardImage from '../assets/images/broadband.webp';
+---
+<BaseLayout>
+  <Carrousel client:load itemWidth={356} arrowLess={true}>
+    <ResourceCard head="Broadband Mapping"
+      title="Explore Broadband Nationwide"
+      triggerId="broadband-modal-trigger"
+      modalId="broadband-modal"
+      backgroundImage={broadbandCardImage.src}
+    />
+  </Carrousel>
+  
+  <Modal id={'broadband-modal'} isOpen={false}>
+    <BroadbandModal modalId={'broadband-modal'}/>
+  </Modal>
+</BaseLayout>
+
+<script>
+  let triggers: HTMLElement[] = [];
+  let modals : HTMLElement[] = [];
+  
+  ['broadband-modal-trigger'].forEach(id => {
+    const trigger = document.getElementById(id);
+    if(trigger) {
+      triggers.push(trigger);
+    }
+  });
+  
+  ['broadband-modal'].forEach(id => {
+    const modal = document.getElementById(id);
+    if(modal) {
+      modals.push(modal);
+    }
+  });
+  
+  triggers.forEach((trigger, index) => {
+    const modal = modals[index];
+    if(trigger && modal) {
+      trigger.addEventListener('click', () => {
+        modal.dataset.isOpen = 'true';
+      });
+    }
+  });
+</script>

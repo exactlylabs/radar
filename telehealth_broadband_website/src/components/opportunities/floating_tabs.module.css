@@ -37,7 +37,7 @@
   text-decoration: none;
   letter-spacing: 0.88px;
   font-size: .875rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   color: #C4C8DD;
   border: none;
   background-color: transparent;

@@ -1,0 +1,28 @@
+.gradient {
+  width: calc(100% + 2 * var(--content-padding-inline));
+  height: 500px;
+  position: absolute;
+  top: calc(-1 * var(--content-padding-top) - var(--header-height));
+  left: calc(-1 * var(--content-padding-inline));
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 4, 26, 0) 0%,
+    rgb(5, 4, 26) 100%
+  );
+}
+
+.modalHero {
+  position: relative;
+}
+
+.content {
+  min-width: 600px;
+  max-width: 825px;
+  width: 100%;
+}
+
+.heroContainer > div > span,
+.heroContainer > div > h3 {
+  max-width: 450px;
+}

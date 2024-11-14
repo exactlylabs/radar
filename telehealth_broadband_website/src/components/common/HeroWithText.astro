@@ -1,11 +1,11 @@
 ---
 import styles from './hero_with_text.module.css';
 
-const { head, title, content } = Astro.props;
+const { head, title, content, small } = Astro.props;
 ---
 
-<div class={styles.heroContainer}>
-  <span class={styles.head}>{head}</span>
+<div class={styles.heroContainer} data-small={(!!small).toString()}>
+  { !!head && <span class={styles.head}>{head}</span> }
   <h3 class={styles.title}>{title}</h3>
-  <p class={styles.content}>{content}</p>
+  { !!content && <p class={styles.content}>{content}</p> }
 </div>
