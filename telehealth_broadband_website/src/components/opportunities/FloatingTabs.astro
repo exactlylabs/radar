@@ -1,6 +1,6 @@
 ---
 import styles from './floating_tabs.module.css';
-const { ids, labels, scrollToId } = Astro.props;
+const { scrollToId } = Astro.props;
 ---
 <div class={styles.container}>
   <button class={styles.tab}
@@ -16,11 +16,7 @@ const { ids, labels, scrollToId } = Astro.props;
   </button>
   <div class={styles.divider} data-hide-off-scroll="true" hidden="hidden"></div>
   <div class={styles.staticContainer}>
-    {ids.map((id: string, index: number) => (
-      <a data-active={(index === 0).toString()} class={styles.tab} href={`#${id}`}>
-        {labels[index] ?? id}
-      </a>
-    ))}
+    <slot/>
   </div>
 </div>
 
@@ -107,5 +103,5 @@ const { ids, labels, scrollToId } = Astro.props;
         }
       });
     }
-  })
+  });
 </script>

@@ -1,9 +1,9 @@
 ---
 import styles from './bullet_point.module.css';
-const { title, content } = Astro.props;
+const { title, content, direction } = Astro.props;
 ---
 
-<div class={styles.container}>
+<div class={styles.container} data-direction={direction}>
   <div class={styles.iconCircle}>
     <slot/>
   </div>

@@ -16,6 +16,10 @@
   }
 }
 
+.container[data-direction="column"] {
+  flex-direction: column;
+}
+
 .iconCircle {
   display: flex;
   align-items: center;

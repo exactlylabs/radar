@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
+	<path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(12.6978 1.5)" d="M4.8996396 0C2.9769237 -0.0092755463 1.2282523 1.1121993 0.43471357 2.8635476C-0.35882515 4.6148958 -0.04904107 6.6690602 1.225693 8.1084967L0.61259085 11.635934L3.806881 9.6659813C5.6413202 10.088742 7.5556722 9.4221621 8.7308064 7.9514627C9.9059401 6.4807639 10.133657 4.4665103 9.3165188 2.7705796C8.4993811 1.0746489 6.7821617 -0.0024905135 4.8996396 0Z" fill-rule="evenodd"/>
+	<path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(3.94961 9.89872)" d="M0 3.1494973C0 4.8889165 1.4100779 6.2989945 3.1494973 6.2989945C4.8889165 6.2989945 6.2989945 4.8889165 6.2989945 3.1494973C6.2989945 1.4100779 4.8889165 0 3.1494973 0C1.4100779 0 0 1.4100779 0 3.1494973" fill-rule="evenodd"/>
+	<path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.5 17.6001)" d="M11.198213 4.8966107C10.821181 2.0926933 8.4282589 0 5.5991063 0C2.7699533 0 0.37703046 2.0926933 0 4.8966107" fill-rule="evenodd"/>
+</svg>
