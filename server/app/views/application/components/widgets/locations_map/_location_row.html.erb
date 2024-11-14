@@ -7,13 +7,13 @@
   data-map-target="locationRow"
   data-location-id="<%= location.id %>"
   data-location-name="<%= location.name %>"
-  data-location-download="<%= download_avg_and_diff[:avg] %>"
-  data-location-upload="<%= upload_avg_and_diff[:avg] %>"
+  data-location-download="<%= location.current_period_download_average %>"
+  data-location-upload="<%= location.current_period_upload_average %>"
   data-location-online="<%= location.online? %>"
   data-location-latitude="<%= location.latitude %>"
   data-location-longitude="<%= location.longitude %>"
-  data-location-download-diff="<%= download_avg_and_diff[:diff] %>"
-  data-location-upload-diff="<%= upload_avg_and_diff[:diff] %>"
+  data-location-download-diff="<%= location.diff_to_human(location.previous_period_download_average, location.current_period_download_average) %>"
+  data-location-upload-diff="<%= location.diff_to_human(location.previous_period_upload_average, location.current_period_upload_average) %>"
   data-location-expected-download="<%= location.expected_mbps_down %>"
   data-location-expected-upload="<%= location.expected_mbps_up %>"
 >
@@ -26,7 +26,7 @@
     <div class="widgets--location-text-container">
       <p class="widget-location-title ellipsis"><%= location.name %></p>
       <div class="widgets--location-avg-container">
-        <span class="help-dark-text"><%= download_avg_and_diff[:avg].present? ? "#{download_avg_and_diff[:avg].round(2)} Mbps" : 'Not available' %></span>
+        <span class="help-dark-text"><%= location.current_period_download_average.present? ? "#{location.current_period_download_average.round(2)} Mbps" : 'Not available' %></span>
         <span class="help-small-text mx-1">/</span>
         <span class="help-small-text"><%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down.round(2)} Mbps" : 'Not available' %></span>
       </div>

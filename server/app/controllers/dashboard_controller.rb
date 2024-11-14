@@ -143,6 +143,12 @@ class DashboardController < ApplicationController
       @locations = @locations.joins(:categories).where("categories.name = ?", params[:category_name])
     end
 
+    measurements_prev_and_current_period = get_current_and_previous_period(params[:days])
+    prev_period_start = measurements_prev_and_current_period[0]
+    current_period_start = measurements_prev_and_current_period[1]
+    current_period_end = measurements_prev_and_current_period[2]
+    @locations = @locations.for_period_diff_comparison(prev_period_start, current_period_start, current_period_start, current_period_end)
+
     respond_to do |format|
       format.turbo_stream
       format.html

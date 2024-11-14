@@ -51,6 +51,7 @@ class Location < ApplicationRecord
   has_and_belongs_to_many :geospaces
   has_one :location_metadata_projections
   belongs_to :scheduling_selected_client, class_name: "Client", optional: true
+  has_many :aggregated_measurements_by_hours
 
   before_validation :check_if_only_coordinates
   after_validation :custom_geocode, if: Proc.new { new_record? || address_changed? || latitude_changed? || longitude_changed? }
@@ -67,6 +68,40 @@ class Location < ApplicationRecord
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
   scope :with_geospaces, -> { joins("JOIN geospaces ON ST_CONTAINS(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)") }
+
+  scope :for_period_diff_comparison, -> (previous_period_start, previous_period_end, current_period_start, current_period_end) {
+    joins(
+      # Analogous to a CTE
+      sanitize_sql_array([%{
+        LEFT JOIN (
+          SELECT
+            location_id,
+            AVG(download_median) as previous_period_download_average,
+            AVG(upload_median) as previous_period_upload_average
+          FROM aggregated_measurements_by_hours
+          WHERE
+            "time" BETWEEN ? AND ?
+          GROUP BY "location_id"
+        ) previous ON previous.location_id = locations.id
+      }, previous_period_start, previous_period_end])
+    )
+    .joins(
+      # ANALOGOUS TO A CTE
+      sanitize_sql_array([%{
+        LEFT JOIN (
+          SELECT
+            location_id,
+            AVG(download_median) as current_period_download_average,
+            AVG(upload_median) as current_period_upload_average
+          FROM aggregated_measurements_by_hours
+          WHERE
+            "time" BETWEEN ? AND ?
+          GROUP BY "location_id"
+        ) current ON current.location_id = locations.id
+      }, current_period_start, current_period_end])
+    )
+    .select("*")
+  }
 
   def event_data()
     data = self.as_json.transform_keys(&:to_sym)
