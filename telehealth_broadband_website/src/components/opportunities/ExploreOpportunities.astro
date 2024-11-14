@@ -13,13 +13,12 @@ import dataForChangeIcon from '../../assets/icons/data-for-change-icon.svg';
 import phoneMetricsImage from '../../assets/images/phone-metrics-image.webp';
 import FloatingTabs from './FloatingTabs.astro';
 import Tab from './Tab.astro';
-import Image from 'astro/components/Image.astro';
 ---
 
 <div class={styles.exploreOpportunitiesSection}>
   <div class={styles.exploreOpportunitiesHeader}>
     <HeroWithText
-    head="in a nutshell"
+      head="in a nutshell"
       title="Explore the Opportunities"
       content="From hardware upgrades to community education, these strategies empower individuals and businesses to maximize connectivity, improving quality and accessibility in rural areas"
     />
@@ -87,7 +86,8 @@ import Image from 'astro/components/Image.astro';
         <div id="box-1" style="width: 100%; scroll-margin-top: 20vh; max-width: 580px; ">
           <HeroWithText head="Quick Fixes" title="Simple Fixes Create Big Changes" content="During the project, we found many individuals with simple, fixable issues that required only basic technical knowledge. Most lacked local expertise and assumed poor internet performance was unavoidable."/>
           <div style="margin-top: 3.5rem; border-top: solid 1px rgba(255, 255, 255, 0.1); border-bottom: solid 1px rgba(255, 255, 255, 0.1); width: 577px; padding: 2rem 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <BulletPoint title="Replace Outdated Hardware"
+            <BulletPoint 
+              title="Replace Outdated Hardware"
               content="Upgrading older modems, routers, and other network equipment can significantly improve speed and reliability, even without major infrastructure changes."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
@@ -108,7 +108,8 @@ import Image from 'astro/components/Image.astro';
         <div id="box-2" style="width: 100%; scroll-margin-top: 20vh; max-width: 580px; ">
           <HeroWithText head="Community Education" title="Empowering Through Knowledge" content="A common barrier in rural areas is a lack of awareness about internet offerings and reasonable speeds or reliability. Community-wide education can reduce frustration and help residents advocate for better services when current options fall short."/>
           <div style="margin-top: 3.5rem; border-top: solid 1px rgba(255, 255, 255, 0.1); border-bottom: solid 1px rgba(255, 255, 255, 0.1); width: 577px; padding: 2rem 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <BulletPoint title="Informing Residents About Internet Options"
+            <BulletPoint 
+              title="Informing Residents About Internet Options"
               content="Clear information on ISPs, speeds, performance, and costs helps residents make informed choices. Existing resources often seem biased or insufficient."
             >
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
@@ -121,8 +122,9 @@ import Image from 'astro/components/Image.astro';
               </svg>
             </BulletPoint>
             <div style="height: 1px; width: calc(100% + 3rem); margin: 2rem 0 2rem -1.5rem; background-color: rgba(255, 255, 255, 0.1);"></div>
-            <BulletPoint title="Setting Higher Expectations"
-                         content="Educating users on what their internet can support, such as streaming, telehealth, or remote work, empowers them to maximize their experience. Many didn’t realize the services available with a better plan or by addressing local, non-ISP issues."
+            <BulletPoint 
+              title="Setting Higher Expectations"
+              content="Educating users on what their internet can support, such as streaming, telehealth, or remote work, empowers them to maximize their experience. Many didn’t realize the services available with a better plan or by addressing local, non-ISP issues."
             >
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="14">
                 <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(15.0977 1.09766)" d="M6 6L6 0L0 0" fill-rule="evenodd"/>
@@ -134,7 +136,8 @@ import Image from 'astro/components/Image.astro';
         <div id="box-3" style="width: 100%; scroll-margin-top: 20vh; max-width: 580px; ">
           <HeroWithText head="Business Collaboration" title="Bridging the Gap Between Businesses and ISPs" content="Clear communication with IT teams and ISPs is key for rural businesses to resolve connectivity issues often caused by poor documentation. Education programs can teach clear reporting, providing actionable data for ISPs, empowering communities to tackle connectivity challenges."/>
           <div style="margin-top: 3.5rem; border-top: solid 1px rgba(255, 255, 255, 0.1); border-bottom: solid 1px rgba(255, 255, 255, 0.1); width: 577px; padding: 2rem 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <BulletPoint title="Document and Report Issues Clearly"
+            <BulletPoint 
+              title="Document and Report Issues Clearly"
               content="Business owners and community members can log issues with details like time, symptoms, and steps. Clear documentation improves chances of timely responses from ISPs and IT teams."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
@@ -142,8 +145,9 @@ import Image from 'astro/components/Image.astro';
             </svg>
             </BulletPoint>
             <div style="height: 1px; width: calc(100% + 3rem); margin: 2rem 0 2rem -1.5rem; background-color: rgba(255, 255, 255, 0.1);"></div>
-            <BulletPoint title="Provide Actionable Data for ISPs"
-                         content="Understanding the data ISPs need, such as speed tests, error messages, and operational impact, helps businesses report issues more effectively, leading to quicker, targeted solutions."
+            <BulletPoint 
+              title="Provide Actionable Data for ISPs"
+              content="Understanding the data ISPs need, such as speed tests, error messages, and operational impact, helps businesses report issues more effectively, leading to quicker, targeted solutions."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
               <path fill="#4B7BE5" transform="translate(1.5 2.5)" d="M18.114576 0C19.708153 0 21 1.2918477 21 2.8854227L21 15.581244C21 17.174818 19.708153 18.466667 18.114576 18.466667L2.8854227 18.466667C1.2918477 18.466667 0 17.174818 0 15.581244L0 2.8854227C0 1.2918477 1.2918477 0 2.8854227 0L18.114576 0ZM19 5.8000002L2 5.8000002L2 15.581244C2 16.07025 2.3964174 16.466667 2.8854227 16.466667L18.114576 16.466667C18.603582 16.466667 19 16.07025 19 15.581244L19 5.8000002ZM15.452497 8.6593065L15.079013 9.5276461C14.889895 9.9605494 14.696846 10.393564 14.504396 10.814306L14.079356 11.72442L13.945127 12.002858C13.356682 13.212653 12.919954 13.983425 12.551021 14.352779C11.418093 15.485707 9.5819073 15.485707 8.4493818 14.353182C7.3168573 13.220657 7.3168573 11.384471 8.4493818 10.251946C8.8187027 9.8826256 9.5890007 9.4459867 10.797991 8.8579025L11.367949 8.5854597C11.773335 8.3947639 12.197187 8.2012177 12.627119 8.0093479L13.586906 7.5878119L14.143401 7.3500066C14.969198 7.0032768 15.799356 7.8335624 15.452497 8.6593065ZM12.407022 10.583241L12.568989 10.232031L11.94017 10.527541L11.672833 10.656416C10.702168 11.128573 10.007301 11.522453 9.863596 11.66616C9.5121193 12.017636 9.5121193 12.587492 9.863596 12.938969C10.215072 13.290444 10.784928 13.290444 11.136404 12.938969C11.279786 12.795424 11.673957 12.099759 12.146594 11.128053L12.407022 10.583241ZM18.114576 2L2.8854227 2C2.3964174 2 2 2.3964174 2 2.8854227L2 3.8L19 3.8L19 2.8854227C19 2.3964174 18.603582 2 18.114576 2Z"/>
@@ -154,7 +158,8 @@ import Image from 'astro/components/Image.astro';
         <div id="box-4" style="width: 100%; scroll-margin-top: 20vh; max-width: 580px; ">
           <HeroWithText head="Data for Change" title="Providing Communities with Data to Improve Connectivity" content="A program providing broadband data tools to rural communities helps local governments improve connectivity. These tools help leaders identify issues, make recommendations, and engage ISPs and policymakers to secure investments for better healthcare, safety, and quality of life."/>
           <div style="margin-top: 3.5rem; border-top: solid 1px rgba(255, 255, 255, 0.1); border-bottom: solid 1px rgba(255, 255, 255, 0.1); width: 577px; padding: 2rem 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <BulletPoint title="Guiding ISP Investments"
+            <BulletPoint 
+              title="Guiding ISP Investments"
               content="Community-sourced data from pods, speed tests, and coverage maps gives ISPs concrete information on underserved areas, helping prioritize upgrades and new infrastructure like mobile towers."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
@@ -162,28 +167,31 @@ import Image from 'astro/components/Image.astro';
             </svg>
             </BulletPoint>
             <div style="height: 1px; width: calc(100% + 3rem); margin: 2rem 0 2rem -1.5rem; background-color: rgba(255, 255, 255, 0.1);"></div>
-            <BulletPoint title="Identifying Mobile Coverage Gaps for Public Safety"
-                         content="Mobile data collection reveals signal gaps on critical emergency routes, supporting advocacy for better coverage where reliable connectivity is vital for EMS and public safety."
+            <BulletPoint 
+              title="Identifying Mobile Coverage Gaps for Public Safety"
+              content="Mobile data collection reveals signal gaps on critical emergency routes, supporting advocacy for better coverage where reliable connectivity is vital for EMS and public safety."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
               <path fill="#4B7BE5" transform="translate(5 1)" d="M10.333333 0C10.808054 0 11.450075 0.10700352 12.11388 0.43890613C13.274793 1.0193621 14 2.1071737 14 3.6666667L14 18.333334C14 18.808054 13.892997 19.450075 13.561094 20.11388C12.980638 21.274792 11.892826 22 10.333333 22L3.6666667 22C3.191946 22 2.5499251 21.892996 1.8861197 21.561094C0.72520775 20.980639 0 19.892826 0 18.333334L0 3.6666667C0 3.191946 0.10700352 2.5499251 0.43890613 1.8861197C1.0193621 0.72520775 2.1071737 0 3.6666667 0L10.333333 0ZM12 17.111L2 17.111L2 18.333334C2 19.107174 2.2747922 19.519361 2.7805469 19.77224C3.1167417 19.940336 3.4747205 20 3.6666667 20L10.333333 20C11.107174 20 11.519362 19.725208 11.77224 19.219454C11.940337 18.883259 12 18.52528 12 18.333334L12 17.111ZM10.333333 2L3.6666667 2L3.4944158 2.004858C2.8303554 2.0436423 2.4611857 2.3136964 2.2277606 2.7805469C2.0596631 3.1167417 2 3.4747205 2 3.6666667L2 15.111L12 15.111L12 3.6666667C12 2.8928263 11.725207 2.4806378 11.219453 2.2277606C10.883258 2.0596631 10.525279 2 10.333333 2Z"/>
             </svg>            
             </BulletPoint>
             <div style="height: 1px; width: calc(100% + 3rem); margin: 2rem 0 2rem -1.5rem; background-color: rgba(255, 255, 255, 0.1);"></div>
-            <BulletPoint title="Supporting Telehealth and Hospital-at-Home Initiatives"
-                         content="Broadband data from homes reveals gaps in telehealth connectivity, helping leaders prioritize infrastructure improvements and ensure remote access to essential healthcare."
+            <BulletPoint 
+              title="Supporting Telehealth and Hospital-at-Home Initiatives"
+              content="Broadband data from homes reveals gaps in telehealth connectivity, helping leaders prioritize infrastructure improvements and ensure remote access to essential healthcare."
             >
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
               <path fill="#4B7BE5" transform="translate(1 1)" d="M13 0C14.656855 0 16 1.3431457 16 3L16 6L19 6C20.597681 6 21.903662 7.24892 21.994907 8.8237276L22 9L22 13C22 14.656855 20.656855 16 19 16L16 16L16 19C16 20.597681 14.75108 21.903662 13.176272 21.994907L13 22L9 22C7.3431458 22 6 20.656855 6 19L6 16L3 16C1.4023191 16 0.096339121 14.75108 0.0050926935 13.176272L0 13L0 9C0 7.3431458 1.3431457 6 3 6L6 6L6 3C6 1.4023191 7.24892 0.096339121 8.8237276 0.0050926935L9 0L13 0ZM13 2L9 2C8.4477148 2 8 2.4477153 8 3L8 7C8 7.5522847 7.5522847 8 7 8L3 8C2.4477153 8 2 8.4477148 2 9L2 13C2 13.552285 2.4477153 14 3 14L7 14C7.5522847 14 8 14.447715 8 15L8 19C8 19.552284 8.4477148 20 9 20L13 20C13.552285 20 14 19.552284 14 19L14 15C14 14.447715 14.447715 14 15 14L19 14C19.552284 14 20 13.552285 20 13L20 9C20 8.4477148 19.552284 8 19 8L15 8C14.447715 8 14 7.5522847 14 7L14 3C14 2.4477153 13.552285 2 13 2Z"/>
             </svg>            
             </BulletPoint>
             <div style="height: 1px; width: calc(100% + 3rem); margin: 2rem 0 2rem -1.5rem; background-color: rgba(255, 255, 255, 0.1);"></div>
-            <BulletPoint title="Support for Community Members"
-                         content="Data collected by local governments can help them recommend which ISPs are best suited to serve their residents, based on each ISP’s constraints."
+            <BulletPoint 
+              title="Support for Community Members"
+              content="Data collected by local governments can help them recommend which ISPs are best suited to serve their residents, based on each ISP’s constraints."
             >
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
-              <path fill="#4B7BE5" transform="translate(1 1.99998)" d="M11 5.6195126C12.656842 5.6195126 13.999978 6.9626484 13.999978 8.6194906C13.999978 9.9253626 13.165606 11.036358 12.000894 11.448445L12 19.227371C12 19.779655 11.552285 20.227371 11 20.227371C10.447715 20.227371 10 19.779655 10 19.227371L10.000096 11.448795C8.8348665 11.036986 8.0000219 9.9257326 8.0000219 8.6194906L8.0051155 8.4432192C8.0963612 6.8684235 9.4023314 5.6195126 11 5.6195126ZM18.123974 0.23804128C20.582876 2.3278501 22 5.3920498 22 8.6190462C22 11.846042 20.582876 14.910242 18.123974 17.00005C17.703144 17.357712 17.072054 17.306503 16.714394 16.885674C16.356733 16.464844 16.40794 15.833754 16.82877 15.476092C18.840559 13.766284 20 11.259262 20 8.6190462C20 5.9788299 18.840559 3.471808 16.82877 1.761999C16.40794 1.4043382 16.356733 0.77324748 16.714394 0.35241821C17.072054 -0.068411097 17.703144 -0.11961939 18.123974 0.23804128ZM5.2856069 0.35241821C5.6432676 0.77324748 5.5920591 1.4043382 5.1712298 1.761999C3.1594412 3.471808 2 5.9788299 2 8.6190462C2 11.259262 3.1594412 13.766284 5.1712298 15.476092C5.5920591 15.833754 5.6432676 16.464844 5.2856069 16.885674C4.9279461 17.306503 4.2968554 17.357712 3.8760262 17.00005C1.4171234 14.910242 0 11.846042 0 8.6190462C0 5.3920498 1.4171234 2.3278501 3.8760262 0.23804128C4.2968554 -0.11961939 4.9279461 -0.068411097 5.2856069 0.35241821ZM15.532821 3.2859471C17.097801 4.6157665 17.999765 6.5658145 17.999765 8.6194906C17.999765 10.673166 17.097801 12.623214 15.532821 13.953033C15.111959 14.310656 14.480873 14.259388 14.123251 13.838526C13.76563 13.417664 13.816896 12.786577 14.237759 12.428956C15.355541 11.479136 15.999764 10.086322 15.999764 8.6194906C15.999764 7.1526589 15.355541 5.7598438 14.237759 4.8100247C13.816896 4.4524031 13.76563 3.821317 14.123251 3.4004545C14.480873 2.9795923 15.111959 2.9283254 15.532821 3.2859471ZM7.876749 3.4004545C8.2343702 3.821317 8.1831036 4.4524031 7.7622414 4.8100247C6.6444592 5.7598438 6.0002351 7.1526589 6.0002351 8.6194906C6.0002351 10.086322 6.6444592 11.479136 7.7622414 12.428956C8.1831036 12.786577 8.2343702 13.417664 7.876749 13.838526C7.5191274 14.259388 6.8880415 14.310656 6.4671788 13.953033C4.9021983 12.623214 4.0002351 10.673166 4.0002351 8.6194906C4.0002351 6.5658145 4.9021983 4.6157665 6.4671788 3.2859471C6.8880415 2.9283254 7.5191274 2.9795923 7.876749 3.4004545ZM11 7.6195126C10.447727 7.6195126 10.000022 8.0672178 10.000022 8.6194906C10.000022 9.1717625 10.447727 9.6194677 11 9.6194677C11.552273 9.6194677 11.999978 9.1717625 11.999978 8.6194906C11.999978 8.0672178 11.552273 7.6195126 11 7.6195126Z"/>
-            </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+                <path fill="#4B7BE5" transform="translate(1 1.99998)" d="M11 5.6195126C12.656842 5.6195126 13.999978 6.9626484 13.999978 8.6194906C13.999978 9.9253626 13.165606 11.036358 12.000894 11.448445L12 19.227371C12 19.779655 11.552285 20.227371 11 20.227371C10.447715 20.227371 10 19.779655 10 19.227371L10.000096 11.448795C8.8348665 11.036986 8.0000219 9.9257326 8.0000219 8.6194906L8.0051155 8.4432192C8.0963612 6.8684235 9.4023314 5.6195126 11 5.6195126ZM18.123974 0.23804128C20.582876 2.3278501 22 5.3920498 22 8.6190462C22 11.846042 20.582876 14.910242 18.123974 17.00005C17.703144 17.357712 17.072054 17.306503 16.714394 16.885674C16.356733 16.464844 16.40794 15.833754 16.82877 15.476092C18.840559 13.766284 20 11.259262 20 8.6190462C20 5.9788299 18.840559 3.471808 16.82877 1.761999C16.40794 1.4043382 16.356733 0.77324748 16.714394 0.35241821C17.072054 -0.068411097 17.703144 -0.11961939 18.123974 0.23804128ZM5.2856069 0.35241821C5.6432676 0.77324748 5.5920591 1.4043382 5.1712298 1.761999C3.1594412 3.471808 2 5.9788299 2 8.6190462C2 11.259262 3.1594412 13.766284 5.1712298 15.476092C5.5920591 15.833754 5.6432676 16.464844 5.2856069 16.885674C4.9279461 17.306503 4.2968554 17.357712 3.8760262 17.00005C1.4171234 14.910242 0 11.846042 0 8.6190462C0 5.3920498 1.4171234 2.3278501 3.8760262 0.23804128C4.2968554 -0.11961939 4.9279461 -0.068411097 5.2856069 0.35241821ZM15.532821 3.2859471C17.097801 4.6157665 17.999765 6.5658145 17.999765 8.6194906C17.999765 10.673166 17.097801 12.623214 15.532821 13.953033C15.111959 14.310656 14.480873 14.259388 14.123251 13.838526C13.76563 13.417664 13.816896 12.786577 14.237759 12.428956C15.355541 11.479136 15.999764 10.086322 15.999764 8.6194906C15.999764 7.1526589 15.355541 5.7598438 14.237759 4.8100247C13.816896 4.4524031 13.76563 3.821317 14.123251 3.4004545C14.480873 2.9795923 15.111959 2.9283254 15.532821 3.2859471ZM7.876749 3.4004545C8.2343702 3.821317 8.1831036 4.4524031 7.7622414 4.8100247C6.6444592 5.7598438 6.0002351 7.1526589 6.0002351 8.6194906C6.0002351 10.086322 6.6444592 11.479136 7.7622414 12.428956C8.1831036 12.786577 8.2343702 13.417664 7.876749 13.838526C7.5191274 14.259388 6.8880415 14.310656 6.4671788 13.953033C4.9021983 12.623214 4.0002351 10.673166 4.0002351 8.6194906C4.0002351 6.5658145 4.9021983 4.6157665 6.4671788 3.2859471C6.8880415 2.9283254 7.5191274 2.9795923 7.876749 3.4004545ZM11 7.6195126C10.447727 7.6195126 10.000022 8.0672178 10.000022 8.6194906C10.000022 9.1717625 10.447727 9.6194677 11 9.6194677C11.552273 9.6194677 11.999978 9.1717625 11.999978 8.6194906C11.999978 8.0672178 11.552273 7.6195126 11 7.6195126Z"/>
+              </svg>
             </BulletPoint>
           </div>
         </div>
