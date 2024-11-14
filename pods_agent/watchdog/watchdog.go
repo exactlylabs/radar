@@ -255,8 +255,10 @@ func (w *Watchdog) handleSyncRequested(data SyncMessage) (err error) {
 	if err != nil {
 		return errors.W(err)
 	}
-	if err := w.cli.SyncData(syncData); err != nil {
-		return errors.W(err)
+	if w.cli.Connected() {
+		if err := w.cli.SyncData(syncData); err != nil {
+			return errors.W(err)
+		}
 	}
 	return nil
 }

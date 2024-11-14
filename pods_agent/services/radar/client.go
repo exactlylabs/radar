@@ -149,9 +149,11 @@ func (c *RadarClient) requestSync() {
 }
 
 func (c *RadarClient) sendPong() {
-	c.channel.SendAction(cable.CustomActionData{
-		Action: Pong,
-	})
+	if c.Connected() {
+		c.channel.SendAction(cable.CustomActionData{
+			Action: Pong,
+		})
+	}
 }
 
 func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, error) {

@@ -139,6 +139,9 @@ func (c *ChannelClient) SendAction(msg CustomActionData) error {
 		// We can't send actions without a subscription
 		return errors.SentinelWithStack(ErrNotSubscribed)
 	}
+	if !c.cli.Connected() {
+		return errors.SentinelWithStack(ErrNotConnected)
+	}
 	c.cli.Sender() <- ClientMessage{
 		Identifier: c.subscription,
 		Command:    Message,
