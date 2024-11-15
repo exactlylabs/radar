@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactElement, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, ReactElement, useContext, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
@@ -15,6 +15,7 @@ import {GeoJSONFilters} from "../../../api/geojson/types";
 import {usePrev} from "../../../hooks/usePrev";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import './styles/DropdownFilters.css';
+import AlertsContext, {SNACKBAR_TYPES} from "../../../context/AlertsContext";
 
 type ScrollPosition = {
   clientX: number;
@@ -42,7 +43,7 @@ const DropdownFilters = ({
   isInsideContainer,
   openFloatingFilter
 }: DropdownFiltersProps): ReactElement => {
-
+  const { showSnackbarMessage } = useContext(AlertsContext);
   const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isTabletScreen;
 
@@ -64,13 +65,19 @@ const DropdownFilters = ({
     if(selectedGeospaceId) {
       getAsnsForGeospace(selectedGeospaceId)
         .then(res => { setProviders(res.results) })
-        .catch(err => handleError(err));
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        });
     } else {
       getAsns()
         .then(res => {
           setProviders(res.results);
         })
-        .catch(err => handleError(err));
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        });
     }
   }, [selectedGeospaceId]);
 
@@ -119,12 +126,18 @@ const DropdownFilters = ({
     if(selectedGeospaceId) {
        getAsnsForGeospace(selectedGeospaceId, value)
          .then(res => setProviders(res.results))
-         .catch(err => handleError(err))
+         .catch(err => {
+           handleError(err);
+           showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+         })
          .finally(() => setProvidersLoading(false));
     } else {
       getAsns(value)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   });
@@ -134,12 +147,18 @@ const DropdownFilters = ({
     if(selectedGeospaceId) {
       getAsnsForGeospace(selectedGeospaceId)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     } else {
       getAsns()
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   }

@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import {ChangeEvent, ReactElement, useContext, useEffect, useState} from "react";
 import {Filter, Optional} from "../../../../utils/types";
 import {Asn} from "../../../../api/asns/types";
 import {allProvidersElement} from "../../../ExplorePage/TopFilters/utils/providers";
@@ -10,6 +10,7 @@ import Option from "../../../ExplorePage/TopFilters/Option";
 import OptionHorizontalDivider from "../../../ExplorePage/TopFilters/OptionHorizontalDivider";
 import {styles} from "./styles/ModalContentProviders.style";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
+import AlertsContext, {SNACKBAR_TYPES} from "../../../../context/AlertsContext";
 
 interface ModalContentProvidersProps {
   geospaceId: Optional<string>;
@@ -25,6 +26,8 @@ const ModalContentProviders = ({
   setSelectedOption,
   closeModal
 }: ModalContentProvidersProps): ReactElement => {
+
+  const { showSnackbarMessage } = useContext(AlertsContext);
   const [innerOption, setInnerOption] = useState<Optional<Asn>>(selectedOption);
   const [providersLoading, setProvidersLoading] = useState(false);
   const [providers, setProviders] = useState<Array<Asn>>([allProvidersElement]);
@@ -34,14 +37,20 @@ const ModalContentProviders = ({
     if(geospaceId) {
       getAsnsForGeospace(geospaceId)
         .then(res => { setProviders(res.results) })
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     } else {
       getAsns()
         .then(res => {
           setProviders(res.results);
         })
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   }, [geospaceId]);
@@ -52,12 +61,18 @@ const ModalContentProviders = ({
     if(geospaceId) {
       getAsnsForGeospace(geospaceId, value)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     } else {
       getAsns(value)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading providers. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   });

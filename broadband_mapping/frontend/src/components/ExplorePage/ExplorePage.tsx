@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useRef, useState} from "react";
+import React, {ReactElement, useContext, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import Map from "./Map";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
@@ -56,6 +56,7 @@ import ModalContentCustomDateRange
 import ModalContentCalendar from "../common/CustomGenericModal/ModalContentCalendar/ModalContentCalendar";
 import {isIphoneAndSafari} from "../../utils/iphone";
 import {useIsTouchDevice} from "../../hooks/useIsTouchDevice";
+import AlertsContext, {SNACKBAR_TYPES} from "../../context/AlertsContext";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -71,6 +72,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return (possibleGeospace as GeospaceOverview).geospace.id;
   }
 
+  const { showSnackbarMessage } = useContext(AlertsContext);
   const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmallExplorePage = isSmallScreen || isTabletScreen;
   const isTouchRef = useIsTouchDevice();
@@ -149,7 +151,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       }
       getOverview(selectedGeospaceId, filters)
         .then(res => { setSelectedGeospace(res); })
-        .catch(err => handleError(err));
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading overview information. Please try again later.', SNACKBAR_TYPES.ERROR);
+        });
     } else {
       setSelectedGeospace(null);
     }
