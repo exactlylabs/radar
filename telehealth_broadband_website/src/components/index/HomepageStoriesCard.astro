@@ -7,6 +7,10 @@ const { head, title, content, image } = Astro.props;
 
 <div class={styles.card} data-carrousel-card>
   <div>
-    <HeroWithText head={head} title={title} content={content} small/>
+    <HeroWithText head={head}
+      title={title}
+      content={content}
+      inCard
+    />
   </div>
 </div>
