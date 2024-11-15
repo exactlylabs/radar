@@ -1,5 +1,5 @@
 .card {
-  width: clamp(320px, 62.5vw ,1036px);
+  width: clamp(320px, 62.5vw, 1036px);
   height: 454px;
   outline: solid 1px white;
 }
