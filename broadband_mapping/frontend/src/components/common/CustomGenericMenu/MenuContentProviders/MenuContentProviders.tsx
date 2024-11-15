@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import {ChangeEvent, ReactElement, useContext, useEffect, useState} from "react";
 import {styles} from './styles/MenuContentProviders.style';
 import {Filter, Optional} from "../../../../utils/types";
 import {Asn} from "../../../../api/asns/types";
@@ -11,6 +11,7 @@ import {allProvidersElement} from "../../../ExplorePage/TopFilters/utils/provide
 import Option from "../../../ExplorePage/TopFilters/Option";
 import OptionHorizontalDivider from "../../../ExplorePage/TopFilters/OptionHorizontalDivider";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
+import AlertsContext, {SNACKBAR_TYPES} from "../../../../context/AlertsContext";
 
 interface MenuContentProvidersProps {
   geospaceId: Optional<string>;
@@ -26,6 +27,7 @@ const MenuContentProviders = ({
   closeMenu
 }: MenuContentProvidersProps): ReactElement => {
 
+  const { showSnackbarMessage } = useContext(AlertsContext);
   const [innerOption, setInnerOption] = useState<Optional<Asn>>(selectedOption);
   const [providersLoading, setProvidersLoading] = useState(false);
   const [providers, setProviders] = useState<Array<Asn>>([allProvidersElement]);
@@ -35,14 +37,20 @@ const MenuContentProviders = ({
     if(geospaceId) {
       getAsnsForGeospace(geospaceId)
         .then(res => { setProviders(res.results) })
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     } else {
       getAsns()
         .then(res => {
           setProviders(res.results);
         })
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   }, [geospaceId]);
@@ -53,12 +61,18 @@ const MenuContentProviders = ({
     if(geospaceId) {
       getAsnsForGeospace(geospaceId, value)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     } else {
       getAsns(value)
         .then(res => setProviders(res.results))
-        .catch(err => handleError(err))
+        .catch(err => {
+          handleError(err);
+          showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+        })
         .finally(() => setProvidersLoading(false));
     }
   });

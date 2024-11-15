@@ -6,25 +6,28 @@ import {Optional} from "./utils/types";
 import { ViewportContextProvider } from './context/ViewportContent';
 import {MenuContextProvider} from "./context/MenuContent";
 import Frame from "./components/Frame/Frame";
+import {AlertsContextProvider} from "./context/AlertsContext";
 
 const App = () => {
 
   const [userCenter, setUserCenter] = useState<Optional<Array<number>>>(null);
 
   return (
-    <ViewportContextProvider>
-      <MenuContextProvider>
-        <BrowserRouter>
-          <Frame centerOnUser={setUserCenter}>
-            <Routes>
-              <Route path={'/explore'} element={<ExplorePage userCenter={userCenter}/>}/>
-              <Route path={'/about'} element={<AboutPage/>}/>
-              <Route path={'*'} element={<Navigate to={'/explore'} replace />} />
-            </Routes>
-          </Frame>
-        </BrowserRouter>
-      </MenuContextProvider>
-    </ViewportContextProvider>
+    <AlertsContextProvider>
+      <ViewportContextProvider>
+        <MenuContextProvider>
+          <BrowserRouter>
+            <Frame centerOnUser={setUserCenter}>
+              <Routes>
+                <Route path={'/explore'} element={<ExplorePage userCenter={userCenter}/>}/>
+                <Route path={'/about'} element={<AboutPage/>}/>
+                <Route path={'*'} element={<Navigate to={'/explore'} replace />} />
+              </Routes>
+            </Frame>
+          </BrowserRouter>
+        </MenuContextProvider>
+      </ViewportContextProvider>
+    </AlertsContextProvider>
   );
 }
 

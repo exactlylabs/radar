@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useContext, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorationPopover.style";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
 import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverContent";
@@ -11,6 +11,7 @@ import {GeospacesTabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 import {Optional} from "../../../utils/types";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import AlertsContext, {SNACKBAR_TYPES} from "../../../context/AlertsContext";
 
 
 interface ExplorationPopoverProps {
@@ -46,6 +47,7 @@ const ExplorationPopover = ({
   isRightPanelHidden
 }: ExplorationPopoverProps): ReactElement => {
 
+  const { showSnackbarMessage } = useContext(AlertsContext);
   const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmallExplorationPopover = isSmallScreen || isSmallTabletScreen || isLargeTabletScreen;
 
@@ -80,7 +82,10 @@ const ExplorationPopover = ({
         setIndexedCounties(indexed);
         setCounties(res[1].results);
       })
-      .catch(err => handleError(err))
+      .catch(err => {
+        handleError(err);
+        showSnackbarMessage('An error has occurred while loading namespaces. Please try again later.', SNACKBAR_TYPES.ERROR);
+      })
       .finally(() => setLoading(false));
   }, []);
 
