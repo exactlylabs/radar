@@ -1,0 +1,24 @@
+---
+import {Image} from 'astro:assets';
+import styles from './footer.module.css';
+import footerLogo from '../../assets/images/footer-logo.webp';
+---
+
+<footer class={styles.footer}>
+  <div class={styles.topRow}>
+    <Image src={footerLogo}
+           densities={[1, 2, 4]}
+           alt="Main footer TBP logo"
+           height={28}
+           loading={'eager'}
+    />
+    <ul class={styles.links}>
+      <li><a href="/privacy-policy">Privacy Policy</a></li>
+      <li><a href="/cookies">Cookie Policy</a></li>
+    </ul>
+  </div>
+  <div class={styles.bottomRow}>
+    <p class={styles.footerText}>© 2024. All rights reserved.</p>
+    <p class:list={[styles.footerText, styles.maxWidthText]}>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
+  </div>
+</footer>

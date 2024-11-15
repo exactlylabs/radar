@@ -1,0 +1,27 @@
+.sectionWithImage {
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.sectionWithImage > img {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 200px;
+  right: 0;
+  height: auto;
+  animation: fade-in 200ms;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

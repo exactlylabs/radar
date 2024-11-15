@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://telehealthbroadbandproject.com/sitemap-index.xml

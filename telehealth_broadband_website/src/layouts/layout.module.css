@@ -1,0 +1,10 @@
+:root {
+  --navbar-height: 65px;
+  --footer-height: 240px;
+}
+
+.main {
+  width: 100vw;
+  min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+  padding-top: 1rem;
+}

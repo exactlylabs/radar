@@ -1,0 +1,38 @@
+---
+import '../global.css';
+import styles from '../common.module.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Carrousel from '../components/common/Carrousel';
+import AutoExpandingCards from '../components/common/AutoExpandingCards';
+import ExpansibleRows from '../components/common/ExpansibleRows';
+---
+
+<BaseLayout>
+  <section class={styles.paddedSection}>
+    <div style="margin-bottom: 24px">
+      <Carrousel client:only="react" elementCount={5}>
+        {[1,2,3,4,5].map((i, index) => (
+          <div style={{width: '352px', height: '462px', outline: 'solid 1px'}}
+               data-index={index}
+          >Item {index}</div>
+        ))}
+      </Carrousel>
+    </div>
+    <div style="margin-bottom: 24px">
+      <AutoExpandingCards client:only="react" content={[
+        {head: '01', title: 'Community Engagement Efforts', content: 'We worked closely with local partners and community leaders to understand rural connectivity needs. By engaging directly with residents through surveys, interviews, and events, we ensured the data collected reflected the real challenges faced bt these communities.'},
+        {head: '02', title: 'Tools and Methods for Data Collection', content: 'The project developed a variety of tools to measure broadband performance, including monitoring Pods, speed test widgets, and mobile data collection. These tools provided reliable data on internet quality, helping to map connectivity gaps in rural regions accurately.'},
+        {head: '03', title: 'Analyzing Connectivity Challenges', content: 'Our analysis focused on understanding how connectivity issues impact rural communities. By examining the collected data, we identified patterns in broadband performance and barriers to telehealth adoption, offering communities insights into their unique digital landscape.'},
+      ]}/>
+    </div>
+    <div style="margin-bottom: 24px">
+      <ExpansibleRows client:only="react" content={[
+        {head: '01', title: 'Pod Data Collection', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
+        {head: '02', title: 'ISP and Mobile Provider Data', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
+        {head: '03', title: 'Publications and Research Contributions', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
+        {head: '04', title: 'Unique Speed Test Locations', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
+        {head: '05', title: 'Community Engagement Metrics', content: 'Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use.'},
+      ]}/>
+    </div>
+  </section>
+</BaseLayout>
