@@ -9,10 +9,7 @@
         WatchdogChannel.watchdog_stream_name(client),
         {
           event: "version_changed",
-          payload: {
-            version: client.target_watchdog_version.version,
-            binary_url: WatchdogChannel.blob_path(client.target_watchdog_version.signed_binary),
-          }
+          payload: self.watchdog_update_message(client)
         }
       )
     end
@@ -26,10 +23,7 @@
           WatchdogChannel.watchdog_stream_name(client),
           {
             event: "version_changed",
-            payload: {
-              version: update_group.watchdog_version.version,
-              binary_url: WatchdogChannel.blob_path(update_group.watchdog_version.signed_binary),
-            }
+            payload: self.watchdog_update_message(client)
           }
         )
       end
@@ -42,10 +36,7 @@
         WatchdogChannel.watchdog_stream_name(client),
         {
           event: "version_changed",
-          payload: {
-            version: client.to_update_watchdog_version.version,
-            binary_url: WatchdogChannel.blob_path(client.to_update_watchdog_signed_binary),
-          }
+          payload: self.watchdog_update_message(client),
         }
       )
     end
@@ -261,17 +252,21 @@
   end
 
   private
+  def self.watchdog_update_message(client)
+    return {
+      version: client.to_update_watchdog_version.version,
+      binary_url: Rails.application.routes.url_helpers.download_watchdog_version_path(id: client.to_update_watchdog_version.version, signed: true)
+    }
+  end
 
   # Commands to the watchdog -- Called only during the sync process at the beginning of the connection
+
 
   def update()
     self.connection.transmit(
       {
         type: "update",
-        message: {
-          version: self.client.to_update_watchdog_version.version,
-          binary_url: Rails.application.routes.url_helpers.download_watchdog_version_path(id: self.client.to_update_watchdog_version.version, signed: true)
-        },
+        message: self.class.watchdog_update_message(self.client),
       }
     )
   end

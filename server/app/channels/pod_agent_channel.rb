@@ -20,10 +20,7 @@ class PodAgentChannel < ApplicationCable::Channel
         PodAgentChannel.agent_stream_name(client),
         {
           event: "version_changed",
-          payload: {
-            version: client.target_client_version.version,
-            binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
-          }
+          payload: self.agent_update_message(client)
         }
       )
     end
@@ -35,10 +32,7 @@ class PodAgentChannel < ApplicationCable::Channel
         PodAgentChannel.agent_stream_name(client),
         {
           event: "watchdog_version_changed",
-          payload: {
-            version: client.target_watchdog_version.version,
-            binary_url: PodAgentChannel.blob_path(client.target_watchdog_version.signed_binary),
-          }
+          payload: self.watchdog_update_message(client)
         }
       )
     end
@@ -50,10 +44,7 @@ class PodAgentChannel < ApplicationCable::Channel
         PodAgentChannel.agent_stream_name(client),
         {
           event: "version_changed",
-          payload: {
-            version: client.update_group.client_version.version,
-            binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
-          }
+          payload: self.agent_update_message(client)
         }
       )
     end
@@ -124,15 +115,27 @@ class PodAgentChannel < ApplicationCable::Channel
     )
   end
 
+  def self.agent_update_message(client)
+    distribution = client.to_update_distribution
+    return {
+      version: distribution.client_version.version,
+      binary_url: Rails.application.routes.url_helpers.download_client_version_distribution_path(id: distribution.name, client_version_id: distribution.client_version.version, signed: true)
+    }
+  end
+
+  def self.watchdog_update_message(client)
+    return {
+      version: client.to_update_watchdog_version.version,
+      binary_url: Rails.application.routes.url_helpers.download_watchdog_version_path(id: client.to_update_watchdog_version.version, signed: true)
+    }
+  end
+
   def update()
     distribution = self.client.to_update_distribution
     self.connection.transmit(
       {
         type: "update",
-        message: {
-          version: distribution.client_version.version,
-          binary_url: Rails.application.routes.url_helpers.download_client_version_distribution_path(id: distribution.name, client_version_id: distribution.client_version.version, signed: true)
-        },
+        message: self.class.agent_update_message(self.client),
       }
     ) if distribution.present?
   end
@@ -141,12 +144,9 @@ class PodAgentChannel < ApplicationCable::Channel
     self.connection.transmit(
       {
         type: "update_watchdog",
-        message: {
-          version: self.client.to_update_watchdog_version.version,
-          binary_url: PodAgentChannel.blob_path(self.client.to_update_watchdog_signed_binary)
-        },
+        message: self.class.watchdog_update_message(self.client),
       }
-    ) if self.client.to_update_version.present?
+    ) if self.client.to_update_watchdog_version.present?
   end
 
   # Streams
