@@ -9,13 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.arnoldroa.speedtest-v2"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.arnoldroa.speedtest_v2",
+      "permissions": ["FOREGROUND_SERVICE", "WAKE_LOCK"]
     },
     "web": {
       "bundler": "metro",
