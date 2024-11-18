@@ -8,6 +8,12 @@
   height: 700px;
 }
 
+@media (max-width: 768px) {
+  .firstSection {
+    padding-top: 4rem;
+  }
+}
+
 .heroSection {
   width: 100%;
   text-align: center;
@@ -16,12 +22,32 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .heroSection {
+    max-width: 345px;
+  }
+}
+
 .buttonsContainer {
   padding-top: 2.5rem;
   display: flex;
   gap: 1.5rem;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .buttonsContainer {
+    width: max-content;
+    flex-direction: column;
+    gap: 1rem;
+    margin-inline: auto;
+  }
+
+  .buttonsContainer > button,
+  .buttonsContainer > a {
+    width: 100%;
+  }
 }
 
 .partnersContainer {
@@ -34,17 +60,20 @@
   padding-top: 5rem;
 }
 
+@media (max-width: 768px) {
+  .partnersContainer {
+    padding-top: 4rem;
+    max-width: 360px;
+    margin-inline: auto;
+  }
+}
+
 .partnersTitle {
   text-transform: uppercase;
   font-size: 0.875rem;
   font-variation-settings: 'wght' 700;
   color: var(--text-color);
   margin: 0 auto 2rem;
-}
-
-.partnersImage {
-  width: 100%;
-  height: auto;
 }
 
 .approachHero {
@@ -64,6 +93,22 @@
   justify-content: center;
   gap: 8.625rem;
   padding-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .secondSection {
+    padding-top: 6rem;
+    flex-direction: column;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .fadedIcons {
+    width: 100%;
+    height: auto;
+    margin-left: 2rem;
+  }
 }
 
 .gradientIconContainer {
@@ -105,39 +150,74 @@
   }
 }
 
+@media (max-width: 768px) {
+  .flyingLine {
+    display: none;
+  }
+}
+
 .cardsSection {
   padding-top: 7.125rem;
   padding-bottom: 8.5rem;
 }
 
+@media (max-width: 768px) {
+  .cardsSection {
+    padding-top: 3rem;
+    padding-bottom: 5.5rem;
+  }
+}
+
 .findingsSection {
+  --shadow-spread: 50px;
   width: 100%;
   height: 900px;
   background-position: 50% -370px;
   background-repeat: no-repeat;
-  background-size: 1400px 900px;
+  background-size: calc(var(--max-width) + 8* var(--shadow-spread)) 900px;
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .findingsSection {
+    height: max-content;
+  }
+}
+
 .findingsGradient {
-  height: 534px;
+  --shadow-spread: 50px;
   width: 100%;
+  max-width: calc(var(--max-width) + 8* var(--shadow-spread));
+  height: 534px;
   position: absolute;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 0;
   background: linear-gradient(
     180deg,
     rgba(5, 4, 26, 0.65) 0%,
     #0A081C 100%);
+  box-shadow: 0 -75px var(--shadow-spread) var(--shadow-spread) var(--bg-color) inset;
+}
+
+@media (max-width: 768px) {
+  .findingsGradient {
+    box-shadow: none;
+  }
 }
 
 .findingsTextContainer {
-  height: 534px;
   text-align: left;
   padding-top: 6rem;
   z-index: 1;
   position: relative;
+}
+
+@media (max-width: 768px) {
+  .findingsTextContainer {
+    padding-top: 3.5rem;
+  }
 }
 
 .findingsHeroContainer {
@@ -145,16 +225,34 @@
   text-align: left;
 }
 
+@media (max-width: 768px) {
+  .findingsHeroContainer {
+    max-width: 100%;
+  }
+}
+
 .findingsButtonContainer {
   margin-top: 2rem;
 }
 
 .findingsCarrouselContainer {
-  margin-top: 2rem;
+  margin-top: 5.5rem;
+}
+
+@media (max-width: 768px) {
+  .findingsCarrouselContainer {
+    margin-top: 3rem;
+  }
 }
 
 .storiesSection {
   padding-top: 7.5rem;
+}
+
+@media (max-width: 768px) {
+  .storiesSection {
+    padding-top: 5.5rem;
+  }
 }
 
 .storiesHeroContainer {
@@ -168,17 +266,79 @@
   gap: 2rem;
 }
 
+@media (max-width: 768px) {
+  .storiesHeroContainer {
+    max-width: 100%;
+    gap: 1.5rem;
+  }
+}
+
 .opportunitiesSection {
   padding-top: 8rem;
+}
+
+@media (max-width: 768px) {
+  .opportunitiesSection {
+    padding-top: 5.5rem;
+  }
 }
 
 .opportunitiesHero {
   width: 100%;
   max-width: 609px;
-  margin-inline: auto;
-  text-align: center;
+  margin-inline: 0;
+  text-align: left;
 }
 
 .storiesCarrouselContainer {
   margin-top: 5.5rem;
+}
+
+@media (max-width: 768px) {
+  .storiesCarrouselContainer {
+    margin-top: 3rem;
+  }
+}
+
+.resourcesSection {
+  width: 100%;
+  max-width: 609px;
+  margin-inline: auto;
+  text-align: center;
+  padding-top: 7.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-bottom: 5.5rem;
+}
+
+@media (max-width: 768px) {
+  .resourcesSection {
+    max-width: 100%;
+    margin-bottom: 3rem;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-top: 5.5rem;
+  }
+}
+
+.resourcesHeroContainer {
+  max-width: 608px;
+  text-align: center;
+  margin: 0 auto 5.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .resourcesHeroContainer {
+    max-width: 100%;
+    gap: 1.5rem;
+    margin: 0 0 3rem;
+  }
 }

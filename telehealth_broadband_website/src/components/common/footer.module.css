@@ -8,7 +8,7 @@
   justify-content: flex-start;
   gap: 2.25rem;
   position: relative;
-  overflow-y: clip;
+  overflow: clip;
 }
 
 .topRow {

@@ -15,12 +15,12 @@ interface ExpansibleRowProps {
 }
 
 // TODO: make the text fade in a bit with opacity so the height growth doesn't feel choppy
-function ExpansibleRow({content, isOpen, index, toggleOpen}: ExpansibleRowProps) {
+export function ExpansibleRow({content, isOpen, index, toggleOpen}: ExpansibleRowProps) {
   
   return (
     <div className={styles.row} data-open={isOpen.toString()}>
       <div className={styles.topRow} onClick={() => toggleOpen(index)}>
-        <span className={styles.head}>{content.head}</span>
+        { content.head && <span className={styles.head}>{content.head}</span> }
         <h4 className={styles.title}>{content.title}</h4>
         <button className={styles.button}>
           <img src={plusIcon.src} width={16} height={16} alt={'plus icon'}/>
