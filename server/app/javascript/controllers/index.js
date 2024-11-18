@@ -244,3 +244,5 @@ application.register("update-group", UpdateGroupController)
 import WidgetsController from "./widgets_controller"
 application.register("widgets", WidgetsController)
 
+import DashboardRealtimeFilters from "./dashboard_realtime_filters"
+application.register("dashboard-realtime-filters", DashboardRealtimeFilters)
