@@ -1,12 +1,13 @@
 :root {
   --navbar-height: 65px;
   --footer-height: 240px;
-  --side-padding: calc((100% - var(--max-width)) / 2);
+  --side-padding: calc((100vw - var(--max-width)) / 2);
 }
 
 .main {
   width: 100vw;
   min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+  overflow-x: clip;
 }
 
 .heroImage {

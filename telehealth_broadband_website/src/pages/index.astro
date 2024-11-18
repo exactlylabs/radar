@@ -3,16 +3,17 @@ import '../global.css';
 import styles from './index.module.css';
 import commonStyles from '../common.module.css';
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Image } from 'astro:assets';
 import Carrousel from '../components/common/Carrousel';
 import AutoExpandingCards from '../components/common/AutoExpandingCards';
+import HomepageExpansibleRows from '../components/index/HomepageExpansibleRows';
+import HomepageApproachExpansibleRows from '../components/index/HomepageApproachExpansibleRows';
 import HeroWithText from "../components/common/HeroWithText.astro";
 import PrimaryButton from "../components/common/buttons/PrimaryButton.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import HomepageFindingsCard from "../components/index/HomepageFindingsCard.astro";
 import HomepageStoriesCard from "../components/index/HomepageStoriesCard.astro";
 import OpportunitiesGrid from "../components/index/OpportunitiesGrid.astro";
-import logoGroup from '../assets/images/logo-group.webp';
+import PartnerLogoCarrousel from "../components/index/PartnerLogoCarrousel.astro";
 import fadedIcons from '../assets/images/faded-icons.png';
 import cellTowers from '../assets/images/cell-towers.webp';
 import ruralVsUrban from '../assets/images/rural-vs-urban.webp';
@@ -25,7 +26,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
   <section class={styles.firstSection}>
     <div class={styles.heroSection}>
       <HeroWithText head=""
-                    title="Uncovering Rural America's Internet Reallity"
+                    title="Uncovering Rural America's Internet Reality"
                     content="The Telehealth Broadband Pilot partnered with communities in Alaska, Michigan, Texas, and West Virginia to gather data on rural broadband access and its impact on healthcare, education, and daily life."
       />
     </div>
@@ -35,16 +36,16 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
     </div>
     <div class={styles.partnersContainer}>
       <span class={styles.partnersTitle}>In partnership with our community partners</span>
-      <Image src={logoGroup} alt="Community Partners" class={styles.partnersImage}/>
+      <PartnerLogoCarrousel />
     </div>
   </section>
   
   <section class={`${commonStyles.paddedSection} ${styles.secondSection}`}>
-      <div class={styles.flyingLine} data-reverse="true"></div>
+    <div class={styles.flyingLine} data-reverse="true"></div>
     <div class={styles.approachHero}>
       <HeroWithText head="Our approach"
                     title="Uncovering Rural Connectivity Challenges"
-                    content="The Telehealth Broadband Pilot partnered with local leaders to understand connectivity issues, using community engagement and monitoring tools to identify broadband gaps, inform telehealth policy, and support infrastructure improvements."
+                    content="The Telehealth Broadband Pilot Program identified actionable opportunities to enhance internet experiences in rural communities, focusing on the full journey of accessing and using online services."
       />
     </div>
     <img src={fadedIcons.src} alt="Faded Icons" class={styles.fadedIcons} width="494" height="288"/>
@@ -57,6 +58,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
       {head: '02', title: 'Tools and Methods for Data Collection', content: 'The project developed a variety of tools to measure broadband performance, including monitoring Pods, speed test widgets, and mobile data collection. These tools provided reliable data on internet quality, helping to map connectivity gaps in rural regions accurately.'},
       {head: '03', title: 'Analyzing Connectivity Challenges', content: 'Our analysis focused on understanding how connectivity issues impact rural communities. By examining the collected data, we identified patterns in broadband performance and barriers to telehealth adoption, offering communities insights into their unique digital landscape.'},
     ]}/>
+    <HomepageApproachExpansibleRows client:only="react"/>
   </section>
   
   <section class={styles.findingsSection} style={`background-image: url(${cellTowers.src})`}>
@@ -72,7 +74,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
       </div>
     </div>
     <div class={styles.findingsCarrouselContainer}>
-      <Carrousel client:only="react" itemWidth={396}>
+      <Carrousel client:only="react" itemWidth={396} smallItemWidth={276}>
         <HomepageFindingsCard title="Rural vs. Urban Internet Gaps"
           href="/findings"
           image={ruralVsUrban.src}
@@ -98,7 +100,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
     <div class={commonStyles.paddedSection}>
       <div class={styles.storiesHeroContainer}>
         <HeroWithText head="Stories"
-                      title="Stories from the Field"
+                      title="The Reality in the Field"
                       content="Real experiences that reveal the impact of connectivity challenges in rural communities, shared by our Community Lead Partners."
         />
         <PrimaryButton href="/stories">Explore Our Stories</PrimaryButton>
@@ -111,6 +113,11 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
           content="In many rural areas, reliable internet access exists only at community centers, leaving households disconnected. One young adult shared their shock at discovering high-speed internet for the first time upon arriving at college."
           image={girlLaptop.src}
         />
+        <HomepageStoriesCard head="Alaska"
+                             title="Lack of Technical Expertise"
+                             content="Rural Alaska clinics relying on satellite internet experienced severe delays, making many applications unusable. A lack of local expertise and vendor support left these clinics unable to fully utilize essential healthcare services."
+                             image={girlLaptop.src}
+        />
       </Carrousel>
     </div>
   </section>
@@ -121,6 +128,17 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
                     title="Practical Solutions for Empowering Rural Communities"/>
     </div>
     <OpportunitiesGrid/>
+  </section>
+
+  <section class={`${commonStyles.paddedSection} ${styles.resourcesSection}`}>
+    <div class={styles.resourcesHeroContainer}>
+      <HeroWithText head="Resources"
+                    title="Tools to Help the Communities"
+                    content="We've created a suite of tools to help communities understand their broadband experience and take actionable steps toward improving it."
+      />
+      <PrimaryButton href="/resources">Explore Resources</PrimaryButton>
+    </div>
+    <HomepageExpansibleRows client:only="react"/>
   </section>
 </BaseLayout>
 

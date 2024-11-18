@@ -1,0 +1,78 @@
+---
+import styles from './partner_logo_carrousel.module.css';
+
+import anthc from '../../assets/logos/anthc.webp';
+import cmu from '../../assets/logos/cmu.webp';
+import rtec from '../../assets/logos/rtec.webp';
+import tthusc from '../../assets/logos/tthusc.webp';
+import wvpca from '../../assets/logos/wvpca.webp';
+---
+
+<div class={styles.scroller}>
+  <ul class={styles.scrollerInner}>
+    <li>
+      <img src={anthc.src}
+        alt="Alaska Native Tribal Health Consortium"
+        class={styles.logo}
+        height="38"
+      />
+    </li>
+    <li>
+      <img src={cmu.src}
+        alt="Central Michigan University"
+        class={styles.logo}
+        height="38"
+      />
+    </li>
+    <li>
+      <img src={rtec.src}
+        alt="Rural Telecommunications Congress"
+        class={styles.logo}
+        height="38"
+      />
+    </li>
+    <li>
+      <img src={tthusc.src}
+        alt="Texas Tech University Health Sciences Center"
+        class={styles.logo}
+        height="38"
+      />
+    </li>
+    <li>
+      <img src={wvpca.src}
+        alt="West Virginia Primary Care Association"
+        class={styles.logo}
+        height="38"
+      />
+    </li>
+  </ul>
+</div>
+
+<script>
+  import styles from './partner_logo_carrousel.module.css';
+  
+  window.addEventListener('resize', duplicateLogosIfNeeded);
+  
+  function duplicateLogosIfNeeded() {
+    const currentWidth = window.innerWidth;
+    const scrollerInner = document.querySelector(`.${styles.scrollerInner}`)!;
+    const items = Array.from(scrollerInner.children);
+    if(currentWidth < 1024) {
+      if(items.length > 5) return;
+      items.forEach((item) => {
+        const clone = item.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        scrollerInner.appendChild(clone);
+      });
+    } else {
+      items.forEach((item) => {
+        if(item.getAttribute('aria-hidden')) {
+          scrollerInner.removeChild(item);
+        }
+      });
+    }
+  }
+  
+  duplicateLogosIfNeeded();
+  
+</script>

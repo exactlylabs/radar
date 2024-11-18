@@ -5,8 +5,8 @@
   position: relative;
 }
 
-@media (min-width: 1300px) {
+@media (max-width: 1250px) {
   .paddedSection {
-    padding-inline: 0;
+    max-width: calc(100vw - 4rem);
   }
 }

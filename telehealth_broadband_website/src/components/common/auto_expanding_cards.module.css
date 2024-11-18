@@ -22,6 +22,12 @@
   max-height: 335px;
 }
 
+@media (max-width: 768px) {
+  .mainContainer {
+    display: none;
+  }
+}
+
 /* Doing manual template change so we can apply a transition */
 .mainContainer:has(.card[data-open="true"][data-index="0"]) {
   grid-template-columns: 2fr 1fr 1fr;

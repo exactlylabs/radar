@@ -10,6 +10,15 @@
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .card {
+    width: 276px;
+    height: 176px;
+    background-size: 200%;
+    scroll-padding-inline-start: 2rem;
+  }
+}
+
 .gradient {
   width: 100%;
   height: 100%;
@@ -34,6 +43,14 @@
   color: white;
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.375rem;
+    letter-spacing: -0.44px;
+    max-width: unset;
+  }
 }
 
 .buttonContainer {

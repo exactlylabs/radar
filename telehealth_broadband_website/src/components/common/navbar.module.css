@@ -32,3 +32,9 @@ li > a {
   text-underline: none;
   font-variation-settings: 'wght' 600;
 }
+
+@media (max-width: 768px) {
+  .links {
+    display: none;
+  }
+}

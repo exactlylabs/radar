@@ -1,16 +1,22 @@
 ---
 import styles from './homepage_stories_card.module.css';
 import HeroWithText from "../common/HeroWithText.astro";
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 
 const { head, title, content, image } = Astro.props;
 ---
 
-<div class={styles.card} data-carrousel-card>
-  <div>
+<div class={styles.card}
+  style={`background-image: url(${image})`}
+  data-carrousel-card
+>
+  <div class={styles.gradient}></div>
+  <div class={styles.heroContainer}>
     <HeroWithText head={head}
       title={title}
       content={content}
       inCard
     />
   </div>
+  <ReadMoreButton href="/stories"/>
 </div>

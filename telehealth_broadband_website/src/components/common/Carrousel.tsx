@@ -4,6 +4,7 @@ import styles from './carrousel.module.css';
 interface CarrouselProps {
   children: ReactElement[];
   itemWidth?: number; // in pixels, really useful to send over in order to make the scroll smooth
+  smallItemWidth?: number; // in pixels, really useful to send over in order to make the scroll smooth
   arrowLess?: boolean;
   fullWidth?: boolean;
 }
@@ -62,11 +63,12 @@ const arrowWhite = () => (
  * horizontally padded container, so it can reach both ends of the screen.
  * @param children
  * @param itemWidth
+ * @param smallItemWidth
  * @param arrowLess
  * @param fullWidth
  * @constructor
  */
-export default function Carrousel({children, itemWidth, arrowLess, fullWidth}: CarrouselProps) {
+export default function Carrousel({children, itemWidth, smallItemWidth, arrowLess, fullWidth}: CarrouselProps) {
   
   const container = useRef<HTMLDivElement>(null);
   const carrousel = useRef<HTMLDivElement>(null);
@@ -75,9 +77,13 @@ export default function Carrousel({children, itemWidth, arrowLess, fullWidth}: C
   const [currentFirstElementIndex, setCurrentFirstElementIndex] = useState(0);
   const [isDisabledNext, setIsDisabledNext] = useState(false);
   
+  let isSmallScreen = window.innerWidth < 768;
+  
   useEffect(() => {
     const breakParentPadding = () => {
       if (!container.current || !carrousel.current || !itemContainer.current) return;
+      isSmallScreen = window.innerWidth < 768;
+      if(isSmallScreen) return;
       const {left} = container.current.getBoundingClientRect();
       carrousel.current.style.marginLeft = `-${left}px`;
       carrousel.current.style.paddingLeft = `${left}px`;
@@ -93,12 +99,12 @@ export default function Carrousel({children, itemWidth, arrowLess, fullWidth}: C
     }
   }, []);
   
-  const getItemWidth = () => {
+  const getItemWidth = (): number => {
     if(fullWidth) {
       const cards = cardSet.current!.querySelectorAll('[data-carrousel-card]');
       return cards[0].getBoundingClientRect().width;
     }
-    return itemWidth || 300;
+    return (isSmallScreen ? smallItemWidth : itemWidth) || 300;
   }
   
   const updateIndexBasedOnScroll = () => {
