@@ -54,7 +54,7 @@ scheduler.every '1h', overlap: false do
     Location.refresh_outdated_data_usage!
     Client.refresh_outdated_data_usage!
     MetricsProjectionJob.perform_later
-    # RefreshMaterializedViewsJob.perform_later
+    RefreshMaterializedViewsJob.perform_later
   rescue => e
     Sentry.capture_exception(e)
     raise e
