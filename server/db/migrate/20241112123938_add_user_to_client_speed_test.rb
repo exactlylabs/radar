@@ -1,6 +1,6 @@
 class AddUserToClientSpeedTest < ActiveRecord::Migration[6.1]
   def change
-    add_reference :client_speed_tests, :user, foreign_key: true
+    add_reference :client_speed_tests, :mobile_user_device, foreign_key: true
 
     change_table :mobile_scan_networks do |t|
       t.string :state
