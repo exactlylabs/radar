@@ -1,8 +1,7 @@
 module MobileApi::V1
   class NetworksController < ApiController
-    include VectorTiles
-
     before_action :set_network, only: [:show]
+    before_action :validate_explore_params, only: [:carriers, :tiles]
 
     def index
       render_paginated_response(networks) { |item| serialize_mobile_scan_network(item) }
@@ -21,30 +20,14 @@ module MobileApi::V1
           error: "bbox argument must be an array of size 4 [x_0, y_0, x_1, y_1]",
           error_code: "invalid"
         }, status: :unprocessable_entity
-
-      elsif bbox.present?
-        sql_params.merge!({
-          bbox_x_0: params[:bbox][0],
-          bbox_y_0: params[:bbox][1],
-          bbox_x_1: params[:bbox][2],
-          bbox_y_1: params[:bbox][3]
-        })
       end
 
-      sql = %{
-        SELECT
-          name
-        FROM mobile_scan_networks
-        WHERE
-            network_type = 'cell'
-            #{'AND lonlat::geometry && ST_MakeEnvelope(:bbox_x_0, :bbox_y_0, :bbox_x_1, :bbox_y_1, 4326)' if bbox.present?}
-        GROUP BY name
-        ORDER BY name
-      }
+      networks = self.explore_networks.cell
+      if bbox.present?
+        networks = networks.within_box(*bbox)
+      end
 
-      carriers = ActiveRecord::Base.connection.execute(
-        ActiveRecord::Base.sanitize_sql([sql, sql_params])
-      )
+      carriers = networks.pluck(:name).map { |n| {name: n} }
 
       render json: {items: carriers}, status: 200
     end
@@ -53,32 +36,12 @@ module MobileApi::V1
       x = params[:x].to_i
       y = params[:y].to_i
       z = params[:z].to_i
-      sql = %{
-        WITH tile_data AS (
-          SELECT
-            mobile_scan_networks.id,
-            network_type,
-            network_id,
-            name,
-            cell_network_type,
-            cell_network_data_type,
-            wifi_security,
-            ST_AsMVTGeom(
-              ST_Transform(lonlat::geometry, 3857),
-              ST_TileEnvelope(:z, :x, :y), -- bounds
-              4096 -- extent
-            ) as "geom"
-          FROM mobile_scan_networks
-          WHERE
-            CAST(mobile_scan_networks.lonlat as geometry) && ST_Transform(ST_TileEnvelope(:z, :x, :y), 4326)
-        )
 
-        SELECT ST_AsMVT(tile_data.*, 'networks', 4096, 'geom') as mvt
-        FROM tile_data
-      }
-      sql = ActiveRecord::Base.sanitize_sql([sql, {z: params[:z], x: params[:x], y: params[:y]}])
 
-      @tiles = get_vector_tile(Namespaces::NETWORKS, sql)
+      @tiles = self.explore_networks.select(
+        :id, :network_type, :network_id, :name, :cell_network_type, :cell_network_data_type, :wifi_security
+      ).to_vector_tile(z, x, y)
+
       response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
       response.headers['Content-Length'] = @tiles&.length&.to_s || '0'
       send_data @tiles, type: 'application/vnd.mapbox-vector-tile', disposition: 'inline'
@@ -120,6 +83,47 @@ module MobileApi::V1
         @network = networks.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         return render_not_found
+      end
+    end
+
+    def explore_networks
+      network_types = []
+      network_types << :wifi if explore_filters[:wifi].to_s == "true"
+      network_types << :cell if explore_filters[:cell].to_s == "true"
+      networks = MobileScanNetwork.where(network_type: network_types)
+      unless explore_filters[:global].to_s == "true"
+        networks = networks.from_user(current_user)
+      end
+      if explore_filters[:wifi_security_types].present?
+        networks = networks.where(wifi_security: explore_filters[:wifi_security_types])
+      end
+      if explore_filters[:cell_carrier_name].present?
+        networks = networks.where(name: explore_filters[:cell_carrier_name])
+      end
+      if explore_filters[:cell_network_types].present?
+        networks = networks.where(cell_network_type: explore_filters[:cell_network_types])
+      end
+      if explore_filters[:cell_network_data_types].present?
+        networks = networks.where(cell_network_data_type: explore_filters[:cell_network_data_types])
+      end
+
+      return networks
+    end
+
+    def explore_filters(*extra_filters)
+      params.with_defaults(
+        global: true,
+        wifi: true,
+        cell: true
+      )
+    end
+
+    def validate_explore_params
+      errors = {}
+
+      if errors.present?
+        render json: {errors: errors, error_code: 'invalid'}, status: 422
+        return
       end
     end
 

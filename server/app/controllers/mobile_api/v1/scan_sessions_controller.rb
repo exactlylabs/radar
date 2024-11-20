@@ -1,6 +1,5 @@
 module MobileApi::V1
   class ScanSessionsController < ApiController
-    include VectorTiles
     before_action :set_scan_session, except: [:index, :create]
 
     def index
@@ -22,7 +21,6 @@ module MobileApi::V1
     def new_post
       pkg = ScanPackagePb::ScanPackage.decode(request.body.read)
       network_measurements = split_measurements_by_network(pkg)
-      new_networks = []
 
       (pkg.access_points.to_a + pkg.cells.to_a).each do |obj|
         network_type = obj.is_a?(ScanPackagePb::AccessPoint) ? :wifi : :cell
@@ -40,7 +38,6 @@ module MobileApi::V1
             found_by_session: @scan_session,
             lonlat: "POINT(#{network_post_data[:longitude]} #{network_post_data[:latitude]})"
           )
-          new_networks << network
           is_new = true
         end
 
@@ -77,11 +74,6 @@ module MobileApi::V1
             accuracy_after: measurement.accuracy_after,
           )
         end
-      end
-
-      new_networks.each do |network|
-        next unless network.lonlat.present?
-        self.invalidate_cache(Namespaces::NETWORKS, network.lonlat.latitude, network.lonlat.longitude)
       end
 
       head(204)
