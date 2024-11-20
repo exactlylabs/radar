@@ -8,6 +8,7 @@
   position: relative;
   padding: 2rem;
   box-sizing: border-box;
+  scroll-snap-align: center;
 }
 
 @media (max-width: 768px) {

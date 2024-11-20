@@ -38,7 +38,7 @@
     gap: .75rem;
   }
 
-  .topRow:has(.head) {
+  .contentContainer[data-open="true"] > .topRow:has(.head) {
     align-items: flex-start;
     justify-content: flex-start;
     gap: .75rem;

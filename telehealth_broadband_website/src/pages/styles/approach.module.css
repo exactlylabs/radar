@@ -1,0 +1,232 @@
+.heroSection {
+  width: 100%;
+  text-align: center;
+  max-width: 668px;
+  margin-inline: auto;
+  box-sizing: border-box;
+  padding-top: 8.75rem;
+  padding-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    max-width: calc(100% - 3rem);
+    padding-top: 2.5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+.pilotProgramSection {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+  padding-bottom: 7.5rem;
+}
+
+@media (max-width: 768px) {
+  .pilotProgramSection {
+    flex-direction: column;
+    gap: 3rem;
+    padding-bottom: 5.5rem;
+    justify-content: center;
+  }
+}
+
+.pilotProgramSection > img {
+  margin-top: -100px;
+  width: 50%;
+  height: auto;
+  min-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .pilotProgramSection > img {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 500px) {
+  .pilotProgramSection > img {
+    width: 100vw;
+    margin-left: -2rem;
+  }
+}
+
+.pilotHeroContainer {
+  max-width: 608px;
+  min-width: 375px;
+}
+
+@media (max-width: 768px) {
+  .pilotHeroContainer {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+.dataCollectionSection {
+  padding-bottom: 7rem;
+}
+
+@media (max-width: 768px) {
+  .dataCollectionSection {
+    padding-bottom: 5.5rem;
+  }
+}
+
+.dataCollectionHeroContainer {
+  max-width: 608px;
+  text-align: center;
+  margin: 0 auto;
+  padding-bottom: 5rem;
+}
+
+.projectMetricsSection {
+  width: 100%;
+  padding-block: 6rem;
+  padding-inline: 2rem;
+  background: linear-gradient(
+    180deg,
+    rgba(75, 123, 229, 0.1) 0%,
+    rgba(75, 123, 229, 0) 100%
+  );
+}
+
+@media (max-width: 768px) {
+  .projectMetricsSection {
+    padding-block: 3.5rem;
+  }
+}
+
+.projectMetricsContent {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.projectMetricsHeroContainer {
+  max-width: 608px;
+  text-align: left;
+  padding-bottom: 3.5rem;
+}
+
+.enablingCommunitiesSection {
+  padding-top: 4.5rem;
+  padding-bottom: 6.5rem;
+}
+
+.enablingCommunitiesHeroContainer {
+  max-width: 640px;
+  text-align: center;
+  margin: 0 auto;
+  padding-bottom: 3.5rem;
+}
+
+@media (max-width: 768px) {
+  .enablingCommunitiesHeroContainer {
+    text-align: left;
+    margin: 0;
+    max-width: calc(100% - 3rem);
+  }
+}
+
+.projectLeadershipSection {
+  padding-top: 6rem;
+  padding-bottom: 7.5rem;
+  background: linear-gradient(
+      180deg,
+      rgba(75, 123, 229, 0.1) 0%,
+      rgba(75, 123, 229, 0) 100%
+  );
+  width: 100%;
+  padding-inline: 2rem;
+  position: relative;
+  overflow: clip;
+}
+
+@media (max-width: 768px) {
+  .projectLeadershipSection {
+    padding: 3.5rem 1.5rem 5.5rem;
+  }
+}
+
+.projectLeadershipContent {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.projectLeadershipHeroContainer {
+  max-width: 608px;
+  text-align: left;
+  padding-bottom: 4rem;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .projectLeadershipHeroContainer {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+.communityLeadPartnersHero {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-block: 7.5rem;
+}
+
+@media (max-width: 768px) {
+  .communityLeadPartnersHero {
+    flex-direction: column;
+    gap: 3rem;
+    padding: 5.5rem 0 3rem;
+  }
+}
+
+.communityLeadPartnersHeroContainer {
+  max-width: 608px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .communityLeadPartnersHeroContainer {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+.communityLeadPartnersHeroImage {
+  width: 502px;
+  height: 296px;
+  min-width: 50%;
+  border-radius: 6px;
+  background-size: 250%;
+  background-position: 40% 40%;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+  .communityLeadPartnersHeroImage {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 600px;
+  }
+}
+
+.projectLeadershipLight {
+  position: absolute;
+  top: -350px;
+  right: -130%;
+  z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .projectLeadershipLight {
+    top: -350px;
+    right: -75%;
+  }
+}
