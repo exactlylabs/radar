@@ -30,6 +30,7 @@ namespace :dev do
     end
 
     MobileScanNetwork.insert_all!(networks) unless networks.empty?
-    VectorTiles.invalidate_all_cache!(VectorTiles::Namespaces::NETWORKS)
+    scan.mobile_scan_networks << MobileScanNetwork.all unless networks.empty?
+    MobileScanNetwork.invalidate_all_vt_cache!
   end
 end
