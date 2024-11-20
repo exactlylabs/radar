@@ -62,7 +62,7 @@ class ActiveSupport::TestCase
   end
 
   def scan_session(m_user)
-    MobileScanSession.create(mobile_user_device: m_user)
+    MobileScanSession.create!(mobile_user_device: m_user)
   end
 
   def verification_code(email, m_user: nil, device_id: nil, reason: :new_token)

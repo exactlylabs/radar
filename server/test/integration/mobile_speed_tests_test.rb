@@ -26,9 +26,9 @@ class MobileSpeedTestsTest < ActionDispatch::IntegrationTest
         tested_at: tested_at,
         longitude: -120,
         latitude: 30,
+        mobile_scan_session_id: scan.id,
         result: f
       }
-
       assert_enqueued_jobs 1, only: ProcessSpeedTestJob do
         mobile_post(m_user, "/mobile_api/v1/speed_tests", params: data)
       end
@@ -37,7 +37,8 @@ class MobileSpeedTestsTest < ActionDispatch::IntegrationTest
     assert_response :created
     t = ClientSpeedTest.find(@response.parsed_body["id"])
     assert t.result.attached?
-    assert_equal m_user.user, t.user
+    assert_equal t.mobile_scan_session, scan
+    assert_equal t.mobile_user_device, m_user
   end
 
   test "when isps action is called, return a list of all isps with tests" do
@@ -118,7 +119,7 @@ class MobileSpeedTestsTest < ActionDispatch::IntegrationTest
 
     mobile_get(m_user, "/mobile_api/v1/speed_tests/tiles/0/0/0")
 
-    keys = Rails.cache.delete_matched("/mvt/speed_tests/0/0/0/*")
+    keys = Rails.cache.delete_matched("/mvt/ClientSpeedTest/0/0/0/*")
     assert_equal 1, keys.length
   end
 end
