@@ -42,11 +42,11 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
     scan = scan_session(m_user)
 
     net1 = MobileScanNetwork.create!(
-      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(45 -120)",
+      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
     net2 = MobileScanNetwork.create!(
-      network_type: :wifi, network_id: "Test231", name: "Test2", lonlat: "POINT(45 -120)",
+      network_type: :wifi, network_id: "Test231", name: "Test2", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
     scan.mobile_scan_networks << [net1, net2]
@@ -66,11 +66,11 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
     scan = scan_session(m_user)
 
     net1 = MobileScanNetwork.create!(
-      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(45 -120)",
+      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
     net2 = MobileScanNetwork.create!(
-      network_type: :wifi, network_id: "Test231", name: "Test2", lonlat: "POINT(45 -120)",
+      network_type: :wifi, network_id: "Test231", name: "Test2", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
 
@@ -87,7 +87,7 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
     scan = scan_session(m_user)
 
     net1 = MobileScanNetwork.create!(
-      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(45 -120)",
+      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
     scan.mobile_scan_networks << net1
@@ -103,7 +103,7 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
     scan = scan_session(m_user)
 
     net1 = MobileScanNetwork.create!(
-      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(45 -120)",
+      network_type: :cell, network_id: "Test123", name: "Test1", lonlat: "POINT(-125 45)",
       found_by_session: scan,
     )
     scan.mobile_scan_networks << net1
@@ -189,7 +189,7 @@ class MobileScanNetworksTest < ActionDispatch::IntegrationTest
 
     mobile_get(m_user, "/mobile_api/v1/networks/tiles/0/0/0")
 
-    keys = Rails.cache.delete_matched("/mvt/networks/0/0/0/*")
+    keys = Rails.cache.delete_matched("/mvt/MobileScanNetwork/0/0/0/*")
     assert_equal 1, keys.length
   end
 end
