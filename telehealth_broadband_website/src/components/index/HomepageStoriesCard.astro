@@ -6,7 +6,7 @@ import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 const { head, title, content, image } = Astro.props;
 ---
 
-<div class={styles.card}
+<li class={styles.card}
   style={`background-image: url(${image})`}
   data-carrousel-card
 >
@@ -19,4 +19,4 @@ const { head, title, content, image } = Astro.props;
     />
   </div>
   <ReadMoreButton href="/stories"/>
-</div>
+</li>
