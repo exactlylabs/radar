@@ -7,7 +7,6 @@ interface CarrouselProps {
   smallItemWidth?: number; // in pixels, really useful to send over in order to make the scroll smooth
   arrowLess?: boolean;
   fullWidth?: boolean;
-  alignmentRefId?: string;
 }
 
 const arrowBlack = () => (
@@ -67,14 +66,14 @@ const arrowWhite = () => (
  * @param smallItemWidth
  * @param arrowLess
  * @param fullWidth
- * @param alignmentRefId
  * @constructor
  */
-export default function Carrousel({children, itemWidth, smallItemWidth, arrowLess, fullWidth, alignmentRefId}: CarrouselProps) {
+export default function Carrousel({children, itemWidth, smallItemWidth, arrowLess, fullWidth}: CarrouselProps) {
   
   const container = useRef<HTMLDivElement>(null);
   const carrousel = useRef<HTMLDivElement>(null);
-  const cardSet = useRef<HTMLUListElement>(null);
+  const itemContainer = useRef<HTMLDivElement>(null);
+  const cardSet = useRef<HTMLDivElement>(null);
   const [currentFirstElementIndex, setCurrentFirstElementIndex] = useState(0);
   const [isDisabledNext, setIsDisabledNext] = useState(false);
   
@@ -82,27 +81,18 @@ export default function Carrousel({children, itemWidth, smallItemWidth, arrowLes
   
   useEffect(() => {
     const breakParentPadding = () => {
-      if (!cardSet.current || !container.current || !carrousel.current) return;
+      if (!container.current || !carrousel.current || !itemContainer.current) return;
       isSmallScreen = window.innerWidth < 768;
       if(isSmallScreen) return;
-      if(alignmentRefId) {
-        const alignmentRef = document.getElementById(alignmentRefId);
-        if(alignmentRef) {
-          const {left} = alignmentRef.getBoundingClientRect();
-          cardSet.current.style.paddingInline = `${left}px`;
-          return;
-        }
-      } else {
-        const {left} = container.current.getBoundingClientRect();
-        carrousel.current.style.marginLeft = `-${left}px`;
-        carrousel.current.style.paddingLeft = `${left}px`;
-      }
+      const {left} = container.current.getBoundingClientRect();
+      carrousel.current.style.marginLeft = `-${left}px`;
+      carrousel.current.style.paddingLeft = `${left}px`;
     }
     
     breakParentPadding();
     
     window.addEventListener('resize', breakParentPadding);
-    carrousel.current!.addEventListener('scrollend', updateIndexBasedOnScroll);
+    carrousel.current!.addEventListener('scroll', updateIndexBasedOnScroll);
     return () => {
       window.removeEventListener('resize', breakParentPadding);
       carrousel.current!.removeEventListener('scroll', updateIndexBasedOnScroll);
@@ -110,20 +100,19 @@ export default function Carrousel({children, itemWidth, smallItemWidth, arrowLes
   }, []);
   
   const getItemWidth = (): number => {
-    const cards = cardSet.current!.querySelectorAll('astro-slot > li');
-    return cards[0].getBoundingClientRect().width;
+    if(fullWidth) {
+      const cards = cardSet.current!.querySelectorAll('[data-carrousel-card]');
+      return cards[0].getBoundingClientRect().width;
+    }
+    return (isSmallScreen ? smallItemWidth : itemWidth) || 300;
   }
   
   const updateIndexBasedOnScroll = () => {
     if(!carrousel.current) return;
-    let firstElementIndex = Math.floor(carrousel.current.scrollLeft / getItemWidth());
-    const remainingDistanceToEnd = carrousel.current!.scrollWidth - carrousel.current!.scrollLeft - carrousel.current!.clientWidth;
-    const remainingDistanceToStart = carrousel.current!.scrollLeft;
-    
-    if(remainingDistanceToStart !== 0 && firstElementIndex === 0) firstElementIndex = 1;
-    
+    const firstElementIndex = Math.floor(carrousel.current.scrollLeft / getItemWidth());
     setCurrentFirstElementIndex(firstElementIndex);
-    if(remainingDistanceToEnd <= 1) {
+    const remainingDistance = carrousel.current!.scrollWidth - carrousel.current!.scrollLeft - carrousel.current!.clientWidth;
+    if(remainingDistance <= 1) {
       setIsDisabledNext(true);
     } else {
       setIsDisabledNext(false);
@@ -138,16 +127,17 @@ export default function Carrousel({children, itemWidth, smallItemWidth, arrowLes
   }
   
   const moveToPrevious = () => {
-    const scrollDistance = Math.min(getItemWidth(), carrousel.current!.scrollLeft);
-    carrousel.current!.scrollBy({left: -1 * scrollDistance, behavior: 'smooth'});
+    carrousel.current!.scrollBy({left: -getItemWidth(), behavior: 'smooth'});
   }
   
   return (
-    <div id={'scroll-gallery-feature-cards'} style={{width: '100%', margin: '0 auto'}} ref={container}>
+    <div id={'scroll-gallery-feature-cards'} ref={container}>
       <div className={styles.carrousel} ref={carrousel} data-full-width={fullWidth?.toString() ?? 'false'}>
-        <ul className={styles.cardSet} ref={cardSet}>
-          {children}
-        </ul>
+        <div className={styles.itemContainer} ref={itemContainer} data-full-width={fullWidth?.toString() ?? 'false'}>
+          <div className={styles.cardSet} ref={cardSet}>
+            {children}
+          </div>
+        </div>
       </div>
       { !arrowLess &&
         <div className={styles.buttonsContainer}>

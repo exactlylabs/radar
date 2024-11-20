@@ -1,7 +1,10 @@
 .carrousel {
   width: 100%;
   overflow-x: scroll;
+  scroll-snap-type: x mandatory;
   height: max-content;
+  scroll-padding: var(--side-padding);
+  padding-inline: 1px;
 }
 
 @media (max-width: 768px) {
@@ -11,13 +14,26 @@
   }
 }
 
-.cardSet {
-  width: fit-content;
+.itemContainer {
   display: grid;
+  grid-template-rows: repeat(1, auto);
+  grid-template-columns: max-content;
   grid-auto-flow: column;
-  grid-template-columns: unset;
-  grid-auto-columns: 1fr;
   column-gap: 2rem;
+  row-gap: 0;
+  width: fit-content;
+  padding-inline: var(--side-padding);
+  padding-block: 1px;
+}
+
+.cardSet {
+  display: grid;
+  grid-template-rows: repeat(1, auto);
+  grid-template-columns: max-content;
+  grid-auto-flow: column;
+  column-gap: 2rem;
+  row-gap: 0;
+  width: fit-content;
 }
 
 @media (max-width: 1250px) {

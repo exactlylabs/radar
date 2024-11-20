@@ -9,19 +9,11 @@
   gap: 2.25rem;
   position: relative;
   overflow: clip;
-  max-width: var(--max-width);
-  margin-inline: auto;
-}
-
-@media (min-width: 1250px) {
-  .footer {
-    overflow-x: visible;
-  }
 }
 
 @media (min-width: 768px) and (max-width: 1250px) {
   .footer {
-    padding-inline: 3rem;
+    padding-inline: 2rem;
     gap: 2rem;
   }
 }
@@ -115,10 +107,4 @@
   transform: translateX(-50%);
   filter: blur(60px);
   opacity: .6;
-}
-
-@media (min-width: 1250px) {
-  .footerLights {
-    width: calc(var(--max-width) + 5rem);
-  }
 }

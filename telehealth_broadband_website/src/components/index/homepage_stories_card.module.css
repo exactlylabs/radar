@@ -1,11 +1,11 @@
 .card {
-  width: clamp(320px, 100vw, 1250px);
+  width: clamp(320px, 62.5vw, 1036px);
   height: 454px;
   border-radius: 6px;
   backdrop-filter: blur(10px);
   padding: 3rem;
-  background-position: 15% 35%;
-  background-size: 125%;
+  background-position: 15% 55%;
+  background-size: 150%;
   background-repeat: no-repeat;
   background-color: rgb(45, 44, 58);
 }

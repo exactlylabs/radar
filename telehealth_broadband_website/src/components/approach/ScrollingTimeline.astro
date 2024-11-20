@@ -3,7 +3,7 @@ import styles from './scrolling_timeline.module.css';
 import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
 ---
 
-<div class={styles.timelineContainer} data-desktop="true">
+<div class={styles.timelineContainer}>
   <ScrollingTimelineItem
     title='Optimizing Data Collection'
     content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
@@ -22,30 +22,11 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
   <div class={styles.timelineLine}></div>
 </div>
 
-<div class={styles.timelineContainer} data-mobile="true">
-  <ScrollingTimelineItem
-          title='Optimizing Data Collection'
-          content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
-          side='right'
-  />
-  <ScrollingTimelineItem
-          title='Understanding Rural Connectivity'
-          content='Identifying and testing approaches that can reliably assess internet experience, with a focus on replicable strategies for rural connectivity studies.'
-          side='right'
-  />
-  <ScrollingTimelineItem
-          title='Guiding Policy and Funding'
-          content='Using analyzed data to guide policies and funding  that address broadband inequities and enhance telehealth access, supporting federal and state-level decision-makers.'
-          side='right'
-  />
-  <div class={styles.timelineLine}></div>
-</div>
-
 <script>
   import styles from './scrolling_timeline.module.css';
   
-  const containers = document.querySelectorAll(`.${styles.timelineContainer}`);
-  if(containers) {
+  const container = document.querySelector(`.${styles.timelineContainer}`);
+  if(container) {
     const intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry: IntersectionObserverEntry) => {
         if (entry.isIntersecting) {
@@ -64,7 +45,6 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
             rgba(75, 123, 229, 0) 0%,
             rgb(75, 123, 229) ${percentageVisible}%,
             rgba(255, 255, 255, 0.1) ${percentageVisible}%,
-            rgba(255, 255, 255, 0.1) 99%,
             rgba(255, 255, 255, 0) 100%
           )`;
           line.setAttribute('data-visible', percentageVisible.toString());
@@ -74,7 +54,7 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
       rootMargin: '0px 0px -50% 0px',
       threshold: Array.from({length: 101}, (_, i) => i / 100)
     });
-    containers.forEach(container => { intersectionObserver.observe(container); });
+    intersectionObserver.observe(container);
   }
   
   const timelineItems = document.querySelectorAll(`.${styles.timelineItem}`);
@@ -106,11 +86,11 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
     });
     
     timelineItems.forEach((item, index) => {
-      if(index === 0 || index === 3) {
+      if(index === 0) {
         firstObserver.observe(item);
-      } else if(index === 1 || index === 4) {
+      } else if(index === 1) {
         secondObserver.observe(item);
-      } else if(index === 2 || index === 5) {
+      } else if(index === 2) {
         thirdObserver.observe(item);
       }
     });
