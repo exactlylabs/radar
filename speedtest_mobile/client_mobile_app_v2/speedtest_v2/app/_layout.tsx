@@ -2,9 +2,9 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { StatusBar, Text } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -13,27 +13,43 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [loaded, error] = useFonts({
+    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'MulishRegular': require('../assets/fonts/Mulish-Regular.ttf'),
+    'MulishBold': require('../assets/fonts/Mulish-Bold.ttf'),
   });
 
   useEffect(() => {
+    if (error) {
+      console.error('Font loading error:', error);
+      console.error('Font paths:', {
+        spaceMono: '../assets/fonts/SpaceMono-Regular.ttf',
+        mulish: '../assets/fonts/Mulish-VariableFont_wght.ttf'
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      console.log('Fontes carregadas com sucesso');
+      SplashScreen.hideAsync().catch((e: any) => {
+        console.error('Error:', e);
+      });
     }
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    console.log('Aguardando carregamento das fontes...');
+    return <Text>Carregando...</Text>;
   }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <StatusBar barStyle='light-content' />
       <Stack>
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
