@@ -27,6 +27,13 @@
   }
 }
 
+@media (max-width: 768px) {
+  .footer {
+    padding-inline: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
 .topRow {
   width: 100%;
   display: flex;

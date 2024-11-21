@@ -7,18 +7,40 @@
   transition: background-size 0.3s ease, background-position 0.3s ease;
   margin-block: 1rem;
   cursor: pointer;
-  background-position: 50% 10%;
-  background-size: 225%;
-  background-repeat: no-repeat;
   position: relative;
   z-index: 0;
   overflow: clip;
+  background-position: 50% 10%;
+  background-size: 225%;
+  background-repeat: no-repeat;
 }
 
 .card:hover {
   opacity: 0.8;
   background-size: 230%;
   background-position: 50% 15%;
+}
+
+#pods-modal-trigger {
+  background-position: 20% 40%;
+  background-size: 130%;
+}
+
+.card#pods-modal-trigger:hover {
+  opacity: 0.8;
+  background-size: 135%;
+  background-position: 20% 45%;
+}
+
+#speed-test-modal-trigger {
+  background-position: 20% 40%;
+  background-size: 200%;
+}
+
+.card#speed-test-modal-trigger:hover {
+  opacity: 0.8;
+  background-size: 215%;
+  background-position: 20% 45%;
 }
 
 .gradient {
@@ -40,11 +62,12 @@
   left: 2rem;
   text-align: left;
   z-index: 1;
+  max-width: 260px;
 }
 
 .head {
   font-size: 0.875rem;
-  color: white;
+  color: #C4C8DD;
   letter-spacing: 0.4px;
   line-height: 2.286;
   text-transform: uppercase;

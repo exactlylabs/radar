@@ -1,6 +1,6 @@
 ---
 import '../global.css';
-import styles from './styles/resources.module.css';
+import styles from './styles/_resources.module.css';
 import commonStyles from '../common.module.css';
 
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -10,14 +10,19 @@ import BroadbandModal from "../components/resources/BroadbandModal.astro";
 import ResourceCard from "../components/resources/ResourceCard.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import HeroWithText from "../components/common/HeroWithText.astro";
+import { Image } from 'astro:assets';
 
+import resourcesHeroImage from '../assets/images/resources-hero-image.webp';
+import resourcesVideo from '../assets/videos/resources-video.mp4';
 import broadbandCardImage from '../assets/images/broadband.webp';
 import videoThumbnail from '../assets/images/video-thumbnail.webp';
-import resourcesVideo from '../assets/videos/resources-video.mp4';
+import radarPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
+import broadbandMappingImage from '../assets/images/broadband-mapping-laptop.webp';
+import mobileTestingImage from '../assets/images/mobile-testing.webp';
 ---
 <BaseLayout>
 
-  <section class={commonStyles.paddedSection} id="carrousel-alignment-ref">
+  <section class={commonStyles.paddedSection}>
     <div class={styles.heroSectionContent}>
       <div class={styles.heroSectionHeroContainer}>
         <HeroWithText
@@ -25,11 +30,17 @@ import resourcesVideo from '../assets/videos/resources-video.mp4';
           content="The Telehealth Broadband Program developed innovative tools that empower users to monitor and understand their internet quality. Discover real data showcasing internet performance in your community."
         />
       </div>
+      <Image src={resourcesHeroImage}
+        alt="Resources section hero image"
+        class={styles.heroImage}
+      />
     </div>
   </section>
-
-  <section class={`${commonStyles.paddedSection} ${styles.exploreToolsSection}`}>
-    <h3 class={styles.exploreToolsTitle}>Explore the Tools</h3>
+  
+  <section class={styles.exploreToolsSection}>
+    <div class={commonStyles.paddedSection} id="carrousel-alignment-ref">
+      <h3 class={styles.exploreToolsTitle}>Explore the Tools</h3>
+    </div>
     <Carrousel client:only="react" itemWidth={356} alignmentRefId={'carrousel-alignment-ref'}>
       <ResourceCard head="Broadband Mapping"
                     title="Explore Broadband Nationwide"
@@ -37,23 +48,23 @@ import resourcesVideo from '../assets/videos/resources-video.mp4';
                     modalId="broadband-modal"
                     backgroundImage={broadbandCardImage.src}
       />
-      <ResourceCard head="Broadband Mapping"
-                    title="Explore Broadband Nationwide"
-                    triggerId="broadband-modal-trigger"
-                    modalId="broadband-modal"
-                    backgroundImage={broadbandCardImage.src}
+      <ResourceCard head="Radar Pods"
+                    title="Real-Time Internet Monitoring"
+                    triggerId="pods-modal-trigger"
+                    modalId="pods-modal"
+                    backgroundImage={radarPodsImage.src}
       />
-      <ResourceCard head="Broadband Mapping"
-                    title="Explore Broadband Nationwide"
-                    triggerId="broadband-modal-trigger"
-                    modalId="broadband-modal"
-                    backgroundImage={broadbandCardImage.src}
+      <ResourceCard head="Radar Speed"
+                    title="Web-Based Speed Testing"
+                    triggerId="speed-test-modal-trigger"
+                    modalId="speed-test-modal"
+                    backgroundImage={broadbandMappingImage.src}
       />
-      <ResourceCard head="Broadband Mapping"
-                    title="Explore Broadband Nationwide"
-                    triggerId="broadband-modal-trigger"
-                    modalId="broadband-modal"
-                    backgroundImage={broadbandCardImage.src}
+      <ResourceCard head="Mobile Testing"
+                    title="On-the-Go Speed Testing"
+                    triggerId="mobile-testing-trigger"
+                    modalId="mobile-testing-modal"
+                    backgroundImage={mobileTestingImage.src}
       />
     </Carrousel>
   </section>
@@ -81,32 +92,49 @@ import resourcesVideo from '../assets/videos/resources-video.mp4';
   <Modal id={'broadband-modal'} isOpen={false}>
     <BroadbandModal modalId={'broadband-modal'}/>
   </Modal>
+  <Modal id={'pods-modal'} isOpen={false}>
+    <BroadbandModal modalId={'pods-modal'}/>
+  </Modal>
+  <Modal id={'speed-test-modal'} isOpen={false}>
+    <BroadbandModal modalId={'speed-test-modal'}/>
+  </Modal>
+  <Modal id={'mobile-testing-modal'} isOpen={false}>
+    <BroadbandModal modalId={'mobile-testing-modal'}/>
+  </Modal>
 </BaseLayout>
 
 <script>
-  let triggers: HTMLElement[] = [];
-  let modals : HTMLElement[] = [];
-  
-  ['broadband-modal-trigger'].forEach(id => {
-    const trigger = document.getElementById(id);
-    if(trigger) {
-      triggers.push(trigger);
-    }
-  });
-  
-  ['broadband-modal'].forEach(id => {
-    const modal = document.getElementById(id);
-    if(modal) {
-      modals.push(modal);
-    }
-  });
-  
-  triggers.forEach((trigger, index) => {
-    const modal = modals[index];
-    if(trigger && modal) {
-      trigger.addEventListener('click', () => {
+  function attachModals(carrousel: HTMLElement) {
+    let modals : HTMLElement[] = [];
+    const carrouselListItems = carrousel.querySelectorAll('li');
+    carrouselListItems.forEach(li => {
+      const modal = document.getElementById(li.dataset.modalId!);
+      if(modal) {
+        modals.push(modal);
+      }
+    });
+    
+    carrouselListItems.forEach((li, index) => {
+      const modal = modals[index];
+      li.addEventListener('click', () => {
         modal.dataset.isOpen = 'true';
       });
-    }
+    });
+  }
+
+  // Bringing in a MutationObserver here because as the Carrousel component is client-side rendered,
+  // the modals are not present in the DOM when the script is executed. So, by "listening" to DOM mutations
+  // I can trigger the required script at the exact moment the modals are added to the DOM.
+  const mutationObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if(mutation.addedNodes.length === 1 && mutation.addedNodes[0].id === 'scroll-gallery-feature-cards') {
+        attachModals(mutation.addedNodes[0] as HTMLElement);
+      }
+    });
+  });
+  
+  mutationObserver.observe(document, {
+    childList: true,
+    subtree: true
   });
 </script>

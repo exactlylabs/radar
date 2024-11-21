@@ -2,16 +2,20 @@
 import styles from './resource_card.module.css';
 import plus from '../../assets/icons/plus.svg';
 
-const { head, title, triggerId, backgroundImage } = Astro.props;
+const { head, title, triggerId, modalId, backgroundImage } = Astro.props;
 ---
 
-<li class={styles.card} id={triggerId} style={`background-image: url(${backgroundImage});`}>
+<li class={styles.card}
+  id={styles[triggerId]}
+  style={`background-image: url(${backgroundImage});`}
+  data-modal-id={modalId}
+>
   <div class={styles.gradient}></div>
   <div class={styles.textContainer}>
     <span class={styles.head}>{head}</span>
     <h4 class={styles.title}>{title}</h4>
   </div>
   <div class={styles.openButton}>
-    <img style="transform: rotate(45deg)" src={plus.src} width="16" height="16" alt="open icon"/>
+    <img src={plus.src} width="16" height="16" alt="open icon"/>
   </div>
 </li>
