@@ -46,14 +46,14 @@
 }
 
 .summaries {
-  box-sizing: border-box; 
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  align-items: center; 
+  align-items: center;
   justify-content: flex-start;
   padding: 0 1.5rem;
-  border-top: solid 1px rgba(255, 255, 255, 0.1); 
-  border-bottom: solid 1px rgba(255, 255, 255, 0.1); 
+  border-top: solid 1px rgba(255, 255, 255, 0.1);
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
   gap: 2.5rem;
   height: 300px;
 }
@@ -112,19 +112,19 @@
   .opportunityContainer {
     max-width: none;
   }
-  
+
 }
 
 .bulletPoints {
-  margin-top: 3.5rem; 
-  border-top: solid 1px rgba(255, 255, 255, 0.1); 
-  border-bottom: solid 1px rgba(255, 255, 255, 0.1); 
+  margin-top: 3.5rem;
+  border-top: solid 1px rgba(255, 255, 255, 0.1);
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
   width: 36.0625rem;
-  padding: 2rem 1.5rem; 
-  box-sizing: border-box; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: flex-start; 
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: flex-start;
 }
 
