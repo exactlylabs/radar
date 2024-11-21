@@ -1,8 +1,8 @@
 ---
 import styles from './buttons.module.css';
-const { href } = Astro.props;
+const { href, download } = Astro.props;
 ---
 
-<a href={href ?? '#'} class={`${styles.button} ${styles.transparent}`}>
+<a href={href ?? '#'} class={`${styles.button} ${styles.transparent}`} download={download}>
   <slot/>
 </a>

@@ -11,6 +11,7 @@
   overflow: clip;
   max-width: var(--max-width);
   margin-inline: auto;
+  border-top: solid 1px rgba(255, 255, 255, 0.1);
 }
 
 @media (min-width: 1250px) {
@@ -23,12 +24,6 @@
   .footer {
     padding-inline: 3rem;
     gap: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer {
-    border-top: solid 1px rgba(255, 255, 255, 0.1);
   }
 }
 

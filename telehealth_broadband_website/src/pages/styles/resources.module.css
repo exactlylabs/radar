@@ -1,0 +1,50 @@
+.heroSectionContent {
+  width: 100%;
+  padding-block: 8.75rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.heroSectionHeroContainer {
+  max-width: 608px;
+  text-align: left;
+}
+
+.exploreToolsSection {
+  padding-bottom: 5.5rem;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+.exploreToolsTitle {
+  font-size: 2.5rem;
+  text-align: left;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.8px;
+  margin-bottom: 3rem;
+}
+
+.learnMoreSection {
+  padding: 5.625rem 0 7.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.learnMoreHeroContainer {
+  max-width: 608px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+.learnMoreVideo {
+  width: 50%;
+  aspect-ratio: 609 / 343;
+  border-radius: .5rem;
+}

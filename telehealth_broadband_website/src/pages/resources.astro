@@ -1,23 +1,83 @@
 ---
 import '../global.css';
+import styles from './styles/resources.module.css';
+import commonStyles from '../common.module.css';
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Carrousel from '../components/common/Carrousel';
 import Modal from '../components/common/Modal.astro';
 import BroadbandModal from "../components/resources/BroadbandModal.astro";
 import ResourceCard from "../components/resources/ResourceCard.astro";
+import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
+import HeroWithText from "../components/common/HeroWithText.astro";
 
 import broadbandCardImage from '../assets/images/broadband.webp';
+import videoThumbnail from '../assets/images/video-thumbnail.webp';
+import resourcesVideo from '../assets/videos/resources-video.mp4';
 ---
 <BaseLayout>
-  <Carrousel client:load itemWidth={356} arrowLess={true}>
-    <ResourceCard head="Broadband Mapping"
-      title="Explore Broadband Nationwide"
-      triggerId="broadband-modal-trigger"
-      modalId="broadband-modal"
-      backgroundImage={broadbandCardImage.src}
-    />
-  </Carrousel>
-  
+
+  <section class={commonStyles.paddedSection} id="carrousel-alignment-ref">
+    <div class={styles.heroSectionContent}>
+      <div class={styles.heroSectionHeroContainer}>
+        <HeroWithText
+          title="Innovative Tools for Monitoring Internet Connectivity"
+          content="The Telehealth Broadband Program developed innovative tools that empower users to monitor and understand their internet quality. Discover real data showcasing internet performance in your community."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class={`${commonStyles.paddedSection} ${styles.exploreToolsSection}`}>
+    <h3 class={styles.exploreToolsTitle}>Explore the Tools</h3>
+    <Carrousel client:only="react" itemWidth={356} alignmentRefId={'carrousel-alignment-ref'}>
+      <ResourceCard head="Broadband Mapping"
+                    title="Explore Broadband Nationwide"
+                    triggerId="broadband-modal-trigger"
+                    modalId="broadband-modal"
+                    backgroundImage={broadbandCardImage.src}
+      />
+      <ResourceCard head="Broadband Mapping"
+                    title="Explore Broadband Nationwide"
+                    triggerId="broadband-modal-trigger"
+                    modalId="broadband-modal"
+                    backgroundImage={broadbandCardImage.src}
+      />
+      <ResourceCard head="Broadband Mapping"
+                    title="Explore Broadband Nationwide"
+                    triggerId="broadband-modal-trigger"
+                    modalId="broadband-modal"
+                    backgroundImage={broadbandCardImage.src}
+      />
+      <ResourceCard head="Broadband Mapping"
+                    title="Explore Broadband Nationwide"
+                    triggerId="broadband-modal-trigger"
+                    modalId="broadband-modal"
+                    backgroundImage={broadbandCardImage.src}
+      />
+    </Carrousel>
+  </section>
+
+  <section class={`${commonStyles.paddedSection} ${styles.learnMoreSection}`}>
+    <div class={styles.learnMoreHeroContainer}>
+      <HeroWithText head="Learn More"
+        title="Top 10 Reasons Your Internet Falls Short and How to Fix It"
+        content="Watch our video and download our troubleshooting guide to start diagnosing and fixing the most common connectivity issues."
+      />
+      <TransparentSecondaryButton href={resourcesVideo} download>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+          <path fill="white" transform="translate(0.25 0.25)" d="M7.75 0C8.1642132 0 8.5 0.33578643 8.5 0.75L8.5 9.9720001L11.21967 7.2530031C11.485936 6.9867368 11.9026 6.9625306 12.196212 7.1803851L12.28033 7.2530031C12.573223 7.5458965 12.573223 8.0207701 12.28033 8.3136635L8.2803297 12.313663C7.9874368 12.606557 7.5125632 12.606557 7.2196698 12.313663L3.2196698 8.3136635C2.9267766 8.0207701 2.9267766 7.5458965 3.2196698 7.2530031C3.5125632 6.9601102 3.9874368 6.9601102 4.2803302 7.2530031L7 9.9720001L7 0.75C7 0.33578643 7.3357863 0 7.75 0ZM14.75 14C15.164213 14 15.5 14.335787 15.5 14.75C15.5 15.164213 15.164213 15.5 14.75 15.5L0.75 15.5C0.33578643 15.5 0 15.164213 0 14.75C0 14.335787 0.33578643 14 0.75 14L14.75 14Z"/>
+        </svg>
+        Download Our Guide
+      </TransparentSecondaryButton>
+    </div>
+    <video class={styles.learnMoreVideo}
+      src={resourcesVideo}
+      poster={videoThumbnail.src}
+      controls
+    ></video>
+  </section>
+
   <Modal id={'broadband-modal'} isOpen={false}>
     <BroadbandModal modalId={'broadband-modal'}/>
   </Modal>
