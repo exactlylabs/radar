@@ -1,7 +1,5 @@
 .section {
-  margin: 8rem auto;
-  max-width: 1248px;
-  margin-inline: auto;
+  padding: 8rem 0;
 }
 
 .sectionsContainer {
