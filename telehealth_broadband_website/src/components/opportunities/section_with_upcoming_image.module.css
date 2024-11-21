@@ -39,19 +39,19 @@
   object-fit: cover;
 }
 
-.incomingImage[data-image-index="0"] {
+.incomingImage:nth-child(2) {
   object-position: 10%;
 }
 
-.incomingImage[data-image-index="1"] {
+.incomingImage:nth-child(3) {
   object-position: 10%;
 }
 
-.incomingImage[data-image-index="2"] {
+.incomingImage:nth-child(4) {
   object-position: 60%;
 }
 
-.incomingImage[data-image-index="3"] {
+.incomingImage:nth-child(5) {
   object-position: 30%;
 }
 
