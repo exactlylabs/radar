@@ -1,7 +1,7 @@
 .paddedSection {
   width: 100%;
   max-width: var(--max-width);
-  margin: 8rem auto;
+  margin: 0 auto;
   position: relative;
 }
 

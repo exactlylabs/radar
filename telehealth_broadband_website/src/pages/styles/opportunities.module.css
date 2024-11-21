@@ -1,3 +1,9 @@
+.section {
+  margin: 8rem auto;
+  max-width: 1248px;
+  margin-inline: auto;
+}
+
 .sectionsContainer {
   display: flex;
   flex-direction: row;
