@@ -20,6 +20,12 @@
   flex-direction: column;
 }
 
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+}
+
 .iconCircle {
   display: flex;
   align-items: center;

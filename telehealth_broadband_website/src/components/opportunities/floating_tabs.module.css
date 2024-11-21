@@ -2,7 +2,6 @@
   position: sticky;
   top: 0;
   padding: 1rem 0;
-
   width: 100%;
   z-index: 10;
   display: flex;
@@ -23,6 +22,35 @@
   background-color: var(--bg-color);
 }
 
+@media (max-width: 768px) {
+  .staticContainer {
+    position: relative;
+    width: 100vw;
+    padding-inline: 2rem;
+    margin-right: -2rem;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .gradient {
+    position: absolute;
+    z-index: 1;
+    top: 1rem;
+    left: calc(1rem + 2.5rem + 1px);
+    width: 0;
+    height: 0;
+    background: linear-gradient(
+      90deg,
+      var(--bg-color) 0%,
+      transparent 100%)
+  }
+
+  .container:has(#top-scroller:not([hidden]))>.gradient {
+    width: 0.75rem;
+    height: 2.5rem;
+  }
+}
+
 .tab {
   height: 2.5rem;
   text-transform: uppercase;
@@ -33,15 +61,15 @@
   box-sizing: border-box;
   padding: .5rem .75rem;
   border-radius: .5rem;
-  outline: solid 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-decoration: none;
   letter-spacing: 0.88px;
   font-size: .875rem;
   font-variation-settings: 'wght' 700;
   color: #C4C8DD;
-  border: none;
   background-color: transparent;
   cursor: pointer;
+  text-wrap: nowrap;
 }
 
 .tab:hover {
@@ -55,23 +83,29 @@
 }
 
 .divider {
-  height: 28px;
+  height: 1.75rem;
   width: 1px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.tab:has(svg) > * {
+@media (max-width: 768px) {
+  .divider {
+    display: none;
+  }
+}
+
+.tab:has(svg)>* {
   pointer-events: none;
 }
 
 [hidden],
-[hidden] > * {
+[hidden]>* {
   display: none;
   opacity: 0;
 }
 
 [data-hide-off-scroll],
-[data-hide-off-scroll] > * {
+[data-hide-off-scroll]>* {
   transition: display 0.5s, opacity 0.5s;
   transition-behavior: allow-discrete;
   animation: fade-in 2s;
@@ -81,6 +115,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
