@@ -7,11 +7,7 @@ export default function HomepageApproachExpansibleRows() {
   const [currentOpenIndex, setCurrentOpenIndex] = useState<number | null>(null);
   
   const handleToggle = (index: number) => {
-    if (currentOpenIndex === index) {
-      setCurrentOpenIndex(null);
-    } else {
-      setCurrentOpenIndex(index);
-    }
+    setCurrentOpenIndex((prev) => prev === index ? null : index);
   }
   
   return (
