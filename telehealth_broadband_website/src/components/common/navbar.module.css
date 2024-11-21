@@ -15,6 +15,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .nav > ul {
+    display: none;
+  }
+}
+
 .links {
   display: flex;
   flex-direction: row;
@@ -29,7 +35,6 @@ li {
 
 li > a {
   text-decoration: none;
-  text-underline: none;
   font-variation-settings: 'wght' 600;
 }
 

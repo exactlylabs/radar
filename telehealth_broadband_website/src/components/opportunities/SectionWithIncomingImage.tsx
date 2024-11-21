@@ -16,13 +16,14 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
     contentIds.forEach((contentId: string, index: number) => {
       const intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
         entries.forEach((entry: IntersectionObserverEntry) => {
-          const opacity = Math.max(0.3, entry.intersectionRatio);
-          console.log("intersectionRatio", entry.intersectionRatio);
-          (entry.target as HTMLElement).style.opacity = `${opacity}`;
-          
-          if(opacity >= 0.45) {
-            setCurrentSectionInView(index);
+          let opacity = 1;
+          if (window.innerWidth > 768) {
+            opacity = Math.max(0.3, entry.intersectionRatio);
+            if(opacity >= 0.45) {
+              setCurrentSectionInView(index);
+            }
           }
+          (entry.target as HTMLElement).style.opacity = `${opacity}`;
         });
       }, {
         rootMargin: '-120px',
@@ -37,10 +38,10 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
       {children}
       {imageSrcs.map((src, index) => (
         <img src={src}
-              width="366"
               alt="section image"
               className={styles.incomingImage}
-              style={{display: index === currentSectionInView ? 'block' : 'none'}}
+              data-visible={index === currentSectionInView}
+              data-image-index={index}
               key={src}
         />
       ))}

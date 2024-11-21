@@ -24,3 +24,9 @@
   background-repeat: no-repeat;
   box-shadow: 0 -75px var(--shadow-spread) var(--shadow-spread) var(--bg-color) inset;
 }
+
+@media (max-width: 768px) {
+  .heroImage {
+    display: none;
+  }
+}
