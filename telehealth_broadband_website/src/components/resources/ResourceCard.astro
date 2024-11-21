@@ -5,7 +5,7 @@ import plus from '../../assets/icons/plus.svg';
 const { head, title, triggerId, backgroundImage } = Astro.props;
 ---
 
-<button class={styles.card} id={triggerId} style={`background-image: url(${backgroundImage});`}>
+<li class={styles.card} id={triggerId} style={`background-image: url(${backgroundImage});`}>
   <div class={styles.gradient}></div>
   <div class={styles.textContainer}>
     <span class={styles.head}>{head}</span>
@@ -14,4 +14,4 @@ const { head, title, triggerId, backgroundImage } = Astro.props;
   <div class={styles.openButton}>
     <img style="transform: rotate(45deg)" src={plus.src} width="16" height="16" alt="open icon"/>
   </div>
-</button>
+</li>

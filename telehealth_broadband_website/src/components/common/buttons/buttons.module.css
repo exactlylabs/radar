@@ -34,7 +34,7 @@
 
 .transparent {
   outline: solid 1.5px white;
-  background: transparent;
+  background-color: transparent;
   color: white;
 }
 
