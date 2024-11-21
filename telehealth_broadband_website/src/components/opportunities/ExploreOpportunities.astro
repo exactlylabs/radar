@@ -64,11 +64,13 @@ import Tab from './Tab.astro';
       </svg>
     </BulletPoint>
   </div>
+  <div id="opportunities">
   <FloatingTabs
-    scrollToId="scroll-to"
+    id="opportunities"
+    scrollToId="opportunities"
   >
     <Tab 
-      id="box-1"
+      id="quick-fixes"
       label="Quick Fixes"
       isActive="true"
     >
@@ -77,7 +79,7 @@ import Tab from './Tab.astro';
       </svg>
     </Tab>
     <Tab 
-      id="box-2"
+      id="community-education"
       label='Community Education'
       icon={communityEducationIcon}
       isActive="false"
@@ -90,7 +92,7 @@ import Tab from './Tab.astro';
       </svg>
     </Tab>
     <Tab 
-      id="box-3"
+      id="business-collaboration"
       label='Business Collaboration'
       icon={businessCollaborationIcon}
       isActive="false"
@@ -102,7 +104,7 @@ import Tab from './Tab.astro';
       </svg>
     </Tab>
     <Tab 
-      id="box-4"
+      id="data-for-change"
       label='Data for Change'
       icon={dataForChangeIcon}
       isActive="false"
@@ -120,11 +122,11 @@ import Tab from './Tab.astro';
   <div class={styles.sectionsContainer}>
     <SectionWithIncomingImage
       client:only="react"
-      contentIds={['box-1', 'box-2', 'box-3', 'box-4']}
+      contentIds={['quick-fixes', 'community-education', 'business-collaboration', 'data-for-change']}
       imageSrcs={[sectionImage.src, dadSonImage.src, workerImage.src, phoneMetricsImage.src]}
     >
       <div style="width: 100%;display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 6rem">
-        <div id="box-1" class={styles.opportunityContainer}>
+        <div id="quick-fixes" class={styles.opportunityContainer}>
           <HeroWithText head="Quick Fixes" title="Simple Fixes Create Big Changes" content="During the project, we found many individuals with simple, fixable issues that required only basic technical knowledge. Most lacked local expertise and assumed poor internet performance was unavoidable."/>
           <div class={styles.bulletPoints}>
             <BulletPoint 
@@ -149,7 +151,7 @@ import Tab from './Tab.astro';
           </div>
           <img src={sectionImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
-        <div id="box-2" class={styles.opportunityContainer}>
+        <div id="community-education" class={styles.opportunityContainer}>
           <HeroWithText head="Community Education" title="Empowering Through Knowledge" content="A common barrier in rural areas is a lack of awareness about internet offerings and reasonable speeds or reliability. Community-wide education can reduce frustration and help residents advocate for better services when current options fall short."/>
           <div class={styles.bulletPoints}>
             <BulletPoint 
@@ -180,7 +182,7 @@ import Tab from './Tab.astro';
           </div>
           <img src={dadSonImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
-        <div id="box-3" class={styles.opportunityContainer}>
+        <div id="business-collaboration" class={styles.opportunityContainer}>
           <HeroWithText head="Business Collaboration" title="Bridging the Gap Between Businesses and ISPs" content="Clear communication with IT teams and ISPs is key for rural businesses to resolve connectivity issues often caused by poor documentation. Education programs can teach clear reporting, providing actionable data for ISPs, empowering communities to tackle connectivity challenges."/>
           <div class={styles.bulletPoints}>
             <BulletPoint 
@@ -205,7 +207,7 @@ import Tab from './Tab.astro';
           </div>
           <img src={workerImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
-        <div id="box-4" class={styles.opportunityContainer}>
+        <div id="data-for-change" class={styles.opportunityContainer}>
           <HeroWithText head="Data for Change" title="Providing Communities with Data to Improve Connectivity" content="A program providing broadband data tools to rural communities helps local governments improve connectivity. These tools help leaders identify issues, make recommendations, and engage ISPs and policymakers to secure investments for better healthcare, safety, and quality of life."/>
           <div class={styles.bulletPoints}>
             <BulletPoint 

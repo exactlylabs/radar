@@ -2,6 +2,7 @@
   position: sticky;
   top: 0;
   padding: 1rem 0;
+  margin-bottom: 40px;
   width: 100%;
   z-index: 10;
   display: flex;
@@ -30,24 +31,6 @@
     margin-right: -2rem;
     justify-content: flex-start;
     overflow-x: auto;
-  }
-
-  .gradient {
-    position: absolute;
-    z-index: 1;
-    top: 1rem;
-    left: calc(1rem + 2.5rem + 1px);
-    width: 0;
-    height: 0;
-    background: linear-gradient(
-      90deg,
-      var(--bg-color) 0%,
-      transparent 100%)
-  }
-
-  .container:has(#top-scroller:not([hidden]))>.gradient {
-    width: 0.75rem;
-    height: 2.5rem;
   }
 }
 

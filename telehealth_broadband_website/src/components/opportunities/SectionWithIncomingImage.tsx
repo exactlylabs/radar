@@ -41,7 +41,6 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
               alt="section image"
               className={styles.incomingImage}
               data-visible={index === currentSectionInView}
-              data-image-index={index}
               key={src}
         />
       ))}
