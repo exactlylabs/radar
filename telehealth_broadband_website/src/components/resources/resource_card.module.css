@@ -45,11 +45,9 @@
 .head {
   font-size: 0.875rem;
   color: white;
-  /*letter-spacing: 0.6px;*/
   letter-spacing: 0.4px;
   line-height: 2.286;
   text-transform: uppercase;
-  /*font-weight: 700;*/
   font-variation-settings: 'wght' 700;
   margin: 0 0 8px;
 }
@@ -57,9 +55,7 @@
 .title {
   font-size: 1.75rem;
   color: white;
-  /*letter-spacing: calc(-0.56px / 1.5);*/
   letter-spacing: -0.56px;
-  /*font-weight: 700;*/
   font-variation-settings: 'wght' 700;
   margin: 0;
 }
