@@ -1,3 +1,4 @@
+import { sharedStyles } from "@/styles/shared";
 import { StyleSheet, Text } from "react-native";
 
 interface TitleProps {
@@ -11,7 +12,7 @@ export default function Title({ title }: TitleProps) {
 const styles = StyleSheet.create({
     title: {
         fontSize: 28,
-        color: '#FFFFFF',
+        color: sharedStyles.colors.white,
         fontFamily: 'MulishBold',
         maxWidth: '90%',
     },

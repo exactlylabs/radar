@@ -13,34 +13,20 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
     'MulishRegular': require('../assets/fonts/Mulish-Regular.ttf'),
     'MulishBold': require('../assets/fonts/Mulish-Bold.ttf'),
   });
 
   useEffect(() => {
-    if (error) {
-      console.error('Font loading error:', error);
-      console.error('Font paths:', {
-        spaceMono: '../assets/fonts/SpaceMono-Regular.ttf',
-        mulish: '../assets/fonts/Mulish-VariableFont_wght.ttf'
-      });
-    }
-  }, [error]);
-
-  useEffect(() => {
     if (loaded) {
-      console.log('Fontes carregadas com sucesso');
-      SplashScreen.hideAsync().catch((e: any) => {
-        console.error('Error:', e);
-      });
+      SplashScreen.hideAsync();
     }
   }, [loaded]);
 
   if (!loaded) {
-    console.log('Aguardando carregamento das fontes...');
-    return <Text>Carregando...</Text>;
+    return null;
   }
 
   return (

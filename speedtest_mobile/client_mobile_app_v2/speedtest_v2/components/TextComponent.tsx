@@ -1,3 +1,4 @@
+import { sharedStyles } from "@/styles/shared";
 import { StyleSheet, Text } from "react-native";
 
 export default function TextComponent({ text }: { text: string }) {
@@ -7,7 +8,7 @@ export default function TextComponent({ text }: { text: string }) {
 const styles = StyleSheet.create({
     text: {
         fontSize: 16,
-        color: '#BCBBC7',
+        color: sharedStyles.colors.gray400,
         fontFamily: 'MulishRegular',
         maxWidth: '100%',
         textAlign: 'justify'
