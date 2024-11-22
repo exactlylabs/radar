@@ -1,0 +1,74 @@
+---
+import "../global.css";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import commonStyles from "../common.module.css";
+import styles from "./styles/_stories.module.css";
+import HeroWithText from "../components/common/HeroWithText.astro";
+import StoryGridCard from "../components/stories/StoryCard.astro";
+import alaskaStory from "../assets/images/alaska-story-1.webp";
+import westVirginiaStory from "../assets/images/west-virginia-story-2.webp";
+import michiganStory from "../assets/images/michigan-story.webp";
+import texasStory from "../assets/images/texas-story.webp";
+---
+
+<BaseLayout>
+  <section class={styles.heroSection}>
+    <HeroWithText
+      head="Stories"
+      title="The Reality on the Ground"
+      content="Firsthand experiences from the field, shared by our Community Lead Partners."
+    />
+  </section>
+  <section class={commonStyles.paddedSection}>
+    <div class={styles.stories}>
+      <StoryGridCard
+        head="Alaska"
+        title="Healthcare Sites Go Dark"
+        content="When a major internet cable was cut in Alaska, healthcare facilities were forced to switch from high-speed fiber to slower satellite connections. This shift limited doctors’ capabilities and left communities waiting months for restoration."
+        readMorePath="/stories/alaska-1"
+        image={alaskaStory}
+      />
+      <div class={styles.divider}></div>
+      <div class={styles.twoStories}>
+        <StoryGridCard
+          head="Alaska"
+          title="Lack of Technical Expertise"
+          content="Rural Alaska clinics relying on satellite internet experienced severe delays, making many applications unusable. A lack of local expertise and vendor support left these clinics unable to fully utilize essential healthcare services."
+          readMorePath="/stories/alaska-2"
+          image={westVirginiaStory}
+        />
+        <StoryGridCard
+          head="West Virginia"
+          title="Community Centers as Lifelines"
+          content="In many rural areas, reliable internet access exists only at community centers, leaving households disconnected. One young adult shared their shock at discovering high-speed internet for the first time upon arriving at college."
+          readMorePath="/stories/west-virginia-1"
+          image={westVirginiaStory}
+        />
+      </div>
+      <div class={styles.divider}></div>
+      <div class={styles.storiesGrid}>
+        <StoryGridCard
+          head="Michigan"
+          title="Healthcare Burnout"
+          content="A rural Michigan clinic struggled with years of unstable internet due to misconfigured Wi-Fi, which part-time IT staff couldn't resolve. This impacted telehealth, delayed charting, and ultimately led to provider burnout and turnover."
+          readMorePath="/stories/michigan"
+          image={michiganStory}
+        />
+        <StoryGridCard
+          head="Texas"
+          title="The Telehealth Struggle"
+          content="A remote Texas clinic’s outdated equipment caused frequent connection drops during telehealth sessions, preventing many elderly and disabled patients from accessing essential health services."
+          readMorePath="/stories/texas"
+          image={texasStory}
+        />
+        <StoryGridCard
+          head="West Virginia"
+          title="Learning Interrupted"
+          content="In rural West Virginia, a school’s limited satellite connection disrupted online learning, with students often unable to join lessons or complete assignments. For many families, it was their only reliable internet access."
+          readMorePath="/stories/west-virginia-2"
+          image={westVirginiaStory}
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

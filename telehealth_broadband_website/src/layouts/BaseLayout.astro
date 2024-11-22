@@ -24,6 +24,8 @@ import styles from './layout.module.css';
   <script>
     import womanPhoneImage from '../assets/images/woman-phone.webp';
     import approachHero from '../assets/images/approach-hero.webp';
+    import storiesHero from '../assets/images/stories-hero.webp';
+    
     const heroImage = document.getElementById('hero-image');
     if(heroImage) {
       const pathname = window.location.pathname;
@@ -33,6 +35,10 @@ import styles from './layout.module.css';
         heroImage.style.height = '765px';
       } else if(pathname === '/approach') {
         heroImage.style.backgroundImage = `url(${approachHero.src})`;
+        heroImage.style.backgroundPositionY = '50%';
+        heroImage.style.height = '536px';
+      } else if(pathname === '/stories') {
+        heroImage.style.backgroundImage = `url(${storiesHero.src})`;
         heroImage.style.backgroundPositionY = '50%';
         heroImage.style.height = '536px';
       }
