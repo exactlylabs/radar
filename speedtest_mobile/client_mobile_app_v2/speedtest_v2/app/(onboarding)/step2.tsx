@@ -6,6 +6,7 @@ import TextComponent from "@/components/TextComponent";
 import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
+import { sharedStyles } from "@/styles/shared";
 
 export default function Step2() {
     return (
@@ -65,13 +66,13 @@ const styles = StyleSheet.create({
     dotSelected: {
         width: 8,
         height: 8,
-        backgroundColor: '#4B7BE5',
+        backgroundColor: sharedStyles.colors.blue200,
         borderRadius: 5
     },
     dot: {
         width: 8,
         height: 8,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: sharedStyles.colors.white,
         opacity: 0.2,
         borderRadius: 5,
     }

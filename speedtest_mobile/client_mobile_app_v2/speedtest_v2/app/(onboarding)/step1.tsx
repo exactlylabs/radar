@@ -7,6 +7,7 @@ import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { useRouter } from "expo-router";
+import { sharedStyles } from "@/styles/shared";
 
 export default function Step1() {
     const router = useRouter();
@@ -67,13 +68,13 @@ const styles = StyleSheet.create({
     dotSelected: {
         width: 8,
         height: 8,
-        backgroundColor: '#4B7BE5',
+        backgroundColor: sharedStyles.colors.blue200,
         borderRadius: 5
     },
     dot: {
         width: 8,
         height: 8,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: sharedStyles.colors.white,
         opacity: 0.2,
         borderRadius: 5,
     }

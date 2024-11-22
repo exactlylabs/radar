@@ -16,7 +16,7 @@ export default function Button({ title, onPress }: ButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: sharedStyles.colors.buttonBg,
+        backgroundColor: sharedStyles.colors.blue200,
         padding: 10,
         paddingVertical: 15,
         borderRadius: 26,
