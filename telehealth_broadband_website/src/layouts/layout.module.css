@@ -6,8 +6,15 @@
 
 .main {
   width: 100vw;
+  min-height: calc(100dvh - var(--navbar-height) - var(--footer-height));
   min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
   overflow-x: clip;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: var(--responsive-navbar-height);
+  }
 }
 
 .heroImage {
