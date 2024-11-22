@@ -1,4 +1,5 @@
 import { sharedStyles } from "@/styles/shared";
+import { sharedStyles } from "@/styles/shared";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
 interface ButtonProps {
@@ -16,7 +17,7 @@ export default function Button({ title, onPress }: ButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: sharedStyles.colors.blue200,
+        backgroundColor: '#4B7BE5',
         padding: 10,
         paddingVertical: 15,
         borderRadius: 26,
