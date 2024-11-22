@@ -79,11 +79,7 @@ import logo from '../../assets/logos/navbar-logo.webp';
   }
   
   function checkScrollForNavbarBg() {
-    if(window.scrollY > 0) {
-      document.querySelector('nav')!.dataset.scrolled = 'true';
-    } else {
-      document.querySelector('nav')!.dataset.scrolled = 'false';
-    }
+    document.querySelector('nav')!.dataset.scrolled = (window.scrollY > 0).toString();
   }
   
   menuButton.addEventListener('click', toggleMenu);
