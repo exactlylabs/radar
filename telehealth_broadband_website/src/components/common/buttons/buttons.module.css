@@ -1,7 +1,7 @@
 .button {
   border-radius: .25rem;
   padding: 0.875rem 1.5rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   cursor: pointer;
   border: none;
   outline: none;
@@ -34,6 +34,43 @@
 
 .transparent {
   outline: solid 1.5px white;
-  background: transparent;
+  background-color: transparent;
   color: white;
+}
+
+.readMore {
+  width: max-content;
+  border-radius: .25rem;
+  text-decoration: none;
+  padding: 10px 1rem;
+  color: white;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-variation-settings: 'wght' 700;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+}
+
+.readMore > * {
+  pointer-events: none;
+}
+
+.readMore > img {
+  transition: transform 0.3s ease;
+}
+
+.readMore:hover {
+  opacity: 0.9;
+}
+
+.readMore:hover > img {
+  transform: translateX(3px);
 }

@@ -1,5 +1,5 @@
 export type CardContent = {
-  head: string;
+  head?: string;
   title: string;
   content: string;
 }

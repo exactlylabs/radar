@@ -1,0 +1,47 @@
+---
+import styles from './approach_partners_grid.module.css';
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+
+import anthcLogo from '../../assets/logos/anthc.webp';
+import cmuLogo from '../../assets/logos/cmu.webp';
+import ttuhscLogo from '../../assets/logos/tthusc.webp';
+import wvpcaLogo from '../../assets/logos/wvpca.webp';
+import alaskaMask from '../../assets/images/mask-alaska.webp';
+import michiganMask from '../../assets/images/mask-michigan.webp';
+import texasMask from '../../assets/images/mask-texas.webp';
+import westVirginiaMask from '../../assets/images/mask-west-virginia.webp';
+---
+
+<div class={styles.container}>
+  <div class={styles.card} style={`background-image: url(${alaskaMask.src})`}>
+    <span>Alaska</span>
+    <h5>Alaska Native Tribal Health Consortium</h5>
+    <a href="https://www.anthc.org/" target="_blank" class={styles.logoLink}>
+      <img src={anthcLogo.src} alt="ANTHC logo" height="41"/>
+    </a>
+  </div>
+  <div class={styles.card} style={`background-image: url(${michiganMask.src})`}>
+    <span>Michigan</span>
+    <h5>Central Michigan University</h5>
+    <GoToLinkButton href="https://www.cmich.edu/offices-departments/office-information-technology/telehealth-broadband-pilot-program" text="Go to Project Site"/>
+    <a href="https://www.cmich.edu/" target="_blank" class={styles.logoLink}>
+      <img src={cmuLogo.src} alt="CMU logo" height="38"/>
+    </a>
+  </div>
+  <div class={styles.card} style={`background-image: url(${texasMask.src})`}>
+    <span>Texas</span>
+    <h5>Texas Tech University Health Sciences Center</h5>
+    <GoToLinkButton href="https://www.ttuhsc.edu/rural-health/tbp.aspx" text="Go to Project Site"/>
+    <a href="https://www.ttuhsc.edu/" target="_blank" class={styles.logoLink}>
+      <img src={ttuhscLogo.src} alt="TTUHSC logo" height="34"/>
+    </a>
+  </div>
+  <div class={styles.card} style={`background-image: url(${westVirginiaMask.src})`}>
+    <span>West Virginia</span>
+    <h5>West Virginia Primary Care Association</h5>
+    <GoToLinkButton href="https://www.wvpca.org/telehealth-broadband-pilot-program" text="Go to Project Site"/>
+    <a href="https://www.wvpca.org/" target="_blank" class={styles.logoLink}>
+      <img src={wvpcaLogo.src} alt="WVPCA logo" height="36"/>
+    </a>
+  </div>
+</div>

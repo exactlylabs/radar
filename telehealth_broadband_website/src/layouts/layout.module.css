@@ -1,19 +1,26 @@
 :root {
   --navbar-height: 65px;
   --footer-height: 240px;
-  --side-padding: max(2rem, calc((100% - var(--max-width)) / 2));
+  --side-padding: calc((100vw - var(--max-width)) / 2);
 }
 
 .main {
   width: 100vw;
+  min-height: calc(100dvh - var(--navbar-height) - var(--footer-height));
   min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+  overflow-x: clip;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: var(--responsive-navbar-height);
+  }
 }
 
 .heroImage {
   --shadow-spread: 50px;
   width: calc(100vw + 2 * var(--shadow-spread));
   max-width: calc(var(--max-width) + 8 * var(--shadow-spread));
-  height: 500px;
   z-index: -1;
   position: absolute;
   top: 0;
@@ -23,4 +30,10 @@
   background-position-y: 50%;
   background-repeat: no-repeat;
   box-shadow: 0 -75px var(--shadow-spread) var(--shadow-spread) var(--bg-color) inset;
+}
+
+@media (max-width: 768px) {
+  .heroImage {
+    display: none;
+  }
 }

@@ -6,12 +6,13 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
+  gap: 5rem;
 }
 
 .sectionWithImage > img {
   position: -webkit-sticky;
   position: sticky;
-  top: 200px;
+  top: 12.5rem;
   right: 0;
   height: auto;
   animation: fade-in 200ms;
@@ -24,4 +25,45 @@
   to {
     opacity: 1;
   }
+}
+
+.incomingImage {
+  display: none;
+}
+
+.incomingImage[data-visible="true"] {
+  display: block;
+  height: 469px;
+  width: 366px;
+  border-radius: .5rem;
+  object-fit: cover;
+}
+
+.incomingImage:nth-child(2) {
+  object-position: 10%;
+}
+
+.incomingImage:nth-child(3) {
+  object-position: 10%;
+}
+
+.incomingImage:nth-child(4) {
+  object-position: 60%;
+}
+
+.incomingImage:nth-child(5) {
+  object-position: 30%;
+}
+
+@media (max-width: 768px) {
+  .sectionWithImage {
+    flex-direction: column;
+    align-items: center;
+    animation: none;
+  }
+
+  .incomingImage[data-visible="true"] {
+    display: none;
+  }
+  
 }

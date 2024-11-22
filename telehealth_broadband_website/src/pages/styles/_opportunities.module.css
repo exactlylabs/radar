@@ -1,0 +1,152 @@
+.section {
+  padding: 8rem 0;
+}
+
+.sectionsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.introductionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  margin-bottom: 112px;
+}
+
+@media (max-width: 768px) {
+  .introductionSection {
+    margin-bottom: 4rem;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  gap: 5rem;
+}
+
+@media (max-width: 1300px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .header > img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.summaries {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 1.5rem;
+  border-top: solid 1px rgba(255, 255, 255, 0.1);
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+  gap: 2.5rem;
+  height: 300px;
+}
+
+@media (max-width: 768px) {
+  .summaries {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 2.065rem 0;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .divider {
+    width: 100%;
+    height: 1px;
+    flex-direction: row;
+  }
+}
+
+.exploreOpportunitiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+@media (max-width: 768px) {
+  .exploreOpportunitiesSection {
+    gap: 3.5rem;
+  }
+}
+
+.exploreOpportunitiesHeader {
+  max-width: 608px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.opportunityContainer {
+  width: 100%;
+  scroll-margin-top: 20vh;
+  max-width: 36.25rem;
+}
+
+@media (max-width: 768px) {
+  .opportunityContainer {
+    max-width: none;
+  }
+
+}
+
+.bulletPoints {
+  margin-top: 3.5rem;
+  border-top: solid 1px rgba(255, 255, 255, 0.1);
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+  width: 36.0625rem;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+@media (max-width: 768px) {
+  .bulletPoints {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+.opportunityImage {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .opportunityImage {
+    display: block;
+    margin-top: 2.25rem;
+    width: 100%;
+    aspect-ratio: 1.8;
+    object-fit: cover;
+    object-position: 0% 20%;
+    border-radius: .5rem;
+  }
+}

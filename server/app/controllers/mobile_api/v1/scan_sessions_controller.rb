@@ -36,6 +36,7 @@ module MobileApi::V1
             last_seen_at: network_post_data[:last_seen],
             first_seen_at: network_post_data[:first_seen],
             found_by_session: @scan_session,
+            lonlat: "POINT(#{network_post_data[:longitude]} #{network_post_data[:latitude]})"
           )
           is_new = true
         end
@@ -127,6 +128,8 @@ module MobileApi::V1
           measurements: [],
           first_seen: nil,
           last_seen: nil,
+          latitude: nil,
+          longitude: nil,
         }
       end
 
@@ -142,6 +145,8 @@ module MobileApi::V1
 
         network[:first_seen] = measurement.timestamp_before.to_time if network[:first_seen].nil? || network[:first_seen] > measurement.timestamp_before.to_time
         network[:last_seen] = measurement.timestamp_before.to_time if network[:last_seen].nil? || network[:last_seen] < measurement.timestamp_before.to_time
+        network[:latitude] = measurement.latitude_before if network[:latitude].nil?
+        network[:longitude] = measurement.longitude_before if network[:longitude].nil?
 
         if network_type == :wifi
           cache_key = "#{@scan_session.id}:wifi:#{network[:obj].id};#{measurement.latitude_before.round(5)},#{measurement.longitude_before.round(5)}"

@@ -1,0 +1,87 @@
+.heroSection {
+  width: 100%;
+  text-align: center;
+  max-width: 668px;
+  margin-inline: auto;
+  box-sizing: border-box;
+  padding-top: 8.75rem;
+  padding-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+}
+
+.storyCard {
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 32px 48px;
+}
+
+.storyImage {
+  flex-grow: 1;
+  display: block;
+  width: 57%;
+  height: auto;
+  aspect-ratio: 1.77;
+  border-radius: .5rem;
+  object-fit: cover;
+  object-position: 0 75%;
+}
+
+.storySummary {
+  flex-grow: 1;
+  flex-basis: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.heroContainer {
+  width: 100%;
+}
+
+.stories {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  margin-bottom: 6rem;
+}
+
+.twoStories {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+}
+
+@media (max-width: 768px) {
+  .twoStories {
+    flex-direction: column;
+  }
+}
+
+.storiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(387px, 1fr));
+  gap: 4rem 2rem;
+}
+
+.divider {
+  height: 1px; 
+  width: calc(100% + 3rem); 
+  margin: 2rem 0 2rem -1.5rem; 
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .divider {
+    display: none;
+  }
+  
+}

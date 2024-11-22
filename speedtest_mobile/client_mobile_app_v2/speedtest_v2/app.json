@@ -19,9 +19,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.arnoldroa.speedtest_v2"
+        "backgroundColor": "#FFFFFF",
+        "resizeMode": "cover"
+      }
     },
     "web": {
       "bundler": "metro",

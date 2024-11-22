@@ -1,31 +1,31 @@
-.scrollContainer {
+.carrousel {
   width: 100%;
   overflow-x: scroll;
-  scroll-snap-type: x mandatory;
   height: max-content;
-  scroll-padding: var(--side-padding);
 }
 
-.itemContainer {
-  display: grid;
-  grid-template-rows: repeat(1, auto);
-  grid-template-columns: max-content;
-  grid-auto-flow: column;
-  column-gap: 2rem;
-  row-gap: 0;
-  width: fit-content;
-  padding-inline: var(--side-padding);
-  padding-block: 1px;
+@media (max-width: 768px) {
+  .carrousel {
+    scroll-padding: unset;
+    scroll-snap-type: unset;
+  }
 }
 
 .cardSet {
-  display: grid;
-  grid-template-rows: repeat(1, auto);
-  grid-template-columns: max-content;
-  grid-auto-flow: column;
-  column-gap: 2rem;
-  row-gap: 0;
   width: fit-content;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: unset;
+  grid-auto-columns: 1fr;
+  column-gap: 2rem;
+}
+
+@media (max-width: 1250px) {
+  .cardSet {
+    padding-inline: 2rem;
+    width: max-content;
+    column-gap: 1rem;
+  }
 }
 
 .cardSet > astro-slot > div {
@@ -43,6 +43,21 @@
   justify-content: flex-end;
   gap: 1.5rem;
   padding-top: 2.5rem;
+}
+
+@media (min-width: 768px) and (max-width: 1250px) {
+  .buttonsContainer {
+    margin-right: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .buttonsContainer {
+    width: 100%;
+    margin: unset;
+    padding-top: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 .button {

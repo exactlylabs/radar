@@ -1,0 +1,24 @@
+---
+import HeroWithText from "../common/HeroWithText.astro";
+import BulletPoint from "./BulletPoint.astro";
+import styles from '../../pages/styles/_opportunities.module.css';
+import Image from 'astro/components/Image.astro';
+import opportunities from '../../assets/images/opportunities.webp';
+---
+
+<div class={styles.introductionSection}>
+  <div class={styles.header}>
+    <HeroWithText
+      head="Opportunities"
+      title="Maximizing Rural Connectivity Through Practical Solutions"
+      content="The Telehealth Broadband Pilot Program identified actionable opportunities to enhance internet experiences in rural communities, focusing on the full journey of accessing and using online services."
+    />
+    <Image
+      src={opportunities}
+      densities={[1, 2, 4]}
+      alt="opportunities"
+      height={390}
+      loading={'eager'}
+    />
+  </div>
+</div>

@@ -18,16 +18,39 @@
   gap: 1.5rem;
 }
 
+@media (max-width: 1250px) {
+  .timelineContainer {
+    width: 100%;
+  }
+}
+
+.timelineContainer[data-mobile="true"] {
+  display: none;
+  width: 100%;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .timelineContainer {
+    display: none;
+  }
+
+  .timelineContainer[data-mobile="true"] {
+    display: flex;
+  }
+}
+
 .timelineLine {
   position: absolute;
   width: 2px;
   height: 83%;
   background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 15%,
-    rgba(255, 255, 255, 0.1) 85%,
-    rgba(255, 255, 255, 0) 100%
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 15%,
+      rgba(255, 255, 255, 0.1) 99%,
+      rgba(255, 255, 255, 0) 100%
   );
   top: -10%;
   left: 50%;
@@ -48,6 +71,20 @@
   margin-left: 0;
   margin-right: auto;
   text-align: right;
+}
+
+@media (max-width: 1250px) {
+  .timelineItem {
+    width: calc(50% - var(--timeline-item-distance) - var(--timeline-item-ball-size));
+    margin-left: calc(50% + var(--timeline-item-distance) + 1px);
+    margin-right: auto;
+  }
+
+  .timelineItem[data-side="left"] {
+    margin-left: 11px;
+    margin-right: auto;
+    text-align: right;
+  }
 }
 
 .timelineItem[data-side="right"]::after {
@@ -102,7 +139,7 @@
 
 .timelineItemTitle {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-variation-settings: 'wght' 700;
   color: white;
   letter-spacing: -0.4px;
   margin-bottom: 0.75rem;
@@ -112,4 +149,35 @@
   font-size: 1.0625rem;
   color: var(--text-color);
   line-height: 1.529;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --timeline-item-distance: 30px;
+  }
+
+  .timelineContainer[data-mobile="true"] > .timelineItem {
+    margin-left: 2rem;
+    margin-right: auto;
+  }
+
+  .timelineItem {
+    width: calc(100% - 3rem);
+  }
+
+  .timelineLine {
+    position: absolute;
+    width: 2px;
+    height: 83%;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 15%,
+        rgba(255, 255, 255, 0.1) 99%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    top: -10%;
+    left: 0;
+    transform: unset;
+  }
 }
