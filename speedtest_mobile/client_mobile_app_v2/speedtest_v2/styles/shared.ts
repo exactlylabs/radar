@@ -4,7 +4,9 @@ export const sharedStyles = StyleSheet.create({
     colors: {
         white: '#FFFFFF',
         gray400: '#BCBBC7',
-        buttonBg: '#4B7BE5'
+        blue200: '#4B7BE5',
+        bgGradientPrimary: '#1B1860',
+        bgGradientSecondary: '#0B0B1A',
     },
     titleContainer: {
         flexDirection: "column",
