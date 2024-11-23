@@ -57,7 +57,7 @@ func InstallFromUrl(binPath, updateUrl, expectedVersion string) error {
 		return errors.W(err)
 	}
 	if res.StatusCode != 200 {
-		return errors.New("update.InstallFromUrl unexpected status code: %d", res.StatusCode)
+		return errors.New("update.InstallFromUrl unexpected status code: %d", res.StatusCode).WithMetadata(errors.Metadata{"url": updateUrl})
 	}
 	defer res.Body.Close()
 	binary, err := ParseUpdateFile(res.Body)
