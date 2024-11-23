@@ -339,11 +339,6 @@ func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo
 	ctx.Write(vtData)
 }
 
-func ArcGisVectorTile(ctx *webcontext.Context) {
-	data := make(map[string]any)
-	data["sources"] = map[string]any{"esri": map[string]any{"type": "vector", "url": "https://086c-2804-7f0-9e83-9fbf-fa6c-601f-611d-994a.ngrok-free.app/api/v1/namespaces/states/tiles/"}}
-}
-
 func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namespace, asnOrgId *string, filter storages.SummaryFilter, useCache bool) (map[string]storages.GeospaceSummaryResult, error) {
 	summaryMap := make(map[string]storages.GeospaceSummaryResult)
 	key := cacheKey(namespace, asnOrgId, filter)
