@@ -133,6 +133,10 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 		}
 		summary, exists := summaryMap[geospaceId.(string)]
 		if exists {
+			feature.SetProperty("download_meadian", summary.DownloadMedian)
+			feature.SetProperty("upload_median", summary.UploadMedian)
+			feature.SetProperty("latency_median", summary.LatencyMedian)
+			feature.SetProperty("name", summary.Geospace.Name)
 			feature.SetProperty("summary", summary)
 		}
 	}
@@ -333,6 +337,11 @@ func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo
 		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
 	}
 	ctx.Write(vtData)
+}
+
+func ArcGisVectorTile(ctx *webcontext.Context) {
+	data := make(map[string]any)
+	data["sources"] = map[string]any{"esri": map[string]any{"type": "vector", "url": "https://086c-2804-7f0-9e83-9fbf-fa6c-601f-611d-994a.ngrok-free.app/api/v1/namespaces/states/tiles/"}}
 }
 
 func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namespace, asnOrgId *string, filter storages.SummaryFilter, useCache bool) (map[string]storages.GeospaceSummaryResult, error) {
