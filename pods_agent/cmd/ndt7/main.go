@@ -11,7 +11,9 @@ func main() {
 	// Run NDT7
 
 	runner := ndt7speedtest.New()
-
+	if err := runner.Setup(); err != nil {
+		panic(err)
+	}
 	ctx := context.Background()
 	result, err := runner.Run(ctx)
 	if err != nil {

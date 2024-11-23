@@ -20,6 +20,10 @@ func NewMockedRunner() *OoklaMockRunner {
 	return &OoklaMockRunner{}
 }
 
+func (r *OoklaMockRunner) Setup() error {
+	return nil
+}
+
 func (r *OoklaMockRunner) Type() string {
 	return "OOKLA"
 }

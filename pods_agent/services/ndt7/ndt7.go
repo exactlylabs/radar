@@ -99,6 +99,10 @@ func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) (*summary, e
 	return s, nil
 }
 
+func (r *ndt7Runner) Setup() error {
+	return nil
+}
+
 func (r *ndt7Runner) Type() string {
 	return "NDT7"
 }

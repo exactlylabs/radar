@@ -20,6 +20,10 @@ func NewMockedRunner() *Ndt7MockRunner {
 	return &Ndt7MockRunner{}
 }
 
+func (r *Ndt7MockRunner) Setup() error {
+	return nil
+}
+
 func (r *Ndt7MockRunner) Type() string {
 	return "NDT7"
 }
