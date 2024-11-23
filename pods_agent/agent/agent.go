@@ -68,31 +68,45 @@ func (a *Agent) registerAgent(ctx context.Context, c *config.Config, label *stri
 	}
 }
 
+func (a *Agent) setupClient(ctx context.Context, c *config.Config) {
+	log.Println("No Client ID found for this agent.")
+	var label *string
+	if os.Getenv("RADAR_REGISTER_LABEL") != "" {
+		labelStr := os.Getenv("RADAR_REGISTER_LABEL")
+		label = &labelStr
+	}
+	pod := a.registerAgent(ctx, c, label)
+	if pod == nil {
+		// Context was cancelled, skip all rest
+		return
+	}
+	c.ClientId = pod.ClientId
+	c.Secret = pod.Secret
+	log.Println("Agent Registered to the Server!")
+	log.Println("Client ID =", c.ClientId)
+	log.Println("Secret =", c.Secret)
+	log.Println("You can find these values in the config file located at", config.ConfigFilePath())
+}
+
+func (a *Agent) setupRunners() {
+	for _, r := range a.runners {
+		if err := r.Setup(); err != nil {
+			panic(errors.W(err))
+		}
+	}
+}
+
 func (a *Agent) Setup(ctx context.Context, c *config.Config) {
+	a.conf = c
+
 	if c.ClientId == "" {
-		log.Println("No Client ID found for this agent.")
-		var label *string
-		if os.Getenv("RADAR_REGISTER_LABEL") != "" {
-			labelStr := os.Getenv("RADAR_REGISTER_LABEL")
-			label = &labelStr
-		}
-		pod := a.registerAgent(ctx, c, label)
-		if pod == nil {
-			// Context was cancelled, skip all rest
-			return
-		}
-		c.ClientId = pod.ClientId
-		c.Secret = pod.Secret
-		log.Println("Agent Registered to the Server!")
-		log.Println("Client ID =", c.ClientId)
-		log.Println("Secret =", c.Secret)
-		log.Println("You can find these values in the config file located at", config.ConfigFilePath())
+		a.setupClient(ctx, c)
 	}
 	err := config.Save(c)
 	if err != nil {
 		panic(errors.W(err))
 	}
-	a.conf = c
+	a.setupRunners()
 }
 
 // Start the Agent, blocking the current goroutine
