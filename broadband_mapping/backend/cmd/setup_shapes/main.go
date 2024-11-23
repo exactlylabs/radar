@@ -33,6 +33,7 @@ var shapeUrls = map[namespaces.Namespace]string{
 }
 var envName = flag.String("env-file", ".env", "Name of the environment variables file")
 var outputDir = flag.String("output-dir", "geos", "Directory where all files will be stored")
+var filesOnly = flag.Bool("files-only", false, "Skip the creation process in the DB, and just generate the files")
 
 func main() {
 	flag.Parse()
@@ -84,7 +85,14 @@ func main() {
 			panic(err)
 		}
 		log.Println("GeoJSON file loaded")
-		geospaces, err := internal.PopulateDB(storage, ns, fc)
+
+		var geospaces []internal.DBGeospaceFeature
+		if !*filesOnly {
+			geospaces, err = internal.PopulateDB(storage, ns, fc)
+		} else {
+			geospaces = internal.GetGeospaces(storage, ns, fc)
+		}
+
 		if err != nil {
 			panic(err)
 		}

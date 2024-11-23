@@ -107,6 +107,51 @@ func PopulateDB(s storages.GeospaceStorage, ns namespaces.Namespace, fc geojson.
 	return populated, nil
 }
 
+func featureMap(features []*geojson.Feature, ns namespaces.Namespace) map[string]*geojson.Feature {
+	codeMap := codesMap[ns]
+	featureMap := make(map[string]*geojson.Feature)
+
+	for _, feature := range features {
+		if feature == nil {
+			continue
+		}
+		rawCode := feature.Properties[codeMap[0]]
+		if rawCode == nil {
+			log.Println(ns, "shape with no data... skipping it")
+			continue
+		}
+		code := rawCode.(string)
+		featureMap[code] = feature
+	}
+
+	return featureMap
+}
+
+func GetGeospaces(s storages.GeospaceStorage, ns namespaces.Namespace, fc geojson.FeatureCollection) []DBGeospaceFeature {
+	data := make([]DBGeospaceFeature, 0)
+
+	it, err := s.AllFromNamespace(ns, nil, nil)
+	if err != nil {
+		panic(err)
+	}
+	featureMap := featureMap(fc.Features, ns)
+	for it.HasNext() {
+		if geospace, err := it.GetRow(); err != nil {
+			panic(err)
+		} else {
+			if featureMap[geospace.GeoId] == nil {
+				continue
+			}
+			data = append(data, DBGeospaceFeature{
+				Geospace: geospace,
+				Feature:  featureMap[geospace.GeoId],
+			})
+		}
+	}
+
+	return data
+}
+
 func saveGeospace(storage storages.GeospaceStorage, g *storages.Geospace) (dg *storages.DetailedGeospace, err error) {
 	if dg, err = getGeospace(storage, g.Namespace, g.GeoId); err == storages.ErrGeospaceNotFound {
 		if err := storage.Create(g); err != nil {
