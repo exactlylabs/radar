@@ -9,25 +9,46 @@ import ButtonContainer from "@/components/ButtonContainer";
 import { useRouter } from "expo-router";
 import { sharedStyles } from "@/styles/shared";
 import { useEffect, useRef } from "react"; // Added useEffect and useRef
+import * as Permissions from "expo-permissions"; // Added Permissions import
 
-// Change the component name here
 export default function Permissions1PhoneAccess() {
   const router = useRouter();
-  const slideAnim = useRef(new Animated.Value(1)).current; // Animation value
+  const slideAnim = useRef(new Animated.Value(1)).current;
 
-  const handleNavigation = () => {
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      router.push("/permissions_2_location_access");
+  const requestPermissions = async () => {
+    const { status: phoneStatus } = await Permissions.askAsync(
+      Permissions.READ_PHONE_STATE
+    ); // Request phone state permissions
+    const { status: networkStatus } = await Permissions.askAsync(
+      Permissions.ACCESS_NETWORK_STATE
+    ); // Request network state permissions
+    const { status: wifiStateStatus } = await Permissions.askAsync(
+      Permissions.ACCESS_WIFI_STATE
+    ); // Request Wi-Fi state permissions
+    const { status: changeWifiStateStatus } = await Permissions.askAsync(
+      Permissions.CHANGE_WIFI_STATE
+    ); // Request change Wi-Fi state permissions
+    const { status: internetStatus } = await Permissions.askAsync(
+      Permissions.INTERNET
+    ); // Request internet permissions
+
+    if (phoneStatus === "granted" && networkStatus === "granted" && wifiStateStatus === "granted" && changeWifiStateStatus === "granted" && internetStatus === "granted") {
       Animated.timing(slideAnim, {
-        toValue: 1,
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
-      }).start();
-    });
+      }).start(() => {
+        router.push("/permissions_2_location_access");
+        Animated.timing(slideAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      });
+    } else {
+      // Handle permission denial
+      console.log("Permissions not granted");
+    }
   };
 
   return (
@@ -46,13 +67,14 @@ export default function Permissions1PhoneAccess() {
           </View>
 
           <ButtonContainer>
-            <Button title="Enable phone access" onPress={handleNavigation} />
+            <Button title="Enable phone access" onPress={requestPermissions} />{" "}
           </ButtonContainer>
         </Animated.View>
       </View>
     </BgGradient>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
