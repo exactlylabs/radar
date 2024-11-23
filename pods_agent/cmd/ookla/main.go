@@ -9,6 +9,9 @@ import (
 
 func main() {
 	ookla := ookla.New()
+	if err := ookla.Setup(); err != nil {
+		panic(err)
+	}
 	ctx := context.Background()
 	result, err := ookla.Run(ctx)
 	if err != nil {

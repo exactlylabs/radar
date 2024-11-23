@@ -9,20 +9,19 @@ import (
 
 // createOoklaBinary generates the embeded
 // executable for running the speedtest
-func createOoklaBinary() {
+func createOoklaBinary() error {
 	binary := ooklaBinary
 	f, err := config.OpenFile(binaryFilename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		panic(errors.Wrap(err, "error opening bin file"))
+		return errors.W(err)
 	}
-	f.Write(binary)
+	if _, err := f.Write(binary); err != nil {
+		return errors.W(err)
+	}
 	f.Close()
+	return nil
 }
 
 func binaryPath() string {
 	return config.Join(binaryFilename)
-}
-
-func init() {
-	createOoklaBinary()
 }
