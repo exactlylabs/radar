@@ -1,5 +1,11 @@
-// app/(onboarding)/permissions_1_phone_access.tsx
-import { Image, StyleSheet, Text, View, Animated } from "react-native"; // Added Animated
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  PermissionsAndroid,
+} from "react-native";
 import Title from "@/components/Title";
 import gridImage from "@/assets/images/step1grid-onboarding.png";
 import TextComponent from "@/components/TextComponent";
@@ -8,46 +14,93 @@ import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { useRouter } from "expo-router";
 import { sharedStyles } from "@/styles/shared";
-import { useEffect, useRef } from "react"; // Added useEffect and useRef
-import * as Permissions from "expo-permissions"; // Added Permissions import
+import { useEffect, useRef } from "react";
 
 export default function Permissions1PhoneAccess() {
   const router = useRouter();
   const slideAnim = useRef(new Animated.Value(1)).current;
 
   const requestPermissions = async () => {
-    const { status: phoneStatus } = await Permissions.askAsync(
-      Permissions.READ_PHONE_STATE
-    ); // Request phone state permissions
-    const { status: networkStatus } = await Permissions.askAsync(
-      Permissions.ACCESS_NETWORK_STATE
-    ); // Request network state permissions
-    const { status: wifiStateStatus } = await Permissions.askAsync(
-      Permissions.ACCESS_WIFI_STATE
-    ); // Request Wi-Fi state permissions
-    const { status: changeWifiStateStatus } = await Permissions.askAsync(
-      Permissions.CHANGE_WIFI_STATE
-    ); // Request change Wi-Fi state permissions
-    const { status: internetStatus } = await Permissions.askAsync(
-      Permissions.INTERNET
-    ); // Request internet permissions
+    try {
+      const phoneGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        {
+          title: "Phone State Permission",
+          message: "This app needs access to your phone state.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
 
-    if (phoneStatus === "granted" && networkStatus === "granted" && wifiStateStatus === "granted" && changeWifiStateStatus === "granted" && internetStatus === "granted") {
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        router.push("/permissions_2_location_access");
+      const networkGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE,
+        {
+          title: "Network State Permission",
+          message: "This app needs access to your network state.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
+      const wifiStateGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_WIFI_STATE,
+        {
+          title: "Wi-Fi State Permission",
+          message: "This app needs access to your Wi-Fi state.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
+      const changeWifiStateGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CHANGE_WIFI_STATE,
+        {
+          title: "Change Wi-Fi State Permission",
+          message: "This app needs permission to change Wi-Fi state.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
+      const internetGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.INTERNET,
+        {
+          title: "Internet Permission",
+          message: "This app needs access to the internet.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
+      if (
+        phoneGranted === PermissionsAndroid.RESULTS.GRANTED &&
+        networkGranted === PermissionsAndroid.RESULTS.GRANTED &&
+        wifiStateGranted === PermissionsAndroid.RESULTS.GRANTED &&
+        changeWifiStateGranted === PermissionsAndroid.RESULTS.GRANTED &&
+        internetGranted === PermissionsAndroid.RESULTS.GRANTED
+      ) {
         Animated.timing(slideAnim, {
-          toValue: 1,
+          toValue: 0,
           duration: 300,
           useNativeDriver: true,
-        }).start();
-      });
-    } else {
-      // Handle permission denial
-      console.log("Permissions not granted");
+        }).start(() => {
+          router.push("/permissions_2_location_access");
+          Animated.timing(slideAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        });
+      } else {
+        console.log("Permissions not granted");
+      }
+    } catch (err) {
+      console.warn(err);
     }
   };
 
