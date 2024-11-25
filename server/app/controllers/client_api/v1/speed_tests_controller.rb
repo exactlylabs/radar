@@ -23,7 +23,6 @@ module ClientApi
           @speed_test.result.attach(io: result_file, filename: filename, content_type: 'application/json')
           @speed_test.gzip = true
           @speed_test.autonomous_system = AutonomousSystem.find_by_ip(@speed_test.ip) unless @speed_test.ip.nil?  || Rails.env.development?
-          byebug
           @speed_test.save!
           # Call process to parse JSON and seed measurement
           ProcessSpeedTestJob.perform_later(@speed_test, is_mobile)
