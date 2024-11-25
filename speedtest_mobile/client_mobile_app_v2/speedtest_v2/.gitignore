@@ -36,3 +36,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+# platform specific
+ios/
+# enable android later
+android/
