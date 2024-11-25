@@ -31,7 +31,6 @@ class ClientSpeedTest < ApplicationRecord
     self.longitude = self.lonlat.longitude
     if geo = results.first
       self.state = geo.state if self.state.nil?
-      self.county = geo.county if self.county.nil?
       self.city = geo.city if self.city.nil?
     end
   end
