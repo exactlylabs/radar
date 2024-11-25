@@ -6,9 +6,12 @@ import TextComponent from "@/components/TextComponent";
 import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { sharedStyles } from "@/styles/shared";
+import { colors, sharedStyles } from "@/styles/shared";
+import { useRouter } from "expo-router";
 
 export default function Step2() {
+    const router = useRouter();
+
     return (
         <BgGradient>
             <View style={styles.content}>
@@ -30,7 +33,9 @@ export default function Step2() {
                 </View>
 
                 <ButtonContainer>
-                    <Button title="Get started" onPress={() => {}} />
+                    <Button title="Get started" onPress={() => {
+                        router.push('/account-email');
+                    }} />
                 </ButtonContainer>
             </View>
         </BgGradient>
@@ -66,13 +71,13 @@ const styles = StyleSheet.create({
     dotSelected: {
         width: 8,
         height: 8,
-        backgroundColor: sharedStyles.colors.blue200,
+        backgroundColor: colors.blue200,
         borderRadius: 5
     },
     dot: {
         width: 8,
         height: 8,
-        backgroundColor: sharedStyles.colors.white,
+        backgroundColor: colors.white,
         opacity: 0.2,
         borderRadius: 5,
     }
