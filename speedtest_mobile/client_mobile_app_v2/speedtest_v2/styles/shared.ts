@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
 
+export const colors = {
+    white: '#FFFFFF',
+    gray400: '#BCBBC7',
+    blue200: '#4B7BE5',
+    bgGradientPrimary: '#1B1860',
+    bgGradientSecondary: '#0B0B1A',
+}
+
 export const sharedStyles = StyleSheet.create({
-    colors: {
-        white: '#FFFFFF',
-        gray400: '#BCBBC7',
-        blue200: '#4B7BE5',
-        bgGradientPrimary: '#1B1860',
-        bgGradientSecondary: '#0B0B1A',
-    },
     titleContainer: {
         flexDirection: "column",
         alignItems: "center",

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>user_icon copy@1x</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#3F79FA" offset="0%"></stop>
+            <stop stop-color="#2660E1" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#FFFFFF" stop-opacity="0.199874344" offset="0%"></stop>
+            <stop stop-color="#436ECC" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="My-Radar" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Onboarding---Account" transform="translate(-24, -112)">
+            <g id="user_icon-copy" transform="translate(24, 112)">
+                <circle id="Oval" stroke="url(#linearGradient-2)" stroke-width="0.847058824" fill="url(#linearGradient-1)" cx="36" cy="36" r="35.5764706"></circle>
+                <g id="Group" transform="translate(21.4286, 18.8571)" fill="#FFFFFF">
+                    <circle id="Oval" cx="14.5714286" cy="7.71428571" r="7.71428571"></circle>
+                    <ellipse id="Oval-Copy-2" cx="14.5714286" cy="27" rx="14.5714286" ry="9"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
