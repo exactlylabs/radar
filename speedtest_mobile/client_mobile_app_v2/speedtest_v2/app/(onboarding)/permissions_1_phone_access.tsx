@@ -59,7 +59,7 @@ export default function Permissions1PhoneAccess() {
   return (
     <View style={styles.background}>
       <View style={styles.container}>
-        <View style={styles.progressBarContainer}>
+        <View style={sharedStyles.progressBarContainer}>
           <View style={styles.progressBarFill} />
         </View>
         <Animated.View style={{ ...styles.content, opacity: slideAnim }}>
@@ -92,16 +92,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  progressBarContainer: {
-    height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
-    marginTop: 108,
-    width: "100%",
-  },
   progressBarFill: {
-    height: "100%",
+    ...sharedStyles.progressBarFill,
     width: "15%",
-    backgroundColor: sharedStyles.colors.blue200,
   },
   content: {
     flex: 1,
