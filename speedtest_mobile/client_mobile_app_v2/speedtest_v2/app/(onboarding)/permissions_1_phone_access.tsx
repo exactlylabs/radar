@@ -1,15 +1,13 @@
 import {
-  Image,
   StyleSheet,
   Text,
   View,
   Animated,
   PermissionsAndroid,
+
 } from "react-native";
 import Title from "@/components/Title";
-import gridImage from "@/assets/images/step1grid-onboarding.png";
 import TextComponent from "@/components/TextComponent";
-import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { useRouter } from "expo-router";
@@ -33,57 +31,11 @@ export default function Permissions1PhoneAccess() {
         }
       );
 
-      const networkGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE,
-        {
-          title: "Network State Permission",
-          message: "This app needs access to your network state.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
+      // ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE, and INTERNET
+      // are automatically granted by including them in AndroidManifest.xml
+      // CHANGE_WIFI_STATE might need to be handled differently
 
-      const wifiStateGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_WIFI_STATE,
-        {
-          title: "Wi-Fi State Permission",
-          message: "This app needs access to your Wi-Fi state.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
-
-      const changeWifiStateGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CHANGE_WIFI_STATE,
-        {
-          title: "Change Wi-Fi State Permission",
-          message: "This app needs permission to change Wi-Fi state.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
-
-      const internetGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.INTERNET,
-        {
-          title: "Internet Permission",
-          message: "This app needs access to the internet.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
-
-      if (
-        phoneGranted === PermissionsAndroid.RESULTS.GRANTED &&
-        networkGranted === PermissionsAndroid.RESULTS.GRANTED &&
-        wifiStateGranted === PermissionsAndroid.RESULTS.GRANTED &&
-        changeWifiStateGranted === PermissionsAndroid.RESULTS.GRANTED &&
-        internetGranted === PermissionsAndroid.RESULTS.GRANTED
-      ) {
+      if (phoneGranted === PermissionsAndroid.RESULTS.GRANTED) {
         Animated.timing(slideAnim, {
           toValue: 0,
           duration: 300,
@@ -105,54 +57,68 @@ export default function Permissions1PhoneAccess() {
   };
 
   return (
-    <BgGradient>
+    <View style={styles.background}>
       <View style={styles.container}>
-        <View style={styles.progressBar} />
+        <View style={styles.progressBarContainer}>
+          <View style={styles.progressBarFill} />
+        </View>
         <Animated.View style={{ ...styles.content, opacity: slideAnim }}>
-          <View style={styles.imageContainer}>
-            <Image source={gridImage} />
-          </View>
-          <View style={styles.titleContainer}>
-            <Title title="Access to cellular and Wi-Fi reception" />
-          </View>
-          <View style={styles.textContainer}>
-            <TextComponent text="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately." />
+          <View style={styles.topContent}>
+            <View style={styles.titleContainer}>
+              <Title title="Access to cellular and Wi-Fi reception" />
+            </View>
+            <View style={styles.textContainer}>
+              <TextComponent text="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately." />
+            </View>
           </View>
 
-          <ButtonContainer>
-            <Button title="Enable phone access" onPress={requestPermissions} />{" "}
-          </ButtonContainer>
+          <View style={styles.bottomContent}>
+            <ButtonContainer>
+              <Button title="Enable phone access" onPress={requestPermissions} />
+            </ButtonContainer>
+          </View>
         </Animated.View>
       </View>
-    </BgGradient>
+    </View>
   );
 }
 
-
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: sharedStyles.colors.blueBackground,
+  },
   container: {
     flex: 1,
     padding: 20,
   },
-  progressBar: {
+  progressBarContainer: {
     height: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    marginTop: 108,
+    width: "100%",
+  },
+  progressBarFill: {
+    height: "100%",
+    width: "15%",
     backgroundColor: sharedStyles.colors.blue200,
-    marginBottom: 20,
   },
   content: {
     flex: 1,
   },
-  imageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+  topContent: {
+    flex: 1,
   },
   titleContainer: {
     paddingHorizontal: 20,
-    marginTop: 10,
+    marginTop: 32,
   },
   textContainer: {
     paddingHorizontal: 20,
     paddingRight: 50,
-    marginTop: 20,
+    marginTop: 16,
+  },
+  bottomContent: {
+    marginBottom: 20,
   },
 });

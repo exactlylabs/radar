@@ -5,8 +5,10 @@ export const sharedStyles = StyleSheet.create({
         white: '#FFFFFF',
         gray400: '#BCBBC7',
         blue200: '#4B7BE5',
+        blueBackground: '#15152E',
         bgGradientPrimary: '#1B1860',
         bgGradientSecondary: '#0B0B1A',
+
     },
     titleContainer: {
         flexDirection: "column",
