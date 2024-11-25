@@ -176,7 +176,8 @@ class BackgroundSpeedTest {
     );
 
     if (result.failure != null) {
-      _localStorage.addPendingSpeedTestResult(speedTestResult);
+      final deferredSpeedTestResult = _markSpeedTestAsDeferred(speedTestResult);
+      _localStorage.addPendingSpeedTestResult(deferredSpeedTestResult);
     } else {
       await _uploadOfflineReports();
     }
@@ -194,6 +195,11 @@ class BackgroundSpeedTest {
         await _localStorage.removePendingSpeedTestResult(pendingSpeedTestResultsKey);
       }
     }
+  }
+
+  Map<String, dynamic> _markSpeedTestAsDeferred(Map<String, dynamic> speedTestResult) {
+    speedTestResult['speed_test']['deferred_upload'] = true;
+    return speedTestResult;
   }
 
   Map<String, dynamic> getSpeedTestResult() {
