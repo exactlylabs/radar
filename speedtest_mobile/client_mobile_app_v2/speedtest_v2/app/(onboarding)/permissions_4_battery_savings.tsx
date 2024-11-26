@@ -20,7 +20,6 @@ export default function Permissions4BatterySavings() {
 
   const handleUpdateSettings = async () => {
     const isBatterySavingEnabled = await Battery.isLowPowerModeEnabledAsync();
-    console.log("isBatterySavingEnabled", isBatterySavingEnabled);
     if (true ||isBatterySavingEnabled) {
       Alert.alert(
         "Update Settings",
