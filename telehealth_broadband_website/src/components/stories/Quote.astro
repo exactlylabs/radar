@@ -1,0 +1,10 @@
+---
+import styles from './quote.module.css';
+
+const { quote, author } = Astro.props;
+---
+
+<div class={styles.quoteContainer}>
+  <blockquote class={styles.quote}>{quote}</blockquote>
+  <p class={styles.quoteAuthor}>— {author}</p>
+</div>

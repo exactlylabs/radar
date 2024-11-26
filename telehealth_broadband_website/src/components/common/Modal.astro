@@ -22,7 +22,7 @@ const { id, isOpen } = Astro.props;
 </div>
 
 
-<script define:vars={{id}}>
+<script is:inline define:vars={{id}}>
   const underlay = document.getElementById(`${id}-underlay`);
   const container = document.getElementById(id);
   const modal = document.getElementById(`${id}-modal`);

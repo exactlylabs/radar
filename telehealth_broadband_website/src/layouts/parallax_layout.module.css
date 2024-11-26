@@ -1,0 +1,37 @@
+:root {
+  --navbar-height: 65px;
+  --footer-height: 240px;
+  --side-padding: calc((100vw - var(--max-width)) / 2);
+}
+
+.parallaxBackgroundImage {
+  width: auto;
+  min-width: 100vw;
+  height: 100dvh;
+  height: 100vh;
+  max-height: 100dvh;
+  max-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+@media (max-width: 768px) {
+  .parallaxBackgroundImage {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.parallaxContainer {
+  width: 100%;
+  height: 100dvh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 0;
+}

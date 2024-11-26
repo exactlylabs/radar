@@ -127,7 +127,7 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
   // I can trigger the required script at the exact moment the modals are added to the DOM.
   const mutationObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if(mutation.addedNodes.length === 1 && mutation.addedNodes[0].id === 'scroll-gallery-feature-cards') {
+      if(mutation.addedNodes.length === 1 && (mutation.addedNodes[0] as HTMLElement).id === 'scroll-gallery-feature-cards') {
         attachModals(mutation.addedNodes[0] as HTMLElement);
       }
     });
