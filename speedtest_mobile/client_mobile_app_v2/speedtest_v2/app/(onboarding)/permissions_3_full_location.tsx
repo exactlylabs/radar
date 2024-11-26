@@ -18,8 +18,11 @@ export default function Permissions2LocationAccess() {
       if (status === 'granted') {
         animateAndNavigate();
       } else {
-        // TODO: Show error message ?
-        console.log("Location permission denied");
+        Alert.alert(
+          "Permission Required",
+          "This app requires access to your location all the time to function properly.",
+          [{ text: "OK" }]
+        );
       }
     } catch (err) {
       console.warn(err);
