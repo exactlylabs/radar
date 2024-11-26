@@ -8,7 +8,7 @@ import onboardingStyles from "@/styles/onboarding";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
 import * as Location from 'expo-location';
 
-export default function Permissions2LocationAccess() {
+export default function Permissions3FullLocation() {
   const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
 
   const requestPermissions = async () => {
