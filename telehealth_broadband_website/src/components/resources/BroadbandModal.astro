@@ -1,6 +1,7 @@
 ---
 import HeroWithText from "../common/HeroWithText.astro";
 import styles from './broadband_modal.module.css';
+import sharedModalStyles from './shared_modals.module.css';
 import image from '../../assets/images/broadband.webp';
 import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
 import BulletPoint from "../opportunities/BulletPoint.astro";
@@ -10,15 +11,15 @@ import broadbandSearch from '../../assets/images/broadband-search.webp';
 import broadbandFilters from '../../assets/images/broadband-filters.webp';
 ---
 
-<div id="broadband-modal-content" class={styles.content}>
-  <section class={styles.modalHero}>
-    <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
-    <div class={styles.gradient}></div>
-    <div class={styles.heroContainer}>
+<div class={sharedModalStyles.content}>
+  <section class={sharedModalStyles.modalHero}>
+    <div class={sharedModalStyles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
+    <div class={sharedModalStyles.gradient}></div>
+    <div class={sharedModalStyles.heroContainer}>
       <HeroWithText head="Broadband Mapping" title="Explore Broadband Nationwide" content="Explore a comprehensive online map aggregating millions of anonymized crowd-sourced internet speed tests across the U.S. This tool reveals the real median speeds experienced at state, county, and tribal levels, enabling users to track changes in internet quality over time, compare ISPs, and explore test data categorized by the FCC's served, underserved, and unserved areas." />
     </div>
     <GoToLinkButton href="https://broadbandmapping.com" text="Go to Webiste"/>
-    <div class={styles.itemsGrid}>
+    <div class={sharedModalStyles.itemsGrid}>
       <BulletPoint title="Geographical Insights"
         content="Zoom in on specific geographies to analyze how internet speeds vary across state, county, or tribal levels."
         direction="column"

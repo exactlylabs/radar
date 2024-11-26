@@ -19,6 +19,7 @@ import videoThumbnail from '../assets/images/video-thumbnail.webp';
 import radarPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
 import broadbandMappingImage from '../assets/images/broadband-mapping-laptop.webp';
 import mobileTestingImage from '../assets/images/mobile-testing.webp';
+import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
 ---
 <BaseLayout>
 
@@ -96,7 +97,7 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
     <BroadbandModal modalId={'pods-modal'}/>
   </Modal>
   <Modal id={'speed-test-modal'} isOpen={false}>
-    <BroadbandModal modalId={'speed-test-modal'}/>
+    <SpeedtestModal modalId={'speed-test-modal'}/>
   </Modal>
   <Modal id={'mobile-testing-modal'} isOpen={false}>
     <BroadbandModal modalId={'mobile-testing-modal'}/>
