@@ -1,4 +1,4 @@
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, PermissionsAndroid } from "react-native";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
 import Button from "@/components/Button";
@@ -7,7 +7,6 @@ import { sharedStyles } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
 import * as Location from 'expo-location';
-import { PERMISSION_GRANTED } from "@/constants/permissionsConstants";
 
 export default function Permissions3FullLocation() {
   const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
@@ -16,7 +15,7 @@ export default function Permissions3FullLocation() {
     try {
       const { status } = await Location.requestBackgroundPermissionsAsync();
 
-      if (status === PERMISSION_GRANTED) {
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
         animateAndNavigate();
       } else {
         Alert.alert(
