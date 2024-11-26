@@ -12,6 +12,7 @@ import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { useRouter } from "expo-router";
 import { sharedStyles } from "@/styles/shared";
+import onboardingStyles from "@/styles/onboarding";
 import { useEffect, useRef } from "react";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
 
@@ -46,23 +47,23 @@ export default function Permissions1PhoneAccess() {
   };
 
   return (
-    <View style={styles.background}>
-      <View style={styles.container}>
+    <View style={onboardingStyles.background}>
+      <View style={onboardingStyles.container}>
         <View style={sharedStyles.progressBarContainer}>
           <View style={styles.progressBarFill} />
         </View>
         <AnimatedTransition slideAnim={slideAnim}>
-          <View style={styles.content}>
-            <View style={styles.topContent}>
-              <View style={styles.titleContainer}>
+          <View style={onboardingStyles.content}>
+            <View style={onboardingStyles.topContent}>
+              <View style={onboardingStyles.titleContainer}>
                 <Title title="Access to cellular and Wi-Fi reception" />
               </View>
-              <View style={styles.textContainer}>
+              <View style={onboardingStyles.textContainer}>
                 <TextComponent text="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately." />
               </View>
             </View>
 
-            <View style={styles.bottomContent}>
+            <View style={onboardingStyles.bottomContent}>
               <ButtonContainer>
                 <Button title="Enable phone access" onPress={requestPermissions} />
               </ButtonContainer>
@@ -75,34 +76,8 @@ export default function Permissions1PhoneAccess() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    backgroundColor: sharedStyles.colors.blueBackground,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-  },
   progressBarFill: {
     ...sharedStyles.progressBarFill,
     width: "15%",
-  },
-  content: {
-    flex: 1,
-  },
-  topContent: {
-    flex: 1,
-  },
-  titleContainer: {
-    paddingHorizontal: 20,
-    marginTop: 32,
-  },
-  textContainer: {
-    paddingHorizontal: 20,
-    paddingRight: 50,
-    marginTop: 16,
-  },
-  bottomContent: {
-    marginBottom: 20,
-  },
+  }
 });
