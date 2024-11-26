@@ -1,0 +1,9 @@
+---
+import styles from './epigraph.module.css';
+
+const { text } = Astro.props;
+---
+
+<div class={styles.epigraph}>
+  <p class={styles.epigraphText}>{text}</p>
+</div>

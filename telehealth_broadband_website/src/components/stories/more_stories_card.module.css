@@ -1,0 +1,26 @@
+.card {
+
+}
+.card > img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 387 / 219;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
+
+.card > div[data-small="true"] {
+  gap: 0;
+}
+
+.card > div[data-small="true"] > span {
+  margin-bottom: .5rem;
+}
+
+.card > div[data-small="true"] > h3 {
+  margin-bottom: 0.75rem;
+}
+
+.card > a {
+  margin-top: 1.5rem;
+}
