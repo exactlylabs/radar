@@ -139,3 +139,12 @@ import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
     subtree: true
   });
 </script>
+
+<script type="text/javascript"
+        src="https://speed.radartoolkit.com/widget.js"
+        onload="
+          RadarSpeedWidget.config({ clientId: 1, elementId: 'speedtest-root', frameStyle: { width: '100%', height: '100%' }, global: true });
+          RadarSpeedWidget.new().mount();
+        "
+        defer
+></script>
