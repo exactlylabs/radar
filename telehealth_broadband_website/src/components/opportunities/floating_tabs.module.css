@@ -1,8 +1,7 @@
 .container {
   position: sticky;
-  top: 0;
+  top: var(--responsive-navbar-height);
   padding: 1rem 0;
-  margin-bottom: 40px;
   width: 100%;
   z-index: 10;
   display: flex;
