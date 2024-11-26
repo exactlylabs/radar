@@ -25,10 +25,13 @@ export default function OnboardingLayout() {
         name="permissions_3_full_location"
         options={{ headerShown: false }}
       />
-      {/* Onboarding - Permissions - 2
-        Onboarding - Permissions - 3
-        Onboarding - Permissions - 4
-        Onboarding - Permissions - 5 */}
+      <Stack.Screen
+        name="permissions_4_battery_savings"
+        options={{ headerShown: false }}
+      />
+      {/*
+        Onboarding - Permissions - 5
+      */}
     </Stack>
   );
 }
