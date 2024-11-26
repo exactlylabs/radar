@@ -1,14 +1,14 @@
 ---
 import HeroWithText from "../common/HeroWithText.astro";
-import styles from './broadband_modal.module.css';
+import styles from './speedtest_modal.module.css';
 import sharedModalStyles from './shared_modals.module.css';
 import image from '../../assets/images/broadband-mapping-laptop.webp';
 import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
 import BulletPoint from "../opportunities/BulletPoint.astro";
 
-import broadbandMain from '../../assets/images/broadband-mapping.webp';
-import broadbandSearch from '../../assets/images/broadband-search.webp';
-import broadbandFilters from '../../assets/images/broadband-filters.webp';
+import speedtestLeft from '../../assets/images/speedtest.webp';
+import speedtestRight from '../../assets/images/speedtest-popup.webp';
+import Epigraph from "../stories/Epigraph.astro";
 ---
 
 <div class={sharedModalStyles.content}>
@@ -43,9 +43,15 @@ import broadbandFilters from '../../assets/images/broadband-filters.webp';
       </BulletPoint>
     </div>
     <div class={styles.imagesGrid}>
-      <div style={`background-image: url(${broadbandMain.src})`}></div>
-      <div style={`background-image: url(${broadbandSearch.src})`}></div>
-      <div style={`background-image: url(${broadbandFilters.src})`}></div>
+      <div style={`background-image: url(${speedtestLeft.src})`}></div>
+      <div style={`background-image: url(${speedtestRight.src})`}></div>
     </div>
+    <Epigraph text="The Radar Speed website is accessible from any computer or mobile device, providing data on speeds, latency, and packet loss. The community map displays all speed test results, offering an easy way to compare internet access across different locations. It allows filtering by connection type, internet service providers, cost range, and time periods."/>
+  </section>
+  
+  <section class={styles.embedSection}>
+    <h3>Embed a Speed Test Widget</h3>
+    <p>In addition to the website, the speed test tool can be embedded into any community-specific site, allowing visitors to run tests easily. Try it yourself.</p>
+    <div id="speedtest-root" class={styles.embed}></div>
   </section>
 </div>
