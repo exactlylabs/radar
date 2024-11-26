@@ -9,7 +9,7 @@ import AnimatedTransition, { useAnimatedTransition } from "@/components/Animated
 import * as Location from 'expo-location';
 
 export default function Permissions2LocationAccess() {
-  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
+  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_full_location");
 
   const requestPermissions = async () => {
     try {
@@ -58,6 +58,6 @@ export default function Permissions2LocationAccess() {
 const styles = StyleSheet.create({
   progressBarFill: {
     ...sharedStyles.progressBarFill,
-    width: "30%",
+    width: "32%",
   },
 });

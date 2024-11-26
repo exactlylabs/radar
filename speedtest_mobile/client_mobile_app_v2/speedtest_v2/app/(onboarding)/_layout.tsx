@@ -21,6 +21,10 @@ export default function OnboardingLayout() {
         name="permissions_2_location_access"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="permissions_3_full_location"
+        options={{ headerShown: false }}
+      />
       {/* Onboarding - Permissions - 2
         Onboarding - Permissions - 3
         Onboarding - Permissions - 4
