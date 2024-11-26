@@ -8,14 +8,16 @@ import { AntDesign } from "@expo/vector-icons";
 import UserIcon from '../../assets/images/icons/usericon.png'
 import Input from "@/components/Input";
 import InfoIcon from '../../assets/images/icons/infoicon.png'
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
+import { colors } from "@/styles/shared";
 
 export default function AccountEmail() {
     const router = useRouter()
     const [email, setEmail] = useState('')
     const [error, setError] = useState('')
+    const [isFocused, setIsFocused] = useState(false)
 
     const handleContinue = () => {
         if (isValidEmail(email)) {
@@ -43,6 +45,8 @@ export default function AccountEmail() {
                         placeholder="Enter your email address"
                         value={email}
                         onChangeText={setEmail}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
                     />
                     {error && (
                         <Text style={styles.errorText}>
@@ -61,7 +65,8 @@ export default function AccountEmail() {
                 </ButtonContainer>
 
                 <View style={styles.privacyContainer}>
-                    <Text style={styles.privacyText}>By proceeding, you agree to the Privacy Policy.</Text>
+                    <Text style={styles.privacyText}>By proceeding, you agree to the</Text>
+                    <Link href={''} style={styles.privacyLink}>Privacy Policy</Link>
                 </View>
             </View>
         </View>
@@ -71,7 +76,7 @@ export default function AccountEmail() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#15152E',
+        backgroundColor: colors.bgPrimary,
     },
     content: {
         flex: 1,
@@ -94,15 +99,16 @@ const styles = StyleSheet.create({
         marginTop: 40
     },
     errorText: {
-        color: 'red',
-        fontSize: 14,
-        fontFamily: 'MulishRegular'
+        color: colors.red400,
+        fontSize: 16,
+        fontFamily: 'MulishRegular',
+        marginVertical: 20
     },
     infoContainer: {
         flexDirection: 'row',
         gap: 10,
         marginTop: 10,
-        marginBottom: 200
+        marginBottom: 180
     },
     infoIcon: {
         width: 20,
@@ -110,7 +116,7 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     infoText: {
-        color: '#737381',
+        color: colors.gray400,
         fontSize: 14,
         fontFamily: 'MulishRegular',
         maxWidth: '90%'
@@ -119,12 +125,20 @@ const styles = StyleSheet.create({
         marginTop: 10,
         textAlign: 'center',
         width: '100%',
+        flexDirection: 'row',
+        gap: 5,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     privacyText: {
-        color: '#737381',
+        color: colors.gray400,
         fontSize: 14,
         fontFamily: 'MulishRegular'
+    },
+    privacyLink: {
+        color: colors.gray400,
+        fontSize: 14,
+        fontFamily: 'MulishRegular',
+        textDecorationLine: 'underline'
     }
 })
