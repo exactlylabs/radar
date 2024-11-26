@@ -1,44 +1,24 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  PermissionsAndroid,
-  Alert,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { useRouter } from "expo-router";
 import { sharedStyles } from "@/styles/shared";
-import { useEffect, useRef } from "react";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
+import * as Location from 'expo-location';
 
-export default function Permissions1PhoneAccess() {
-  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_2_location_access");
+export default function Permissions2LocationAccess() {
+  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
 
   const requestPermissions = async () => {
     try {
-      const phoneGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-        {
-          title: "Phone State Permission",
-          message: "This app needs access to your phone state.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
+      const { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (phoneGranted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (status === 'granted') {
         animateAndNavigate();
       } else {
-        Alert.alert(
-          "Permission Required",
-          "This app requires phone state permissions to function properly.",
-          [{ text: "OK" }]
-        );
+        // TODO: Show error message ?
+        console.log("Location permission denied");
       }
     } catch (err) {
       console.warn(err);
@@ -55,16 +35,16 @@ export default function Permissions1PhoneAccess() {
           <View style={styles.content}>
             <View style={styles.topContent}>
               <View style={styles.titleContainer}>
-                <Title title="Access to cellular and Wi-Fi reception" />
+                <Title title="Access to your location" />
               </View>
               <View style={styles.textContainer}>
-                <TextComponent text="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately." />
+                <TextComponent text="Your location is used to map Wi-Fi hotspots and cell towers, and to provide you with the locations where wireless quality is being measured." />
               </View>
             </View>
 
             <View style={styles.bottomContent}>
               <ButtonContainer>
-                <Button title="Enable phone access" onPress={requestPermissions} />
+                <Button title="Enable location access" onPress={requestPermissions} />
               </ButtonContainer>
             </View>
           </View>
@@ -85,7 +65,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     ...sharedStyles.progressBarFill,
-    width: "15%",
+    width: "30%",
   },
   content: {
     flex: 1,
