@@ -4,7 +4,7 @@ import {
   View,
   Animated,
   PermissionsAndroid,
-
+  Alert,
 } from "react-native";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
@@ -49,7 +49,11 @@ export default function Permissions1PhoneAccess() {
           }).start();
         });
       } else {
-        console.log("Permissions not granted");
+        Alert.alert(
+          "Permission Required",
+          "This app requires phone state permissions to function properly.",
+          [{ text: "OK" }]
+        );
       }
     } catch (err) {
       console.warn(err);
