@@ -1,0 +1,58 @@
+---
+import HeroWithText from "../common/HeroWithText.astro";
+import styles from './mobile_testing_modal.module.css';
+import image from '../../assets/images/mobile-testing.webp';
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+import BulletPoint from "../opportunities/BulletPoint.astro";
+
+import mobileApp from '../../assets/images/mobile-app.webp';
+import broadbandSearch from '../../assets/images/broadband-search.webp';
+import broadbandFilters from '../../assets/images/broadband-filters.webp';
+import Epigraph from "../stories/Epigraph.astro";
+import Image from "astro/components/Image.astro";
+---
+
+<div id="mobile-testing-modal-content" class={styles.content}>
+  <section class={styles.modalHero}>
+    <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
+    <div class={styles.gradient}></div>
+    <div class={styles.heroContainer}>
+      <HeroWithText head="Mobile Testing" title="On-the-Go Speed Testing" content="The Radar Speed app enables users to run manual and scheduled speed tests, view their test history, and compare results with the community. With Radar mode enabled, the app also identifies cell towers and Wi-Fi access points, mapping coverage gaps and connectivity performance across various regions.​" />
+    </div>
+    <GoToLinkButton href="https://www.radartoolkit.com/mobile-testing" text="Go to Webiste"/>
+    <div class={styles.itemsGrid}>
+      <BulletPoint title="Speed Tests & Signal Strenght"
+        content="The app allows users to run speed tests and analyze mobile signal strength in real time on both Wi-Fi and cellular connections."
+        direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.5 11.0901)" d="M3.4615433 0L3.4615433 8.0785284C3.4623413 8.3877411 3.3087668 8.6768856 3.0523095 8.8490133L3.0523095 8.8490133C2.2518735 9.382802 1.2096698 9.382802 0.40923372 8.8490133L0.40923372 8.8490133C0.15277645 8.6768856 -0.00079802208 8.3877411 0 8.0785284L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.5 9.93436)" d="M0 1.1557266C0 1.7940167 0.77489144 2.3114531 1.7307686 2.3114531C2.6866455 2.3114531 3.4615371 1.7940167 3.4615371 1.1557266C3.4615371 0.51743639 2.6866455 0 1.7307686 0C0.77489144 0 0 0.51743639 0 1.1557266" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(10.2692 7.62291)" d="M3.4615433 0L3.4615433 11.545709C3.4623413 11.85492 3.3087668 12.144065 3.0523095 12.316193L3.0523095 12.316193C2.2518735 12.849982 1.2096698 12.849982 0.40923372 12.316193L0.40923372 12.316193C0.15277645 12.144065 -0.00079802208 11.85492 0 11.545709L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(10.2692 6.46718)" d="M0 1.1557266C0 1.7940167 0.77489144 2.3114531 1.7307686 2.3114531C2.6866455 2.3114531 3.4615371 1.7940167 3.4615371 1.1557266C3.4615371 0.51743639 2.6866455 0 1.7307686 0C0.77489144 0 0 0.51743639 0 1.1557266" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.0385 4.15573)" d="M3.4615433 0L3.4615433 15.012888C3.4623413 15.322101 3.3087668 15.611245 3.0523095 15.783373L3.0523095 15.783373C2.2518735 16.317162 1.2096698 16.317162 0.40923372 15.783373L0.40923372 15.783373C0.15277645 15.611245 -0.00079802208 15.322101 0 15.012888L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.0385 3)" d="M0 1.1557267C0 1.568628 0.32988259 1.9501646 0.86538422 2.1566153C1.4008859 2.363066 2.0606511 2.363066 2.5961528 2.1566153C3.1316545 1.9501646 3.4615371 1.568628 3.4615371 1.1557267C3.4615371 0.74282527 3.1316545 0.3612887 2.5961528 0.15483801C2.0606511 -0.051612668 1.4008859 -0.051612668 0.86538422 0.15483801C0.32988259 0.3612887 0 0.74282527 0 1.1557267" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Identify Towers & Access Points"
+                   content="With Radar mode enabled, the app maps the coverage of mobile towers and the availability of nearby Wi-Fi access points."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="25">
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(9.21708 9.21446)" d="M0 2.85658C0 4.4342256 1.2791865 5.71316 2.8571429 5.71316C4.4350991 5.71316 5.7142859 4.4342256 5.7142859 2.85658C5.7142859 1.2789345 4.4350991 0 2.8571429 0C1.2791865 0 0 1.2789345 0 2.85658" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(7.7885 17.7842)" d="M0 4.2848701C0 1.9184016 1.9187796 0 4.2857141 0C6.6526489 0 8.5714283 1.9184016 8.5714283 4.2848701L0 4.2848701Z" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(5.64565 5.64379)" d="M1.8828571 10.972068C-0.62763351 8.4620409 -0.62761694 4.3925109 1.8828943 1.8825048C4.3934054 -0.62750161 8.4637375 -0.62750161 10.974249 1.8825048C13.484759 4.3925109 13.484776 8.4620409 10.974286 10.972068" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(2.07422 2.07373)" d="M2.9285715 17.067345C-0.97637832 13.162766 -0.97616297 6.8325481 2.9290524 2.9282351C6.8342676 -0.97607833 13.165732 -0.97607833 17.070948 2.9282351C20.976164 6.8325481 20.976377 13.162766 17.071428 17.067345" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+    </div>
+    <div class={styles.mobileAppContainer}>
+      <div class={styles.imageContainer} style={`background-image: url(${mobileApp.src})`}></div>
+      <!-- <div class={styles.imageContainer}>
+
+        <Image src={mobileApp} alt="Mobile App"/>
+      </div> -->
+      <Epigraph text="In addition to viewing real-time mobile signal quality and test internet speeds, the app allows users to analyze coverage and internet access quality through the community map."/>
+    </div>
+  </section>
+</div>
