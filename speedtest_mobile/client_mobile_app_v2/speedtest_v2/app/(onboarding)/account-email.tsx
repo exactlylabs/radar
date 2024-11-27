@@ -5,9 +5,9 @@ import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { AntDesign } from "@expo/vector-icons";
 
-import UserIcon from '../../assets/images/icons/usericon.png'
+import UserIcon from '@/assets/images/icons/usericon.png'
 import Input from "@/components/Input";
-import InfoIcon from '../../assets/images/icons/infoicon.png'
+import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
