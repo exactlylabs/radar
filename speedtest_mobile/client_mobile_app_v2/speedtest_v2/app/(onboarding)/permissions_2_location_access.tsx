@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Alert, PermissionsAndroid } from "react-native";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
 import Button from "@/components/Button";
@@ -9,17 +9,20 @@ import AnimatedTransition, { useAnimatedTransition } from "@/components/Animated
 import * as Location from 'expo-location';
 
 export default function Permissions2LocationAccess() {
-  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
+  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_full_location");
 
   const requestPermissions = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (status === 'granted') {
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
         animateAndNavigate();
       } else {
-        // TODO: Show error message ?
-        console.log("Location permission denied");
+        Alert.alert(
+          "Permission Required",
+          "This app requires location permissions to function properly.",
+          [{ text: "OK" }]
+        );
       }
     } catch (err) {
       console.warn(err);
@@ -58,6 +61,6 @@ export default function Permissions2LocationAccess() {
 const styles = StyleSheet.create({
   progressBarFill: {
     ...sharedStyles.progressBarFill,
-    width: "30%",
+    width: "32%",
   },
 });

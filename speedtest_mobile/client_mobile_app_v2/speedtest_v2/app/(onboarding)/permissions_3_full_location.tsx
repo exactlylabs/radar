@@ -1,43 +1,26 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  PermissionsAndroid,
-  Alert,
-} from "react-native";
+import { StyleSheet, View, Alert, PermissionsAndroid } from "react-native";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { useRouter } from "expo-router";
 import { sharedStyles } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
-import { useEffect, useRef } from "react";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
+import * as Location from 'expo-location';
 
-export default function Permissions1PhoneAccess() {
-  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_2_location_access");
+export default function Permissions3FullLocation() {
+  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_3_location_all_time");
 
   const requestPermissions = async () => {
     try {
-      const phoneGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-        {
-          title: "Phone State Permission",
-          message: "This app needs access to your phone state.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
+      const { status } = await Location.requestBackgroundPermissionsAsync();
 
-      if (phoneGranted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
         animateAndNavigate();
       } else {
         Alert.alert(
           "Permission Required",
-          "This app requires phone state permissions to function properly.",
+          "This app requires access to your location all the time to function properly.",
           [{ text: "OK" }]
         );
       }
@@ -56,16 +39,16 @@ export default function Permissions1PhoneAccess() {
           <View style={onboardingStyles.content}>
             <View style={onboardingStyles.topContent}>
               <View style={onboardingStyles.titleContainer}>
-                <Title title="Access to cellular and Wi-Fi reception" />
+                <Title title="Allow access to your location all the time" />
               </View>
               <View style={onboardingStyles.textContainer}>
-                <TextComponent text="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately." />
+                <TextComponent text="Your location is needed even when the app is closed so that Radar works in the background." />
               </View>
             </View>
 
             <View style={onboardingStyles.bottomContent}>
               <ButtonContainer>
-                <Button title="Enable phone access" onPress={requestPermissions} />
+                <Button title="Update location settings" onPress={requestPermissions} />
               </ButtonContainer>
             </View>
           </View>
@@ -78,6 +61,6 @@ export default function Permissions1PhoneAccess() {
 const styles = StyleSheet.create({
   progressBarFill: {
     ...sharedStyles.progressBarFill,
-    width: "16%",
-  }
+    width: "50%",
+  },
 });
