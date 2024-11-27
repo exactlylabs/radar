@@ -11,6 +11,7 @@ import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
+import { colors, fonts } from "@/styles/shared";
 
 export default function AccountEmail() {
     const router = useRouter()
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: 14,
-        fontFamily: 'MulishRegular'
+        fontFamily: fonts.MulishRegular
     },
     infoContainer: {
         flexDirection: 'row',
@@ -110,21 +111,20 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     infoText: {
-        color: '#737381',
+        color: colors.gray500,
         fontSize: 14,
-        fontFamily: 'MulishRegular',
+        fontFamily: fonts.MulishRegular,
         maxWidth: '90%'
     },
     privacyContainer: {
         marginTop: 10,
-        textAlign: 'center',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center'
     },
     privacyText: {
-        color: '#737381',
+        color: colors.gray500,
         fontSize: 14,
-        fontFamily: 'MulishRegular'
+        fontFamily: fonts.MulishRegular
     }
 })
