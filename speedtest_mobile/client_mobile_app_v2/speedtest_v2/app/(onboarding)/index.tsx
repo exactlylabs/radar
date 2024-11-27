@@ -11,7 +11,7 @@ import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { Link, useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
-import { colors } from "@/styles/shared";
+import { colors, fonts } from "@/styles/shared";
 
 export default function AccountEmail() {
     const router = useRouter()
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     errorText: {
         color: colors.red400,
         fontSize: 16,
-        fontFamily: 'MulishRegular',
+        fontFamily: fonts.MulishRegular,
         marginVertical: 20
     },
     infoContainer: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     infoText: {
         color: colors.gray400,
         fontSize: 14,
-        fontFamily: 'MulishRegular',
+        fontFamily: fonts.MulishRegular,
         maxWidth: '90%'
     },
     privacyContainer: {
@@ -133,12 +133,12 @@ const styles = StyleSheet.create({
     privacyText: {
         color: colors.gray400,
         fontSize: 14,
-        fontFamily: 'MulishRegular'
+        fontFamily: fonts.MulishRegular
     },
     privacyLink: {
         color: colors.gray400,
         fontSize: 14,
-        fontFamily: 'MulishRegular',
+        fontFamily: fonts.MulishRegular,
         textDecorationLine: 'underline'
     }
 })
