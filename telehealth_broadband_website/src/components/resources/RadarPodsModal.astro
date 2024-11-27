@@ -1,0 +1,68 @@
+---
+import HeroWithText from "../common/HeroWithText.astro";
+import styles from './radar_pods_modal.module.css';
+import image from '../../assets/images/radar-pods.webp';
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+import BulletPoint from "../opportunities/BulletPoint.astro";
+
+import podsDashboard from '../../assets/images/pods-dashboard.webp';
+import outages from '../../assets/images/outages.webp';
+import downloadSpeed from '../../assets/images/download-speed.webp';
+import dashboard from '../../assets/images/dashboard.webp';
+import podsDesktop from '../../assets/images/pods-desktop.webp';
+import Epigraph from "../stories/Epigraph.astro";
+import Image from "astro/components/Image.astro";
+---
+
+<div id="radar-pods-modal-content" class={styles.content}>
+  <section class={styles.modalHero}>
+    <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
+    <div class={styles.gradient}></div>
+    <div class={styles.heroContainer}>
+      <HeroWithText head="Radar Pods" title="Real-Time Internet Monitoring" content="The Radar Pod is a device that tracks internet performance by running automatic speed tests. Connected to a router via ethernet or Wi-Fi, it offers key metrics like speed, latency, and outages through a online dashboard. Ideal for individuals and institutions, the Pod monitors internet quality and helps diagnose connection issues." />
+    </div>
+    <GoToLinkButton href="https://www.radartoolkit.com" text="Go to Webiste"/>
+    <div class={styles.itemsGrid}>
+      <BulletPoint title="Scheduling & Data Caps"
+        content="Scheduling and data cap features are relevant for internet connections with data limits."
+        direction="column"
+      >
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+        <path fill="#4B7BE5" transform="translate(1 1)" d="M11 0C17.075132 0 22 4.9248676 22 11C22 17.075132 17.075132 22 11 22C4.9248676 22 0 17.075132 0 11L0.0037074047 10.711593C0.15663482 4.7697635 5.0212984 0 11 0ZM11 2C6.0294371 2 2 6.0294371 2 11C2 15.970563 6.0294371 20 11 20C15.970563 20 20 15.970563 20 11C20 6.0294371 15.970563 2 11 2ZM11 6.4285712C11.552285 6.4285712 12 6.8762865 12 7.4285712L12 10.585L16.170992 14.75773C16.561474 15.148296 16.561407 15.781462 16.170841 16.171944C15.780275 16.562428 15.14711 16.562359 14.756627 16.171793L10.292818 11.707031C10.257427 11.671634 10.225245 11.634243 10.196271 11.595221L10.124619 11.483969L10.093654 11.4231L10.059881 11.341638L10.035817 11.26589L10.011038 11.148599L10.003889 11.088804L10 11L10 7.4285712C10 6.8762865 10.447715 6.4285712 11 6.4285712Z"/>
+      </svg>
+      </BulletPoint>
+      <BulletPoint title="Real-time Dashboard"
+                   content="An online dashboard is accessible from anywhere and has support for multiple sites."
+                   direction="column"
+      >
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.5 11.0901)" d="M3.4615433 0L3.4615433 8.0785284C3.4623413 8.3877411 3.3087668 8.6768856 3.0523095 8.8490133L3.0523095 8.8490133C2.2518735 9.382802 1.2096698 9.382802 0.40923372 8.8490133L0.40923372 8.8490133C0.15277645 8.6768856 -0.00079802208 8.3877411 0 8.0785284L0 0" fill-rule="evenodd"/>
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.5 9.93436)" d="M0 1.1557266C0 1.7940167 0.77489144 2.3114531 1.7307686 2.3114531C2.6866455 2.3114531 3.4615371 1.7940167 3.4615371 1.1557266C3.4615371 0.51743639 2.6866455 0 1.7307686 0C0.77489144 0 0 0.51743639 0 1.1557266" fill-rule="evenodd"/>
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(10.2692 7.62291)" d="M3.4615433 0L3.4615433 11.545709C3.4623413 11.85492 3.3087668 12.144065 3.0523095 12.316193L3.0523095 12.316193C2.2518735 12.849982 1.2096698 12.849982 0.40923372 12.316193L0.40923372 12.316193C0.15277645 12.144065 -0.00079802208 11.85492 0 11.545709L0 0" fill-rule="evenodd"/>
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(10.2692 6.46718)" d="M0 1.1557266C0 1.7940167 0.77489144 2.3114531 1.7307686 2.3114531C2.6866455 2.3114531 3.4615371 1.7940167 3.4615371 1.1557266C3.4615371 0.51743639 2.6866455 0 1.7307686 0C0.77489144 0 0 0.51743639 0 1.1557266" fill-rule="evenodd"/>
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.0385 4.15573)" d="M3.4615433 0L3.4615433 15.012888C3.4623413 15.322101 3.3087668 15.611245 3.0523095 15.783373L3.0523095 15.783373C2.2518735 16.317162 1.2096698 16.317162 0.40923372 15.783373L0.40923372 15.783373C0.15277645 15.611245 -0.00079802208 15.322101 0 15.012888L0 0" fill-rule="evenodd"/>
+        <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.0385 3)" d="M0 1.1557267C0 1.568628 0.32988259 1.9501646 0.86538422 2.1566153C1.4008859 2.363066 2.0606511 2.363066 2.5961528 2.1566153C3.1316545 1.9501646 3.4615371 1.568628 3.4615371 1.1557267C3.4615371 0.74282527 3.1316545 0.3612887 2.5961528 0.15483801C2.0606511 -0.051612668 1.4008859 -0.051612668 0.86538422 0.15483801C0.32988259 0.3612887 0 0.74282527 0 1.1557267" fill-rule="evenodd"/>
+      </svg>
+      </BulletPoint>
+    </div>
+    <div class={styles.imageWithEpigraphContainer}>
+      <div class={styles.podsDashboardImage} style={`background-image: url(${podsDashboard.src})`}></div>
+      <Epigraph text="Data can be accessed and managed through the Pod’s customizable dashboard, offering key metrics along with features like test scheduling and data caps. A snapshot of metrics is also available via a QR code on the device."/>
+    </div>
+    <div class={styles.imageWithEpigraphContainer}>
+      <div class={styles.twoImagesContainer}>
+        <div class={styles.outagesImage} style={`background-image: url(${outages.src})`}></div>
+        <div class={styles.downloadSpeedImage} style={`background-image: url(${downloadSpeed.src})`}></div>
+      </div>
+      <Epigraph text="The Radar Pod gathers essential metrics such as download and upload speeds, latency, jitter, packet loss, and outage frequency."/>
+    </div>
+    <div class={styles.imageWithEpigraphContainer}>
+      <div class={styles.dashboardImage} style={`background-image: url(${dashboard.src})`}></div>
+      <Epigraph text="The data collected by the Pod provides actionable insights into the quality of service experienced by individual users and helps troubleshoot internet issues. Institutions can deploy Radar Pods across managed sites for enterprise-level internet quality monitoring. Collectively, the Radar Pods have contributed to a large, live dataset that tracks service quality across 25 focus counties in the Telehealth Broadband Pilot Program."/>
+    </div>
+    <div class={styles.imageWithEpigraphContainer}>
+      <div class={styles.podsDesktopImage} style={`background-image: url(${podsDesktop.src})`}></div>
+      <Epigraph text="The Telehealth Broadband Program also developed the Software Pod to complement the physical Radar Pod. It functions like the Radar Pod but is installed as a software agent on computers. This solution is ideal for monitoring desktop workstations with ethernet connections and has been an effective tool for institutions with stationary workstations."/>
+    </div>
+  </section>
+</div>
