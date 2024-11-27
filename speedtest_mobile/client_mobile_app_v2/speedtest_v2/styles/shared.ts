@@ -6,6 +6,7 @@ export const colors = {
     gray400: '#A09FB7',
     gray500: '#737381',
     blue200: '#4B7BE5',
+    blueBackground: '#15152E',
     bgGradientPrimary: '#1B1860',
     bgGradientSecondary: '#0B0B1A',
     red400: '#E54B4B',
@@ -18,6 +19,14 @@ export const fonts = {
 }
 
 export const sharedStyles = StyleSheet.create({
+    colors: {
+        white: colors.white,
+        gray400: colors.gray400,
+        blue200: colors.blue200,
+        blueBackground: colors.blueBackground,
+        bgGradientPrimary: colors.bgGradientPrimary,
+        bgGradientSecondary: colors.bgGradientSecondary,
+    },
     titleContainer: {
         flexDirection: "column",
         alignItems: "center",
@@ -110,5 +119,15 @@ export const sharedStyles = StyleSheet.create({
     errorText: {
         color: '#f44336',
         textAlign: 'center',
+    },
+    progressBarContainer: {
+        height: 4,
+        backgroundColor: "rgba(255, 255, 255, 0.12)",
+        marginTop: 108,
+        width: "100%",
+    },
+    progressBarFill: {
+        height: "100%",
+        backgroundColor: colors.blue200,
     },
 });
