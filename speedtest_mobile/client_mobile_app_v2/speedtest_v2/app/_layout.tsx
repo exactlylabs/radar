@@ -14,9 +14,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    'SpaceMono': require('../assets/fonts/SpaceMono-Regular.ttf'),
-    'MulishRegular': require('../assets/fonts/Mulish-Regular.ttf'),
-    'MulishBold': require('../assets/fonts/Mulish-Bold.ttf'),
+    'SpaceMono': require('@/assets/fonts/SpaceMono-Regular.ttf'),
+    'MulishRegular': require('@/assets/fonts/Mulish-Regular.ttf'),
+    'MulishBold': require('@/assets/fonts/Mulish-Bold.ttf'),
   });
 
   useEffect(() => {
