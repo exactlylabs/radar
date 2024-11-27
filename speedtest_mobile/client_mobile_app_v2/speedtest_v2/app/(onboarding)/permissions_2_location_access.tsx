@@ -12,8 +12,6 @@ export default function Permissions2LocationAccess() {
       title="Access to your location"
       description="Your location is used to map Wi-Fi hotspots and cell towers, and to provide you with the locations where wireless quality is being measured."
       buttonTitle="Enable location access"
-      progressBarWidth="32%"
-      nextPath="/permissions_3_full_location"
       requestPermission={requestPermission}
       errorMessage="This app requires location permissions to function properly."
     />

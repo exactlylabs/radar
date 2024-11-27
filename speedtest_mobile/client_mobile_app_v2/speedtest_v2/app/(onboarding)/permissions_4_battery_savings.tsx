@@ -18,8 +18,6 @@ export default function Permissions4BatterySavings() {
       title="Disable your battery saving settings"
       description="Your current battery settings might impact your results. Make sure to disable your battery saving settings on your device."
       buttonTitle="Update settings"
-      progressBarWidth="66%"
-      nextPath="/permissions_5_notifications"
       requestPermission={requestPermission}
       errorMessage="Please disable battery saving mode to ensure accurate measurements."
     />

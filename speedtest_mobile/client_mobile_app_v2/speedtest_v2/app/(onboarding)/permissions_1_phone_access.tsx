@@ -20,8 +20,6 @@ export default function Permissions1PhoneAccess() {
       title="Access to cellular and Wi-Fi reception"
       description="Your cellular and Wi-Fi signal is used to identify Wi-Fi hotspots and cell towers and to run speed tests accurately."
       buttonTitle="Enable phone access"
-      progressBarWidth="16%"
-      nextPath="/permissions_2_location_access"
       requestPermission={requestPermission}
       errorMessage="This app requires phone state permissions to function properly."
     />

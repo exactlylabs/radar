@@ -5,17 +5,17 @@ import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { sharedStyles } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
-import AnimatedTransition from "@/components/AnimatedTransition";
+import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
 import { Alert } from "react-native";
 import { PermissionsAndroid } from "react-native";
-import { useAnimatedTransition } from "@/hooks/useAnimatedTransition";
+import { getNextScreen } from "@/constants/permissionScreens";
+import { usePathname } from "expo-router";
 
 type PermissionRequestProps = {
   title: string;
   description: string;
   buttonTitle: string;
   progressBarWidth: string;
-  nextPath: string;
   requestPermission: () => Promise<string>;
   errorMessage: string;
 };
@@ -25,10 +25,11 @@ export default function PermissionRequest({
   description,
   buttonTitle,
   progressBarWidth,
-  nextPath,
   requestPermission,
   errorMessage,
 }: PermissionRequestProps) {
+  const currentPath = usePathname();
+  const nextPath = getNextScreen(currentPath);
   const { slideAnim, animateAndNavigate } = useAnimatedTransition(nextPath);
 
   const handlePermissionRequest = async () => {
