@@ -1,0 +1,193 @@
+---
+import '../global.css';
+import styles from './styles/_findings.module.css';
+import commonStyles from '../common.module.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroWithText from "../components/common/HeroWithText.astro";
+import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
+import PrimaryButton from "../components/common/buttons/PrimaryButton.astro";
+import { Image } from 'astro:assets';
+import BulletPoint from "../components/opportunities/BulletPoint.astro";
+import Carrousel from '../components/common/Carrousel';
+import StateFindingsCard from "../components/findings/StateFindingsCard.astro";
+
+import evaluationResultsImage from '../assets/images/evaluation-results.webp';
+import alaskaCardImage from '../assets/images/alaska-findings-card.webp';
+import implementationFindingsImage from '../assets/images/implementation-findings-image.webp';
+---
+
+<BaseLayout
+  title="Findings"
+  description=""
+>
+  <section class={commonStyles.paddedSection}>
+    <div class={styles.firstSection}>
+      <HeroWithText head="Findings"
+        title="Insights into Rural Connectivity and Telehealth"
+        content="Explore the key findings on telehealth usage, rural broadband perceptions, and the challenges faced in achieving reliable, affordable internet."
+      />
+      <div class={styles.downloadButtonContainer}>
+        <TransparentSecondaryButton download href="/findings-report.pdf">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+            <path fill="white" transform="translate(0.25 0.25)" d="M7.75 0C8.1642132 0 8.5 0.33578643 8.5 0.75L8.5 9.9720001L11.21967 7.2530031C11.485936 6.9867368 11.9026 6.9625306 12.196212 7.1803851L12.28033 7.2530031C12.573223 7.5458965 12.573223 8.0207701 12.28033 8.3136635L8.2803297 12.313663C7.9874368 12.606557 7.5125632 12.606557 7.2196698 12.313663L3.2196698 8.3136635C2.9267766 8.0207701 2.9267766 7.5458965 3.2196698 7.2530031C3.5125632 6.9601102 3.9874368 6.9601102 4.2803302 7.2530031L7 9.9720001L7 0.75C7 0.33578643 7.3357863 0 7.75 0ZM14.75 14C15.164213 14 15.5 14.335787 15.5 14.75C15.5 15.164213 15.164213 15.5 14.75 15.5L0.75 15.5C0.33578643 15.5 0 15.164213 0 14.75C0 14.335787 0.33578643 14 0.75 14L14.75 14Z"/>
+          </svg>
+          Download Full Report
+        </TransparentSecondaryButton>
+      </div>
+    </div>
+  </section>
+
+  <section class={`${commonStyles.paddedSection} ${styles.evaluationResultsSection}`}>
+    <div class={styles.evaluationResultsTop}>
+      <div class={styles.evaluationResultsHeroContainer}>
+        <HeroWithText head="Evaluation Results"
+          title="A Look Into the Rural Communities"
+          content="An analysis by the Rural Telehealth Evaluation Center (RTEC) highlights telehealth adoption, community sentiment, and the barriers rural communities face in achieving reliable and affordable internet. These findings offer a closer look at the challenges and progress in improving healthcare access through broadband."
+        />
+        <PrimaryButton href="/evaluation-results">
+          Explore Evaluation Results
+        </PrimaryButton>
+      </div>
+      <div class={styles.sidePicturesContainer}>
+        <Image src={evaluationResultsImage} alt="Evaluation Results hero image"/>
+      </div>
+    </div>
+    <div class={styles.evaluationGrid}>
+      <BulletPoint title="Telehealth Usage"
+        content="Telehealth is more widely adopted in areas with robust broadband."
+        direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+          <path fill="#4B7BE5" transform="translate(1 1)" d="M13 0C14.656855 0 16 1.3431457 16 3L16 6L19 6C20.597681 6 21.903662 7.24892 21.994907 8.8237276L22 9L22 13C22 14.656855 20.656855 16 19 16L16 16L16 19C16 20.597681 14.75108 21.903662 13.176272 21.994907L13 22L9 22C7.3431458 22 6 20.656855 6 19L6 16L3 16C1.4023191 16 0.096339121 14.75108 0.0050926935 13.176272L0 13L0 9C0 7.3431458 1.3431457 6 3 6L6 6L6 3C6 1.4023191 7.24892 0.096339121 8.8237276 0.0050926935L9 0L13 0ZM13 2L9 2C8.4477148 2 8 2.4477153 8 3L8 7C8 7.5522847 7.5522847 8 7 8L3 8C2.4477153 8 2 8.4477148 2 9L2 13C2 13.552285 2.4477153 14 3 14L7 14C7.5522847 14 8 14.447715 8 15L8 19C8 19.552284 8.4477148 20 9 20L13 20C13.552285 20 14 19.552284 14 19L14 15C14 14.447715 14.447715 14 15 14L19 14C19.552284 14 20 13.552285 20 13L20 9C20 8.4477148 19.552284 8 19 8L15 8C14.447715 8 14 7.5522847 14 7L14 3C14 2.4477153 13.552285 2 13 2Z"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Community Opinions"
+                   content="Varied satisfaction levels with broadband; some accept limitations, while others seek better options but can't find them."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30">
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(14.9288 1.01318)" d="M6.0662756 0C3.6857483 -0.011484114 1.5207071 1.3770212 0.53822172 3.5453768C-0.44426373 5.7137322 -0.060718067 8.2570066 1.5175384 10.039182L0.75845271 14.406525L4.7133241 11.967514C6.9845552 12.490937 9.3547268 11.665639 10.809668 9.8447571C12.264607 8.0238752 12.546546 5.530015 11.534842 3.4302723C10.523139 1.3305297 8.3970385 -0.0030835208 6.0662756 0Z" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.09757 11.4117)" d="M0 3.8994129C0 6.052999 1.7458266 7.7988257 3.8994129 7.7988257C6.052999 7.7988257 7.7988257 6.052999 7.7988257 3.8994129C7.7988257 1.7458266 6.052999 0 3.8994129 0C1.7458266 0 0 1.7458266 0 3.8994129" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.0647 20.9468)" d="M13.864579 6.0625257C13.397775 2.5909772 10.435081 0 6.9322896 0C3.429497 0 0.46680388 2.5909772 0 6.0625257" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Urban vs. Rural"
+                   content="Rural clinics are less likely to provide telehealth, limiting rural residents' healthcare options."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+          <path fill="#4B7BE5" transform="translate(0.999949 1.00022)" d="M15.000053 9.3333292C18.129665 9.3333292 20.666718 11.870381 20.666718 14.999994C20.666718 16.203289 20.291664 17.318985 19.652082 18.236561L21.707157 20.292885C22.097681 20.683409 22.097681 21.316574 21.707157 21.707098C21.316633 22.097622 20.683468 22.097622 20.292944 21.707098L18.237154 19.651649C17.319477 20.29146 16.203581 20.666658 15.000053 20.666658C11.87044 20.666658 9.3333883 18.129606 9.3333883 14.999994L9.3374805 14.782635C9.4517117 11.753751 11.943222 9.3333292 15.000053 9.3333292ZM14.333386 0L14.372416 0C14.653555 0.0048102769 14.934052 0.060318656 15.199888 0.16663438L20.533161 2.2999439C21.419176 2.6542861 22.000042 3.5124202 22.000042 4.4666653L22.000042 10.333329C22.000042 10.885614 21.552336 11.333329 21.000042 11.333329C20.447765 11.333329 20.000042 10.885614 20.000042 10.333329L20.000042 4.4666653C20.000042 4.3301797 19.917046 4.2075539 19.790438 4.15692L15.333021 2.3737803L15.333386 7C15.333386 7.5522847 14.885672 8 14.333386 8C13.781102 8 13.333386 7.5522847 13.333386 7L13.333021 2.3737803L8.6660204 4.2407804L8.6667233 10.333329C8.6667233 10.885614 8.2190075 11.333329 7.6667233 11.333329C7.1144385 11.333329 6.6667233 10.885614 6.6667233 10.333329L6.6660209 4.2397799L2.000042 2.3737774L2.000042 14.661327C2.000042 14.770512 2.0531766 14.870831 2.1392522 14.932517L2.2096717 14.971072L7.5429454 17.104382C7.6224046 17.13616 7.7110415 17.13616 7.7905006 17.104382C8.303297 16.8993 8.885252 17.148752 9.0903339 17.661549C9.2954149 18.174345 9.0459633 18.7563 8.5331669 18.961382C7.976954 19.183826 7.3564925 19.183826 6.8002214 18.961359L1.4669478 16.828049C0.58093309 16.473707 2.0821159e-05 15.615572 2.0821159e-05 14.661327L2.0821159e-05 1.8903995C-0.0027471257 1.3356786 0.27061313 0.81590933 0.72927737 0.50389284C1.1879517 0.19186951 1.7718102 0.12851156 2.2861705 0.33465597L7.5429454 2.4377215C7.6224046 2.4694993 7.7110415 2.4694993 7.7903681 2.4377747L13.466943 0.16661145C13.6663 0.086882874 13.87391 0.035730485 14.08386 0.013155338L14.333386 0ZM15.000053 11.333329C12.97501 11.333329 11.333388 12.974951 11.333388 14.999994C11.333388 17.025038 12.97501 18.666658 15.000053 18.666658C17.025097 18.666658 18.666718 17.025038 18.666718 14.999994C18.666718 12.974951 17.025097 11.333329 15.000053 11.333329Z"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Barriers"
+                   content="Digital literacy, infrastructure reliability, and support shortages made rural telehealth less accessible."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 3.45)" d="M9 2.6219726C6.4113193 1.035096 3.4614589 0.13293166 0.428 0.00037253386C0.31658599 -0.0043705222 0.20802332 0.036340479 0.12719999 0.11317253C0.046558708 0.18928187 0.00059359026 0.29508838 0 0.40597254L0 13.799573C0.00022568832 14.01878 0.17299491 14.198954 0.39199999 14.208372C3.1693251 13.812761 5.989078 14.550492 8.2167997 16.255573C8.4645433 16.358225 8.7345295 16.395416 9.0008001 16.363573" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(11.9992 3.45)" d="M0.00079999998 2.6219726C2.5894809 1.035096 5.539341 0.13293166 8.5727997 0.00037253386C8.6842136 -0.0043705222 8.7927771 0.036340479 8.8736 0.11317253C8.9548454 0.18985523 9.0008001 0.29665378 9.0008001 0.40837252L9.0008001 13.799573C9.0005741 14.01878 8.8278055 14.198954 8.6087999 14.208372C5.8314748 13.812761 3.0117221 14.550492 0.78399998 16.255573C0.53625655 16.358225 0.26627091 16.395416 0 16.363573" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(11.3379 6.07197)" d="M0.66206896 0L0.66206896 13.7496" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.2 17.5824)" d="M0 0.0128L0 2.5936C-0.0003453251 2.717962 0.055936564 2.8357193 0.15292571 2.9135597C0.24991485 2.9914002 0.37706313 3.020858 0.49840158 2.9935999C2.9000089 2.4928246 5.3467398 2.2402968 7.8000016 2.24C10.10902 2.2387972 12.411244 2.4901586 14.665602 2.9895999C14.786862 3.0162208 14.913656 2.9865196 15.010478 2.908813C15.107301 2.8311067 15.163743 2.7137482 15.164001 2.5896001L15.164001 0" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Affordability"
+                   content="Cost barriers limit broadband access for many rural, low-income households, restricting reliable internet options."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="20">
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(15.4009 3.93333)" d="M3.2992122 0L1.3113899 0C0.68304861 0.00043885884 0.14320639 0.44625098 0.023970855 1.0631756C-0.095264673 1.6801002 0.23957603 2.294966 0.82250106 2.5295112L2.8406343 3.3361778C3.4249132 3.5699093 3.760993 4.1855297 3.6416211 4.8033991C3.5222492 5.421268 2.98104 5.8673968 2.3517456 5.8666677L0.36587885 5.8666677" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.4242 2.75747)" d="M0.8091954 1.1758621L0.8091954 0.44252872" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.4242 9.35747)" d="M0.8091954 1.1758621L0.8091954 0.44252872" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(11.3668 1)" d="M0 5.8666668C0 9.1067371 2.6265962 11.733334 5.8666668 11.733334C9.1067371 11.733334 11.733334 9.1067371 11.733334 5.8666668C11.733334 2.6265962 9.1067371 0 5.8666668 0C2.6265962 0 0 2.6265962 0 5.8666668" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.1001 11.9433)" d="M0 0L22 5.1900444" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(9.16676 14.9333)" d="M5.8666668 3.6666667L0 3.6666667L2.9333334 0L5.8666668 3.6666667Z" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+    </div>
+  </section>
+
+  <section class={styles.stateFindingsSection}>
+    <div class={styles.stateFindingsHeroContainer}>
+      <HeroWithText head="State Findings"
+        title="Exploring Regional Challenges"
+        content="Findings from RTEC and Community Lead Partners highlight unique regional challenges and common themes in broadband access across Texas, Alaska, Michigan, and West Virginia, offering guidance for improving rural telehealth connectivity"
+      />
+    </div>
+    <div id="carrousel-ref" class={styles.carrouselRef}></div>
+    <Carrousel client:only="react" fullWidth alignmentRefId="carrousel-ref">
+      <StateFindingsCard head="Alaska"
+        title="Findings in Alaska"
+        content="Limited infrastructure and geographic challenges reduced broadband speeds and reliability in rural areas, impacting telehealth services and highlighting the need for tailored connectivity solutions."
+        link="/findings/alaska"
+        backgroundImage={alaskaCardImage}
+      />
+      <StateFindingsCard head="Alaska"
+                         title="Findings in Alaska"
+                         content="Limited infrastructure and geographic challenges reduced broadband speeds and reliability in rural areas, impacting telehealth services and highlighting the need for tailored connectivity solutions."
+                         link="/findings/alaska"
+                         backgroundImage={alaskaCardImage}
+      />
+      <StateFindingsCard head="Alaska"
+                         title="Findings in Alaska"
+                         content="Limited infrastructure and geographic challenges reduced broadband speeds and reliability in rural areas, impacting telehealth services and highlighting the need for tailored connectivity solutions."
+                         link="/findings/alaska"
+                         backgroundImage={alaskaCardImage}
+      />
+      <StateFindingsCard head="Alaska"
+                         title="Findings in Alaska"
+                         content="Limited infrastructure and geographic challenges reduced broadband speeds and reliability in rural areas, impacting telehealth services and highlighting the need for tailored connectivity solutions."
+                         link="/findings/alaska"
+                         backgroundImage={alaskaCardImage}
+      />
+    </Carrousel>
+  </section>
+  
+  <section class={`${commonStyles.paddedSection} ${styles.implementationFindingsSection}`}>
+    <div class={styles.evaluationResultsTop}>
+      <div class={styles.implementationFindingsHeroContainer}>
+        <HeroWithText head="Implementation Findings"
+                      title="Lessons for Future Success"
+                      content="Strategies and lessons learned from the Alaska Native Tribal Health Consortium (ANTHC) and the Community Lead Partners (CLPs) reveal what worked and where future projects can improve, offering a roadmap for successful broadband data collection and engagement in rural communities. These ideas are meant to help future projects find better ways to work with communities and set up programs successfully."
+        />
+        <PrimaryButton href="/implementation-findings">Explore the Findings</PrimaryButton>
+      </div>
+      <div class={styles.implementationFindingsImageContainer}>
+        <Image src={implementationFindingsImage} alt="Evaluation Results hero image"/>
+      </div>
+    </div>
+      <div class={styles.implementationGrid}>
+        <BulletPoint title="Effective Engagement Strategies"
+                     content="Local partnerships and in-person outreach boosted community involvement."
+                     bigCircle
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32">
+            <path fill="#4B7BE5" transform="translate(1 1)" d="M15 0C17.614147 0 19.733334 2.1191854 19.733334 4.7333331C19.733334 7.0471501 18.073109 8.9732008 15.878931 9.3852167C19.625164 9.8191795 22.533333 13.003304 22.533333 16.866667L22.533333 19.666666C22.533333 20.218952 22.085619 20.666666 21.533333 20.666666L19.637667 20.666334L18.795036 29.099504C18.747849 29.571383 18.377687 29.939386 17.916941 29.993212L17.799999 30L12.2 30C11.686249 30 11.256083 29.610706 11.204963 29.099504L10.360666 20.666334L8.4666662 20.666666C7.9538307 20.666666 7.5311594 20.280626 7.4733944 19.783287L7.4666667 19.666666L7.4666667 16.866667C7.4666667 13.003304 10.374836 9.8191795 14.121454 9.384016C11.92689 8.9732008 10.266666 7.0471501 10.266666 4.7333331L10.271538 4.5166683C10.384781 2.0030882 12.458467 0 15 0ZM5.6666665 3.7333333C7.7653489 3.7333333 9.4666662 5.4346514 9.4666662 7.5333333C9.4666662 9.4804821 8.0021629 11.085578 6.1145601 11.307215C6.4420319 11.470063 6.6666665 11.808798 6.6666665 12.2C6.6666665 12.752285 6.2189512 13.2 5.6666665 13.2C3.6416225 13.2 2 14.841622 2 16.866667L2 18.666L2.8666666 18.666666C3.3321958 18.666666 3.7304776 18.98665 3.8381972 19.42948L3.8589447 19.542631L4.6820002 26.132999L7.5333333 26.133333C8.0461693 26.133333 8.4688406 26.519373 8.5266056 27.016712L8.5333338 27.133333C8.5333338 27.685617 8.085618 28.133333 7.5333333 28.133333L3.8 28.133333C3.2956767 28.133333 2.8702757 27.757797 2.8077221 27.257368L1.983 20.666L1 20.666666C0.48716417 20.666666 0.064492837 20.280626 0.0067277313 19.783287L0 19.666666L0 16.866667C0 14.0008 2.1274533 11.631827 4.889215 11.252892C3.163682 10.895251 1.8666667 9.3657589 1.8666667 7.5333333L1.8716112 7.3377857C1.9733871 5.3299804 3.6335685 3.7333333 5.6666665 3.7333333ZM26.233334 4.2424369C27.409058 4.9212413 28.133333 6.175724 28.133333 7.5333333C28.133333 8.8909426 27.409058 10.145425 26.233334 10.82423C25.877565 11.029633 25.496817 11.172881 25.106205 11.253977C27.870487 11.629535 30 13.999413 30 16.866667L30 19.666666C30 20.218952 29.552284 20.666666 29 20.666666L28.015667 20.666L27.192278 27.257368C27.134537 27.719303 26.767622 28.07482 26.314852 28.126781L26.200001 28.133333L22.466667 28.133333C21.914381 28.133333 21.466667 27.685617 21.466667 27.133333C21.466667 26.581049 21.914381 26.133333 22.466667 26.133333L25.316668 26.132999L26.141056 19.542631C26.198797 19.080698 26.56571 18.72518 27.018482 18.67322L27.133333 18.666666L27.999666 18.666L28 16.866667C28 14.906946 26.46258 13.30631 24.528067 13.205083L24.333334 13.2C23.781048 13.2 23.333334 12.752285 23.333334 12.2C23.333334 11.808388 23.558441 11.469352 23.886316 11.305229C23.382128 11.247286 22.887384 11.086377 22.433332 10.82423C21.257608 10.145425 20.533333 8.8909426 20.533333 7.5333333L20.539993 7.3081012C20.615202 6.0381141 21.322927 4.8835301 22.433332 4.2424369C23.609056 3.563632 25.05761 3.563632 26.233334 4.2424369ZM15 11.333333C11.944024 11.333333 9.4666662 13.810691 9.4666662 16.866667L9.4666662 18.666334L11.266666 18.666666C11.740899 18.666666 12.143909 18.998373 12.243313 19.451479L12.261703 19.567163L13.104667 27.999334L16.894667 27.999334L17.738297 19.567163C17.785484 19.095284 18.155645 18.72728 18.616394 18.673456L18.733334 18.666666L20.532667 18.666334L20.533333 16.866667C20.533333 13.883452 18.172541 11.451631 15.217275 11.337521L15 11.333333ZM5.6666665 5.7333331C4.672554 5.7333331 3.8666666 6.5392208 3.8666666 7.5333333C3.8666666 8.5274458 4.672554 9.333333 5.6666665 9.333333C6.660779 9.333333 7.4666667 8.5274458 7.4666667 7.5333333C7.4666667 6.5392208 6.660779 5.7333331 5.6666665 5.7333331ZM23.433332 5.9744873C22.876411 6.2960267 22.533333 6.8902555 22.533333 7.5333333C22.533333 8.1764116 22.876411 8.7706404 23.433332 9.0921793C23.990255 9.4137182 24.676411 9.4137182 25.233334 9.0921793C25.790255 8.7706404 26.133333 8.1764116 26.133333 7.5333333C26.133333 6.8902555 25.790255 6.2960267 25.233334 5.9744873C24.676411 5.6529484 23.990255 5.6529484 23.433332 5.9744873ZM15 2C13.490421 2 12.266666 3.2237551 12.266666 4.7333331C12.266666 6.2429118 13.490421 7.4666667 15 7.4666667C16.509579 7.4666667 17.733334 6.2429118 17.733334 4.7333331C17.733334 3.2237551 16.509579 2 15 2Z"/>
+          </svg>
+        </BulletPoint>
+        <BulletPoint title="Innovative Deployment Methods"
+                     content="Automatically deployed tools and mobile apps extended reach to challenging locations."
+                     bigCircle
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+            <path fill="#4B7BE5" transform="translate(2 2)" d="M7.6890411 14.211753L14.213944 7.6859608C15.760286 8.423892 17.603821 8.107296 18.815372 6.8957448C20.026924 5.6841931 20.343519 3.8406579 19.605589 2.2943163L18.339006 3.5644548C17.812775 4.0906863 16.959585 4.0906863 16.433353 3.5644548C15.907123 3.0382235 15.907123 2.185034 16.433353 1.6588026L17.699049 0.39221939C16.153025 -0.34316939 14.311453 -0.025403881 13.101277 1.1855707C11.891101 2.3965454 11.574551 4.2383261 12.310959 5.783864L5.7860556 12.307878C4.2397137 11.569948 2.3961785 11.886543 1.1846269 13.098095C-0.026924698 14.309647 -0.34352016 16.153181 0.39441076 17.699524L1.6609939 16.433828C2.001406 16.093416 2.4975672 15.960471 2.9625785 16.08507C3.4275901 16.209669 3.7908053 16.572886 3.9154048 17.037897C4.0400043 17.502909 3.9070582 17.999069 3.5666461 18.339481L2.3009517 19.603397C3.8469753 20.338787 5.6885467 20.021021 6.8987226 18.810047C8.1088991 17.599072 8.4254494 15.757292 7.6890411 14.211753Z" fill-rule="evenodd"/>
+          </svg>
+        </BulletPoint>
+        <BulletPoint title="Motivating Participation"
+                     content="Incentives helped sustain engagement and increase willingness to host pods."
+                     bigCircle
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32">
+            <path fill="#4B7BE5" transform="translate(3 1.80519)" d="M23 2.1948054C23 4.2943282 21.897654 6.230639 20.240974 7.5955558L23.4 7.5948052C24.835939 7.5948052 26 8.7588654 26 10.194805L26 12.594806C26 13.521263 25.30007 14.284244 24.400154 14.383802L24.4 24.594805C24.4 26.030746 23.235941 27.194805 21.799999 27.194805L4.1999998 27.194805C2.7640595 27.194805 1.6 26.030746 1.6 24.594805L1.5988396 14.383691C0.69940829 14.283675 0 13.520918 0 12.594806L0 10.194805C0 8.7588654 1.1640596 7.5948052 2.5999999 7.5948052L5.7590261 7.5955558C4.1023459 6.230639 3 4.2943282 3 2.1948054C3 0.28407824 4.4062972 -0.39561296 6.1376872 0.22069168C7.2913322 0.63134253 8.7280245 1.6102029 10.081993 2.8514385C11.41059 4.0694151 12.49606 5.3908896 13.000807 6.4678988L12.984533 6.4994659C13.482705 5.416779 14.576401 4.0813417 15.918007 2.8514385C17.271976 1.6102029 18.708668 0.63134253 19.862312 0.22069168C21.593702 -0.39561296 23 0.28407824 23 2.1948054ZM12 14.394L3.5999999 14.394805L3.5999999 24.594805C3.5999999 24.89304 3.8175895 25.140451 4.1026769 25.186953L4.1999998 25.194805L12 25.194L12 14.394ZM22.4 14.394805L14 14.394L14 25.194L21.799999 25.194805C22.131371 25.194805 22.4 24.926176 22.4 24.594805L22.4 14.394805ZM12 9.5939999L2.5999999 9.5948057C2.2686291 9.5948057 2 9.8634348 2 10.194805L2 12.394805L12 12.394L12 9.5939999ZM23.4 9.5948057L14 9.5939999L14 12.394L24 12.394805L24 10.194805C24 9.8965712 23.78241 9.6491585 23.497324 9.6026583L23.4 9.5948057ZM5 2.1948054C5 5.0088401 8.0325403 7.5948052 11.2 7.5948052C11.232403 7.5948052 11.262272 7.5941038 11.289607 7.5928512L11.303 7.590981C11.285347 7.5421162 11.265927 7.4908895 11.24078 7.4312167L11.198572 7.335465C10.831023 6.5366645 9.8933573 5.3917432 8.7304859 4.3256936C7.5563703 3.2493367 6.3247809 2.4102187 5.4669924 2.1048808C4.9040556 1.9044981 5 1.8581262 5 2.1948054ZM20.533009 2.1048808C19.675219 2.4102187 18.44363 3.2493367 17.269514 4.3256936C16.106644 5.3917432 15.168977 6.5366645 14.801428 7.335465C14.754541 7.4373655 14.722265 7.5210986 14.69943 7.5841517L14.710393 7.5928512L14.8 7.5948052C17.967461 7.5948052 21 5.0088401 21 2.1948054C21 1.8581262 21.095945 1.9044981 20.533009 2.1048808Z"/>
+          </svg>
+        </BulletPoint>
+        <BulletPoint title="Promising Future Tactics"
+                     content="Mass media outreach and flexible partnerships showed potential for greater impact."
+                     bigCircle
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32">
+            <path fill="#4B7BE5" transform="translate(1 3.99832)" d="M25.405766 1.0016814L25.405766 20.806559C25.405766 21.605255 24.515619 22.081646 23.851065 21.638609L22.490015 20.731243C18.555607 18.108891 13.98151 16.623524 9.270998 16.427511C9.4997435 18.156 10.313359 19.766388 11.591622 20.982195C11.9918 21.36282 12.007651 21.995787 11.627026 22.395964C11.246401 22.796143 10.613434 22.811995 10.213256 22.431368C8.5320063 20.832266 7.4886336 18.691473 7.252871 16.405043L5.5011086 16.40523C2.4629302 16.40523 0 13.942299 0 10.90412C0 7.865942 2.4629302 5.4030118 5.5011086 5.4030118L8.2016888 5.4030118C13.287004 5.4025793 18.258486 3.8973856 22.489929 1.0770546L23.851065 0.16963112C24.515619 -0.27340537 25.405766 0.20298603 25.405766 1.0016814ZM23.404774 2.8666813L23.140614 3.0404112C18.989462 5.690546 14.210645 7.1871686 9.296031 7.3813581L9.2017736 7.3836813L9.2017736 14.423681L9.296031 14.426883C14.210646 14.621073 18.989468 16.117699 23.14069 18.767881L23.404774 18.940681L23.404774 2.8666813ZM7.2010002 7.4030118L5.5011086 7.4030118C3.6319535 7.4030118 2.1049068 8.867753 2.0051806 10.712025L2 10.90412C2 12.837729 3.5674996 14.405229 5.5011086 14.405229L7.2010002 14.405012L7.2010002 7.4030118ZM28.006653 8.1036768C28.558937 8.1036768 29.006653 8.5513926 29.006653 9.1036768L29.006653 12.704564C29.006653 13.256848 28.558937 13.704564 28.006653 13.704564C27.454367 13.704564 27.006653 13.256848 27.006653 12.704564L27.006653 9.1036768C27.006653 8.5513926 27.454367 8.1036768 28.006653 8.1036768Z"/>
+          </svg>
+        </BulletPoint>
+      </div>
+  </section>
+</BaseLayout>

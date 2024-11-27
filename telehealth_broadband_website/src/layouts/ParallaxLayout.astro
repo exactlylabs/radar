@@ -2,8 +2,9 @@
 import Navbar from "../components/common/Navbar.astro";
 import Footer from "../components/common/Footer.astro";
 import styles from './parallax_layout.module.css';
+import BaseHead from "../components/common/BaseHead.astro";
 
-const { bgImageSrc } = Astro.props;
+const { bgImageSrc, title, description } = Astro.props;
 ---
 
 <html lang="en">
@@ -13,7 +14,7 @@ const { bgImageSrc } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <title>Telehealth Broadband Project</title>
+    <BaseHead title={title} description={description}/>
   </head>
   <body>
     <main class={styles.parallaxContainer} id="parallax-scrollable-container">

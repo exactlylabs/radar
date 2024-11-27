@@ -3,8 +3,6 @@ import styles from './carrousel.module.css';
 
 interface CarrouselProps {
   children: ReactElement[];
-  itemWidth?: number; // in pixels, really useful to send over in order to make the scroll smooth
-  smallItemWidth?: number; // in pixels, really useful to send over in order to make the scroll smooth
   arrowLess?: boolean;
   fullWidth?: boolean;
   alignmentRefId?: string;
@@ -63,14 +61,12 @@ const arrowWhite = () => (
  * For this component to work as expected, it should be placed --outside-- of a
  * horizontally padded container, so it can reach both ends of the screen.
  * @param children
- * @param itemWidth
- * @param smallItemWidth
  * @param arrowLess
  * @param fullWidth
  * @param alignmentRefId
  * @constructor
  */
-export default function Carrousel({children, itemWidth, smallItemWidth, arrowLess, fullWidth, alignmentRefId}: CarrouselProps) {
+export default function Carrousel({children, arrowLess, fullWidth, alignmentRefId}: CarrouselProps) {
   
   const container = useRef<HTMLDivElement>(null);
   const carrousel = useRef<HTMLDivElement>(null);

@@ -1,0 +1,119 @@
+---
+import styles from './scrolling_timeline.module.css';
+import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
+---
+
+<div class={styles.timelineContainer} data-desktop="true">
+  <ScrollingTimelineItem
+    title='Optimizing Data Collection'
+    content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
+    side='right'
+  />
+  <ScrollingTimelineItem
+    title='Understanding Rural Connectivity'
+    content='Identifying and testing approaches that can reliably assess internet experience, with a focus on replicable strategies for rural connectivity studies.'
+    side='left'
+  />
+  <ScrollingTimelineItem
+    title='Guiding Policy and Funding'
+    content='Using analyzed data to guide policies and funding  that address broadband inequities and enhance telehealth access, supporting federal and state-level decision-makers.'
+    side='right'
+  />
+  <div class={styles.timelineLine}></div>
+</div>
+
+<div class={styles.timelineContainer} data-mobile="true">
+  <ScrollingTimelineItem
+          title='Optimizing Data Collection'
+          content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
+          side='right'
+  />
+  <ScrollingTimelineItem
+          title='Understanding Rural Connectivity'
+          content='Identifying and testing approaches that can reliably assess internet experience, with a focus on replicable strategies for rural connectivity studies.'
+          side='right'
+  />
+  <ScrollingTimelineItem
+          title='Guiding Policy and Funding'
+          content='Using analyzed data to guide policies and funding  that address broadband inequities and enhance telehealth access, supporting federal and state-level decision-makers.'
+          side='right'
+  />
+  <div class={styles.timelineLine}></div>
+</div>
+
+<script>
+  import styles from './scrolling_timeline.module.css';
+  
+  const containers = document.querySelectorAll(`.${styles.timelineContainer}`);
+  if(containers) {
+    const intersectionObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry: IntersectionObserverEntry) => {
+        if (entry.isIntersecting) {
+          const line: HTMLElement | null = entry.target.querySelector(`.${styles.timelineLine}`);
+          if(!line) return;
+          
+          // get current percentage of visibility, if that's lower, don't replace it
+          const currentPercentage = parseInt(line.getAttribute('data-visible') ?? '0');
+          if(currentPercentage && currentPercentage > entry.intersectionRatio * 100) return;
+          
+          const percentageVisible = Math.round(entry.intersectionRatio * 100); // Calculate visibility in %
+          
+          // Set the gradient dynamically to match the intersection ratio
+          line.style.background = `linear-gradient(
+            180deg,
+            rgba(75, 123, 229, 0) 0%,
+            rgb(75, 123, 229) ${percentageVisible}%,
+            rgba(255, 255, 255, 0.1) ${percentageVisible}%,
+            rgba(255, 255, 255, 0.1) 99%,
+            rgba(255, 255, 255, 0) 100%
+          )`;
+          line.setAttribute('data-visible', percentageVisible.toString());
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -50% 0px',
+      threshold: Array.from({length: 101}, (_, i) => i / 100)
+    });
+    containers.forEach(container => { intersectionObserver.observe(container); });
+  }
+  
+  const timelineItems = document.querySelectorAll(`.${styles.timelineItem}`);
+  if(timelineItems) {
+    const rootMargin = `0px 0px -50% 0px`;
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry: IntersectionObserverEntry) => {
+        if (entry.isIntersecting) {
+          (entry.target as HTMLElement).style.opacity = '1';
+          entry.target.classList.add(styles.timelineItemVisible);
+        }
+      });
+    };
+  
+    // We use different observers to tweak the timing of the observer's intersection getting triggered
+    const firstObserver = new IntersectionObserver(callback, {
+      rootMargin: rootMargin,
+      threshold: 0.6
+    });
+    
+    const secondObserver = new IntersectionObserver(callback, {
+      rootMargin: rootMargin,
+      threshold: 0.8
+    });
+    
+    const thirdObserver = new IntersectionObserver(callback, {
+      rootMargin: rootMargin,
+      threshold: 0.9
+    });
+    
+    timelineItems.forEach((item, index) => {
+      if(index === 0 || index === 3) {
+        firstObserver.observe(item);
+      } else if(index === 1 || index === 4) {
+        secondObserver.observe(item);
+      } else if(index === 2 || index === 5) {
+        thirdObserver.observe(item);
+      }
+    });
+  }
+  
+</script>

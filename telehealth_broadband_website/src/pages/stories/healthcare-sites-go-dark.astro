@@ -21,7 +21,12 @@ import theTelehealthStruggle from '../../assets/images/the-telehealth-struggle.w
 import learningInterrupted from '../../assets/images/learning-interrupted.webp';
 ---
 
-<ParallaxLayout bgImageSrc={arenacCounty.src}>
+<ParallaxLayout
+  bgImageSrc={arenacCounty.src}
+  title="Stories from the Field: Real Rural Connectivity Challenges"
+  description="Read firsthand accounts of how connectivity issues impact rural communities. Stories of resilience, innovation, and lessons learned from real experiences."
+>
+  
   <section class={styles.header}>
     <div class={styles.overlay} id="parallax-overlay"></div>
     <div class={styles.verticalWhiteLine} id="vertical-white-line"></div>
@@ -84,7 +89,7 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
       />
     </div>
     <div class={styles.videoContainer}>
-      <video class={styles.video} src="https://assets.codepen.io/671557/telehealth-broadband-project.mp4" controls></video>
+      <video class={styles.video} src="" controls></video>
       <div class={styles.epigraphContainer}>
         <Epigraph text="Linda explains all the inconveniences that the outage caused in her life and the impact on her health."/>
       </div>

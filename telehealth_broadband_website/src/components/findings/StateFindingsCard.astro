@@ -1,0 +1,16 @@
+---
+import styles from './state_findings_card.module.css';
+import HeroWithText from "../common/HeroWithText.astro";
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+
+const { head, title, content, link, backgroundImage } = Astro.props;
+---
+
+<li class={styles.card} style={`background-image: url(${backgroundImage.src})`}>
+  <div class={styles.gradient}></div>
+  <div class={styles.heroContainer}>
+    <HeroWithText head={head} title={title} content={content} small/>
+  </div>
+  <ReadMoreButton href={link} text={`Explore ${head}`} />
+</li>

@@ -50,6 +50,20 @@
   }
 }
 
+.container[data-big-circle="true"] .iconCircle {
+  width: 4rem;
+  min-width: 4rem;
+  height: 4rem;
+}
+
+@media (max-width: 768px) {
+  .container[data-big-circle="true"] .iconCircle {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
 .textContainer {
   display: flex;
   flex-direction: column;
