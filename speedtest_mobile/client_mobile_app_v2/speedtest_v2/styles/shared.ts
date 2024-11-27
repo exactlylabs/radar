@@ -1,12 +1,21 @@
 import { StyleSheet } from 'react-native';
 
-const colors = {
+export const colors = {
     white: '#FFFFFF',
-    gray400: '#BCBBC7',
+    gray300: '#BCBBC7',
+    gray400: '#A09FB7',
+    gray500: '#737381',
     blue200: '#4B7BE5',
     blueBackground: '#15152E',
     bgGradientPrimary: '#1B1860',
     bgGradientSecondary: '#0B0B1A',
+    red400: '#E54B4B',
+    bgPrimary: '#15152E',
+}
+
+export const fonts = {
+    MulishBold: 'MulishBold',
+    MulishRegular: 'MulishRegular',
 }
 
 export const sharedStyles = StyleSheet.create({

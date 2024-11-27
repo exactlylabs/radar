@@ -1,4 +1,3 @@
-// onboardingStyles.ts
 import { StyleSheet } from "react-native";
 import { sharedStyles } from "@/styles/shared";
 
