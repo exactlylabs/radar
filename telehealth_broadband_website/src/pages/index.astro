@@ -22,7 +22,10 @@ import importanceOfLocal from '../assets/images/rance-michael.webp';
 import girlLaptop from '../assets/images/girl-laptop.webp';
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Telehealth Broadband Project - Uncovering Rural America's Internet Reality"
+  description="Explore the findings of the Telehealth Broadband Pilot, highlighting the challenges and opportunities in rural broadband access and its impact on telehealth."
+>
   <section class={styles.firstSection}>
     <div class={styles.heroSection}>
       <HeroWithText head=""
@@ -74,7 +77,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
       </div>
     </div>
     <div class={styles.findingsCarrouselContainer}>
-      <Carrousel client:only="react" itemWidth={396} smallItemWidth={276} alignmentRefId={'findings-alignment-reference-id'}>
+      <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'}>
         <HomepageFindingsCard title="Rural vs. Urban Internet Gaps"
                               href="/findings"
                               image={ruralVsUrban.src}

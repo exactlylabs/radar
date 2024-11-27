@@ -28,7 +28,7 @@
     rgba(5, 4, 26, 0.55) 0%,
     rgba(26, 24, 49, 0.89) 100%
   );
-  border-radius: 8px;
+  border-radius: inherit;
   position: absolute;
   z-index: 0;
   top: 0;

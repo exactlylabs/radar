@@ -1,5 +1,5 @@
 .card {
-  width: clamp(320px, 100vw, 1250px);
+  width: clamp(320px, calc(100vw - 6rem), 1250px);
   height: 454px;
   border-radius: 6px;
   backdrop-filter: blur(10px);
@@ -12,6 +12,7 @@
 
 @media (max-width: 768px) {
   .card {
+    width: calc(100vw - 6rem);
     padding: 2.5rem 1.5rem;
     background-size: 225%;
     background-position: 35% 55%;
@@ -31,7 +32,7 @@
       rgba(5, 14, 37, 0.7) 0%,
       rgba(15, 14, 37, 0.2) 100%
   );
-  border-radius: 8px;
+  border-radius: inherit;
   position: absolute;
   z-index: -1;
   top: 0;
