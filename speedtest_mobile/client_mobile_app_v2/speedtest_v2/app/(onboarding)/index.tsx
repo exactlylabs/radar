@@ -9,18 +9,18 @@ import UserIcon from '@/assets/images/icons/usericon.png'
 import Input from "@/components/Input";
 import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors } from "@/styles/shared";
 
 export default function AccountEmail() {
     const router = useRouter()
-    const [email, setEmail] = useState('')
+    const emailRef = useRef('')
     const [error, setError] = useState('')
     const [isFocused, setIsFocused] = useState(false)
 
     const handleContinue = () => {
-        if (isValidEmail(email)) {
+        if (isValidEmail(emailRef.current)) {
             setError('')
         } else {
             setError('Invalid email format')
@@ -43,8 +43,8 @@ export default function AccountEmail() {
                 <View style={styles.inputContainer}>
                     <Input
                         placeholder="Enter your email address"
-                        value={email}
-                        onChangeText={setEmail}
+                        value={emailRef.current}
+                        onChangeText={(text) => emailRef.current = text}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                     />
@@ -66,7 +66,7 @@ export default function AccountEmail() {
 
                 <View style={styles.privacyContainer}>
                     <Text style={styles.privacyText}>By proceeding, you agree to the</Text>
-                    <Link href={''} style={styles.privacyLink}>Privacy Policy</Link>
+                    <Link href={'https://radartoolkit.com/privacy-policy'} style={styles.privacyLink}>Privacy Policy</Link>
                 </View>
             </View>
         </View>
