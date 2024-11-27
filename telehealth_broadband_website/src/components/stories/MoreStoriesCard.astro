@@ -1,0 +1,14 @@
+---
+import styles from './more_stories_card.module.css';
+import HeroWithText from "../common/HeroWithText.astro";
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+import { Image } from 'astro:assets';
+
+const { head, title, preview, link, imageSrc } = Astro.props;
+---
+
+<div class={styles.card}>
+  <Image src={imageSrc} alt={title}/>
+  <HeroWithText head={head} title={title} content={preview} small />
+  <ReadMoreButton href={link} />
+</div>

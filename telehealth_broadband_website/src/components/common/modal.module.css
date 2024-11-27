@@ -50,10 +50,9 @@
 }
 
 .modal {
-  min-width: 450px;
+  width: clamp(450px, 75%, 1050px);
   min-height: 300px;
-  max-height: calc(100vh - 10rem);
-  max-width: calc(100vw - 25rem);
+  max-height: calc(100vh - 7rem);
   border-radius: 1.5rem;
   background-color: #05041A;
   position: fixed;
@@ -64,6 +63,29 @@
   animation: fade-in 0.5s ease-in-out;
   overflow-y: hidden;
   box-sizing: border-box;
+}
+
+@media (max-width: 1080px) {
+  .modal {
+    width: 90%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 100vw;
+    height: 100dvh;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    min-width: unset;
+    max-width: unset;
+    min-height: unset;
+    max-height: unset;
+    transform: unset;
+    border-radius: 0;
+  }
 }
 
 .container[data-closing='true'] > .modal {
@@ -81,6 +103,19 @@
   }
 }
 
+@media (max-width: 768px) {
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      top: 100%;
+    }
+    to {
+      opacity: 1;
+      top: 0;
+    }
+  }
+}
+
 @keyframes fade-out {
   to {
     opacity: 0;
@@ -92,10 +127,37 @@
   }
 }
 
+@media (max-width: 768px) {
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+      top: 100%;
+    }
+    from {
+      opacity: 1;
+      top: 0;
+    }
+  }
+}
+
 .contentBody {
   padding: 18.75rem 6.75rem 5rem;
   max-height: calc(100vh - 10rem);
   overflow-y: auto;
+}
+
+@media (max-width: 1080px) {
+  .contentBody {
+    padding: 18.75rem 3rem 5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentBody {
+    padding: 13.75rem 1.5rem 3rem;
+    max-height: 100dvh;
+    max-height: 100vh;
+  }
 }
 
 .header {
@@ -109,6 +171,12 @@
 [aria-label="Close modal"] {
   padding: .75rem;
   margin-right: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  [aria-label="Close modal"] {
+    margin-right: 0;
+  }
 }
 
 [aria-label="Close modal"] > svg {

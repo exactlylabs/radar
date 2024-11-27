@@ -1,0 +1,57 @@
+---
+import HeroWithText from "../common/HeroWithText.astro";
+import styles from './speedtest_modal.module.css';
+import sharedModalStyles from './shared_modals.module.css';
+import image from '../../assets/images/broadband-mapping-laptop.webp';
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+import BulletPoint from "../opportunities/BulletPoint.astro";
+
+import speedtestLeft from '../../assets/images/speedtest.webp';
+import speedtestRight from '../../assets/images/speedtest-popup.webp';
+import Epigraph from "../stories/Epigraph.astro";
+---
+
+<div class={sharedModalStyles.content}>
+  <section class={sharedModalStyles.modalHero}>
+    <div class={sharedModalStyles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
+    <div class={sharedModalStyles.gradient}></div>
+    <div class={sharedModalStyles.heroContainer}>
+      <HeroWithText head="Radar Speed" title="Web-Based Speed Testing" content="Radar Speed is a web-based tool for quick internet speed checks. It provides access to test history and allows speed comparisons with the community across different locations via a public map where results are plotted" />
+    </div>
+    <GoToLinkButton href="https://speed.radartoolkit.com" text="Go to Webiste"/>
+    <div class={sharedModalStyles.itemsGrid}>
+      <BulletPoint title="Results History"
+                   content="The tool provides a speed test history, allowing users to compare their connectivity performance over time."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="27">
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.00195 11.878)" d="M4.6153908 0L4.6153908 10.771372C4.6164551 11.183655 4.4116893 11.56918 4.069746 11.798684L4.069746 11.798684C3.0024979 12.510404 1.6128931 12.510404 0.54564494 11.798684L0.54564494 11.798684C0.20370194 11.56918 -0.0010640295 11.183655 0 10.771372L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.00196 10.3371)" d="M0 1.5409688C0 2.3920224 1.0331886 3.0819376 2.3076913 3.0819376C3.5821941 3.0819376 4.6153827 2.3920224 4.6153827 1.5409688C4.6153827 0.68991524 3.5821941 0 2.3076913 0C1.0331886 0 0 0.68991524 0 1.5409688" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.69426 7.25514)" d="M4.6153908 0L4.6153908 15.394278C4.6164551 15.806561 4.4116893 16.192087 4.069746 16.421591L4.069746 16.421591C3.0024979 17.13331 1.6128931 17.13331 0.54564494 16.421591L0.54564494 16.421591C0.20370194 16.192087 -0.0010640295 15.806561 0 15.394278L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.69426 5.71417)" d="M0 1.5409688C0 2.3920224 1.0331886 3.0819376 2.3076913 3.0819376C3.5821941 3.0819376 4.6153827 2.3920224 4.6153827 1.5409688C4.6153827 0.68991524 3.5821941 0 2.3076913 0C1.0331886 0 0 0.68991524 0 1.5409688" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.3866 2.63224)" d="M4.6153908 0L4.6153908 20.017185C4.6164551 20.429468 4.4116893 20.814993 4.069746 21.044497L4.069746 21.044497C3.0024979 21.756216 1.6128931 21.756216 0.54564494 21.044497L0.54564494 21.044497C0.20370194 20.814993 -0.0010640295 20.429468 0 20.017185L0 0" fill-rule="evenodd"/>
+          <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(16.3866 1.09127)" d="M0 1.5409688C0 2.0915039 0.43984345 2.6002195 1.1538457 2.8754869C1.8678478 3.1507545 2.7475348 3.1507545 3.4615371 2.8754869C4.175539 2.6002195 4.6153827 2.0915039 4.6153827 1.5409688C4.6153827 0.99043369 4.175539 0.48171824 3.4615371 0.20645067C2.7475348 -0.068816893 1.8678478 -0.068816893 1.1538457 0.20645067C0.43984345 0.48171824 0 0.99043369 0 1.5409688" fill-rule="evenodd"/>
+        </svg>
+      </BulletPoint>
+      <BulletPoint title="Community Map"
+                   content="The community map allows for the comparison of speed test results from users across different regions and providers."
+                   direction="column"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+          <path fill="#4B7BE5" transform="translate(0.999949 1.00022)" d="M15.000053 9.3333292C18.129665 9.3333292 20.666718 11.870381 20.666718 14.999994C20.666718 16.203289 20.291664 17.318985 19.652082 18.236561L21.707157 20.292885C22.097681 20.683409 22.097681 21.316574 21.707157 21.707098C21.316633 22.097622 20.683468 22.097622 20.292944 21.707098L18.237154 19.651649C17.319477 20.29146 16.203581 20.666658 15.000053 20.666658C11.87044 20.666658 9.3333883 18.129606 9.3333883 14.999994L9.3374805 14.782635C9.4517117 11.753751 11.943222 9.3333292 15.000053 9.3333292ZM14.333386 0L14.372416 0C14.653555 0.0048102769 14.934052 0.060318656 15.199888 0.16663438L20.533161 2.2999439C21.419176 2.6542861 22.000042 3.5124202 22.000042 4.4666653L22.000042 10.333329C22.000042 10.885614 21.552336 11.333329 21.000042 11.333329C20.447765 11.333329 20.000042 10.885614 20.000042 10.333329L20.000042 4.4666653C20.000042 4.3301797 19.917046 4.2075539 19.790438 4.15692L15.333021 2.3737803L15.333386 7C15.333386 7.5522847 14.885672 8 14.333386 8C13.781102 8 13.333386 7.5522847 13.333386 7L13.333021 2.3737803L8.6660204 4.2407804L8.6667233 10.333329C8.6667233 10.885614 8.2190075 11.333329 7.6667233 11.333329C7.1144385 11.333329 6.6667233 10.885614 6.6667233 10.333329L6.6660209 4.2397799L2.000042 2.3737774L2.000042 14.661327C2.000042 14.770512 2.0531766 14.870831 2.1392522 14.932517L2.2096717 14.971072L7.5429454 17.104382C7.6224046 17.13616 7.7110415 17.13616 7.7905006 17.104382C8.303297 16.8993 8.885252 17.148752 9.0903339 17.661549C9.2954149 18.174345 9.0459633 18.7563 8.5331669 18.961382C7.976954 19.183826 7.3564925 19.183826 6.8002214 18.961359L1.4669478 16.828049C0.58093309 16.473707 2.0821159e-05 15.615572 2.0821159e-05 14.661327L2.0821159e-05 1.8903995C-0.0027471257 1.3356786 0.27061313 0.81590933 0.72927737 0.50389284C1.1879517 0.19186951 1.7718102 0.12851156 2.2861705 0.33465597L7.5429454 2.4377215C7.6224046 2.4694993 7.7110415 2.4694993 7.7903681 2.4377747L13.466943 0.16661145C13.6663 0.086882874 13.87391 0.035730485 14.08386 0.013155338L14.333386 0ZM15.000053 11.333329C12.97501 11.333329 11.333388 12.974951 11.333388 14.999994C11.333388 17.025038 12.97501 18.666658 15.000053 18.666658C17.025097 18.666658 18.666718 17.025038 18.666718 14.999994C18.666718 12.974951 17.025097 11.333329 15.000053 11.333329Z"/>
+        </svg>
+      </BulletPoint>
+    </div>
+    <div class={styles.imagesGrid}>
+      <div style={`background-image: url(${speedtestLeft.src})`}></div>
+      <div style={`background-image: url(${speedtestRight.src})`}></div>
+    </div>
+    <Epigraph text="The Radar Speed website is accessible from any computer or mobile device, providing data on speeds, latency, and packet loss. The community map displays all speed test results, offering an easy way to compare internet access across different locations. It allows filtering by connection type, internet service providers, cost range, and time periods."/>
+  </section>
+  
+  <section class={styles.embedSection}>
+    <h3>Embed a Speed Test Widget</h3>
+    <p>In addition to the website, the speed test tool can be embedded into any community-specific site, allowing visitors to run tests easily. Try it yourself.</p>
+    <div id="speedtest-root" class={styles.embed}></div>
+  </section>
+</div>

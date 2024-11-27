@@ -1,0 +1,16 @@
+.epigraph {
+  border-left: solid 2px #4B7BE5;
+  padding-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .epigraph {
+    padding-left: 0.875rem;
+  }
+}
+
+.epigraphText {
+  line-height: 1.625;
+  color: var(--text-color);
+  text-align: left;
+}

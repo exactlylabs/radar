@@ -11,6 +11,8 @@
   padding: 2rem 1rem 0;
   max-width: var(--max-width);
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
 }
 
 @media (min-width: 1300px) {

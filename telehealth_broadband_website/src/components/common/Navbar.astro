@@ -78,10 +78,17 @@ import logo from '../../assets/logos/navbar-logo.webp';
     }
   }
   
-  function checkScrollForNavbarBg() {
-    document.querySelector('nav')!.dataset.scrolled = (window.scrollY > 0).toString();
+  function checkScrollForNavbarBg(scrollableElement: HTMLElement | null = null) {
+    const toScroll = scrollableElement ?? window;
+    const scrollY = toScroll instanceof Window ? toScroll.scrollY : toScroll.scrollTop;
+    document.querySelector('nav')!.dataset.scrolled = (scrollY > 0).toString();
   }
   
   menuButton.addEventListener('click', toggleMenu);
-  window.addEventListener('scroll', checkScrollForNavbarBg);
+  const possibleParalaxLayout = document.getElementById("parallax-scrollable-container");
+  if(possibleParalaxLayout)  {
+    possibleParalaxLayout.addEventListener('scroll', () => checkScrollForNavbarBg(possibleParalaxLayout));
+  } else {
+    window.addEventListener('scroll', () => checkScrollForNavbarBg());
+  }
 </script>

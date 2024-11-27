@@ -60,7 +60,7 @@ import wvpca from '../../assets/logos/wvpca.webp';
     if(currentWidth < 1024) {
       if(items.length > 5) return;
       items.forEach((item) => {
-        const clone = item.cloneNode(true);
+        const clone = item.cloneNode(true) as HTMLElement;
         clone.setAttribute('aria-hidden', 'true');
         scrollerInner.appendChild(clone);
       });

@@ -1,16 +1,46 @@
 ---
 import HeroWithText from "../common/HeroWithText.astro";
 import styles from './broadband_modal.module.css';
+import sharedModalStyles from './shared_modals.module.css';
 import image from '../../assets/images/broadband.webp';
+import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
+import BulletPoint from "../opportunities/BulletPoint.astro";
+
+import broadbandMain from '../../assets/images/broadband-mapping.webp';
+import broadbandSearch from '../../assets/images/broadband-search.webp';
+import broadbandFilters from '../../assets/images/broadband-filters.webp';
 ---
 
-<div id="broadband-modal-content" class={styles.content}>
-  <section class={styles.modalHero}>
-    <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
-    <div class={styles.gradient}></div>
-    <div class={styles.heroContainer}>
-      <HeroWithText head="Broadband Mapping" title="Explore Broadband Nationwide" content="Explore a comprehensive online map aggregating millions of anonymized crowd-sourced internet speed tests across the U.S. This tool reveals the real median speeds experienced at state, county, and tribal levels, enabling users to track changes in internet quality over time, compare ISPs, and explore test data categorized by the FCC’s served, underserved, and unserved areas." />
+<div class={sharedModalStyles.content}>
+  <section class={sharedModalStyles.modalHero}>
+    <div class={sharedModalStyles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
+    <div class={sharedModalStyles.gradient}></div>
+    <div class={sharedModalStyles.heroContainer}>
+      <HeroWithText head="Broadband Mapping" title="Explore Broadband Nationwide" content="Explore a comprehensive online map aggregating millions of anonymized crowd-sourced internet speed tests across the U.S. This tool reveals the real median speeds experienced at state, county, and tribal levels, enabling users to track changes in internet quality over time, compare ISPs, and explore test data categorized by the FCC's served, underserved, and unserved areas." />
+    </div>
+    <GoToLinkButton href="https://broadbandmapping.com" text="Go to Webiste"/>
+    <div class={sharedModalStyles.itemsGrid}>
+      <BulletPoint title="Geographical Insights"
+        content="Zoom in on specific geographies to analyze how internet speeds vary across state, county, or tribal levels."
+        direction="column"
+      >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+            <path fill="#4B7BE5" transform="translate(0.999949 1.00022)" d="M15.000053 9.3333292C18.129665 9.3333292 20.666718 11.870381 20.666718 14.999994C20.666718 16.203289 20.291664 17.318985 19.652082 18.236561L21.707157 20.292885C22.097681 20.683409 22.097681 21.316574 21.707157 21.707098C21.316633 22.097622 20.683468 22.097622 20.292944 21.707098L18.237154 19.651649C17.319477 20.29146 16.203581 20.666658 15.000053 20.666658C11.87044 20.666658 9.3333883 18.129606 9.3333883 14.999994L9.3374805 14.782635C9.4517117 11.753751 11.943222 9.3333292 15.000053 9.3333292ZM14.333386 0L14.372416 0C14.653555 0.0048102769 14.934052 0.060318656 15.199888 0.16663438L20.533161 2.2999439C21.419176 2.6542861 22.000042 3.5124202 22.000042 4.4666653L22.000042 10.333329C22.000042 10.885614 21.552336 11.333329 21.000042 11.333329C20.447765 11.333329 20.000042 10.885614 20.000042 10.333329L20.000042 4.4666653C20.000042 4.3301797 19.917046 4.2075539 19.790438 4.15692L15.333021 2.3737803L15.333386 7C15.333386 7.5522847 14.885672 8 14.333386 8C13.781102 8 13.333386 7.5522847 13.333386 7L13.333021 2.3737803L8.6660204 4.2407804L8.6667233 10.333329C8.6667233 10.885614 8.2190075 11.333329 7.6667233 11.333329C7.1144385 11.333329 6.6667233 10.885614 6.6667233 10.333329L6.6660209 4.2397799L2.000042 2.3737774L2.000042 14.661327C2.000042 14.770512 2.0531766 14.870831 2.1392522 14.932517L2.2096717 14.971072L7.5429454 17.104382C7.6224046 17.13616 7.7110415 17.13616 7.7905006 17.104382C8.303297 16.8993 8.885252 17.148752 9.0903339 17.661549C9.2954149 18.174345 9.0459633 18.7563 8.5331669 18.961382C7.976954 19.183826 7.3564925 19.183826 6.8002214 18.961359L1.4669478 16.828049C0.58093309 16.473707 2.0821159e-05 15.615572 2.0821159e-05 14.661327L2.0821159e-05 1.8903995C-0.0027471257 1.3356786 0.27061313 0.81590933 0.72927737 0.50389284C1.1879517 0.19186951 1.7718102 0.12851156 2.2861705 0.33465597L7.5429454 2.4377215C7.6224046 2.4694993 7.7110415 2.4694993 7.7903681 2.4377747L13.466943 0.16661145C13.6663 0.086882874 13.87391 0.035730485 14.08386 0.013155338L14.333386 0ZM15.000053 11.333329C12.97501 11.333329 11.333388 12.974951 11.333388 14.999994C11.333388 17.025038 12.97501 18.666658 15.000053 18.666658C17.025097 18.666658 18.666718 17.025038 18.666718 14.999994C18.666718 12.974951 17.025097 11.333329 15.000053 11.333329Z"/>
+          </svg>
+      </BulletPoint>
+      <BulletPoint title="Date Filtering & ISP Comparisons"
+                   content="Filter data by date and compare the performance of various ISPs to visualize changes in internet quality over time."
+                   direction="column"
+      >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+            <path fill="#4B7BE5" transform="translate(2 3)" d="M1.6010401 0L18.400883 0C18.843422 0.00082651933 19.265909 0.184664 19.56815 0.50791621C19.870392 0.83116841 20.025461 1.2650403 19.996588 1.7066371C19.694689 5.910233 16.811579 9.4389172 12.831126 10.609057L12.802002 10.617L12.802333 15.747062C12.802704 16.170248 12.63551 16.574036 12.341969 16.871546L12.226048 16.977961L9.8206549 18.982454C9.3433752 19.379995 8.6792479 19.465651 8.1167183 19.202223C7.5541887 18.938795 7.1947522 18.37381 7.1945195 17.752279L7.1940022 10.616L7.1656094 10.608675C3.2771156 9.4638329 0.4367792 6.0679235 0.028114749 1.9934058L0.0035660621 1.7080559C-0.025974641 1.2659317 0.12900817 0.83133161 0.4316383 0.50766301C0.73433572 0.18392244 1.1577212 0 1.6010401 0ZM17.957003 2L2.0420022 2L2.053133 2.0902472C2.5018287 5.356688 4.9141417 8.0300837 8.1385021 8.7986822L8.3947229 8.8553801C8.860218 8.9504995 9.194519 9.3600197 9.194519 9.8351345L9.1940022 16.9L10.802002 15.56L10.802333 9.8351345C10.802333 9.3994627 11.083428 9.0189667 11.488982 8.8854418L11.602556 8.8552923C14.955967 8.1715765 17.486191 5.4435849 17.946903 2.0903704L17.957003 2Z"/>
+          </svg>
+      </BulletPoint>
+    </div>
+    <div class={styles.imagesGrid}>
+      <div style={`background-image: url(${broadbandMain.src})`}></div>
+      <div style={`background-image: url(${broadbandSearch.src})`}></div>
+      <div style={`background-image: url(${broadbandFilters.src})`}></div>
     </div>
   </section>
-  <div style="height: 2000px"></div>
 </div>

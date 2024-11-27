@@ -6,13 +6,7 @@ export default function OnboardingLayout() {
     <Stack>
       <Stack.Screen name="step1" options={{ headerShown: false }} />
       <Stack.Screen name="step2" options={{ headerShown: false }} />
-      {/* Onboarding - Account
-        Onboarding - Account (Invalid email)
-        Onboarding - Account (Entering email)
-        Onboarding - Account (Verify email - resend code)
-        Onboarding - Account (Verify email - code resent)
-        Onboarding - Account (Verify email - entering code)
-        Onboarding - Account (Verify email - invalid code) */}
+      <Stack.Screen name="account-email" options={{ headerShown: false }} />
       <Stack.Screen
         name="permissions_1_phone_access"
         options={{ headerShown: false }}

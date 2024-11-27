@@ -1,0 +1,219 @@
+---
+import Navbar from "../components/common/Navbar.astro";
+import Footer from "../components/common/Footer.astro";
+import styles from './parallax_layout.module.css';
+
+const { bgImageSrc } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <title>Telehealth Broadband Project</title>
+  </head>
+  <body>
+    <main class={styles.parallaxContainer} id="parallax-scrollable-container">
+      <img src={bgImageSrc}
+        id="parallax-background-image"
+        alt="Parallax Background Image"
+        class={styles.parallaxBackgroundImage}
+        loading="eager"
+      />
+      <Navbar/>
+      <slot />
+      <Footer/>
+    </main>
+    
+    <script>
+      const scrollableContainer = document.getElementById("parallax-scrollable-container")!;
+      scrollableContainer.style.overflowY = 'hidden';
+      
+      const parallaxImage = (document.getElementById("parallax-background-image")! as HTMLImageElement);
+      let initialParallaxImageWidth = 0;
+      let initialParallaxImageHeight = 0;
+      let initialWhiteLineHeight = 0;
+    
+      function initialSetup() {
+        const scrollableContainer = document.getElementById("parallax-scrollable-container")!;
+        const scrollPercentage = scrollableContainer.scrollTop / window.innerHeight;
+        
+        const mainHero = document.getElementById("parallax-main-hero-text")!;
+        const parallaxOverlay = document.querySelector('#parallax-overlay') as HTMLElement;
+        
+        const initialParallaxOverlayOpacity = 0.70;
+        const newOpacity = initialParallaxOverlayOpacity - initialParallaxOverlayOpacity * scrollPercentage;
+        parallaxOverlay.style.opacity = newOpacity.toString();
+        mainHero.style.opacity = (1 - scrollPercentage * 2).toString();
+        
+        const whiteLine = document.getElementById("vertical-white-line")!;
+        whiteLine.style.opacity = `${1 - scrollPercentage / 2}`;
+        const { bottom } = mainHero.getBoundingClientRect();
+        const { top: whiteLineTop } = whiteLine.getBoundingClientRect();
+        const whiteLineColor = 'rgba(255, 255, 255, 0.2)';
+        if(bottom >= whiteLineTop) {
+          const percentageOverlap = (bottom - whiteLineTop) / whiteLine.clientHeight;
+          whiteLine.style.background = `linear-gradient(to bottom, transparent 0%, transparent ${percentageOverlap * 100}%, ${whiteLineColor} ${percentageOverlap * 100 + 1}%, ${whiteLineColor} 100%)`;
+        } else {
+          whiteLine.style.height = `${initialWhiteLineHeight}px`;
+          whiteLine.style.background = `linear-gradient(to bottom, ${whiteLineColor} 0%, ${whiteLineColor} 100%)`;
+        }
+        whiteLine.style.bottom = `${scrollPercentage * 100}%`;
+        whiteLine.style.opacity = `${1 - scrollPercentage / 2}`;
+        
+        const {
+          top: incomingImageTop,
+          width: referenceWidth,
+          height: referenceHeight
+        } = document.getElementById("parallax-content-image")!.getBoundingClientRect();
+        
+        return { incomingImageTop, referenceHeight, referenceWidth };
+      }
+      
+      function getPixelsToBeSwapped(referenceHeight: number, coefficient: number): number {
+        return window.innerHeight + referenceHeight * coefficient;
+      }
+      
+      function getReferences() {
+        const incomingImage = document.getElementById("parallax-content-image")! as HTMLImageElement;
+        const parallaxImage = document.getElementById("parallax-background-image")! as HTMLImageElement;
+        const currentPixelsScrolled = document.getElementById("parallax-scrollable-container")!.scrollTop;
+        return { incomingImage, parallaxImage, currentPixelsScrolled };
+      }
+      
+      function swapIfNecessary(incomingImageTop: number, pixelsToBeSwapped: number, incomingImage: HTMLImageElement, parallaxImage: HTMLImageElement) {
+        const normalizedIncomingTop = incomingImageTop < 0 ? window.innerHeight + (incomingImageTop * -1) : incomingImageTop;
+        
+        if(normalizedIncomingTop >= pixelsToBeSwapped) {
+          parallaxImage.style.opacity = '0';
+          incomingImage.style.opacity = '1';
+        } else {
+          parallaxImage.style.opacity = '1';
+          incomingImage.style.opacity = '0';
+        }
+      }
+      
+      function handleResponsiveMainParallaxImage() {
+        const { incomingImageTop, referenceHeight } = initialSetup();
+        const { incomingImage, parallaxImage, currentPixelsScrolled } = getReferences();
+        const hiddenPercentage = 64 / referenceHeight;
+        const pixelsToBeSwapped = getPixelsToBeSwapped(referenceHeight, hiddenPercentage);
+        
+        const percentageScrolled = currentPixelsScrolled / pixelsToBeSwapped;
+        
+        if(percentageScrolled >= 1) {
+          parallaxImage.style.opacity = '0';
+          incomingImage.style.opacity = '1';
+          return;
+        }
+        
+        const diffBetweenTop = referenceHeight * hiddenPercentage;
+        const newTop = 0 - (diffBetweenTop * percentageScrolled);
+        parallaxImage.style.top = `${newTop}px`;
+        
+        swapIfNecessary(incomingImageTop, pixelsToBeSwapped, incomingImage, parallaxImage);
+      }
+      
+      function handleMainParallaxImage() {
+        const { incomingImageTop, referenceHeight, referenceWidth } = initialSetup();
+        const { incomingImage, parallaxImage, currentPixelsScrolled } = getReferences();
+        const hiddenPercentage = 0.25;
+        const pixelsToBeSwapped = getPixelsToBeSwapped(referenceHeight, hiddenPercentage);
+        
+        const percentageScrolled = currentPixelsScrolled / pixelsToBeSwapped;
+        
+        if(percentageScrolled >= 1) {
+          parallaxImage.style.opacity = '0';
+          incomingImage.style.opacity = '1';
+          return;
+        }
+        
+        const diffBetweenImageWidth = initialParallaxImageWidth - referenceWidth;
+        const newWidth = initialParallaxImageWidth - (diffBetweenImageWidth * percentageScrolled);
+        parallaxImage.style.minWidth = `${newWidth}px`;
+        parallaxImage.style.width = `${newWidth}px`;
+        
+        const diffBetweenImageHeight = initialParallaxImageHeight - referenceHeight;
+        const newHeight = initialParallaxImageHeight - (diffBetweenImageHeight * percentageScrolled);
+        parallaxImage.style.height = `${newHeight}px`;
+        
+        const diffBetweenTop = referenceHeight * hiddenPercentage;
+        const newTop = 0 - (diffBetweenTop * percentageScrolled);
+        parallaxImage.style.top = `${newTop}px`;
+        
+        swapIfNecessary(incomingImageTop, pixelsToBeSwapped, incomingImage, parallaxImage);
+      }
+      
+      function handleVerticallyShiftedImages() {
+        const verticalShiftImageLeft = document.getElementById("vertical-offset-image-left")!;
+        const verticalShiftImageRight = document.getElementById("vertical-offset-image-right")!;
+        const { top: leftTop } = verticalShiftImageLeft.getBoundingClientRect();
+        if(leftTop <= window.innerHeight) {
+          const topPercentage = leftTop / window.innerHeight;
+          const initialMargin = -40;
+          const marginShift = 80;
+          const newValue = initialMargin + (marginShift * (1 - topPercentage));
+          verticalShiftImageLeft.style.marginTop = `${newValue}px`;
+          verticalShiftImageRight.style.marginBottom = `${newValue}px`;
+        }
+      }
+      
+      function handleHorizontalShiftImages() {
+        const horizontalShiftImage = document.getElementById("horizontal-shift-image")!;
+        const {top: horizontalShiftTop} = horizontalShiftImage.getBoundingClientRect();
+        const targetShiftPx = 100;
+        if (horizontalShiftTop <= window.innerHeight) {
+          const topPercentage = horizontalShiftTop / window.innerHeight;
+          const newValue = targetShiftPx * (1 - topPercentage);
+          horizontalShiftImage.style.transform = `translate(calc(-45% - ${newValue}px), -35%)`;
+        }
+      }
+      
+      function handleThreeImageCarrousel() {
+        const threeImageCarrousel = document.getElementById("three-image-carrousel")!;
+        const { top: carrouselTop } = threeImageCarrousel.getBoundingClientRect();
+        const targetShiftPx = 100;
+        if(carrouselTop <= window.innerHeight) {
+          const topPercentage = carrouselTop / window.innerHeight;
+          const newValue = targetShiftPx - targetShiftPx * (1 - topPercentage);
+          threeImageCarrousel.style.left = `${newValue}px`;
+        }
+      }
+      
+      function handleScroll() {
+        const windowWidth = window.innerWidth;
+        if(windowWidth > 768) {
+          handleMainParallaxImage();
+          handleVerticallyShiftedImages();
+          handleHorizontalShiftImages();
+          handleThreeImageCarrousel();
+        } else {
+          handleResponsiveMainParallaxImage();
+        }
+      }
+      
+      
+      // Need to "lock" the scrollable container until the image is loaded so that we can get
+      // the actual image dimensions post-render
+      function handleLoadedImage() {
+        scrollableContainer.style.overflowY = 'auto';
+        initialParallaxImageWidth = parallaxImage.clientWidth;
+        initialParallaxImageHeight = parallaxImage.clientHeight;
+        initialWhiteLineHeight = document.getElementById("vertical-white-line")!.clientHeight;
+        document.getElementById("parallax-scrollable-container")!.removeEventListener('scroll', handleScroll);
+        document.getElementById("parallax-scrollable-container")!.addEventListener('scroll', handleScroll);
+      }
+      
+      if(!parallaxImage.complete) {
+        parallaxImage.onload = handleLoadedImage;
+      } else {
+        handleLoadedImage();
+      }
+      
+      window.addEventListener('resize', handleLoadedImage);
+    </script>
+</body>
+</html>

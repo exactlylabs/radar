@@ -19,6 +19,9 @@ import videoThumbnail from '../assets/images/video-thumbnail.webp';
 import radarPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
 import broadbandMappingImage from '../assets/images/broadband-mapping-laptop.webp';
 import mobileTestingImage from '../assets/images/mobile-testing.webp';
+import MobileTestingModal from '../components/resources/MobileTestingModal.astro';
+import RadarPodsModal from '../components/resources/RadarPodsModal.astro';
+import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
 ---
 <BaseLayout>
 
@@ -93,13 +96,13 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
     <BroadbandModal modalId={'broadband-modal'}/>
   </Modal>
   <Modal id={'pods-modal'} isOpen={false}>
-    <BroadbandModal modalId={'pods-modal'}/>
+    <RadarPodsModal modalId={'radar-pods-modal'}/>
   </Modal>
   <Modal id={'speed-test-modal'} isOpen={false}>
-    <BroadbandModal modalId={'speed-test-modal'}/>
+    <SpeedtestModal modalId={'speed-test-modal'}/>
   </Modal>
   <Modal id={'mobile-testing-modal'} isOpen={false}>
-    <BroadbandModal modalId={'mobile-testing-modal'}/>
+    <MobileTestingModal modalId={'mobile-testing-modal'}/>
   </Modal>
 </BaseLayout>
 
@@ -127,7 +130,7 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
   // I can trigger the required script at the exact moment the modals are added to the DOM.
   const mutationObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if(mutation.addedNodes.length === 1 && mutation.addedNodes[0].id === 'scroll-gallery-feature-cards') {
+      if(mutation.addedNodes.length === 1 && (mutation.addedNodes[0] as HTMLElement).id === 'scroll-gallery-feature-cards') {
         attachModals(mutation.addedNodes[0] as HTMLElement);
       }
     });
@@ -138,3 +141,12 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
     subtree: true
   });
 </script>
+
+<script type="text/javascript"
+        src="https://speed.radartoolkit.com/widget.js"
+        onload="
+          RadarSpeedWidget.config({ clientId: 1, elementId: 'speedtest-root', frameStyle: { width: '100%', height: '100%' }, global: true });
+          RadarSpeedWidget.new().mount();
+        "
+        defer
+></script>

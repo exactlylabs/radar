@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View } from "react-native";
 import Title from "@/components/Title";
 
-import gridImage from '../../assets/images/step2grid-onboarding.png';
+import gridImage from '@/assets/images/step2grid-onboarding.png';
 import TextComponent from "@/components/TextComponent";
 import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
