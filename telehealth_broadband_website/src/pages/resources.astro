@@ -20,6 +20,7 @@ import radarPodsImage from '../assets/images/approach-broadband-monitoring-pods.
 import broadbandMappingImage from '../assets/images/broadband-mapping-laptop.webp';
 import mobileTestingImage from '../assets/images/mobile-testing.webp';
 import MobileTestingModal from '../components/resources/MobileTestingModal.astro';
+import RadarPodsModal from '../components/resources/RadarPodsModal.astro';
 import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
 ---
 <BaseLayout>
@@ -95,7 +96,7 @@ import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
     <BroadbandModal modalId={'broadband-modal'}/>
   </Modal>
   <Modal id={'pods-modal'} isOpen={false}>
-    <BroadbandModal modalId={'pods-modal'}/>
+    <RadarPodsModal modalId={'radar-pods-modal'}/>
   </Modal>
   <Modal id={'speed-test-modal'} isOpen={false}>
     <SpeedtestModal modalId={'speed-test-modal'}/>
