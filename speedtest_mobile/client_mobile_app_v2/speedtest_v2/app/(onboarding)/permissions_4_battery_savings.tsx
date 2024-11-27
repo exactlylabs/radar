@@ -1,4 +1,12 @@
-import { StyleSheet, View, Alert, PermissionsAndroid } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Linking,
+  Platform,
+} from "react-native";
+
+import * as Battery from "expo-battery";
 import Title from "@/components/Title";
 import TextComponent from "@/components/TextComponent";
 import Button from "@/components/Button";
@@ -6,26 +14,24 @@ import ButtonContainer from "@/components/ButtonContainer";
 import { sharedStyles } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
 import AnimatedTransition, { useAnimatedTransition } from "@/components/AnimatedTransition";
-import * as Location from 'expo-location';
 
-export default function Permissions3FullLocation() {
-  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/permissions_4_battery_savings");
+export default function Permissions4BatterySavings() {
+  const { slideAnim, animateAndNavigate } = useAnimatedTransition("/next_screen_path");
 
-  const requestPermissions = async () => {
-    try {
-      const { status } = await Location.requestBackgroundPermissionsAsync();
-
-      if (status === PermissionsAndroid.RESULTS.GRANTED) {
-        animateAndNavigate();
-      } else {
-        Alert.alert(
-          "Permission Required",
-          "This app requires access to your location all the time to function properly.",
-          [{ text: "OK" }]
-        );
-      }
-    } catch (err) {
-      console.warn(err);
+  const handleUpdateSettings = async () => {
+    const isBatterySavingEnabled = await Battery.isLowPowerModeEnabledAsync();
+    if (true ||isBatterySavingEnabled) {
+      Alert.alert(
+        "Update Settings",
+        "Please disable your battery saving settings on your device.",
+        [
+          {
+            text: "OK",
+            onPress: () =>
+              Linking.openSettings(),
+          },
+        ]
+      );
     }
   };
 
@@ -39,16 +45,16 @@ export default function Permissions3FullLocation() {
           <View style={onboardingStyles.content}>
             <View style={onboardingStyles.topContent}>
               <View style={onboardingStyles.titleContainer}>
-                <Title title="Allow access to your location all the time" />
+                <Title title="Disable your battery saving settings" />
               </View>
               <View style={onboardingStyles.textContainer}>
-                <TextComponent text="Your location is needed even when the app is closed so that Radar works in the background." />
+                <TextComponent text="Your current battery settings might impact your results. Make sure to disable your battery saving settings on your device." />
               </View>
             </View>
 
             <View style={onboardingStyles.bottomContent}>
               <ButtonContainer>
-                <Button title="Update location settings" onPress={requestPermissions} />
+                <Button title="Update settings" onPress={handleUpdateSettings} />
               </ButtonContainer>
             </View>
           </View>
@@ -61,6 +67,6 @@ export default function Permissions3FullLocation() {
 const styles = StyleSheet.create({
   progressBarFill: {
     ...sharedStyles.progressBarFill,
-    width: "50%",
+    width: "66%",
   },
 });
