@@ -5,6 +5,7 @@ export const colors = {
     gray300: '#BCBBC7',
     gray400: '#A09FB7',
     gray500: '#737381',
+    gray600: '#58586c',
     blue200: '#4B7BE5',
     blueBackground: '#15152E',
     bgGradientPrimary: '#1A1B2E',
