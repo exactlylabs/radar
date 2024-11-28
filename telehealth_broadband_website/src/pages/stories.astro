@@ -6,10 +6,11 @@ import styles from "./styles/_stories.module.css";
 import HeroWithText from "../components/common/HeroWithText.astro";
 import StoryGridCard from "../components/stories/StoryCard.astro";
 import alaskaStory from "../assets/images/alaska-story-1.webp";
-import westVirginiaStory from '../assets/images/west-virginia-story-2.webp';
-import michiganStory from '../assets/images/michigan-story.webp';
-import texasStory from '../assets/images/texas-story.webp';
+import westVirginiaStory from "../assets/images/west-virginia-story-2.webp";
+import michiganStory from "../assets/images/michigan-story.webp";
+import texasStory from "../assets/images/texas-story.webp";
 import storiesHero from '../assets/images/stories-hero.webp';
+import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp";
 ---
 
 <BaseLayout
@@ -18,6 +19,7 @@ import storiesHero from '../assets/images/stories-hero.webp';
   heroBgStyle={`background-image: url(${storiesHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={styles.heroSection}>
+    <img src={blueGradientZigzag.src} alt="blue gradient light" class={styles.blueGradientZigzag} />
     <HeroWithText
       head="Stories"
       title="The Reality on the Ground"
