@@ -5,6 +5,7 @@ import opportunities from '../../assets/images/opportunities.webp';
 
 import dotsGrid from '../../assets/images/dots-grid.webp';
 import greenBlueZigZagLight from '../../assets/images/green-blue-zigzag-light.webp';
+import greenBlueZigZagVerticalLight from '../../assets/images/green-blue-zigzag-vertical-light.webp';
 ---
 
 <div class={styles.introductionSection}>
@@ -12,6 +13,7 @@ import greenBlueZigZagLight from '../../assets/images/green-blue-zigzag-light.we
     <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} data-position="left" />
     <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} data-position="right" />
     <img src={greenBlueZigZagLight.src} alt="green and blue zigzag light" class={styles.greenBlueZigZagLight} />
+    <img src={greenBlueZigZagVerticalLight.src} alt="green and blue zigzag vertical light" class={styles.greenBlueZigZagVerticalLight} />
 
     <HeroWithText
       head="Opportunities"
@@ -21,8 +23,8 @@ import greenBlueZigZagLight from '../../assets/images/green-blue-zigzag-light.we
     <img
       src={opportunities.src}
       alt="opportunities"
-      height={390}
       loading={'eager'}
+      class={styles.headerImage}
     />
   </div>
 </div>
