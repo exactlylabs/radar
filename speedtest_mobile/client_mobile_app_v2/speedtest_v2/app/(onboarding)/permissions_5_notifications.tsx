@@ -18,7 +18,7 @@ export default function Permissions5Notifications() {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
+        lightColor: rgba(255, 35, 31, 0.49),
     });
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
