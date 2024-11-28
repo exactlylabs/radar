@@ -1,7 +1,7 @@
 .container {
   position: sticky;
-  top: var(--responsive-navbar-height);
-  padding: 1rem 0;
+  top: 0;
+  padding: 1rem 1rem;
   width: 100%;
   z-index: 10;
   display: flex;
@@ -9,8 +9,15 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); */
   backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .container {
+    top: var(--responsive-navbar-height);
+    margin-left: -1.5rem;
+  }
 }
 
 .staticContainer {
@@ -19,7 +26,7 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); */
 }
 
 @media (max-width: 768px) {
