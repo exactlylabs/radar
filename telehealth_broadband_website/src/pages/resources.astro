@@ -20,6 +20,9 @@ import mobileTestingImage from '../assets/images/mobile-testing.webp';
 import MobileTestingModal from '../components/resources/MobileTestingModal.astro';
 import RadarPodsModal from '../components/resources/RadarPodsModal.astro';
 import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
+import blueGreenVerticalLight from '../assets/images/blue-green-vertical-light.webp';
+import pinkYellowVerticalLight from '../assets/images/pink-yellow-vertical-light.webp';
+import dotsGrid from '../assets/images/dots-grid.webp';
 ---
 <BaseLayout
   title="Tools and Resources for Rural Connectivity"
@@ -27,8 +30,11 @@ import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
 >
 
   <section class={commonStyles.paddedSection}>
+    <img src={pinkYellowVerticalLight.src} alt="pink yellow light" class={styles.pinkYellowVerticalLight} />
+    <img src={blueGreenVerticalLight.src} alt="blue green light" class={styles.blueGreenVerticalLight} />
     <div class={styles.heroSectionContent}>
       <div class={styles.heroSectionHeroContainer}>
+        <img src={dotsGrid.src} alt="blue green light" class={styles.dotsGrid} />
         <HeroWithText
           title="Innovative Tools for Monitoring Internet Connectivity"
           content="The Telehealth Broadband Program developed innovative tools that empower users to monitor and understand their internet quality. Discover real data showcasing internet performance in your community."

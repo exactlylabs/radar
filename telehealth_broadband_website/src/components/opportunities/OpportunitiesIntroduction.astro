@@ -2,10 +2,17 @@
 import HeroWithText from "../common/HeroWithText.astro";
 import styles from '../../pages/styles/_opportunities.module.css';
 import opportunities from '../../assets/images/opportunities.webp';
+
+import dotsGrid from '../../assets/images/dots-grid.webp';
+import greenBlueZigZagLight from '../../assets/images/green-blue-zigzag-light.webp';
 ---
 
 <div class={styles.introductionSection}>
   <div class={styles.header}>
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} data-position="left" />
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} data-position="right" />
+    <img src={greenBlueZigZagLight.src} alt="green and blue zigzag light" class={styles.greenBlueZigZagLight} />
+
     <HeroWithText
       head="Opportunities"
       title="Maximizing Rural Connectivity Through Practical Solutions"
