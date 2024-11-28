@@ -23,9 +23,10 @@ export default function OnboardingLayout() {
         name="permissions_4_battery_savings"
         options={{ headerShown: false }}
       />
-      {/*
-        Onboarding - Permissions - 5
-      */}
+      <Stack.Screen
+        name="permissions_5_notifications"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
