@@ -27,6 +27,10 @@ export default function OnboardingLayout() {
         name="permissions_5_notifications"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="account-validate-code"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
