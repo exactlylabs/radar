@@ -82,9 +82,10 @@ const { scrollToId } = Astro.props;
   const tabsContainer = document.querySelector(`.${styles.container}`)!;
   const toShowElements = tabsContainer.querySelectorAll('[data-hide-off-scroll="true"]');
   window.addEventListener('scroll', () => {
+    const topScrollThreshold = 72;
     if(tabsContainer) {
       toShowElements.forEach(elem => {
-        if(tabsContainer.getBoundingClientRect().top === 72) {
+        if(tabsContainer.getBoundingClientRect().top === topScrollThreshold) {
           const staticContainer = tabsContainer.querySelector(`.${styles.staticContainer}`)! as HTMLElement;
           if(!staticContainer.hasAttribute('shifted')) {
             staticContainer.style.paddingLeft = '74px';
