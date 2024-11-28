@@ -37,6 +37,10 @@
   .container {
     top: var(--responsive-navbar-height);
     margin-left: -1.5rem;
+    padding-inline: 1rem;
+    width: 100vw;
+    padding-top: 1rem;
+    backdrop-filter: blur(10px);
   }
 }
 
