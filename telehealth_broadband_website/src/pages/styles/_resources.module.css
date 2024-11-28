@@ -97,3 +97,46 @@
     margin: 0 auto;
   }
 }
+
+.blueGreenVerticalLight {
+  position: absolute;
+  top: -300px;
+  right: -350px;
+  z-index: -1;
+  height: 1112px;
+  aspect-ratio: 4362 / 4448; 
+}
+
+.pinkYellowVerticalLight {
+  position: absolute;
+  top: -250px;
+  left: -380px;
+  z-index: -1;
+  height: 1003.5px;
+  aspect-ratio: 3940 / 4014;
+}
+
+.dotsGrid {
+  position: absolute;
+  top: 25px;
+  right: 50%;
+  z-index: -1;
+  height: 460px;
+  aspect-ratio: 772 / 460;
+}
+
+@media (max-width: 1080px) {
+  .blueGreenVerticalLight {
+    top: -200px;
+    right: -350px;
+  }
+
+  .pinkYellowVerticalLight {
+    display: none;
+  }
+
+  .dotsGrid {
+    display: none;
+  }
+  
+}
