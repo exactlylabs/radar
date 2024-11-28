@@ -67,6 +67,7 @@
 .contentImage {
   width: calc(100% - 2 * var(--side-padding));
   height: auto;
+  aspect-ratio: var(--parallax-aspect-ratio);
   position: relative;
   opacity: 0;
   border-radius: 1rem;

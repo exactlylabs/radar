@@ -2,15 +2,14 @@
   --navbar-height: 65px;
   --footer-height: 240px;
   --side-padding: calc((100vw - var(--max-width)) / 2);
+  --parallax-aspect-ratio: 1.6;
 }
 
 .parallaxBackgroundImage {
   width: auto;
-  min-width: 100vw;
   height: 100dvh;
   height: 100vh;
-  max-height: 100dvh;
-  max-height: 100vh;
+  aspect-ratio: var(--parallax-aspect-ratio);
   position: fixed;
   top: 0;
   left: 50%;
