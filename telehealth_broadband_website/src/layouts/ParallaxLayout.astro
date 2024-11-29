@@ -18,12 +18,14 @@ const { bgImageSrc, title, description } = Astro.props;
   </head>
   <body>
     <main class={styles.parallaxContainer} id="parallax-scrollable-container">
-      <img src={bgImageSrc}
-        id="parallax-background-image"
-        alt="Parallax Background Image"
-        class={styles.parallaxBackgroundImage}
-        loading="eager"
-      />
+      <div id="parallax-background-image"
+           class={styles.parallaxBackgroundImage}
+      >
+        <img src={bgImageSrc}
+          alt="Parallax Background Image"
+          loading="eager"
+        />
+      </div>
       <Navbar/>
       <slot />
       <Footer/>
@@ -33,7 +35,8 @@ const { bgImageSrc, title, description } = Astro.props;
       const scrollableContainer = document.getElementById("parallax-scrollable-container")!;
       scrollableContainer.style.overflowY = 'hidden';
       
-      const parallaxImage = (document.getElementById("parallax-background-image")! as HTMLImageElement);
+      const parallaxImageContainer = (document.getElementById("parallax-background-image")! as HTMLDivElement);
+      const parallaxImage = parallaxImageContainer.querySelector('img')!;
       let initialParallaxImageWidth = 0;
       let initialParallaxImageHeight = 0;
       let initialWhiteLineHeight = 0;
@@ -67,85 +70,90 @@ const { bgImageSrc, title, description } = Astro.props;
         
         const {
           top: incomingImageTop,
+          bottom: incomingImageBottom,
           width: referenceWidth,
-          height: referenceHeight
         } = document.getElementById("parallax-content-image")!.getBoundingClientRect();
         
-        return { incomingImageTop, referenceHeight, referenceWidth };
-      }
-      
-      function getPixelsToBeSwapped(referenceHeight: number, coefficient: number): number {
-        return window.innerHeight + referenceHeight * coefficient;
+        return { incomingImageTop, incomingImageBottom, referenceWidth };
       }
       
       function getReferences() {
         const incomingImage = document.getElementById("parallax-content-image")! as HTMLImageElement;
-        const parallaxImage = document.getElementById("parallax-background-image")! as HTMLImageElement;
+        const parallaxImageContainer = document.getElementById("parallax-background-image")! as HTMLDivElement;
+        const parallaxImage = parallaxImageContainer.querySelector('img')!;
         const currentPixelsScrolled = document.getElementById("parallax-scrollable-container")!.scrollTop;
-        return { incomingImage, parallaxImage, currentPixelsScrolled };
+        const incomingText = document.getElementById("parallax-reference-container")!;
+        return { incomingImage, parallaxImage, parallaxImageContainer, currentPixelsScrolled, incomingText };
       }
       
-      function swapIfNecessary(incomingImageTop: number, pixelsToBeSwapped: number, incomingImage: HTMLImageElement, parallaxImage: HTMLImageElement) {
-        const normalizedIncomingTop = incomingImageTop < 0 ? window.innerHeight + (incomingImageTop * -1) : incomingImageTop;
-        
-        if(normalizedIncomingTop >= pixelsToBeSwapped) {
-          parallaxImage.style.opacity = '0';
+      function swapIfNecessary(percentageScrolled: number, incomingImage: HTMLImageElement, parallaxImageContainer: HTMLDivElement) {
+        const { bottom: incomingBottom, width: incomingWidth } = incomingImage.getBoundingClientRect();
+        const { bottom: parallaxBottom, width: parallaxWidth } = parallaxImageContainer.getBoundingClientRect();
+        if(percentageScrolled >= 1 &&
+           incomingBottom <= parallaxBottom &&
+           parallaxWidth <= incomingWidth
+         ) {
+          parallaxImageContainer.style.opacity = '0';
           incomingImage.style.opacity = '1';
         } else {
-          parallaxImage.style.opacity = '1';
+          parallaxImageContainer.style.opacity = '1';
           incomingImage.style.opacity = '0';
         }
       }
       
       function handleResponsiveMainParallaxImage() {
-        const { incomingImageTop, referenceHeight } = initialSetup();
-        const { incomingImage, parallaxImage, currentPixelsScrolled } = getReferences();
-        const hiddenPercentage = 64 / referenceHeight;
-        const pixelsToBeSwapped = getPixelsToBeSwapped(referenceHeight, hiddenPercentage);
+        initialSetup();
+        const { incomingImage, parallaxImageContainer, parallaxImage, currentPixelsScrolled } = getReferences();
+        const THREE_REM = 3 * 16;
+        const NAVBAR_HEIGHT = 72;
+        const referenceHeight = incomingImage.height;
+        const totalPixelsToBeScrolledUntilSwap = referenceHeight + THREE_REM - NAVBAR_HEIGHT;
+        let percentageScrolled = currentPixelsScrolled / totalPixelsToBeScrolledUntilSwap;
+        let newScale = 1.25 - (0.25 * percentageScrolled);
+        newScale = newScale < 1 ? 1 : newScale;
+        parallaxImage.style.scale = `${newScale}`;
         
-        const percentageScrolled = currentPixelsScrolled / pixelsToBeSwapped;
+        const newTop = 0 - (THREE_REM * percentageScrolled);
+        parallaxImageContainer.style.top = `${newTop}px`;
         
-        if(percentageScrolled >= 1) {
-          parallaxImage.style.opacity = '0';
-          incomingImage.style.opacity = '1';
-          return;
-        }
-        
-        const diffBetweenTop = referenceHeight * hiddenPercentage;
-        const newTop = 0 - (diffBetweenTop * percentageScrolled);
-        parallaxImage.style.top = `${newTop}px`;
-        
-        swapIfNecessary(incomingImageTop, pixelsToBeSwapped, incomingImage, parallaxImage);
+        swapIfNecessary(percentageScrolled, incomingImage, parallaxImageContainer);
       }
       
       function handleMainParallaxImage() {
-        const { incomingImageTop, referenceHeight, referenceWidth } = initialSetup();
-        const { incomingImage, parallaxImage, currentPixelsScrolled } = getReferences();
-        const hiddenPercentage = 0.25;
-        const pixelsToBeSwapped = getPixelsToBeSwapped(referenceHeight, hiddenPercentage);
-        
-        const percentageScrolled = currentPixelsScrolled / pixelsToBeSwapped;
-        
-        if(percentageScrolled >= 1) {
-          parallaxImage.style.opacity = '0';
-          incomingImage.style.opacity = '1';
-          return;
+        const { referenceWidth } = initialSetup();
+        const { incomingImage, parallaxImageContainer, parallaxImage, currentPixelsScrolled } = getReferences();
+        const SIX_REM = 6 * 16;
+        const referenceHeight = incomingImage.height;
+        const totalPixelsToBeScrolledUntilSwap = referenceHeight + SIX_REM;
+        let percentageScrolled = currentPixelsScrolled / totalPixelsToBeScrolledUntilSwap;
+        let newScale = 1.5 - (0.5 * percentageScrolled);
+        newScale = newScale < 1 ? 1 : newScale;
+        parallaxImage.style.scale = `${newScale}`;
+        const percentageBreakpoint = 0.75;
+        if(percentageScrolled >= percentageBreakpoint) {
+          parallaxImageContainer.style.borderBottomLeftRadius = '1rem';
+          parallaxImageContainer.style.borderBottomRightRadius = '1rem';
+          const normalizedPercentage = (percentageScrolled - percentageBreakpoint) / (1 - percentageBreakpoint);
+          
+          const diffBetweenImageWidth = initialParallaxImageWidth - referenceWidth;
+          let newWidth = initialParallaxImageWidth - (diffBetweenImageWidth * normalizedPercentage);
+          newWidth = newWidth < referenceWidth ? referenceWidth : newWidth;
+          parallaxImageContainer.style.minWidth = `${newWidth}px`;
+          parallaxImageContainer.style.width = `${newWidth}px`;
+          
+          const diffBetweenImageHeight = initialParallaxImageHeight - referenceHeight;
+          let newHeight = initialParallaxImageHeight - (diffBetweenImageHeight * normalizedPercentage);
+          newHeight = newHeight < referenceHeight ? referenceHeight : newHeight;
+          parallaxImageContainer.style.height = `${newHeight}px`;
+        } else {
+          parallaxImageContainer.style.borderBottomLeftRadius = '0';
+          parallaxImageContainer.style.borderBottomRightRadius = '0';
+          parallaxImageContainer.style.minWidth = `${initialParallaxImageWidth}px`;
+          parallaxImageContainer.style.width = `${initialParallaxImageWidth}px`;
+          parallaxImageContainer.style.height = `${initialParallaxImageHeight}px`;
         }
         
-        const diffBetweenImageWidth = initialParallaxImageWidth - referenceWidth;
-        const newWidth = initialParallaxImageWidth - (diffBetweenImageWidth * percentageScrolled);
-        parallaxImage.style.minWidth = `${newWidth}px`;
-        parallaxImage.style.width = `${newWidth}px`;
-        
-        const diffBetweenImageHeight = initialParallaxImageHeight - referenceHeight;
-        const newHeight = initialParallaxImageHeight - (diffBetweenImageHeight * percentageScrolled);
-        parallaxImage.style.height = `${newHeight}px`;
-        
-        const diffBetweenTop = referenceHeight * hiddenPercentage;
-        const newTop = 0 - (diffBetweenTop * percentageScrolled);
-        parallaxImage.style.top = `${newTop}px`;
-        
-        swapIfNecessary(incomingImageTop, pixelsToBeSwapped, incomingImage, parallaxImage);
+        swapIfNecessary(percentageScrolled, incomingImage, parallaxImageContainer);
       }
       
       function handleVerticallyShiftedImages() {
@@ -169,7 +177,7 @@ const { bgImageSrc, title, description } = Astro.props;
         if (horizontalShiftTop <= window.innerHeight) {
           const topPercentage = horizontalShiftTop / window.innerHeight;
           const newValue = targetShiftPx * (1 - topPercentage);
-          horizontalShiftImage.style.transform = `translate(calc(-45% - ${newValue}px), -35%)`;
+          horizontalShiftImage.style.transform = `translate3d(calc(-45% - ${newValue}px), -50%, 0)`;
         }
       }
       
@@ -201,8 +209,8 @@ const { bgImageSrc, title, description } = Astro.props;
       // the actual image dimensions post-render
       function handleLoadedImage() {
         scrollableContainer.style.overflowY = 'auto';
-        initialParallaxImageWidth = parallaxImage.clientWidth;
-        initialParallaxImageHeight = parallaxImage.clientHeight;
+        initialParallaxImageWidth = parallaxImageContainer.clientWidth;
+        initialParallaxImageHeight = parallaxImageContainer.clientHeight;
         initialWhiteLineHeight = document.getElementById("vertical-white-line")!.clientHeight;
         document.getElementById("parallax-scrollable-container")!.removeEventListener('scroll', handleScroll);
         document.getElementById("parallax-scrollable-container")!.addEventListener('scroll', handleScroll);

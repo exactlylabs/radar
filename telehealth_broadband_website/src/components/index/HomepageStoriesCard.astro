@@ -2,8 +2,9 @@
 import styles from './homepage_stories_card.module.css';
 import HeroWithText from "../common/HeroWithText.astro";
 import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+import ContainedReadMore from "../common/buttons/ContainedReadMore.astro";
 
-const { head, title, content, image } = Astro.props;
+const { head, title, content, image, link } = Astro.props;
 ---
 
 <li class={styles.card}
@@ -11,12 +12,14 @@ const { head, title, content, image } = Astro.props;
   data-carrousel-card
 >
   <div class={styles.gradient}></div>
-  <div class={styles.heroContainer}>
-    <HeroWithText head={head}
-      title={title}
-      content={content}
-      inCard
-    />
-  </div>
-  <ReadMoreButton href="/stories"/>
+  <a href={link} class={styles.cardLink}>
+    <div class={styles.heroContainer}>
+      <HeroWithText head={head}
+        title={title}
+        content={content}
+        inCard
+      />
+    </div>
+    <ContainedReadMore text="Learn more"/>
+  </a>
 </li>

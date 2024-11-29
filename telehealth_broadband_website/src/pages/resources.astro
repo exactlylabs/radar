@@ -10,7 +10,6 @@ import BroadbandModal from "../components/resources/BroadbandModal.astro";
 import ResourceCard from "../components/resources/ResourceCard.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import HeroWithText from "../components/common/HeroWithText.astro";
-import { Image } from 'astro:assets';
 
 import resourcesHeroImage from '../assets/images/resources-hero-image.webp';
 import broadbandCardImage from '../assets/images/broadband.webp';
@@ -35,7 +34,7 @@ import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
           content="The Telehealth Broadband Program developed innovative tools that empower users to monitor and understand their internet quality. Discover real data showcasing internet performance in your community."
         />
       </div>
-      <Image src={resourcesHeroImage}
+      <img src={resourcesHeroImage.src}
         alt="Resources section hero image"
         class={styles.heroImage}
       />

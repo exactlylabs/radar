@@ -3,13 +3,14 @@ import styles from '../../pages/styles/_opportunities.module.css';
 import HeroWithText from '../common/HeroWithText.astro';
 import BulletPoint from './BulletPoint.astro';
 import SectionWithIncomingImage from './SectionWithIncomingImage';
-import sectionImage from '../../assets/images/router-image.webp';
-import dadSonImage from '../../assets/images/dad-son-image.webp';
-import workerImage from '../../assets/images/worker-image.webp';
-import communityEducationIcon from '../../assets/icons/community-education-icon.svg';
+import simpleFixes from '../../assets/images/simple-fixes-create-big-changes.webp';
+import empowering from '../../assets/images/empowering-through-knowledge.webp';
+import bridging from '../../assets/images/bridging-the-gap.webp';
+import providing from '../../assets/images/providing-communities-with-data.webp';
 import businessCollaborationIcon from '../../assets/icons/business-collaboration-icon.svg';
 import dataForChangeIcon from '../../assets/icons/data-for-change-icon.svg';
-import phoneMetricsImage from '../../assets/images/phone-metrics-image.webp';
+import communityEducationIcon from '../../assets/icons/community-education-icon.svg';
+
 import FloatingTabs from './FloatingTabs.astro';
 import Tab from './Tab.astro';
 ---
@@ -121,7 +122,7 @@ import Tab from './Tab.astro';
     <SectionWithIncomingImage
       client:only="react"
       contentIds={['quick-fixes', 'community-education', 'business-collaboration', 'data-for-change']}
-      imageSrcs={[sectionImage.src, dadSonImage.src, workerImage.src, phoneMetricsImage.src]}
+      imageSrcs={[simpleFixes.src, empowering.src, bridging.src, providing.src]}
     >
       <div style="width: 100%;display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 5rem">
         <div id="quick-fixes" class={styles.opportunityContainer}>
@@ -151,7 +152,7 @@ import Tab from './Tab.astro';
               </BulletPoint>
             </div>
           </div>
-          <img src={sectionImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={simpleFixes.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
         <div id="community-education" class={styles.opportunityContainer}>
           <HeroWithText head="Community Education" title="Empowering Through Knowledge" content="A common barrier in rural areas is a lack of awareness about internet offerings and reasonable speeds or reliability. Community-wide education can reduce frustration and help residents advocate for better services when current options fall short."/>
@@ -186,7 +187,7 @@ import Tab from './Tab.astro';
               </BulletPoint>
             </div>
           </div>
-          <img src={dadSonImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={empowering.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
         <div id="business-collaboration" class={styles.opportunityContainer}>
           <HeroWithText head="Business Collaboration" title="Bridging the Gap Between Businesses and ISPs" content="Clear communication with IT teams and ISPs is key for rural businesses to resolve connectivity issues often caused by poor documentation. Education programs can teach clear reporting, providing actionable data for ISPs, empowering communities to tackle connectivity challenges."/>
@@ -215,7 +216,7 @@ import Tab from './Tab.astro';
               </BulletPoint>
             </div>
           </div>
-          <img src={workerImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={bridging.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
         <div id="data-for-change" class={styles.opportunityContainer}>
           <HeroWithText head="Data for Change" title="Providing Communities with Data to Improve Connectivity" content="A program providing broadband data tools to rural communities helps local governments improve connectivity. These tools help leaders identify issues, make recommendations, and engage ISPs and policymakers to secure investments for better healthcare, safety, and quality of life."/>
@@ -268,7 +269,7 @@ import Tab from './Tab.astro';
               </BulletPoint>
             </div>
           </div>
-          <img src={phoneMetricsImage.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={providing.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
         </div>
       </div>
     </SectionWithIncomingImage>

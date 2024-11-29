@@ -4,13 +4,13 @@ import ParallaxLayout from "../../layouts/ParallaxLayout.astro";
 import styles from './styles/template.module.css';
 import commonStyles from '../../common.module.css';
 import HeroWithText from "../../components/common/HeroWithText.astro";
-import { Image } from 'astro:assets';
 import Epigraph from "../../components/stories/Epigraph.astro";
 import Quote from "../../components/stories/Quote.astro";
 import MoreStoriesCard from "../../components/stories/MoreStoriesCard.astro";
 
 import arenacCounty from '../../assets/images/arenac-county.webp';
 import openField from '../../assets/images/open-field.webp';
+import barn from '../../assets/images/barn.webp';
 import oldManRiver from '../../assets/images/old-man-river.webp';
 import oldLadyOffice from '../../assets/images/old-lady-office.webp';
 import street from '../../assets/images/street.webp';
@@ -19,6 +19,7 @@ import subRegionalClinic from '../../assets/images/sub-regional-clinic.webp';
 import healthcareBurnout from '../../assets/images/healthcare-burnout.webp';
 import theTelehealthStruggle from '../../assets/images/the-telehealth-struggle.webp';
 import learningInterrupted from '../../assets/images/learning-interrupted.webp';
+import oldLadyThinking from '../../assets/images/old-lady-thinking.webp';
 ---
 
 <ParallaxLayout
@@ -43,6 +44,7 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
        class={styles.contentImage}
        alt="Arenac County"
        id="parallax-content-image"
+       loading="eager"
   />
   
   <section class={commonStyles.paddedSection} id="parallax-reference-container">
@@ -57,8 +59,8 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
   </section>
   
   <section class={styles.verticallyAnimatedImagesContainer}>
-    <img alt="open field image" src={openField.src} class={styles.verticalAnimated} data-position="left" id="vertical-offset-image-left"/>
-    <img alt="open field image" src={openField.src} class={styles.verticalAnimated} data-position="right" id="vertical-offset-image-right"/>
+    <img alt="barn image" src={barn.src} class={styles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
+    <img alt="open field image" src={openField.src} class={styles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
   </section>
   
   <section class={commonStyles.paddedSection}>
@@ -72,7 +74,7 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
       class={styles.horizontalShiftImage}
       id="horizontal-shift-image"
       alt={'Old man looking at a river'}
-      loading="lazy"
+      loading="eager"
     />
   </section>
   
@@ -89,7 +91,7 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
       />
     </div>
     <div class={styles.videoContainer}>
-      <video class={styles.video} src="" controls></video>
+      <video class={styles.video} src="" poster={oldLadyThinking.src} controls></video>
       <div class={styles.epigraphContainer}>
         <Epigraph text="Linda explains all the inconveniences that the outage caused in her life and the impact on her health."/>
       </div>
@@ -109,9 +111,9 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
     </div>
     
     <div id="three-image-carrousel" class={styles.threeImageCarrousel}>
-      <img src={oldLadyOffice.src} alt="Old lady in an office"/>
-      <img src={street.src} alt="Street image"/>
-      <img src={womanOffice.src} alt="Woman in an office"/>
+      <img src={oldLadyOffice.src} alt="Old lady in an office" loading="eager"/>
+      <img src={street.src} alt="Street image" loading="eager"/>
+      <img src={womanOffice.src} alt="Woman in an office" loading="eager"/>
     </div>
   </section>
 
@@ -127,14 +129,14 @@ import learningInterrupted from '../../assets/images/learning-interrupted.webp';
       />
     </div>
     <div class={styles.verticallyAnimatedImagesContainer}>
-      <img src={openField.src} class={styles.verticalAnimated}/>
-      <img src={openField.src} class={styles.verticalAnimated}/>
+      <img src={openField.src} class={styles.verticalAnimated} loading="eager"/>
+      <img src={openField.src} class={styles.verticalAnimated} loading="eager"/>
     </div>
     <div class={styles.textContainer}>
       <p>When service was finally restored, the relief was palpable. But for Dr. Evans, the experience left a lasting impression on the necessity for a resilient backup system. "We can't afford to be left in the dark again," he says. "For rural healthcare, reliable connectivity isn't just a luxury; it's part of the standard of care."</p>
     </div>
     <div class={styles.subRegionalClinicContainer}>
-      <Image src={subRegionalClinic} alt="Sub-regional clinic"/>
+      <img src={subRegionalClinic.src} alt="Sub-regional clinic" loading="eager"/>
       <Epigraph text="Dr. Mark Evans' clinic in Kodiak, Alaska."/>
     </div>
     <div class={styles.textContainer}>

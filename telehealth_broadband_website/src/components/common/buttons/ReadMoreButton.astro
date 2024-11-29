@@ -1,10 +1,14 @@
 ---
 import styles from './buttons.module.css';
 import arrow from '../../../assets/icons/arrow.svg';
-const { href, text } = Astro.props;
+const { href, text, inactive, transparent } = Astro.props;
 ---
 
-<a href={href} class={styles.readMore}>
+<a href={inactive ? '#' : href}
+  class={styles.readMore}
+  data-transparent={(!!transparent).toString()}
+  data-inactive={(!!inactive).toString()}
+>
   { text ?? 'Read more' }
   <img src={arrow.src} width="16" height="16" alt="right arrow"/>
 </a>

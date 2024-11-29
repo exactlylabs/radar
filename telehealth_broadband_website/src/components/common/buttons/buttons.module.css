@@ -74,3 +74,13 @@
 .readMore:hover > img {
   transform: translateX(3px);
 }
+
+.readMore[data-transparent='true'] {
+  background-color: transparent;
+  backdrop-filter: none;
+  padding: 0;
+}
+
+.readMore[data-inactive='true']:hover {
+  opacity: 1;
+}

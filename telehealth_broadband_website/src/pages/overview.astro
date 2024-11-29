@@ -3,7 +3,6 @@ import '../global.css';
 import styles from './styles/_approach.module.css';
 import commonStyles from '../common.module.css';
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { Image } from 'astro:assets';
 import ScrollingTimeline from '../components/overview/ScrollingTimeline.astro';
 import HeroWithText from "../components/common/HeroWithText.astro";
 import Carrousel from "../components/common/Carrousel";
@@ -19,13 +18,15 @@ import mobileDataCollectionImage from '../assets/images/approach-mobile-data-col
 import existingPublicDataImage from '../assets/images/approach-existint-public-data.webp';
 import ranceMichaelImage from '../assets/images/rance-michael.webp';
 import projectLeadershipLight from '../assets/images/project-leadership-hero-lights.webp';
+import approachHero from '../assets/images/approach-hero.webp';
 ---
 <BaseLayout
   title="Our Approach to Understand and Improve Rural Broadband"
   desctiption="Learn about our data-driven methods, community partnerships, and innovative tools used to understand rural broadband access and its impact on telehealth in underserved areas."
+  heroBgStyle={`background-image: url(${approachHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={styles.heroSection}>
-    <HeroWithText head="Our Approach"
+    <HeroWithText head="Overview"
       title="Understanding and Improving Rural Broadband"
       content="Our approach integrates data and partnerships to enhance rural broadband, empowering communities and advancing digital equity."
     />
@@ -38,11 +39,10 @@ import projectLeadershipLight from '../assets/images/project-leadership-hero-lig
         content="The Telehealth Broadband Pilot Program, funded by the Office for the Advancement of Telehealth, provides actionable data on rural broadband access and its impact on healthcare. The project delivers crucial insights into connectivity challenges, informs policy decisions, and evaluates data collection methods to support targeted telehealth and education solutions in underserved areas."
       />
     </div>
-    <Image src={pilotHeroImage}
+    <img src={pilotHeroImage.src}
       alt="Pilot program connectivity image"
       width="517"
       height="430"
-      densities={[1,2,4]}
     />
   </section>
   
@@ -107,7 +107,7 @@ import projectLeadershipLight from '../assets/images/project-leadership-hero-lig
           head="Project Leadership"
           title="Operated under the leadership of two primary institutions"
         />
-        <Image src={projectLeadershipLight}
+        <img src={projectLeadershipLight.src}
                alt="Project leadership light image"
                width="1040"
                height="800"

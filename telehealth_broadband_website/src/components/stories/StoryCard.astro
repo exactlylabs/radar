@@ -2,12 +2,11 @@
 import styles from "../../pages/styles/_stories.module.css";
 import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 import HeroWithText from "../common/HeroWithText.astro";
-import { Image } from 'astro:assets';
 const { head, title, content, readMorePath, image } = Astro.props;
 ---
 
 <div class={styles.storyCard}>
-  <Image src={image} alt={head} class={styles.storyImage}/>
+  <img src={image.src} alt={head} class={styles.storyImage}/>
   <div class={styles.storySummary}>
     <div class={styles.heroContainer}>
       <HeroWithText

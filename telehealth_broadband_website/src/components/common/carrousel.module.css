@@ -18,6 +18,7 @@
   grid-template-columns: unset;
   grid-auto-columns: 1fr;
   column-gap: 2rem;
+  padding-block: 1rem;
 }
 
 @media (max-width: 1250px) {
@@ -122,9 +123,8 @@
   transition: width 0.3s, border-radius 0.3s;
 }
 
-.automaticDot:hover {
-  cursor: pointer;
-  opacity: 0.8;
+.automaticDot:not([data-selected="true"]):hover {
+  background-color: white;
 }
 
 .automaticDot[data-selected="true"] {
@@ -142,7 +142,12 @@
   position: absolute;
   left: 0;
   top: 0;
-  animation: grow 4850ms linear forwards;
+  animation: grow 7850ms linear forwards;
+  animation-play-state: running;
+}
+
+.automaticDot[data-selected="true"][data-paused="true"]::after {
+  animation-play-state: paused;
 }
 
 @keyframes grow {

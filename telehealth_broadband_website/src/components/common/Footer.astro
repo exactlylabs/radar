@@ -1,5 +1,4 @@
 ---
-import {Image} from 'astro:assets';
 import styles from './footer.module.css';
 import footerLogo from '../../assets/logos/footer-logo.webp';
 import footerLights from '../../assets/images/footer-lights.webp';
@@ -7,11 +6,10 @@ import footerLights from '../../assets/images/footer-lights.webp';
 
 <footer class={styles.footer}>
   <div class={styles.topRow}>
-    <Image src={footerLogo}
-           densities={[1, 2, 4]}
-           alt="Main footer TBP logo"
-           height={28}
-           loading={'eager'}
+    <img src={footerLogo.src}
+         alt="Main footer TBP logo"
+         height={28}
+         loading={'eager'}
     />
     <ul class={styles.links} data-desktop="true">
       <li><a href="/privacy-policy">Privacy Policy</a></li>
@@ -26,11 +24,10 @@ import footerLights from '../../assets/images/footer-lights.webp';
         <li><a href="/cookies">Cookie Policy</a></li>
     </ul>
   </div>
-  <Image src={footerLights}
-         densities={[1, 2, 4]}
-         alt="Footer lights"
-         loading={'eager'}
-         class={styles.footerLights}
-         id="footer-lights"
+  <img src={footerLights.src}
+       alt="Footer lights"
+       loading={'eager'}
+       class={styles.footerLights}
+       id="footer-lights"
   />
 </footer>
