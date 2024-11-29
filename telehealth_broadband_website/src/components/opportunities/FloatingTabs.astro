@@ -64,7 +64,9 @@ const { scrollToId } = Astro.props;
     if(tabs.length > 0) {
       tabs.forEach((tab) => {
         const tabId = tab.getAttribute('href')!;
+        console.log(tabId);
         const target = document.querySelector(tabId)!;
+        console.log(target);
         observer.observe(target);
       });
     }
