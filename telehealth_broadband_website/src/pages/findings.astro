@@ -6,19 +6,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HeroWithText from "../components/common/HeroWithText.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import PrimaryButton from "../components/common/buttons/PrimaryButton.astro";
-import { Image } from 'astro:assets';
 import BulletPoint from "../components/opportunities/BulletPoint.astro";
 import Carrousel from '../components/common/Carrousel';
-import StateFindingsCard from "../components/findings/StateFindingsCard.astro";
+import StateFindingsCard from '../components/findings/StateFindingsCard.astro';
 
 import evaluationResultsImage from '../assets/images/evaluation-results.webp';
 import alaskaCardImage from '../assets/images/alaska-findings-card.webp';
 import implementationFindingsImage from '../assets/images/implementation-findings-image.webp';
+import findingsHero from '../assets/images/findings-hero.webp';
 ---
 
 <BaseLayout
   title="Findings"
   description=""
+  heroBgStyle={`background-image: url(${findingsHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={commonStyles.paddedSection}>
     <div class={styles.firstSection}>
@@ -49,7 +50,7 @@ import implementationFindingsImage from '../assets/images/implementation-finding
         </PrimaryButton>
       </div>
       <div class={styles.sidePicturesContainer}>
-        <Image src={evaluationResultsImage} alt="Evaluation Results hero image"/>
+        <img src={evaluationResultsImage.src} alt="Evaluation Results hero image"/>
       </div>
     </div>
     <div class={styles.evaluationGrid}>
@@ -114,7 +115,7 @@ import implementationFindingsImage from '../assets/images/implementation-finding
       />
     </div>
     <div id="carrousel-ref" class={styles.carrouselRef}></div>
-    <Carrousel client:only="react" fullWidth alignmentRefId="carrousel-ref">
+    <Carrousel client:only="react" fullWidth alignmentRefId="carrousel-ref" arrowLess elementCount={4}>
       <StateFindingsCard head="Alaska"
         title="Findings in Alaska"
         content="Limited infrastructure and geographic challenges reduced broadband speeds and reliability in rural areas, impacting telehealth services and highlighting the need for tailored connectivity solutions."
@@ -152,7 +153,7 @@ import implementationFindingsImage from '../assets/images/implementation-finding
         <PrimaryButton href="/implementation-findings">Explore the Findings</PrimaryButton>
       </div>
       <div class={styles.implementationFindingsImageContainer}>
-        <Image src={implementationFindingsImage} alt="Evaluation Results hero image"/>
+        <img src={implementationFindingsImage.src} alt="Evaluation Results hero image"/>
       </div>
     </div>
       <div class={styles.implementationGrid}>

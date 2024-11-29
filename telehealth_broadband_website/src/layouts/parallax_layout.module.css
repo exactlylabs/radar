@@ -5,6 +5,12 @@
   --parallax-aspect-ratio: 1.6;
 }
 
+@media (max-width: 1250px) {
+  :root {
+    --side-padding: 3rem;
+  }
+}
+
 .parallaxBackgroundImage {
   width: auto;
   height: 100dvh;
@@ -15,14 +21,31 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: -1;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  overflow: hidden;
+}
+
+.parallaxBackgroundImage > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
+  scale: 1.5;
 }
+
+
 
 @media (max-width: 768px) {
   .parallaxBackgroundImage {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+  }
+
+  .parallaxBackgroundImage > img {
+    scale: 1.25;
   }
 }
 

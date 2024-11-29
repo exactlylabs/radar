@@ -3,12 +3,17 @@
   height: 252px;
   border-radius: 8px;
   background-repeat: no-repeat;
-  background-size: 175%;
-  background-position: 30% 45%;
+  background-size: 100% 100%;
+  background-position: center;
   position: relative;
-  padding: 2rem;
   box-sizing: border-box;
   scroll-snap-align: center;
+  transition: background-size 0.3s;
+}
+
+.card:hover {
+  scale: 1.015;
+  background-size: 102.5% 102.5%;
 }
 
 @media (max-width: 768px) {
@@ -18,6 +23,17 @@
     background-size: 200%;
     scroll-padding-inline-start: 2rem;
   }
+}
+
+.cardLink {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 2rem;
+}
+
+.cardLink:hover > div > button > img {
+  transform: translateX(0.25rem);
 }
 
 .gradient {

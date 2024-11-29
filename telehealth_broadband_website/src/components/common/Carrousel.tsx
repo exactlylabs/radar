@@ -57,7 +57,7 @@ const arrowWhite = () => (
   </svg>
 );
 
-const AUTOMATIC_SWITCH_INTERVAL = 5000;
+const AUTOMATIC_SWITCH_INTERVAL = 8000;
 
 /**
  * A carrousel component that can be used to scroll through a set of elements.
@@ -78,6 +78,10 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   const automaticSwitchTimeout = useRef<NodeJS.Timeout | null>(null);
   const currentElementIndex = useRef(0);
   const isDisabledNextRef = useRef(false);
+  const switchDateRef = useRef(new Date());
+  const timeLeftRef = useRef(AUTOMATIC_SWITCH_INTERVAL);
+  const timePausedRef = useRef(0);
+  const pauseTime = useRef(0);
   
   let isSmallScreen = window.innerWidth < 768;
   
@@ -123,6 +127,28 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
       clearInterval(automaticSwitchTimeout.current);
     }
     automaticSwitchTimeout.current = setInterval(moveToNext, AUTOMATIC_SWITCH_INTERVAL);
+    switchDateRef.current = new Date();
+    timeLeftRef.current = AUTOMATIC_SWITCH_INTERVAL;
+    timePausedRef.current = 0;
+    pauseTime.current = 0;
+  }
+  
+  const pauseAutomaticSwitch = () => {
+    if(!arrowLess) return;
+    const now = new Date();
+    const lastPause = pauseTime.current === 0 ? switchDateRef.current : new Date(pauseTime.current);
+    pauseTime.current = now.getTime();
+    const timePassed = now.getTime() - lastPause.getTime();
+    timeLeftRef.current = AUTOMATIC_SWITCH_INTERVAL - timePassed;
+    if(automaticSwitchTimeout.current) {
+      clearInterval(automaticSwitchTimeout.current);
+    }
+  }
+  
+  const playAutomaticSwitch = () => {
+    if(!arrowLess) return;
+    timePausedRef.current += pauseTime.current - new Date().getTime();
+    automaticSwitchTimeout.current = setInterval(moveToNext, timeLeftRef.current);
   }
   
   const getItemWidth = (): number => {
@@ -146,7 +172,12 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     
     if (remainingDistanceToStart !== 0 && firstElementIndex === 0) firstElementIndex = 1;
     currentElementIndex.current = firstElementIndex;
-    isDisabledNextRef.current = remainingDistanceToEnd <= 1;
+    if(!arrowLess) {
+      isDisabledNextRef.current = remainingDistanceToEnd <= 1;
+    } else {
+      isDisabledNextRef.current = firstElementIndex === elementCount! - 1;
+    }
+    
   }
   
   const moveToFirst = () => {
@@ -216,11 +247,27 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
       </button>
     </div>
   );
+
+  const handleMouseOver = () => {
+    if(!arrowLess) return;
+    pauseAutomaticSwitch();
+    const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
+    const currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
+    currentActiveAutomaticDot!.setAttribute('data-paused', 'true');
+  }
+  
+  const handleMouseOut = () => {
+    if(!arrowLess) return;
+    playAutomaticSwitch();
+    const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
+    const currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
+    currentActiveAutomaticDot!.removeAttribute('data-paused');
+  }
   
   return (
     <div id={'scroll-gallery-feature-cards'} style={{width: '100%', margin: '0 auto', position: 'relative'}} ref={container}>
       <div className={styles.carrousel} ref={carrousel} data-full-width={fullWidth?.toString() ?? 'false'}>
-        <ul className={styles.cardSet} ref={cardSet}>
+        <ul className={styles.cardSet} ref={cardSet} onMouseEnter={handleMouseOver} onMouseLeave={handleMouseOut}>
           {children}
         </ul>
       </div>

@@ -1,14 +1,12 @@
 ---
-import { Image } from 'astro:assets';
 import styles from './navbar.module.css';
 import logo from '../../assets/logos/navbar-logo.webp';
 ---
 
 <nav class={styles.nav} data-responsive-menu-open="false" data-scrolled="false">
   <a href="/">
-    <Image
-      src={logo}
-      densities={[1,2,4]}
+    <img
+      src={logo.src}
       alt="Main navbar TBP logo"
       height={28}
       loading={'eager'}

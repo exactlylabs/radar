@@ -4,7 +4,7 @@ import Footer from "../components/common/Footer.astro";
 import styles from './layout.module.css';
 import BaseHead from "../components/common/BaseHead.astro";
 
-const { title, description } = Astro.props;
+const { title, description, heroBgStyle } = Astro.props;
 ---
 
 <html lang="en">
@@ -17,40 +17,11 @@ const { title, description } = Astro.props;
   <BaseHead title={title} description={description} />
 </head>
 <body>
-  <div class={styles.heroImage} id="hero-image"></div>
+  <div class={styles.heroImage} id="hero-image" style={heroBgStyle}></div>
   <Navbar/>
   <main class={styles.main}>
     <slot />
   </main>
   <Footer/>
-  
-  <script>
-    import womanPhoneImage from '../assets/images/woman-phone.webp';
-    import approachHero from '../assets/images/approach-hero.webp';
-    import storiesHero from '../assets/images/stories-hero.webp';
-    import findingsHero from '../assets/images/findings-hero.webp';
-    
-    const heroImage = document.getElementById('hero-image');
-    if(heroImage) {
-      const pathname = window.location.pathname;
-      if(pathname === '/') {
-        heroImage.style.backgroundImage = `url(${womanPhoneImage.src})`;
-        heroImage.style.backgroundPositionY = '75%';
-        heroImage.style.height = '765px';
-      } else if(pathname === '/overview') {
-        heroImage.style.backgroundImage = `url(${approachHero.src})`;
-        heroImage.style.backgroundPositionY = '50%';
-        heroImage.style.height = '536px';
-      } else if(pathname === '/stories') {
-        heroImage.style.backgroundImage = `url(${storiesHero.src})`;
-        heroImage.style.backgroundPositionY = '50%';
-        heroImage.style.height = '536px';
-      } else if(pathname === '/findings') {
-        heroImage.style.backgroundImage = `url(${findingsHero.src})`;
-        heroImage.style.height = '536px';
-      }
-    }
-  </script>
-  
 </body>
 </html>

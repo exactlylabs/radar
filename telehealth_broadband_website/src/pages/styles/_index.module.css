@@ -169,12 +169,8 @@
 }
 
 .findingsSection {
-  --shadow-spread: 50px;
   width: 100%;
   height: 900px;
-  background-position: 50% -370px;
-  background-repeat: no-repeat;
-  background-size: calc(var(--max-width) + 8* var(--shadow-spread)) 900px;
   position: relative;
 }
 
@@ -208,10 +204,16 @@
 }
 
 .findingsTextContainer {
+  --shadow-spread: 50px;
   text-align: left;
   padding-top: 6rem;
   z-index: 1;
   position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  max-width: var(--max-width);
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
