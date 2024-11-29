@@ -27,9 +27,6 @@ export default function OnboardingLayout() {
         name="account-validate-code"
         options={{ headerShown: false }}
       />
-      {/*
-        Onboarding - Permissions - 5
-      */}
     </Stack>
   );
 }

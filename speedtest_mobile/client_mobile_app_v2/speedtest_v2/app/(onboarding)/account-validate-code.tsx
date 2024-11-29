@@ -6,11 +6,8 @@ import ButtonContainer from "@/components/ButtonContainer";
 import { AntDesign } from "@expo/vector-icons";
 
 import EmailIcon from '@/assets/images/icons/emailicon.png'
-import Input from "@/components/Input";
-import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { useRouter } from "expo-router";
-import { useState, useEffect } from "react";
-import { isValidEmail } from "@/src/utils/validateEmail";
+import { useState, useEffect, useRef } from "react";
 import { colors, fonts } from "@/styles/shared";
 import TextComponent from "@/components/TextComponent";
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from "react-native-confirmation-code-field";
@@ -20,8 +17,9 @@ import Animated, {
     useSharedValue,
     withSequence
 } from 'react-native-reanimated';
+import { TIMER_DURATIONS } from "@/constants/Timer";
 
-const CELL_COUNT = 6; // Number of cells
+const CELL_COUNT = 6;
 
 export default function AccountValidateCode() {
     const router = useRouter()
@@ -33,14 +31,14 @@ export default function AccountValidateCode() {
     });
 
     const [isError, setIsError] = useState(false)
-    const [countdown, setCountdown] = useState(59);
+    const [countdown, setCountdown] = useState(TIMER_DURATIONS.SEND_NEW_CODE);
     const [canResend, setCanResend] = useState(false);
     const opacity = useSharedValue(0);
+    const timerRef = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
         if (countdown > 0) {
-            timer = setInterval(() => {
+            timerRef.current = setInterval(() => {
                 setCountdown((prev) => prev - 1);
             }, 1000);
         } else {
@@ -48,16 +46,16 @@ export default function AccountValidateCode() {
         }
 
         return () => {
-            if (timer) clearInterval(timer);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         };
     }, [countdown]);
 
     const showNotification = () => {
         opacity.value = withSequence(
             withTiming(1, { duration: 300 }),
-            withTiming(0, { duration: 5000 }, (finished) => {
-                // Animation cleanup if needed
-            })
+            withTiming(0, { duration: 5000 }, () => {})
         );
     };
 
@@ -67,14 +65,13 @@ export default function AccountValidateCode() {
 
     const handleResendCode = () => {
         if (canResend) {
-            setCountdown(59);
+            setCountdown(TIMER_DURATIONS.SEND_NEW_CODE);
             setCanResend(false);
             showNotification();
         }
     };
 
     const handleContinue = () => {
-        // Validate code here
         setIsError(true)
     };
 
@@ -82,7 +79,7 @@ export default function AccountValidateCode() {
         <View style={styles.container}>
             <View style={styles.content}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <AntDesign name="arrowleft" size={24} color="#A09FB7" />
+                    <AntDesign name="arrowleft" size={24} color={colors.gray400} />
                 </TouchableOpacity>
 
                 <Image source={EmailIcon} style={styles.emailIcon} />
@@ -104,7 +101,7 @@ export default function AccountValidateCode() {
                     rootStyle={styles.codeFieldRoot}
                     keyboardType="number-pad"
                     textContentType="oneTimeCode"
-                    renderCell={({ index, symbol, isFocused }) => (
+                    renderCell={({ index, symbol, isFocused }: { index: number, symbol: string, isFocused: boolean }) => (
                         <Text
                             key={index}
                             style={[styles.cell, isFocused && styles.focusedCell]}
@@ -131,7 +128,6 @@ export default function AccountValidateCode() {
                     </View>
                 ) : (
                     <View style={styles.resendContainer}>
-                        {/* <Text style={styles.resendText}>You can send another code in</Text> */}
                         <Text style={styles.resendTitle}>You can send another code in</Text>
                         <Text style={styles.timer}>{countdown} seconds</Text>
                     </View>
@@ -157,7 +153,7 @@ export default function AccountValidateCode() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#15152E',
+        backgroundColor: colors.bgPrimary,
     },
     content: {
         flex: 1,
@@ -203,7 +199,7 @@ const styles = StyleSheet.create({
     },
     cellText: {
         fontSize: 28,
-        color: '#fff',
+        color: colors.white,
         textAlign: 'center',
     },
     timer: {
@@ -229,15 +225,8 @@ const styles = StyleSheet.create({
         fontFamily: fonts.MulishRegular,
     },
     resendTitle: {
-        // fontSize: 14,
         color: colors.gray400,
-        // fontFamily: fonts.MulishRegular,
     },
-    // resendContainer: {
-    //     marginBottom: 40,
-    //     flexDirection: 'row',
-    //     gap: 10,
-    // },
     resendButton: {
         fontFamily: fonts.MulishBold,
         color: colors.blue200
