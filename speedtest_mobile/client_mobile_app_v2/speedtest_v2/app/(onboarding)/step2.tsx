@@ -8,8 +8,11 @@ import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
 import { colors, sharedStyles } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
+import { useRouter } from "expo-router";
 
 export default function Step2() {
+    const router = useRouter();
+
     return (
         <BgGradient>
             <View style={onboardingStyles.content}>
@@ -31,7 +34,7 @@ export default function Step2() {
                 </View>
 
                 <ButtonContainer>
-                    <Button title="Get started" onPress={() => {}} />
+                    <Button title="Get started" onPress={() => router.push('/account-email')} />
                 </ButtonContainer>
             </View>
         </BgGradient>
