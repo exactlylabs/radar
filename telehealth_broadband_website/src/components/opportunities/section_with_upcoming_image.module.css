@@ -34,7 +34,7 @@
 .incomingImage[data-visible="true"] {
   display: block;
   height: 469px;
-  width: 366px;
+  aspect-ratio: 366 / 469;
   border-radius: .5rem;
   object-fit: cover;
 }
