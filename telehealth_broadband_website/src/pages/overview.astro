@@ -19,6 +19,14 @@ import existingPublicDataImage from '../assets/images/approach-existint-public-d
 import ranceMichaelImage from '../assets/images/rance-michael.webp';
 import projectLeadershipLight from '../assets/images/project-leadership-hero-lights.webp';
 import approachHero from '../assets/images/approach-hero.webp';
+import blueGradientZigZagLight from '../assets/images/blue-gradient-zigzag-light.webp';
+import blueGradientZigZagBluredLight from '../assets/images/blue-gradient-zigzag-blured-light.webp';
+import yellowPinkHorizontalLight from '../assets/images/yellow-pink-horizontal-light.webp';
+import yellowPinkZigZagLight from '../assets/images/yellow-pink-zigzag-light.webp';
+import greenBlueZigZagSmallLight from '../assets/images/green-blue-zigzag-small-light.webp';
+import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizontal-blured-light.webp';
+import pinkYellowHorizontalLight from '../assets/images/pink-yellow-horizontal-blured-light.webp';
+import dotsGrid from '../assets/images/dots-grid.webp';
 ---
 <BaseLayout
   title="Our Approach to Understand and Improve Rural Broadband"
@@ -30,6 +38,8 @@ import approachHero from '../assets/images/approach-hero.webp';
       title="Understanding and Improving Rural Broadband"
       content="Our approach integrates data and partnerships to enhance rural broadband, empowering communities and advancing digital equity."
     />
+    <img src={blueGradientZigZagLight.src} alt="green and blue zigzag light" class={styles.blueGradientZigZagLight} />
+    <img src={yellowPinkHorizontalLight.src} alt="yellow pink light" class={styles.yellowPinkHorizontalLight} />
   </section>
   
   <section class={`${commonStyles.paddedSection} ${styles.pilotProgramSection}`} id="carrousel-alignment-ref">
@@ -48,9 +58,11 @@ import approachHero from '../assets/images/approach-hero.webp';
   
   <section class={styles.dataCollectionSection}>
     <div class={styles.dataCollectionHeroContainer}>
+      <img src={yellowPinkZigZagLight.src} alt="green and blue zigzag light" class={styles.yellowPinkZigZagLight} />
+      <img src={greenBlueZigZagSmallLight.src} alt="green and blue zigzag light" class={styles.greenBlueZigZagSmallLight} />
       <HeroWithText head="Data Collection"
-        title="Building Relevant Insights"
-        content="The program implemented a multi-method approach, each contributing valuable insights on broadband accessibility and reliability across rural America. Led by ANTHC, the data collection strategy leveraged a range of community outreach methods and tools."
+      title="Building Relevant Insights"
+      content="The program implemented a multi-method approach, each contributing valuable insights on broadband accessibility and reliability across rural America. Led by ANTHC, the data collection strategy leveraged a range of community outreach methods and tools."
       />
     </div>
     <Carrousel client:only="react" alignmentRefId={'carrousel-alignment-ref'}>
@@ -78,11 +90,13 @@ import approachHero from '../assets/images/approach-hero.webp';
   </section>
   
   <section class={styles.projectMetricsSection}>
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} />
+    <img src={blueGradientZigZagBluredLight.src} alt="dots grid" class={styles.blueGradientZigZagBluredLight} />
     <div class={styles.projectMetricsContent}>
       <div class={styles.projectMetricsHeroContainer}>
         <HeroWithText head="Project Metrics"
-          title="Measuring Success"
-          content="The success of the Telehealth Broadband Pilot Program is measured through several core metrics that capture the reach, impact, and depth of broadband data collection."
+        title="Measuring Success"
+        content="The success of the Telehealth Broadband Pilot Program is measured through several core metrics that capture the reach, impact, and depth of broadband data collection."
         />
       </div>
       <ApproachExpansibleCards client:only="react"/>
@@ -90,6 +104,9 @@ import approachHero from '../assets/images/approach-hero.webp';
   </section>
   
   <section class={`${commonStyles.paddedSection} ${styles.enablingCommunitiesSection}`}>
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} />
+    <img src={blueGradientHorizontalLight.src} alt="dots grid" class={styles.blueGradientHorizontalLight} />
+    <img src={pinkYellowHorizontalLight.src} alt="dots grid" class={styles.pinkYellowHorizontalLight} />
     <div class={styles.enablingCommunitiesHeroContainer}>
       <HeroWithText
         head="Enabling Communities"
