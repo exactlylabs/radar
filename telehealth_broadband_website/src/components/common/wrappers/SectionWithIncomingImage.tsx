@@ -1,5 +1,5 @@
 import {type ReactElement, useEffect, useRef, useState} from "react";
-import styles from './section_with_upcoming_image.module.css';
+import styles from './styles/section_with_upcoming_image.module.css';
 
 interface SectionWithIncomingImageProps {
   contentIds: string[];
@@ -21,6 +21,7 @@ export default function SectionWithIncomingImage({contentIds, imageSrcs, childre
             opacity = Math.max(0.3, entry.intersectionRatio);
             if(opacity >= 0.45) {
               setCurrentSectionInView(index);
+              opacity = 1;
             }
           }
           (entry.target as HTMLElement).style.opacity = `${opacity}`;

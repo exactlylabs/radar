@@ -1,0 +1,84 @@
+.card {
+  padding: 2rem;
+  border-radius: .5rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.container > span {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: #C4C8DD;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: 0.88px;
+}
+
+.listContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .75rem;
+}
+
+.listItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.listItem > a {
+  text-decoration: underline;
+  color: #DBDEEA;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .listItem > a {
+    font-size: 0.9375rem;
+  }
+}
+
+.fileTypeBadge {
+  font-size: 0.6875rem;
+  padding: .25rem .5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #DBDEEA;
+  text-transform: uppercase;
+  font-variation-settings: 'wght' 600;
+  border-radius: .25rem;
+  backdrop-filter: blur(10px);
+  margin-right: .75rem;
+}

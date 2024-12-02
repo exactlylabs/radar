@@ -159,7 +159,7 @@ div[data-bg-image="true"] {
 }
 
 /* .imageContainer {
-  display: flex;
+  wrappers: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
