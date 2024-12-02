@@ -1,7 +1,7 @@
 import {useState} from "react";
-import styles from './expansible_rows.module.css';
-import type {CardContent} from "./types.ts";
-import plusIcon from "../../assets/icons/plus.svg";
+import styles from './styles/expansible_rows.module.css';
+import type {CardContent} from "../types.ts";
+import plusIcon from "../../../assets/icons/plus.svg";
 
 interface ExpansibleRowsProps {
   content: CardContent[];

@@ -1,5 +1,5 @@
 import {type ReactElement, useEffect, useRef, useState} from "react";
-import styles from './carrousel.module.css';
+import styles from './styles/carrousel.module.css';
 
 interface CarrouselProps {
   children: ReactElement[];

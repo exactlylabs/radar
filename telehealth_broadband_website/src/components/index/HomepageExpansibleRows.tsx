@@ -1,6 +1,6 @@
 import {useState} from "react";
-import styles from './homepage_expanisble_rows.module.css';
-import {ExpansibleRow} from "../common/ExpansibleRows.tsx";
+import styles from './styles/homepage_expanisble_rows.module.css';
+import {ExpansibleRow} from "../common/wrappers/ExpansibleRows.tsx";
 
 import broadbandMappingImage from '../../assets/images/broadband-mapping.webp';
 import siteMonitoringImage from '../../assets/images/site-monitoring.webp';

@@ -1,5 +1,5 @@
 ---
-import styles from './scrolling_timeline.module.css';
+import styles from './styles/scrolling_timeline.module.css';
 import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
 ---
 
@@ -42,7 +42,7 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
 </div>
 
 <script>
-  import styles from './scrolling_timeline.module.css';
+  import styles from './styles/scrolling_timeline.module.css';
   
   const containers = document.querySelectorAll(`.${styles.timelineContainer}`);
   if(containers) {

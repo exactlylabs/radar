@@ -1,20 +1,18 @@
 ---
 import styles from '../../pages/styles/_opportunities.module.css';
-import HeroWithText from '../common/HeroWithText.astro';
-import BulletPoint from './BulletPoint.astro';
-import SectionWithIncomingImage from './SectionWithIncomingImage';
+import incomingImageStyles from "../common/wrappers/styles/section_with_upcoming_image.module.css";
+import HeroWithText from '../common/content/HeroWithText.astro';
+import BulletPoint from '../common/content/BulletPoint.astro';
+import SectionWithIncomingImage from '../common/wrappers/SectionWithIncomingImage';
+import FloatingTabs from '../common/misc/FloatingTabs.astro';
+import Tab from '../common/misc/Tab.astro';
+
+import blueGreenHorizontalLight from '../../assets/images/blue-green-horizontal-light-2.webp';
+import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.webp';
 import simpleFixes from '../../assets/images/simple-fixes-create-big-changes.webp';
 import empowering from '../../assets/images/empowering-through-knowledge.webp';
 import bridging from '../../assets/images/bridging-the-gap.webp';
 import providing from '../../assets/images/providing-communities-with-data.webp';
-import businessCollaborationIcon from '../../assets/icons/business-collaboration-icon.svg';
-import dataForChangeIcon from '../../assets/icons/data-for-change-icon.svg';
-import communityEducationIcon from '../../assets/icons/community-education-icon.svg';
-
-import FloatingTabs from './FloatingTabs.astro';
-import Tab from './Tab.astro';
-import blueGreenHorizontalLight from '../../assets/images/blue-green-horizontal-light-2.webp';
-import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.webp';
 ---
 
 <div class={styles.exploreOpportunitiesSection}>
@@ -87,7 +85,6 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
     <Tab
       id="community-education"
       label='Community Education'
-      icon={communityEducationIcon}
       isActive="false"
     >
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
@@ -100,7 +97,6 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
     <Tab
       id="business-collaboration"
       label='Business Collaboration'
-      icon={businessCollaborationIcon}
       isActive="false"
     >
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
@@ -112,7 +108,6 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
     <Tab
       id="data-for-change"
       label='Data for Change'
-      icon={dataForChangeIcon}
       isActive="false"
     >
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
@@ -133,10 +128,10 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
       imageSrcs={[simpleFixes.src, empowering.src, bridging.src, providing.src]}
     >
       <div style="width: 100%;display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 5rem">
-        <div id="quick-fixes" class={styles.opportunityContainer}>
+        <div id="quick-fixes" class={incomingImageStyles.rowContainer}>
           <HeroWithText head="Quick Fixes" title="Simple Fixes Create Big Changes" content="During the project, we found many individuals with simple, fixable issues that required only basic technical knowledge. Most lacked local expertise and assumed poor internet performance was unavoidable."/>
-          <div class={styles.bulletPoints}>
-            <div class={styles.bulletPointContainer}>
+          <div class={incomingImageStyles.bulletPoints}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
               title="Replace Outdated Hardware"
               content="Upgrading older modems, routers, and other network equipment can significantly improve speed and reliability, even without major infrastructure changes."
@@ -148,7 +143,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Optimizing Internet Setup"
                 content="Simple adjustments like relocating a router for better signal distribution can reduce dead zones and improve overall connectivity in homes and businesses."
@@ -160,12 +155,12 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
           </div>
-          <img src={simpleFixes.src} alt="simple fixes" class={styles.opportunityImage}/>
+          <img src={simpleFixes.src} alt="simple fixes" class={incomingImageStyles.responsiveImage}/>
         </div>
-        <div id="community-education" class={styles.opportunityContainer}>
+        <div id="community-education" class={incomingImageStyles.rowContainer}>
           <HeroWithText head="Community Education" title="Empowering Through Knowledge" content="A common barrier in rural areas is a lack of awareness about internet offerings and reasonable speeds or reliability. Community-wide education can reduce frustration and help residents advocate for better services when current options fall short."/>
-          <div class={styles.bulletPoints}>
-            <div class={styles.bulletPointContainer}>
+          <div class={incomingImageStyles.bulletPoints}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Informing Residents About Internet Options"
                 content="Clear information on ISPs, speeds, performance, and costs helps residents make informed choices. Existing resources often seem biased or insufficient."
@@ -182,7 +177,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Setting Higher Expectations"
                 content="Educating users on what their internet can support, such as streaming, telehealth, or remote work, empowers them to maximize their experience. Many didn’t realize the services available with a better plan or by addressing local, non-ISP issues."
@@ -195,12 +190,12 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
           </div>
-          <img src={empowering.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={empowering.src} alt="Dad and son looking at a computer" class={incomingImageStyles.responsiveImage}/>
         </div>
-        <div id="business-collaboration" class={styles.opportunityContainer}>
+        <div id="business-collaboration" class={incomingImageStyles.rowContainer}>
           <HeroWithText head="Business Collaboration" title="Bridging the Gap Between Businesses and ISPs" content="Clear communication with IT teams and ISPs is key for rural businesses to resolve connectivity issues often caused by poor documentation. Education programs can teach clear reporting, providing actionable data for ISPs, empowering communities to tackle connectivity challenges."/>
-          <div class={styles.bulletPoints}>
-            <div class={styles.bulletPointContainer}>
+          <div class={incomingImageStyles.bulletPoints}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Document and Report Issues Clearly"
                 content="Business owners and community members can log issues with details like time, symptoms, and steps. Clear documentation improves chances of timely responses from ISPs and IT teams."
@@ -212,7 +207,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Provide Actionable Data for ISPs"
                 content="Understanding the data ISPs need, such as speed tests, error messages, and operational impact, helps businesses report issues more effectively, leading to quicker, targeted solutions."
@@ -224,12 +219,12 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
           </div>
-          <img src={bridging.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={bridging.src} alt="Dad and son looking at a computer" class={incomingImageStyles.responsiveImage}/>
         </div>
-        <div id="data-for-change" class={styles.opportunityContainer}>
+        <div id="data-for-change" class={incomingImageStyles.rowContainer}>
           <HeroWithText head="Data for Change" title="Providing Communities with Data to Improve Connectivity" content="A program providing broadband data tools to rural communities helps local governments improve connectivity. These tools help leaders identify issues, make recommendations, and engage ISPs and policymakers to secure investments for better healthcare, safety, and quality of life."/>
-          <div class={styles.bulletPoints}>
-            <div class={styles.bulletPointContainer}>
+          <div class={incomingImageStyles.bulletPoints}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Guiding ISP Investments"
                 content="Community-sourced data from pods, speed tests, and coverage maps gives ISPs concrete information on underserved areas, helping prioritize upgrades and new infrastructure like mobile towers."
@@ -241,7 +236,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Identifying Mobile Coverage Gaps for Public Safety"
                 content="Mobile data collection reveals signal gaps on critical emergency routes, supporting advocacy for better coverage where reliable connectivity is vital for EMS and public safety."
@@ -253,7 +248,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Supporting Telehealth and Hospital-at-Home Initiatives"
                 content="Broadband data from homes reveals gaps in telehealth connectivity, helping leaders prioritize infrastructure improvements and ensure remote access to essential healthcare."
@@ -265,7 +260,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
             <div class={styles.divider} data-direction="horizontal" ></div>
-            <div class={styles.bulletPointContainer}>
+            <div class={incomingImageStyles.bulletPointContainer}>
               <BulletPoint
                 title="Support for Community Members"
                 content="Data collected by local governments can help them recommend which ISPs are best suited to serve their residents, based on each ISP’s constraints."
@@ -277,7 +272,7 @@ import yellowPinkZigZagLight from '../../assets/images/yellow-pink-zigzag-light.
               </BulletPoint>
             </div>
           </div>
-          <img src={providing.src} alt="Dad and son looking at a computer" class={styles.opportunityImage}/>
+          <img src={providing.src} alt="Dad and son looking at a computer" class={incomingImageStyles.responsiveImage}/>
         </div>
       </div>
     </SectionWithIncomingImage>

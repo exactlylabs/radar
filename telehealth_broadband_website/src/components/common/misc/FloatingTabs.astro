@@ -1,5 +1,5 @@
 ---
-import styles from './floating_tabs.module.css';
+import styles from './styles/floating_tabs.module.css';
 const { scrollToId } = Astro.props;
 ---
 <div class={styles.container}>
@@ -20,7 +20,7 @@ const { scrollToId } = Astro.props;
 </div>
 
 <script>
-  import styles from './floating_tabs.module.css';
+  import styles from './styles/floating_tabs.module.css';
   
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -68,7 +68,7 @@ const { scrollToId } = Astro.props;
         observer.observe(target);
       });
     }
-  }, 500); // quick dirty trick to wait for the content to be rendered in the dom
+  }, 1000); // quick dirty trick to wait for the content to be rendered in the dom
   
   const scrollToTop = (e: any) => {
     const target = e.target;

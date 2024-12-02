@@ -1,0 +1,97 @@
+---
+import '../../global.css';
+import styles from './styles/evaluation_results.module.css';
+import commonStyles from '../../common.module.css';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HeroWithText from "../../components/common/content/HeroWithText.astro";
+import FloatingTabs from "../../components/common/misc/FloatingTabs.astro";
+import Tab from "../../components/common/misc/Tab.astro";
+import SectionWithIncomingImage from "../../components/common/wrappers/SectionWithIncomingImage";
+import EvaluationResultsIncomingImageContent
+  from "../../components/findings/evaluation-results/EvaluationResultsIncomingImageContent.astro";
+
+import heroBgImage from '../../assets/images/evaluation-results-hero.webp';
+import telehealthUsageScrollImage from '../../assets/images/telehealth-usage-scroll.webp';
+import communityOpinionsScrollImage from '../../assets/images/community-opinions-scroll.webp';
+import urbanVsRuralScrollImage from '../../assets/images/urbar-vs-rural-scroll.webp';
+import barriersScrollImage from '../../assets/images/barriers-scroll.webp';
+import affordabilityScrollImage from '../../assets/images/affordability-scroll.webp';
+import evaluationResultsLights from '../../assets/images/evaluation-results-lights.webp';
+---
+
+<BaseLayout
+title="Evaluation Results"
+description="Evaluation Results"
+heroBgStyle={{backgroundImage: `url(${heroBgImage.src})`, height: '536px'}}
+>
+  <section class={commonStyles.paddedSection}>
+    <div class={styles.heroContainer}>
+      <HeroWithText head="Evaluation Results"
+        title="Evaluating Rural Telehealth Access"
+        content="Based on data from the Rural Telehealth Evaluation Center (RTEC), this evaluation examines the impact of broadband quality on telehealth access in rural areas. The analysis highlights key trends in usage, community sentiment, and affordability, offering insights into the challenges of achieving reliable and equitable connectivity."
+      />
+    </div>
+  </section>
+  
+  <section class={`${commonStyles.paddedSection} ${styles.scrollerSection}`}>
+    <img src={evaluationResultsLights.src} alt="Evaluation results lights" class={styles.scrollerLights} />
+    <FloatingTabs scrollToId="evaluation-results">
+      <Tab
+        id="telehealth-usage"
+        label="Telehealth Usage"
+        isActive="true"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+          <path fill="none" stroke="white" transform="translate(1 1)" d="M13 0C14.656855 0 16 1.3431457 16 3L16 6L19 6C20.597681 6 21.903662 7.24892 21.994907 8.8237276L22 9L22 13C22 14.656855 20.656855 16 19 16L16 16L16 19C16 20.597681 14.75108 21.903662 13.176272 21.994907L13 22L9 22C7.3431458 22 6 20.656855 6 19L6 16L3 16C1.4023191 16 0.096339121 14.75108 0.0050926935 13.176272L0 13L0 9C0 7.3431458 1.3431457 6 3 6L6 6L6 3C6 1.4023191 7.24892 0.096339121 8.8237276 0.0050926935L9 0L13 0ZM13 2L9 2C8.4477148 2 8 2.4477153 8 3L8 7C8 7.5522847 7.5522847 8 7 8L3 8C2.4477153 8 2 8.4477148 2 9L2 13C2 13.552285 2.4477153 14 3 14L7 14C7.5522847 14 8 14.447715 8 15L8 19C8 19.552284 8.4477148 20 9 20L13 20C13.552285 20 14 19.552284 14 19L14 15C14 14.447715 14.447715 14 15 14L19 14C19.552284 14 20 13.552285 20 13L20 9C20 8.4477148 19.552284 8 19 8L15 8C14.447715 8 14 7.5522847 14 7L14 3C14 2.4477153 13.552285 2 13 2Z"/>
+        </svg>
+      </Tab>
+      <Tab
+        id="community-opinions"
+        label="Community Opinions"
+        isActive="false"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
+          <path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(12.6978 1.5)" d="M4.8996396 0C2.9769237 -0.0092755463 1.2282523 1.1121993 0.43471357 2.8635476C-0.35882515 4.6148958 -0.04904107 6.6690602 1.225693 8.1084967L0.61259085 11.635934L3.806881 9.6659813C5.6413202 10.088742 7.5556722 9.4221621 8.7308064 7.9514627C9.9059401 6.4807639 10.133657 4.4665103 9.3165188 2.7705796C8.4993811 1.0746489 6.7821617 -0.0024905135 4.8996396 0Z" fill-rule="evenodd"/>
+          <path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(3.94961 9.89872)" d="M0 3.1494973C0 4.8889165 1.4100779 6.2989945 3.1494973 6.2989945C4.8889165 6.2989945 6.2989945 4.8889165 6.2989945 3.1494973C6.2989945 1.4100779 4.8889165 0 3.1494973 0C1.4100779 0 0 1.4100779 0 3.1494973" fill-rule="evenodd"/>
+          <path fill="none" stroke="#ACAFCD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.5 17.6001)" d="M11.198213 4.8966107C10.821181 2.0926933 8.4282589 0 5.5991063 0C2.7699533 0 0.37703046 2.0926933 0 4.8966107" fill-rule="evenodd"/>
+        </svg>
+      </Tab>
+      <Tab
+        id="urban-vs-rural"
+        label="Urban vs Rural"
+        isActive="false"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+          <path fill="#ACAFCD" transform="translate(2.25 0.25)" d="M5.75 0C8.9145155 0 11.5 2.4131219 11.5 5.4166727C11.5 7.3554192 9.0927839 11.719155 6.7780004 14.976051C6.5426803 15.30716 6.1571307 15.500281 5.75 15.500281C5.3428693 15.500281 4.9573197 15.30716 4.7220078 14.976063C2.4072156 11.719155 0 7.3554192 0 5.4166727C0 2.4131219 2.5854843 0 5.75 0ZM5.75 1.5C3.3916683 1.5 1.5 3.2655594 1.5 5.4166727C1.5 6.7717161 3.454308 10.432788 5.3908763 13.306403L5.75 13.831L5.9276896 13.573394C7.8593283 10.754781 9.8701849 7.0537553 9.9939766 5.554759L10 5.4166727C10 3.2655594 8.1083317 1.5 5.75 1.5ZM5.75 2.3333364C7.5338039 2.3333364 9 3.7017879 9 5.4166727C9 7.1315575 7.5338039 8.5000095 5.75 8.5000095C3.9661961 8.5000095 2.5 7.1315575 2.5 5.4166727L2.505183 5.2405486C2.6014946 3.6090391 4.0277066 2.3333364 5.75 2.3333364ZM5.75 3.8333364C4.7723799 3.8333364 4 4.5542254 4 5.4166727C4 6.2791204 4.7723799 7.0000091 5.75 7.0000091C6.7276201 7.0000091 7.5 6.2791204 7.5 5.4166727C7.5 4.5542254 6.7276201 3.8333364 5.75 3.8333364Z"/>
+        </svg>
+      </Tab>
+      <Tab
+        id="barriers"
+        label="Barriers"
+        isActive="false"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+          <path fill="#ACAFCD" transform="translate(0.25 0.25)" d="M7.75 0C12.03008 0 15.5 3.4699197 15.5 7.75C15.5 12.03008 12.03008 15.5 7.75 15.5C3.4699197 15.5 0 12.03008 0 7.75C0 3.4699197 3.4699197 0 7.75 0ZM7.75 1.5C4.298347 1.5 1.5 4.298347 1.5 7.75C1.5 11.201653 4.298347 14 7.75 14C11.201653 14 14 11.201653 14 7.75C14 4.298347 11.201653 1.5 7.75 1.5ZM11.513345 8.8666668C11.927559 8.8667469 12.26328 9.2025986 12.2632 9.6168118C12.26312 10.031025 11.927268 10.366747 11.513055 10.366667C10.202205 10.366413 9.0044546 11.109066 8.421855 12.283334C8.2377596 12.654388 7.7877216 12.80595 7.4166665 12.621855C7.0456114 12.43776 6.8940501 11.987721 7.078145 11.616667C7.9140496 9.9318476 9.6325607 8.8663025 11.513345 8.8666668ZM4.9499998 5.8333335C5.4930801 5.8333335 5.9333334 6.2735868 5.9333334 6.8166666C5.9333334 7.3209553 5.5537271 7.7365823 5.0646772 7.7933846L4.9499998 7.8000002C4.40692 7.8000002 3.9666667 7.3597465 3.9666667 6.8166666C3.9666667 6.2735868 4.40692 5.8333335 4.9499998 5.8333335ZM10.083333 5.8333335C10.626413 5.8333335 11.066667 6.2735868 11.066667 6.8166666C11.066667 7.3209553 10.68706 7.7365823 10.19801 7.7933846L10.083333 7.8000002C9.5402536 7.8000002 9.1000004 7.3597465 9.1000004 6.8166666C9.1000004 6.2735868 9.5402536 5.8333335 10.083333 5.8333335Z"/>
+        </svg>
+      </Tab>
+      <Tab
+        id="affordability"
+        label="Affordability"
+        isActive="false"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+          <path fill="#ACAFCD" transform="translate(0.25 0.25)" d="M10.198251 0.086384609C10.621937 0.22761318 10.972135 0.53142029 11.171665 0.93074882L12.435946 3.4595082C13.648896 3.6873002 14.566667 4.7520399 14.566667 6.031137L14.567259 6.3906641C15.120207 6.6665792 15.5 7.2378387 15.5 7.8978033L15.5 10.697803C15.5 11.357768 15.120207 11.929028 14.567259 12.204943L14.566667 12.56447C14.566667 14.009615 13.395145 15.181137 11.95 15.181137L2.6166666 15.181137C1.1715215 15.181137 0 14.009615 0 12.56447L0 6.031137C0 4.6507812 1.0688319 3.5200646 2.4240291 3.4214532L8.9127216 0.17791736C9.3121223 -0.021916954 9.7745647 -0.054843958 10.198251 0.086384609ZM11.95 4.9144702L2.6166666 4.9144702C1.9999487 4.9144702 1.5 5.4144187 1.5 6.031137L1.5 12.56447C1.5 13.181189 1.9999487 13.681137 2.6166666 13.681137L11.95 13.681137C12.566718 13.681137 13.066667 13.181189 13.066667 12.56447L13.066 12.381L11.483334 12.381137C9.7804556 12.381137 8.3999996 11.000682 8.3999996 9.2978039C8.3999996 7.5949254 9.7804556 6.2144699 11.483334 6.2144699L13.066 6.2140002L13.066667 6.031137C13.066667 5.4144187 12.566718 4.9144702 11.95 4.9144702ZM13.816667 7.7144699L11.483334 7.7144699C10.608883 7.7144699 9.8999996 8.4233522 9.8999996 9.2978039C9.8999996 10.172255 10.608883 10.881137 11.483334 10.881137L13.816667 10.881137C13.917919 10.881137 14 10.799056 14 10.697803L14 7.8978033C14 7.7965512 13.917919 7.7144699 13.816667 7.7144699ZM11.483334 10.281137C10.940253 10.281137 10.5 9.8408833 10.5 9.2978039C10.5 8.7547235 10.940253 8.3144703 11.483334 8.3144703C12.026413 8.3144703 12.466666 8.7547235 12.466666 9.2978039C12.466666 9.8020916 12.087061 10.217719 11.598011 10.274521L11.483334 10.281137ZM9.5837212 1.5194683L5.7940001 3.414L10.736 3.414L9.8299341 1.6013895C9.8081932 1.5578787 9.7700529 1.5247909 9.7239094 1.5094095C9.6777649 1.4940282 9.6274004 1.4976144 9.5837212 1.5194683Z"/>
+        </svg>
+      </Tab>
+    </FloatingTabs>
+    <div id="evaluation-results" class={styles.evaluationResultsContentContainer}>
+      <SectionWithIncomingImage
+        client:only="react"
+        contentIds={['telehealth-usage', 'community-opinions', 'urban-vs-rural', 'barriers', 'affordability']}
+        imageSrcs={[telehealthUsageScrollImage.src, communityOpinionsScrollImage.src, urbanVsRuralScrollImage.src, barriersScrollImage.src, affordabilityScrollImage.src]}
+      >
+        <EvaluationResultsIncomingImageContent />
+      </SectionWithIncomingImage>
+    </div>
+  </section>
+</BaseLayout>

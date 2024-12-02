@@ -13,8 +13,7 @@
 
 @media (max-width: 1080px) {
   .container {
-    margin-left: -1.5rem;
-    padding-inline: 1rem;
+    padding-right: 1rem;
     width: 100vw;
     padding-top: 1rem;
     backdrop-filter: blur(10px);
@@ -41,8 +40,8 @@
   .staticContainer {
     position: relative;
     width: 100vw;
-    padding-inline: 2rem;
     margin-right: -2rem;
+    padding-right: 3rem;
     justify-content: flex-start;
     overflow-x: auto;
     padding-top: 0;
@@ -79,6 +78,11 @@
   color: white;
   background-color: rgba(255, 255, 255, 0.1);
   outline: none;
+}
+
+.tab[data-active="true"] > svg > path {
+  stroke: none;
+  fill: white;
 }
 
 .divider {
