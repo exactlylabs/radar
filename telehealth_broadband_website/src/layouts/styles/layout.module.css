@@ -18,9 +18,10 @@
 }
 
 .heroImage {
-  --shadow-spread: 50px;
-  width: calc(100vw + 2 * var(--shadow-spread));
-  max-width: calc(var(--max-width) + 8 * var(--shadow-spread));
+  --shadow-blur: 65px;
+  --shadow-spread: 65px;
+  width: calc(100vw + 2 * var(--shadow-blur));
+  max-width: calc(var(--max-width) + 8 * var(--shadow-blur));
   z-index: -1;
   position: absolute;
   top: 0;
@@ -29,11 +30,5 @@
   background-size: cover;
   background-position-y: 50%;
   background-repeat: no-repeat;
-  box-shadow: 0 -75px var(--shadow-spread) var(--shadow-spread) var(--bg-color) inset;
-}
-
-@media (max-width: 768px) {
-  .heroImage {
-    display: none;
-  }
+  box-shadow: 0 -75px var(--shadow-blur) var(--shadow-spread) var(--bg-color) inset;
 }

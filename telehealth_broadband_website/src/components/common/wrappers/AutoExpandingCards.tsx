@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
-import styles from './auto_expanding_cards.module.css';
-import plusIcon from '../../assets/icons/plus.svg';
-import type {CardContent} from "./types.ts";
+import styles from './styles/auto_expanding_cards.module.css';
+import plusIcon from '../../../assets/icons/plus.svg';
+import type {CardContent} from "../types.ts";
 
 interface AutoExpandingCardsProps {
   content: CardContent[];
