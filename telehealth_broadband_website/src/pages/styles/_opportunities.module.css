@@ -9,7 +9,7 @@
   justify-content: space-between;
   position: relative;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -29,15 +29,28 @@
 .header {
   display: flex;
   flex-direction: row;
-  gap: 5rem;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .headerImage {
-  width: 50%;
-  max-width: 552px;
+  width: calc(50% - 2.5rem);
+  max-width: 550px;
   height: auto;
-  max-height: 390px;
   aspect-ratio: 552 / 390;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 425px;
+  margin: 0 auto;
+}
+
+.heroContainer {
+  width: calc(50% - 2.5rem);
+  text-align: left;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 400px;
 }
 
 @media (max-width: 768px) {
@@ -50,6 +63,13 @@
   .headerImage {
     width: 100%;
     height: auto;
+    max-width: unset;
+    flex-basis: unset;
+  }
+
+  .heroContainer {
+    width: 100%;
+    flex-basis: unset;
   }
 }
 
