@@ -31,3 +31,31 @@
     name:
       - "postgresql-{{postgresql_version}}"
       - "postgis"
+
+- name: Create Data Directory
+  become: yes
+  file:
+    path: "{{postgresql_data_directory}}"
+    state: directory
+    owner: "postgres"
+    group: "postgres"
+    mode: 0700
+  when: "postgresql_data_directory != '/var/lib/postgresql/'+postgresql_version+'/main'"
+  register: create_data
+
+- name: Copy Data Directory Content
+  become: yes
+  shell: "cp -axf /var/lib/postgresql/{{postgresql_version}}/main/* {{postgresql_data_directory}}"
+  when: "create_data.changed"
+  notify:
+    - restart postgresql service
+
+- name: Configure Data Directory in postgresql.conf
+  become: yes
+  lineinfile:
+    dest: "/etc/postgresql/{{postgresql_version}}/main/postgresql.conf"
+    regexp: "data_directory ="
+    line: "data_directory = '{{postgresql_data_directory}}'"
+    state: present
+  notify:
+    - restart postgresql service

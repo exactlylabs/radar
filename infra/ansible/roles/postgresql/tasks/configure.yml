@@ -1,22 +1,4 @@
 ---
-- name: Create Data Directory
-  become: yes
-  file:
-    path: "{{postgresql_data_directory}}"
-    state: directory
-    owner: "postgres"
-    group: "postgres"
-    mode: 0700
-  when: "postgresql_data_directory != '/var/lib/postgresql/'+postgresql_version+'/main'"
-  register: create_data
-
-- name: Copy Data Directory Content
-  become: yes
-  shell: "cp -axf /var/lib/postgresql/{{postgresql_version}}/main/* {{postgresql_data_directory}}"
-  when: "create_data.changed"
-  notify:
-    - restart postgresql service
-
 - name: Backup pg_hba.conf
   become: yes
   copy:
@@ -33,7 +15,7 @@
     group: "postgres"
     mode: 0600
   notify:
-    - restart postgresql service
+    - reload postgresql service
 
 - name: Configure postgresql.conf
   become: yes
@@ -44,33 +26,4 @@
     group: "postgres"
     mode: 0600
   notify:
-    - restart postgresql service
-
-- name: Configure Data Directory in postgresql.conf
-  become: yes
-  lineinfile:
-    dest: "/etc/postgresql/{{postgresql_version}}/main/postgresql.conf"
-    regexp: "data_directory ="
-    line: "data_directory = '{{postgresql_data_directory}}'"
-    state: present
-  notify:
-    - restart postgresql service
-
-- name: Install ACL and Psycopg2 for Python
-  become: yes
-  apt:
-    name:
-      - python3-psycopg2
-      - acl
-    state: latest
-    update_cache: yes
-
-- name: Setup PostgreSQL User
-  become: true
-  become_user: postgres
-  postgresql_user:
-    db: postgres
-    name: "{{item.name}}"
-    password: "{{item.password}}"
-    role_attr_flags: "{{item.permissions}}"
-  loop: "{{postgresql_users}}"
+    - reload postgresql service

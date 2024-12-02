@@ -1,34 +1,34 @@
 ---
-# - name: Install PGBackRest
-#   become: yes
-#   apt:
-#     name:
-#       - pgbackrest
-        # - cron
-#     state: present
+- name: Install PGBackRest
+  become: yes
+  apt:
+    name:
+      - pgbackrest
+        - cron
+    state: present
 
-# - name: Configure PGBackRest
-#   become: yes
-#   template:
-#     src: pgbackrest.conf.j2
-#     dest: /etc/pgbackrest.conf
-#     owner: postgres
-#     group: postgres
-#     mode: 0640
+- name: Configure PGBackRest
+  become: yes
+  template:
+    src: pgbackrest.conf.j2
+    dest: /etc/pgbackrest.conf
+    owner: postgres
+    group: postgres
+    mode: 0640
 
-# - name: Create the Stanza
-#   become: yes
-#   become_method: sudo
-#   become_user: postgres
-#   shell: pgbackrest --stanza=radar --log-level-console=info stanza-create
+- name: Create the Stanza
+  become: yes
+  become_method: sudo
+  become_user: postgres
+  shell: pgbackrest --stanza=radar --log-level-console=info stanza-create
 
-# - name: Check the Configuration
-#   become: yes
-#   become_method: sudo
-#   become_user: postgres
-#   shell: pgbackrest --stanza=radar --log-level-console=info check
-#   notify:
-#     - restart postgresql service
+- name: Check the Configuration
+  become: yes
+  become_method: sudo
+  become_user: postgres
+  shell: pgbackrest --stanza=radar --log-level-console=info check
+  notify:
+    - restart postgresql service
 
 - name: Schedule Full Backup on Sundays
   become: yes

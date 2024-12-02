@@ -24,4 +24,12 @@ setup-clickhouse:
 	@echo "Setting up Clickhouse"
 	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-clickhouse.yml -e @${ENVIRONMENT}_vars
 
+setup-postgres-config:
+	@echo "Configuring PostgreSQL instances"
+	ansible-playbook -i inventory/${ENVIRONMENT}.yml -e @${ENVIRONMENT}_vars playbooks/configure-postgresql.yml
+
+setup-postgres-users:
+	@echo "Configuring PostgreSQL Users"
+	ansible-playbook -i inventory/${ENVIRONMENT}.yml -e @${ENVIRONMENT}_vars playbooks/configure-postgresql-users.yml
+
 setup: setup-nfs setup-swarm

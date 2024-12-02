@@ -1,0 +1,12 @@
+---
+- name: Configuring postgresql.conf
+  hosts:
+    - postgresql-servers
+  roles:
+    - postgresql
+  vars:
+    skip_install: true
+    skip_pgbackrest: true
+    skip_users: true
+    postgresql_configuration_template: 'postgres.conf.j2'
+    postgresql_pg_hba_template: 'pg_hba.conf.j2'
