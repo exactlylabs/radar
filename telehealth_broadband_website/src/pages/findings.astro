@@ -3,11 +3,11 @@ import '../global.css';
 import styles from './styles/_findings.module.css';
 import commonStyles from '../common.module.css';
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HeroWithText from "../components/common/HeroWithText.astro";
+import HeroWithText from "../components/common/content/HeroWithText.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import PrimaryButton from "../components/common/buttons/PrimaryButton.astro";
-import BulletPoint from "../components/opportunities/BulletPoint.astro";
-import Carrousel from '../components/common/Carrousel';
+import BulletPoint from "../components/common/content/BulletPoint.astro";
+import Carrousel from '../components/common/wrappers/Carrousel';
 import StateFindingsCard from '../components/findings/StateFindingsCard.astro';
 
 import evaluationResultsImage from '../assets/images/evaluation-results.webp';
@@ -45,7 +45,7 @@ import findingsHero from '../assets/images/findings-hero.webp';
           title="A Look Into the Rural Communities"
           content="An analysis by the Rural Telehealth Evaluation Center (RTEC) highlights telehealth adoption, community sentiment, and the barriers rural communities face in achieving reliable and affordable internet. These findings offer a closer look at the challenges and progress in improving healthcare access through broadband."
         />
-        <PrimaryButton href="/evaluation-results">
+        <PrimaryButton href="/findings/evaluation-results">
           Explore Evaluation Results
         </PrimaryButton>
       </div>

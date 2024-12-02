@@ -1,6 +1,6 @@
 import {useState} from "react";
-import styles from './homepage_approach_expansible_rows.module.css';
-import {ExpansibleRow} from "../common/ExpansibleRows.tsx";
+import styles from './styles/homepage_approach_expansible_rows.module.css';
+import {ExpansibleRow} from "../common/wrappers/ExpansibleRows.tsx";
 
 export default function HomepageApproachExpansibleRows() {
   

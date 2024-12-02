@@ -1,0 +1,9 @@
+.resourcesContainer {
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .resourcesContainer {
+    margin-top: 2.5rem;
+  }
+}
