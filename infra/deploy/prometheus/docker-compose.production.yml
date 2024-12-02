@@ -1,0 +1,63 @@
+# Reference: https://prometheus.io/docs/guides/dockerswarm/
+services:
+  app:
+    image: prom/prometheus
+    networks:
+      - private
+      - public
+    volumes:
+      - "prometheus_data:/prometheus"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    configs:
+      - source: prometheus_config_v3
+        target: /etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    user: root # Prometheus doesn't have access to docker.sock otherwise.
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.prometheus == true
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    networks:
+      - private
+
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.network == aws
+      labels:
+        - "prometheus-job=cadvisor"
+        - "prometheus-port=8080"
+
+networks:
+  private:
+  public:
+    attachable: true
+
+volumes:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/prometheus-data
+
+configs:
+  # To update config files, we must rename the config key name, and update the service to source from this new name.
+  # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
+  prometheus_config_v3:
+    template_driver: golang
+    file: ./configs/prometheus.yml
