@@ -22,23 +22,13 @@ export default function Permissions5Notifications() {
     });
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
     
     if (existingStatus !== PermissionsAndroid.RESULTS.GRANTED) {
       const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+      return status;
     }
 
-    if (finalStatus !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert(
-        "Permission Required",
-        "Push notifications are required to keep you informed about Radar's status.",
-        [{ text: "OK" }]
-      );
-      return PermissionsAndroid.RESULTS.DENIED;
-    }
-
-    return finalStatus;
+    return existingStatus;
   };
 
   return (
@@ -47,7 +37,7 @@ export default function Permissions5Notifications() {
       description="Notifications will let you know when Radar is running and when it stops."
       buttonTitle="Enable notifications"
       requestPermission={requestPermission}
-      errorMessage="Please enable notifications to stay informed about Radar's status."
+      errorMessage="Push notifications are required to keep you informed about Radar's status."
     />
   );
 } 
