@@ -1,6 +1,6 @@
 .sectionWithImage {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
   position: relative;
   display: flex;
   flex-direction: row;
@@ -16,6 +16,7 @@
   right: 0;
   height: auto;
   animation: fade-in 200ms;
+  aspect-ratio: 366 / 468;
 }
 
 @keyframes fade-in {
@@ -53,6 +54,13 @@
 
 .incomingImage:nth-child(5) {
   object-position: 30%;
+}
+
+@media (max-width: 1080px) {
+  .incomingImage[data-visible="true"] {
+    width: 300px;
+    height: auto;
+  }
 }
 
 @media (max-width: 768px) {
