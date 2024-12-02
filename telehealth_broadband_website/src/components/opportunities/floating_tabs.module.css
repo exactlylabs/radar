@@ -11,14 +11,19 @@
   background-color: unset;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .container {
-    top: var(--responsive-navbar-height);
     margin-left: -1.5rem;
     padding-inline: 1rem;
     width: 100vw;
     padding-top: 1rem;
     backdrop-filter: blur(10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    top: var(--responsive-navbar-height);
   }
 }
 
@@ -32,7 +37,15 @@
   backdrop-filter: blur(10px);
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 1080px) {
+  .staticContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+} */
+
+@media (max-width: 1080px) {
   .staticContainer {
     position: relative;
     width: 100vw;
