@@ -17,15 +17,8 @@ import Animated, {
     useSharedValue,
     withSequence
 } from 'react-native-reanimated';
-import { AntDesign } from "@expo/vector-icons";
 
-import Title from "@/components/Title";
-import Button from "@/components/Button";
-import EmailIcon from '@/assets/images/icons/emailicon.png'
-import TextComponent from "@/components/TextComponent";
-import ButtonContainer from "@/components/ButtonContainer";
-import { colors, fonts } from "@/styles/shared";
-import { TIMER_DURATIONS, timerRef } from "@/constants/Timer";
+import { TIMER_DURATIONS } from "@/constants/Timer";
 
 const CELL_COUNT = 6;
 
@@ -42,6 +35,7 @@ export default function AccountValidateCode() {
     const [countdown, setCountdown] = useState(TIMER_DURATIONS.SEND_NEW_CODE);
     const [canResend, setCanResend] = useState(false);
     const opacity = useSharedValue(0);
+    const timerRef = useRef<NodeJS.Timeout>();
 
     useEffect(() => {
         if (countdown > 0) {
