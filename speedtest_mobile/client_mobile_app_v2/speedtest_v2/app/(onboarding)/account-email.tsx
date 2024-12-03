@@ -9,18 +9,34 @@ import UserIcon from '@/assets/images/icons/usericon.png'
 import Input from "@/components/Input";
 import InfoIcon from '@/assets/images/icons/infoicon.png'
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors, fonts } from "@/styles/shared";
+import { api } from "@/src/api/api";
 
 export default function AccountEmail() {
     const router = useRouter()
-    const [email, setEmail] = useState('')
+    const emailRef = useRef('')
     const [error, setError] = useState('')
 
-    const handleContinue = () => {
-        if (isValidEmail(email)) {
+    const handleContinue = async () => {
+        if (isValidEmail(emailRef.current)) {
             setError('')
+
+            try {
+                const response = await api.post('/authenticate/new_code', {
+                    email: emailRef.current
+                })
+
+                if (response.status === 202) {
+                    router.push({
+                        pathname: '/account-validate-code',
+                        params: { email: emailRef.current }
+                    })
+                }
+            } catch (error) {
+                console.log(error)
+            }
         } else {
             setError('Invalid email format')
         }
@@ -30,7 +46,7 @@ export default function AccountEmail() {
         <View style={styles.container}>
             <View style={styles.content}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <AntDesign name="arrowleft" size={24} color="#A09FB7" />
+                    <AntDesign name="arrowleft" size={24} color={colors.gray400} />
                 </TouchableOpacity>
 
                 <Image source={UserIcon} style={styles.userIcon} />
@@ -42,8 +58,7 @@ export default function AccountEmail() {
                 <View style={styles.inputContainer}>
                     <Input
                         placeholder="Enter your email address"
-                        value={email}
-                        onChangeText={setEmail}
+                        onChangeText={(text) => emailRef.current = text}
                     />
                     {error && (
                         <Text style={styles.errorText}>
@@ -72,7 +87,7 @@ export default function AccountEmail() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#15152E',
+        backgroundColor: colors.bgPrimary,
     },
     content: {
         flex: 1,
