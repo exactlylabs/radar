@@ -232,7 +232,7 @@ func pingFrequency(c *config.Config) time.Duration {
 func updateAgent(msg UpdateBinaryServerMessage, cancel context.CancelFunc) {
 	log.Printf("An Update for version %v is Available\n", msg.Version)
 	err := update.SelfUpdate(msg.BinaryUrl, msg.Version)
-	if update.IsValidationError(err) {
+	if err != nil {
 		log.Printf("Existent update is invalid: %v\n", err)
 		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
 			"Update Data": {
@@ -240,8 +240,6 @@ func updateAgent(msg UpdateBinaryServerMessage, cancel context.CancelFunc) {
 				"url":     msg.BinaryUrl,
 			},
 		})
-	} else if err != nil {
-		panic(errors.W(err))
 	} else {
 		log.Println("Successfully Updated the Binary. Exiting current version.")
 		cancel()
