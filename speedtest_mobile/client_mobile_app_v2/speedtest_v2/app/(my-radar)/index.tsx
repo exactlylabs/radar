@@ -10,7 +10,7 @@ import { colors } from '@/styles/shared';
 import { RadarIcon } from '@/components/Icons';
 import radarLogo from '@/assets/images/RadarLogo.png';
 
-export default function RadarScreen() {
+export default function MyRadarScreen() {
   const [isRunning, setIsRunning] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -87,7 +87,7 @@ export default function RadarScreen() {
           disabled={isLoading}
         />
 
-        <BottomTabBar />
+        {/* <BottomTabBar /> */}
       </SafeAreaView>
     </View>
   );
