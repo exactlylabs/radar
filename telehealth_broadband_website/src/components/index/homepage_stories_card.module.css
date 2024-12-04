@@ -1,21 +1,43 @@
 .card {
-  width: clamp(320px, 100vw, 1250px);
+  width: clamp(320px, calc(100vw - 6rem), 1250px);
   height: 454px;
   border-radius: 6px;
   backdrop-filter: blur(10px);
-  padding: 3rem;
   background-position: 15% 35%;
-  background-size: 125%;
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   background-color: rgb(45, 44, 58);
+  transition: background-size 0.3s, scale .3s;
+}
+
+.card:hover {
+  scale: 1.015;
+  background-size: 105% 105%;
 }
 
 @media (max-width: 768px) {
   .card {
-    padding: 2.5rem 1.5rem;
+    width: calc(100vw - 6rem);
     background-size: 225%;
     background-position: 35% 55%;
   }
+}
+
+.cardLink {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 3rem;
+}
+
+@media (max-width: 768px) {
+  .cardLink {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.cardLink:hover > button > img {
+  transform: translateX(0.25rem);
 }
 
 .heroContainer {
@@ -31,7 +53,7 @@
       rgba(5, 14, 37, 0.7) 0%,
       rgba(15, 14, 37, 0.2) 100%
   );
-  border-radius: 8px;
+  border-radius: inherit;
   position: absolute;
   z-index: -1;
   top: 0;

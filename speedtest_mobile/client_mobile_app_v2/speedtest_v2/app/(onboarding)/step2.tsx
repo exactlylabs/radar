@@ -6,19 +6,23 @@ import TextComponent from "@/components/TextComponent";
 import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { sharedStyles } from "@/styles/shared";
+import { colors, sharedStyles } from "@/styles/shared";
+import onboardingStyles from "@/styles/onboarding";
+import { useRouter } from "expo-router";
 
 export default function Step2() {
+    const router = useRouter();
+
     return (
         <BgGradient>
-            <View style={styles.content}>
+            <View style={onboardingStyles.content}>
                 <View style={styles.imageContainer}>
                     <Image source={gridImage} />
                 </View>
-                <View style={styles.titleContainer}>
+                <View style={onboardingStyles.titleContainer}>
                     <Title title="Help your community know where broadband fails." />
                 </View>
-                <View style={styles.textContainer}>
+                <View style={onboardingStyles.textContainer}>
                     <TextComponent 
                         text="Share your discoveries with others and see how their connectivity compares to yours." 
                     />
@@ -30,7 +34,7 @@ export default function Step2() {
                 </View>
 
                 <ButtonContainer>
-                    <Button title="Get started" onPress={() => {}} />
+                    <Button title="Get started" onPress={() => router.push('/account-email')} />
                 </ButtonContainer>
             </View>
         </BgGradient>
@@ -41,21 +45,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    content: {
-        flex: 1,
-    },
     imageContainer: {
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    titleContainer: {
-        paddingHorizontal: 20,
-        marginTop: 10
-    },
-    textContainer: {
-        paddingHorizontal: 20,
-        paddingRight: 50,
-        marginTop: 20
     },
     dotsContainer: {
         flexDirection: 'row',
@@ -66,13 +58,13 @@ const styles = StyleSheet.create({
     dotSelected: {
         width: 8,
         height: 8,
-        backgroundColor: sharedStyles.colors.blue200,
+        backgroundColor: colors.blue200,
         borderRadius: 5
     },
     dot: {
         width: 8,
         height: 8,
-        backgroundColor: sharedStyles.colors.white,
+        backgroundColor: colors.white,
         opacity: 0.2,
         borderRadius: 5,
     }

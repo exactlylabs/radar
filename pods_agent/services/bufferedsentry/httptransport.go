@@ -26,11 +26,15 @@ type Queue interface {
 }
 
 func newBufferedTransport(queue Queue, dsnStr string) *bufferedTransport {
-	dsn, err := sentry.NewDsn(dsnStr)
-	if err != nil {
-		log.Println(errors.Wrap(err, "failed to parse dsn %s", dsn))
-		dsn = nil
+	var dsn *sentry.Dsn
+	if dsnStr != "" {
+		dsn, err := sentry.NewDsn(dsnStr)
+		if err != nil {
+			log.Println(errors.Wrap(err, "failed to parse dsn %s", dsn))
+			dsn = nil
+		}
 	}
+
 	t := &bufferedTransport{
 		RoundTripper: http.DefaultTransport,
 		retryCh:      make(chan *http.Request, 100),

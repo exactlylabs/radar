@@ -2,6 +2,9 @@
 import Navbar from "../components/common/Navbar.astro";
 import Footer from "../components/common/Footer.astro";
 import styles from './layout.module.css';
+import BaseHead from "../components/common/BaseHead.astro";
+
+const { title, description, heroBgStyle } = Astro.props;
 ---
 
 <html lang="en">
@@ -11,39 +14,14 @@ import styles from './layout.module.css';
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
   <meta name="generator" content={Astro.generator} />
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <title>Telehealth Broadband Project</title>
+  <BaseHead title={title} description={description} />
 </head>
 <body>
-  <div class={styles.heroImage} id="hero-image"></div>
+  <div class={styles.heroImage} id="hero-image" style={heroBgStyle}></div>
   <Navbar/>
   <main class={styles.main}>
     <slot />
   </main>
   <Footer/>
-  
-  <script>
-    import womanPhoneImage from '../assets/images/woman-phone.webp';
-    import approachHero from '../assets/images/approach-hero.webp';
-    import storiesHero from '../assets/images/stories-hero.webp';
-    
-    const heroImage = document.getElementById('hero-image');
-    if(heroImage) {
-      const pathname = window.location.pathname;
-      if(pathname === '/') {
-        heroImage.style.backgroundImage = `url(${womanPhoneImage.src})`;
-        heroImage.style.backgroundPositionY = '75%';
-        heroImage.style.height = '765px';
-      } else if(pathname === '/approach') {
-        heroImage.style.backgroundImage = `url(${approachHero.src})`;
-        heroImage.style.backgroundPositionY = '50%';
-        heroImage.style.height = '536px';
-      } else if(pathname === '/stories') {
-        heroImage.style.backgroundImage = `url(${storiesHero.src})`;
-        heroImage.style.backgroundPositionY = '50%';
-        heroImage.style.height = '536px';
-      }
-    }
-  </script>
-  
 </body>
 </html>

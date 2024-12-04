@@ -241,7 +241,7 @@ func (c *RadarWatchdogClient) WatchdogPing(data watchdog.WatchdogSync, token *st
 	res := &watchdog.ServerMessage{}
 	if podConfig.Update != nil {
 		res.Type = watchdog.UpdateWatchdogMessageType
-		res.Data = &watchdog.UpdateBinaryServerMessage{
+		res.Data = watchdog.UpdateBinaryServerMessage{
 			Version:   podConfig.Update.Version,
 			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
 		}

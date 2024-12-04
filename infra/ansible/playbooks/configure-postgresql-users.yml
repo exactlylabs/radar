@@ -1,0 +1,23 @@
+---
+- name: Configuring PostgreSQL Users
+  hosts:
+    - postgresql-servers
+  roles:
+    - postgresql
+  vars:
+    skip_install: true
+    skip_pgbackrest: true
+    skip_config: true
+    postgresql_users:
+      - name: "{{ postgresql_radar_user }}"
+        permissions: "CREATEDB,LOGIN,SUPERUSER"
+        password: "{{ postgresql_radar_password }}"
+      - name: "grafana"
+        permissions: "CREATEDB,LOGIN"
+        password: "{{ postgresql_grafana_password }}"
+      - name: "prometheus"
+        permissions: "LOGIN"
+        groups:
+          - pg_read_all_stats
+          - pg_monitor
+        password: "{{ postgresql_prometheus_password }}"

@@ -5,3 +5,11 @@
     name: "postgresql"
     state: restarted
     enabled: yes
+
+- name: reload postgresql service
+  become: yes
+  systemd:
+    name: "postgresql"
+    state: reloaded
+    enabled: yes
+

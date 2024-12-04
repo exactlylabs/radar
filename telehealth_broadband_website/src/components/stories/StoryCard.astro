@@ -1,9 +1,7 @@
 ---
-import {Image} from 'astro:assets';
-
+import styles from "../../pages/styles/_stories.module.css";
 import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 import HeroWithText from "../common/HeroWithText.astro";
-import styles from "../../pages/styles/_stories.module.css";
 const { head, title, content, readMorePath, image } = Astro.props;
 ---
 
@@ -11,7 +9,7 @@ const { head, title, content, readMorePath, image } = Astro.props;
   <img src={image.src} alt={head} class={styles.storyImage}/>
   <div class={styles.storySummary}>
     <div class={styles.heroContainer}>
-      <HeroWithText 
+      <HeroWithText
         head={head}
         title={title}
         content={content}

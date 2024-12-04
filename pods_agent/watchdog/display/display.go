@@ -85,7 +85,7 @@ LOOP:
 					c.Update()
 				}
 			})
-			timer.Reset(time.Minute)
+			timer.Reset(time.Second * 5)
 		case <-ctx.Done():
 			app.Stop()
 			break LOOP

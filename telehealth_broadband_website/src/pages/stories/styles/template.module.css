@@ -67,6 +67,7 @@
 .contentImage {
   width: calc(100% - 2 * var(--side-padding));
   height: auto;
+  aspect-ratio: var(--parallax-aspect-ratio);
   position: relative;
   opacity: 0;
   border-radius: 1rem;
@@ -125,6 +126,7 @@
   width: calc(50% - 1rem);
   flex-basis: 345px;
   flex-grow: 1;
+  border-radius: 6px;
 }
 
 .verticalAnimated[data-position='left'] {
@@ -183,20 +185,18 @@
 }
 
 .horizontalShiftContainer > img {
-  width: 150%;
-  height: auto;
+  height: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-45%, -35%);
+  transform: translate3d(-50%, -50%, 0);
+  border-radius: 6px;
 }
 
 @media (max-width: 768px) {
   .horizontalShiftContainer > img {
-    width: 300%;
-    top: 80%;
-    left: 120%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -328,6 +328,7 @@
     gap: 1rem 0;
     height: unset;
     max-width: unset;
+    left: unset;
   }
 }
 

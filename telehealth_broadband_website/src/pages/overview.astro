@@ -1,0 +1,162 @@
+---
+import '../global.css';
+import styles from './styles/_approach.module.css';
+import commonStyles from '../common.module.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ScrollingTimeline from '../components/overview/ScrollingTimeline.astro';
+import HeroWithText from "../components/common/HeroWithText.astro";
+import Carrousel from "../components/common/Carrousel";
+import ApproachExpansibleCards from '../components/overview/ApproachExpansibleCards';
+import ApproachDataCollectionCard from "../components/overview/ApproachDataCollectionCard.astro";
+import ProjectLeadershipGrid from "../components/overview/ProjectLeadershipGrid.astro";
+import ApproachPartnersGrid from "../components/overview/ApproachPartnersGrid.astro";
+
+import pilotHeroImage from '../assets/images/pilot-program-hero.webp';
+import broadbandMonitoringPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
+import speedTestWidgetImage from '../assets/images/approach-speed-test-widget.webp';
+import mobileDataCollectionImage from '../assets/images/approach-mobile-data-collection.webp'
+import existingPublicDataImage from '../assets/images/approach-existint-public-data.webp';
+import ranceMichaelImage from '../assets/images/rance-michael.webp';
+import projectLeadershipLight from '../assets/images/project-leadership-hero-lights.webp';
+import approachHero from '../assets/images/approach-hero.webp';
+import blueGradientZigZagLight from '../assets/images/blue-gradient-zigzag-light.webp';
+import blueGradientZigZagBluredLight from '../assets/images/blue-gradient-zigzag-blured-light.webp';
+import yellowPinkHorizontalLight from '../assets/images/yellow-pink-horizontal-light.webp';
+import yellowPinkZigZagLight from '../assets/images/yellow-pink-zigzag-light.webp';
+import greenBlueZigZagSmallLight from '../assets/images/green-blue-zigzag-small-light.webp';
+import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizontal-blured-light.webp';
+import pinkYellowHorizontalLight from '../assets/images/pink-yellow-horizontal-blured-light.webp';
+import dotsGrid from '../assets/images/dots-grid.webp';
+---
+<BaseLayout
+  title="Our Approach to Understand and Improve Rural Broadband"
+  desctiption="Learn about our data-driven methods, community partnerships, and innovative tools used to understand rural broadband access and its impact on telehealth in underserved areas."
+  heroBgStyle={`background-image: url(${approachHero.src}); background-position-y: 50%; height: 536px;`}
+>
+  <section class={styles.heroSection}>
+    <HeroWithText head="Overview"
+      title="Understanding and Improving Rural Broadband"
+      content="Our approach integrates data and partnerships to enhance rural broadband, empowering communities and advancing digital equity."
+    />
+    <img src={blueGradientZigZagLight.src} alt="green and blue zigzag light" class={styles.blueGradientZigZagLight} />
+    <img src={yellowPinkHorizontalLight.src} alt="yellow pink light" class={styles.yellowPinkHorizontalLight} />
+  </section>
+  
+  <section class={`${commonStyles.paddedSection} ${styles.pilotProgramSection}`} id="carrousel-alignment-ref">
+    <div class={styles.pilotHeroContainer}>
+      <HeroWithText head="The Pilot Program"
+        title="A Data-Driven Approach"
+        content="The Telehealth Broadband Pilot Program, funded by the Office for the Advancement of Telehealth, provides actionable data on rural broadband access and its impact on healthcare. The project delivers crucial insights into connectivity challenges, informs policy decisions, and evaluates data collection methods to support targeted telehealth and education solutions in underserved areas."
+      />
+    </div>
+    <img src={pilotHeroImage.src}
+      alt="Pilot program connectivity image"
+      width="517"
+      height="430"
+    />
+  </section>
+  
+  <section class={styles.dataCollectionSection}>
+    <div class={styles.dataCollectionHeroContainer}>
+      <img src={yellowPinkZigZagLight.src} alt="yellow pink zigzag light" class={styles.yellowPinkZigZagLight} />
+      <img src={greenBlueZigZagSmallLight.src} alt="green and blue zigzag light" class={styles.greenBlueZigZagSmallLight} />
+      <HeroWithText head="Data Collection"
+      title="Building Relevant Insights"
+      content="The program implemented a multi-method approach, each contributing valuable insights on broadband accessibility and reliability across rural America. Led by ANTHC, the data collection strategy leveraged a range of community outreach methods and tools."
+      />
+    </div>
+    <Carrousel client:only="react" alignmentRefId={'carrousel-alignment-ref'}>
+      <ApproachDataCollectionCard
+        title="Broadband Monitoring Pods"
+        content="Physical devices were installed in homes and public facilities to gather real-time data on internet speed, reliability, and bandwidth use."
+        image={broadbandMonitoringPodsImage}
+      />
+      <ApproachDataCollectionCard
+        title="Speed Test Widget"
+        content="Embedded on partner websites, this tool allowed residents to test their internet speeds and contribute data on connectivity across the region."
+        image={speedTestWidgetImage}
+      />
+      <ApproachDataCollectionCard
+        title="Mobile Data Collection"
+        content="Community Lead Partners gathered cellular network performance data via a mobile app while traveling in rural areas, providing insights into mobile broadband coverage by major providers."
+        image={mobileDataCollectionImage}
+      />
+      <ApproachDataCollectionCard
+        title="Existing Public Data"
+        content="Public data from Measurement Lab and Ookla supplemented the primary data, adding valuable context on broadband availability and quality."
+        image={existingPublicDataImage}
+      />
+    </Carrousel>
+  </section>
+  
+  <section class={styles.projectMetricsSection}>
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} />
+    <img src={blueGradientZigZagBluredLight.src} alt="blue blures light" class={styles.blueGradientZigZagBluredLight} />
+    <div class={styles.projectMetricsContent}>
+      <div class={styles.projectMetricsHeroContainer}>
+        <HeroWithText head="Project Metrics"
+        title="Measuring Success"
+        content="The success of the Telehealth Broadband Pilot Program is measured through several core metrics that capture the reach, impact, and depth of broadband data collection."
+        />
+      </div>
+      <ApproachExpansibleCards client:only="react"/>
+    </div>
+  </section>
+  
+  <section class={`${commonStyles.paddedSection} ${styles.enablingCommunitiesSection}`}>
+    <img src={dotsGrid.src} alt="dots grid" class={styles.dotsGrid} />
+    <img src={blueGradientHorizontalLight.src} alt="blue horizontal light" class={styles.blueGradientHorizontalLight} />
+    <img src={pinkYellowHorizontalLight.src} alt="pink yellow light" class={styles.pinkYellowHorizontalLight} />
+    <div class={styles.enablingCommunitiesHeroContainer}>
+      <HeroWithText
+        head="Enabling Communities"
+        title="Insights for Better Decision Making"
+        content="The program is designed to demonstrate models for studying rural broadband connectivity, offering insights that directly support policymakers and local leaders in advocating for necessary infrastructure improvements."
+      />
+    </div>
+    <ScrollingTimeline/>
+  </section>
+  
+  <section class={styles.projectLeadershipSection}>
+    <div class={styles.projectLeadershipContent}>
+      <div class={styles.projectLeadershipHeroContainer}>
+        <HeroWithText
+          head="Project Leadership"
+          title="Operated under the leadership of two primary institutions"
+        />
+        <img src={projectLeadershipLight.src}
+               alt="Project leadership light image"
+               width="1040"
+               height="800"
+               class={styles.projectLeadershipLight}
+        />
+      </div>
+      <ProjectLeadershipGrid />
+      <div class={styles.communityLeadPartnersHero}>
+        <div class={styles.communityLeadPartnersHeroContainer}>
+          <HeroWithText head="Community Lead Partners"
+            title="Partnering with Community Lead Partners"
+            content="Our program's success relies on the contributions of Community Lead Partners (CLPs) across the targeted states, who apply their local knowledge and networks to engage residents, deploy monitoring devices, and facilitate data collection. These efforts provide localized data essential to both policymakers and local advocates."
+          />
+        </div>
+        <div class={styles.communityLeadPartnersHeroImage} style={`background-image: url(${ranceMichaelImage.src});`}></div>
+      </div>
+      <ApproachPartnersGrid />
+    </div>
+  </section>
+</BaseLayout>
+
+
+<script>
+  window.addEventListener('resize', setHeroImageHeight);
+  
+  function setHeroImageHeight() {
+    const windowWidth = window.innerWidth;
+    const heroImage = document.getElementById('hero-image');
+    if(!heroImage) return;
+    if(windowWidth <= 768) heroImage.style.height = '400px';
+    else heroImage.style.height = '536px';
+  }
+  
+  setHeroImageHeight();
+</script>

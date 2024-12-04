@@ -18,6 +18,7 @@
   grid-template-columns: unset;
   grid-auto-columns: 1fr;
   column-gap: 2rem;
+  padding-block: 1rem;
 }
 
 @media (max-width: 1250px) {
@@ -96,4 +97,64 @@
 
 .button[data-direction="left"] {
   transform: rotate(180deg);
+}
+
+.automaticSwitcher {
+  width: fit-content;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: .75rem;
+  margin: 1.5rem auto;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.automaticDot {
+  width: .5rem;
+  height: .5rem;
+  border-radius: .25rem;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: width 0.3s, border-radius 0.3s;
+}
+
+.automaticDot:not([data-selected="true"]):hover {
+  background-color: white;
+}
+
+.automaticDot[data-selected="true"] {
+  width: 2.5rem;
+  border-radius: 4px;
+  position: relative;
+}
+
+.automaticDot[data-selected="true"]::after {
+  content: "";
+  width: .5rem;
+  height: 100%;
+  border-radius: .25rem;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: grow 7850ms linear forwards;
+  animation-play-state: running;
+}
+
+.automaticDot[data-selected="true"][data-paused="true"]::after {
+  animation-play-state: paused;
+}
+
+@keyframes grow {
+  0% {
+    width: .5rem;
+  }
+  100% {
+    width: 100%;
+  }
 }

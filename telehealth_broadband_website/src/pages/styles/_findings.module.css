@@ -1,0 +1,225 @@
+.firstSection {
+  max-width: 670px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 8.75rem;
+}
+
+.downloadButtonContainer {
+  width: fit-content;
+  margin: 2.5rem auto 0;
+}
+
+.evaluationResultsSection {
+  padding-top: 5rem;
+  padding-bottom: 7.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.evaluationResultsTop {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3.75rem;
+  flex-wrap: wrap;
+  padding-bottom: 5rem;
+}
+
+.evaluationResultsHeroContainer {
+  padding-top: 1.5rem;
+  width: calc(50% - 2rem);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2rem;
+  flex-basis: 400px;
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+.evaluationResultsHeroContainer > a {
+  margin-bottom: 0;
+  margin-top: auto;
+}
+
+.sidePicturesContainer {
+  width: calc(50% - 2rem);
+  flex-basis: 400px;
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+.sidePicturesContainer > img {
+  width: 100%;
+  height: auto;
+}
+
+.evaluationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  border-block: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .evaluationGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 1fr);
+  }
+}
+
+.evaluationGrid > div {
+  padding: 3rem 2rem 4.5rem 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .evaluationGrid > div {
+    padding: 2rem 0;
+  }
+}
+
+.evaluationGrid > div:nth-child(1),
+.evaluationGrid > div:nth-child(2),
+.evaluationGrid > div:nth-child(4),
+.evaluationGrid > div:nth-child(5) {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.evaluationGrid > div:nth-child(1),
+.evaluationGrid > div:nth-child(2),
+.evaluationGrid > div:nth-child(3) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .evaluationGrid > div:nth-child(1),
+  .evaluationGrid > div:nth-child(2),
+  .evaluationGrid > div:nth-child(4),
+  .evaluationGrid > div:nth-child(5) {
+    border-right: none;
+  }
+
+  .evaluationGrid > div:nth-child(5) {
+    border-bottom: none;
+  }
+}
+
+.stateFindingsSection {
+  padding-bottom: 7.5rem;
+}
+
+.stateFindingsHeroContainer {
+  max-width: 608px;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 4rem;
+}
+
+.carrouselRef {
+  width: calc(100vw - 3rem);
+  margin: 0 auto;
+  max-width: 1068px;
+}
+
+.implementationFindingsSection {
+  padding-bottom: 6rem;
+}
+
+.implementationFindingsImageContainer {
+  width: calc(50% - 2rem);
+  max-width: 500px;
+  flex-basis: 400px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .implementationFindingsImageContainer {
+    max-width: unset;
+  }
+}
+
+.implementationFindingsImageContainer > img {
+  width: 100%;
+  height: auto;
+}
+
+.implementationFindingsHeroContainer {
+  width: calc(50% - 2rem);
+  max-width: 609px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2rem;
+  flex-basis: 400px;
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+.implementationGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  border-block: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .implementationGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+}
+
+.implementationGrid > div {
+  padding: 3rem 2rem 4.5rem 1.5rem;
+}
+
+.implementationGrid > div:nth-child(1),
+.implementationGrid > div:nth-child(3) {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.implementationGrid > div:nth-child(1),
+.implementationGrid > div:nth-child(2) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.implementationGrid > div:nth-child(2) > div > div > svg {
+  scale: calc(4/3);
+}
+
+@media (max-width: 768px) {
+  .implementationGrid > div {
+    padding: 2rem 0;
+  }
+
+  .implementationGrid > div:nth-child(1),
+  .implementationGrid > div:nth-child(3) {
+    border-right: none;
+  }
+
+  .implementationGrid > div:nth-child(4) {
+    border-bottom: none;
+  }
+
+  .implementationGrid > div > div > svg {
+    scale: calc(20/32);
+  }
+
+  .implementationGrid > div:nth-child(2) > div > svg {
+    scale: calc(20/24);
+  }
+}

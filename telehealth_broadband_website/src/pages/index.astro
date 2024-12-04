@@ -15,15 +15,30 @@ import HomepageStoriesCard from "../components/index/HomepageStoriesCard.astro";
 import OpportunitiesGrid from "../components/index/OpportunitiesGrid.astro";
 import PartnerLogoCarrousel from "../components/index/PartnerLogoCarrousel.astro";
 import fadedIcons from '../assets/images/faded-icons.png';
-import cellTowers from '../assets/images/cell-towers.webp';
+import oldManHomepage from '../assets/images/old-man-homepage.webp';
 import ruralVsUrban from '../assets/images/rural-vs-urban.webp';
-import challengesInAlaska from '../assets/images/alaska.webp';
-import importanceOfLocal from '../assets/images/rance-michael.webp';
-import girlLaptop from '../assets/images/girl-laptop.webp';
+import challengesInAlaska from '../assets/images/challenges-in-alaska.webp';
+import importanceOfLocal from '../assets/images/importance-of-local-expertise.webp';
+import diverseEngagementStrategies from '../assets/images/diverse-engagement-strategies.webp';
+import lackOfTechnicalExpertiseStoryImage from '../assets/images/lack-of-technical-expertise-story.webp'
+import roadImage from '../assets/images/road.webp';
+import lackOfTechnicalExpertise from '../assets/images/lack-of-technical-expertise.webp';
+import blueGradientDiagonalLight from '../assets/images/blue-gradient-diagonal-light.webp';
+import yellowPinkHorizontalLight from '../assets/images/yellow-pink-horizontal-light.webp';
+import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizontal-blured-light.webp';
+import blueGradientConcavedLight from '../assets/images/blue-gradient-concaved-light.webp';
+import blueGradientZigZagSmallLight from '../assets/images/green-blue-zigzag-small-light.webp';
+import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigzag-blured-small-light.webp';
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Telehealth Broadband Project - Uncovering Rural America's Internet Reality"
+  description="Explore the findings of the Telehealth Broadband Pilot, highlighting the challenges and opportunities in rural broadband access and its impact on telehealth."
+  heroBgStyle={`background-image: url(${roadImage.src}); background-position-y: 75%; height: 765px;`}
+>
   <section class={styles.firstSection}>
+    <img src={blueGradientDiagonalLight.src} alt="blue gradient diagonal" class={styles.blueGradientDiagonalLight} />
+    <img src={yellowPinkHorizontalLight.src} alt="yellow pink diagonal" class={styles.yellowPinkHorizontalLight} />
     <div class={styles.heroSection}>
       <HeroWithText head=""
                     title="Uncovering Rural America's Internet Reality"
@@ -61,36 +76,38 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
     <HomepageApproachExpansibleRows client:only="react"/>
   </section>
   
-  <section class={styles.findingsSection} style={`background-image: url(${cellTowers.src})`}>
-    <div class={styles.findingsGradient}></div>
-    <div class={`${commonStyles.paddedSection} ${styles.findingsTextContainer}`} id="findings-alignment-reference-id">
-      <div class={styles.findingsHeroContainer}>
-        <HeroWithText head="Findings"
-                      title="Finding the Real Barriers to Rural Broadband Access"
-                      content="Our evaluation uncovered critical insights into the complexities of rural internet access, beyond just ISP availability and overall speed. Key factors like the user's technical knowledge, device setup, and infrastructure configuration play a significant role in determining broadband quality."/>
-      </div>
-      <div class={styles.findingsButtonContainer}>
-        <PrimaryButton href="/findings">Explore our findings</PrimaryButton>
+  <section class={styles.findingsSection}>
+    <div class={styles.findingsTextContainer} style={`background-image: url(${oldManHomepage.src})`}>
+        <div class={styles.findingsGradient}></div>
+      <div class={commonStyles.paddedSection} id="findings-alignment-reference-id">
+        <div class={styles.findingsHeroContainer}>
+          <HeroWithText head="Findings"
+                        title="Finding the Real Barriers to Rural Broadband Access"
+                        content="Our evaluation uncovered critical insights into the complexities of rural internet access, beyond just ISP availability and overall speed. Key factors like the user's technical knowledge, device setup, and infrastructure configuration play a significant role in determining broadband quality."/>
+        </div>
+        <div class={styles.findingsButtonContainer}>
+          <PrimaryButton href="/findings">Explore our findings</PrimaryButton>
+        </div>
       </div>
     </div>
     <div class={styles.findingsCarrouselContainer}>
-      <Carrousel client:only="react" itemWidth={396} smallItemWidth={276} alignmentRefId={'findings-alignment-reference-id'}>
+      <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'}>
         <HomepageFindingsCard title="Rural vs. Urban Internet Gaps"
-                              href="/findings"
+                              href="/findings/rural-vs-urban-internet-gaps"
                               image={ruralVsUrban.src}
         />
         <HomepageFindingsCard title="Challenges in Alaska"
-                              href="/findings"
+                              href="/findings/challenges-in-alaska"
                               maxTextWidth="250px"
                               image={challengesInAlaska.src}
         />
         <HomepageFindingsCard title="Importance of Local Expertise"
-                              href="/findings"
+                              href="/findings/importance-of-local-expertise"
                               image={importanceOfLocal.src}
         />
         <HomepageFindingsCard title="Diverse Engagement Strategies"
-                              href="/findings"
-                              image={ruralVsUrban.src}
+                              href="/findings/diverse-engagement-strategies"
+                              image={diverseEngagementStrategies.src}
         />
       </Carrousel>
     </div>
@@ -98,6 +115,8 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
   
   <section class={styles.storiesSection}>
     <div class={commonStyles.paddedSection} id="stories-alignment-ref">
+      <img src={blueGradientHorizontalLight.src} alt="blue gradient diagonal" class={styles.blueGradientHorizontalLight} />
+      <img src={blueGradientConcavedLight.src} alt="blue gradient diagonal" class={styles.blueGradientConcavedLight} />
       <div class={styles.storiesHeroContainer}>
         <HeroWithText head="Stories"
                       title="The Reality in the Field"
@@ -107,22 +126,25 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
       </div>
     </div>
     <div class={styles.storiesCarrouselContainer}>
-      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'}>
+      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={2}>
         <HomepageStoriesCard head="West Virginia"
           title="Community Centers as Lifelines"
           content="In many rural areas, reliable internet access exists only at community centers, leaving households disconnected. One young adult shared their shock at discovering high-speed internet for the first time upon arriving at college."
-          image={girlLaptop.src}
+          image={lackOfTechnicalExpertise.src}
+          link="/stories/west-virginia"
         />
         <HomepageStoriesCard head="Alaska"
                              title="Lack of Technical Expertise"
                              content="Rural Alaska clinics relying on satellite internet experienced severe delays, making many applications unusable. A lack of local expertise and vendor support left these clinics unable to fully utilize essential healthcare services."
-                             image={girlLaptop.src}
+                             image={lackOfTechnicalExpertiseStoryImage.src}
+                             link="/stories/lack-of-technical-expertise"
         />
       </Carrousel>
     </div>
   </section>
   
   <section class={`${commonStyles.paddedSection} ${styles.opportunitiesSection}`}>
+    <img src={blueGradientZigZagSmallLight.src} alt="blue gradient diagonal" class={styles.blueGradientZigZagSmallLight} />
     <div class={styles.opportunitiesHero}>
       <HeroWithText head="Opportunities"
                     title="Practical Solutions for Empowering Rural Communities"/>
@@ -132,6 +154,7 @@ import girlLaptop from '../assets/images/girl-laptop.webp';
 
   <section class={`${commonStyles.paddedSection} ${styles.resourcesSection}`}>
     <div class={styles.resourcesHeroContainer}>
+      <img src={yellowPinkZigZagBluredSmallLight.src} alt="yellow pink diagonal light" class={styles.yellowPinkZigZagBluredSmallLight} />
       <HeroWithText head="Resources"
                     title="Tools to Help the Communities"
                     content="We've created a suite of tools to help communities understand their broadband experience and take actionable steps toward improving it."

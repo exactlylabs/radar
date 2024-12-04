@@ -1,0 +1,33 @@
+---
+
+- name: Install ACL and Psycopg2 for Python
+  become: yes
+  apt:
+    name:
+      - python3-psycopg2
+      - acl
+    state: latest
+    update_cache: yes
+
+- name: Setup PostgreSQL User
+  become: true
+  become_user: postgres
+  postgresql_user:
+    db: postgres
+    name: "{{item.name}}"
+    password: "{{item.password}}"
+    role_attr_flags: "{{item.permissions}}"
+  loop: "{{postgresql_users}}"
+
+- name: Grant Groups to PostgreSQL Roles
+  become: true
+  become_user: postgres
+  postgresql_membership:
+    db: postgres
+    groups: "{{item.groups}}"
+    target_roles: "{{item.name}}"
+    state: present
+  when: item.groups is defined
+  loop: "{{ postgresql_users }}"
+
+

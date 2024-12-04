@@ -36,6 +36,14 @@ func New() agent.Runner {
 	}
 }
 
+func (r *ooklaRunner) Setup() error {
+	err := createOoklaBinary()
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
+}
+
 func (r *ooklaRunner) Type() string {
 	return "OOKLA"
 }

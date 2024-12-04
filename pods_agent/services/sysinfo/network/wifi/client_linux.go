@@ -273,7 +273,9 @@ func (c *Client) ScanAccessPoints() ([]APDetails, error) {
 
 func (c *Client) ConnectionStatus() (status WifiStatus, err error) {
 	data, err := c.cli.Conn().SendCommand(wireless.CmdStatus)
-	if err != nil {
+	if errors.Is(err, wireless.ErrCmdTimeout) {
+		return status, ErrNotConnected
+	} else if err != nil {
 		return status, errors.W(err)
 	}
 	status = parseStatus(data)

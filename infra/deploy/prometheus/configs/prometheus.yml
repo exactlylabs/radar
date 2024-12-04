@@ -1,0 +1,40 @@
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'dockerswarm'
+    dockerswarm_sd_configs:
+      - host: unix:///var/run/docker.sock
+        role: tasks
+        filters:
+          - name: __meta_dockerswarm_service_label_prometheus_job
+    scrape_interval: 5s
+    relabel_configs:
+      # Configure the port to access prometheus metrics
+      - source_labels: [__address__, __meta_dockerswarm_service_label_prometheus_port]
+        separator: ;
+        regex: '(.*):(.*);(\d+)'
+        replacement: ${1}:${3}
+        target_label: __address__
+
+      # Only keep containers that should be running.
+      - source_labels: [__meta_dockerswarm_task_desired_state]
+        regex: running
+        action: keep
+      # Only keep containers that have a `prometheus-job` label.
+      - source_labels: [__meta_dockerswarm_service_label_prometheus_job]
+        regex: .+
+        action: keep
+      # Use the prometheus-job Swarm label as Prometheus job label.
+      - source_labels: [__meta_dockerswarm_service_label_prometheus_job]
+        target_label: job
+
+  - job_name: "postgresql"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["pmt-postgres-exporter_app:9187"]
+    # Set instance to the correct name, so we can reference the same name in queries (not the random postgres-exporter ips)
+    relabel_configs:
+      - target_label: instance
+        replacement: db-01.radartoolkit.com

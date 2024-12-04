@@ -1,13 +1,15 @@
 ---
 import styles from './homepage_findings_card.module.css';
-import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
+import ContainedReadMore from "../common/buttons/ContainedReadMore.astro";
 const { title, href, image, maxTextWidth } = Astro.props;
 ---
 
 <li class={styles.card} style={`background-image: url(${image})`}>
   <div class={styles.gradient}></div>
-  <h4 class={styles.title} style={`max-width: ${maxTextWidth ?? '260px'}`}>{title}</h4>
-  <div class={styles.buttonContainer}>
-    <ReadMoreButton href={href}/>
-  </div>
+  <a href={href} class={styles.cardLink}>
+    <h4 class={styles.title} style={`max-width: ${maxTextWidth ?? '260px'}`}>{title}</h4>
+    <div class={styles.buttonContainer}>
+      <ContainedReadMore text="Learn more"/>
+    </div>
+  </a>
 </li>

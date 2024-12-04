@@ -10,6 +10,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/services/ws"
 )
@@ -121,7 +122,10 @@ func (r *runnersExecutor) runUntilSuccessfull(ctx context.Context, interfaces []
 		for _, runner := range r.runners {
 			for _, iface := range interfaces {
 				_, err := r.execute(ctx, runner, iface)
-				if err != nil {
+				if errors.Is(err, network.ErrInterfaceNotConnected) || errors.Is(err, network.ErrInterfaceNotFound) {
+					log.Println(err)
+					continue
+				} else if err != nil {
 					err = errors.W(err)
 					log.Println(err)
 					if !errorIsAny(err, ErrRunnerConnectionError, wifi.ErrNotConnected, wifi.ErrNotSupported) {

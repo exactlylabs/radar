@@ -1,6 +1,9 @@
 ---
 skip_postgres: false
 skip_pgbackrest: false
+skip_install: false
+skip_users: false
+skip_config: false
 postgresql_version: "16"
 postgresql_data_directory: '/var/lib/postgresql/{{postgresql_version}}/main'
 postgresql_users: []

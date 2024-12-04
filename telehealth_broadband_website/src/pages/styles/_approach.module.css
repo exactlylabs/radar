@@ -230,3 +230,131 @@
     right: -75%;
   }
 }
+
+.blueGradientZigZagLight {
+  position: absolute;
+  top: -450px;
+  left: -950px;
+  height: 1498.25px;
+  aspect-ratio: 6020 / 5993;
+  z-index: -1;
+}
+
+.yellowPinkHorizontalLight {
+  position: absolute;
+  top: -100px;
+  right: -950px;
+  height: 768px;
+  aspect-ratio: 1188 / 768;
+  z-index: -1;
+}
+
+.yellowPinkZigZagLight {
+  position: absolute;
+  top: 550px;
+  left: -450px;
+  height: 1155.5px;
+  aspect-ratio: 4641 / 4622;
+  z-index: -1;
+}
+
+.greenBlueZigZagSmallLight {
+  position: absolute;
+  top: 400px;
+  right: -550px;
+  height: 1498.25px;
+  aspect-ratio: 6020 / 5993;
+  z-index: -1;
+}
+
+.projectMetricsSection > .dotsGrid {
+  position: absolute;
+  top: 2100px;
+  left: 50%;
+  z-index: -1;
+  height: 460px;
+  aspect-ratio: 772 / 460;
+}
+
+.blueGradientZigZagBluredLight {
+  position: absolute;
+  top: 1950px;
+  right: -250px;
+  height: 698px;
+  aspect-ratio: 1063 / 698;
+  z-index: -1;
+}
+
+.enablingCommunitiesSection > .dotsGrid {
+  position: absolute;
+  top: -150px;
+  left: 50%;
+  z-index: -1;
+  height: 460px;
+  aspect-ratio: 772 / 460;
+}
+
+.pinkYellowHorizontalLight {
+  position: absolute;
+  top: -400px;
+  left: 50%;
+  z-index: -1;
+  height: 914px;
+  aspect-ratio: 1422 / 914;
+}
+
+.blueGradientHorizontalLight {
+  position: absolute;
+  top: -100px;
+  left: -600px;
+  z-index: -1;
+  height: 759px;
+  aspect-ratio: 1139 / 759;
+}
+
+@media (max-width: 1080px) {
+  .projectMetricsSection > .dotsGrid {
+    top: 2000px;
+    left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .yellowPinkZigZagLight {
+    display: none;
+  }
+
+  .greenBlueZigZagSmallLight {
+    display: none;
+  }
+
+  .projectMetricsSection > .dotsGrid {
+    top: 1800px;
+    left: 0;
+  }
+
+  .blueGradientZigZagBluredLight {
+    top: 1850px;
+    right: -700px;
+  }
+
+  .enablingCommunitiesSection > .dotsGrid {
+    top: -150px;
+    left: 0;
+  }
+
+  .blueGradientHorizontalLight {
+    top: -300px;
+
+  }
+
+  .pinkYellowHorizontalLight {
+    top: -500px;
+  }
+}
+
+@media (max-width: 450px) {
+  .projectMetricsSection > .dotsGrid {
+    top: 2050px;
+  }
+}

@@ -10,7 +10,6 @@ import (
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
-	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
@@ -255,8 +254,10 @@ func (w *Watchdog) handleSyncRequested(data SyncMessage) (err error) {
 	if err != nil {
 		return errors.W(err)
 	}
-	if err := w.cli.SyncData(syncData); err != nil {
-		return errors.W(err)
+	if w.cli.Connected() {
+		if err := w.cli.SyncData(syncData); err != nil {
+			return errors.W(err)
+		}
 	}
 	return nil
 }
@@ -264,7 +265,7 @@ func (w *Watchdog) handleSyncRequested(data SyncMessage) (err error) {
 func (w *Watchdog) handleUpdate(data UpdateBinaryServerMessage) error {
 	log.Printf("An Update for Watchdog Version %v is available\n", data.Version)
 	err := UpdateWatchdog(data.BinaryUrl, data.Version)
-	if update.IsValidationError(err) {
+	if err != nil {
 		log.Printf("Existent update is invalid: %v\n", err)
 		sentry.NotifyErrorOnce(err, map[string]sentry.Context{
 			"Update Data": {
@@ -272,8 +273,6 @@ func (w *Watchdog) handleUpdate(data UpdateBinaryServerMessage) error {
 				"url":     data.BinaryUrl,
 			},
 		})
-	} else if err != nil {
-		panic(err)
 	} else {
 		log.Println("Successfully Updated the Watchdog. Restarting the whole system")
 		if err := w.sysManager.Reboot(); err != nil {

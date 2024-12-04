@@ -6,8 +6,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ExploreOpportunities from '../components/opportunities/ExploreOpportunities.astro';
 import OpportunitiesIntroduction from '../components/opportunities/OpportunitiesIntroduction.astro';
 ---
-<BaseLayout>
-  <section  class=`${commonStyles.paddedSection} ${styles.section}` id="scroll-to">
+<BaseLayout
+  title="Opportunities to Improve Rural Broadband Access"
+  description="Discover strategies to enhance broadband quality, empower communities, and support data-driven advocacy for better rural connectivity."
+>
+  <section  class=`${commonStyles.paddedSection} ${styles.section}`>
     <OpportunitiesIntroduction/>
     <ExploreOpportunities/>
   </section>

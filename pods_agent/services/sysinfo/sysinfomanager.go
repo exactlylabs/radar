@@ -349,6 +349,7 @@ func (si *SysInfoManager) TailscaleUp(authKey string, tags []string) error {
 			"--auth-key", authKey,
 			"--advertise-tags", strings.Join(tags, ","),
 			"--login-server", "https://pods.vpn.radartoolkit.com",
+			"--reset",
 		))
 	if err != nil {
 		return errors.W(err)

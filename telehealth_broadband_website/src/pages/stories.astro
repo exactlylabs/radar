@@ -9,10 +9,17 @@ import alaskaStory from "../assets/images/alaska-story-1.webp";
 import westVirginiaStory from "../assets/images/west-virginia-story-2.webp";
 import michiganStory from "../assets/images/michigan-story.webp";
 import texasStory from "../assets/images/texas-story.webp";
+import storiesHero from '../assets/images/stories-hero.webp';
+import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp";
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Stories from the Field: Real Rural Connectivity Challenges"
+  description="Read firsthand accounts of how connectivity issues impact rural communities. Stories of resilience, innovation, and lessons learned from real experiences."
+  heroBgStyle={`background-image: url(${storiesHero.src}); background-position-y: 50%; height: 536px;`}
+>
   <section class={styles.heroSection}>
+    <img src={blueGradientZigzag.src} alt="blue gradient light" class={styles.blueGradientZigzag} />
     <HeroWithText
       head="Stories"
       title="The Reality on the Ground"
@@ -25,7 +32,7 @@ import texasStory from "../assets/images/texas-story.webp";
         head="Alaska"
         title="Healthcare Sites Go Dark"
         content="When a major internet cable was cut in Alaska, healthcare facilities were forced to switch from high-speed fiber to slower satellite connections. This shift limited doctors’ capabilities and left communities waiting months for restoration."
-        readMorePath="/stories/alaska-1"
+        readMorePath="/stories/healthcare-sites-go-dark"
         image={alaskaStory}
       />
       <div class={styles.divider}></div>
@@ -57,14 +64,14 @@ import texasStory from "../assets/images/texas-story.webp";
         <StoryGridCard
           head="Texas"
           title="The Telehealth Struggle"
-          content="A remote Texas clinic’s outdated equipment caused frequent connection drops during telehealth sessions, preventing many elderly and disabled patients from accessing essential health services."
+          content="A remote Texas clinic's outdated equipment caused frequent connection drops during telehealth sessions, preventing many elderly and disabled patients from accessing essential health services."
           readMorePath="/stories/texas"
           image={texasStory}
         />
         <StoryGridCard
           head="West Virginia"
           title="Learning Interrupted"
-          content="In rural West Virginia, a school’s limited satellite connection disrupted online learning, with students often unable to join lessons or complete assignments. For many families, it was their only reliable internet access."
+          content="In rural West Virginia, a school's limited satellite connection disrupted online learning, with students often unable to join lessons or complete assignments. For many families, it was their only reliable internet access."
           readMorePath="/stories/west-virginia-2"
           image={westVirginiaStory}
         />

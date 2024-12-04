@@ -83,6 +83,8 @@ type Sync struct {
 }
 
 type Runner interface {
+	// Setup is called at code initialization, use it to make internal initializations and binary decompressions
+	Setup() error
 	// Run a speed test.
 	// The returned error could either by an ErrRunnerConnectionError or an internal generic error
 	Run(ctx context.Context) (*Measurement, error)
