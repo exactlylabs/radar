@@ -13,6 +13,7 @@ import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors, fonts } from "@/styles/shared";
 import { api } from "@/src/api/api";
+import { sendCode } from "../http/sendCode";
 
 export default function AccountEmail() {
     const router = useRouter()
@@ -24,9 +25,7 @@ export default function AccountEmail() {
             setError('')
 
             try {
-                const response = await api.post('/authenticate/new_code', {
-                    email: emailRef.current
-                })
+                const response = await sendCode(emailRef.current)
 
                 if (response.status === 202) {
                     router.push({

@@ -1,4 +1,4 @@
-import { Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Title from "@/components/Title";
 
 import Button from "@/components/Button";
@@ -20,6 +20,7 @@ import Animated, {
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
 import { api } from "@/src/api/api";
+import { sendCode } from "../http/sendCode";
 
 const CELL_COUNT = 6;
 
@@ -69,15 +70,14 @@ export default function AccountValidateCode() {
     const handleResendCode = async () => {
         if (canResend) {
             try {
-                const response = await api.post('/authenticate/new_code', {
-                    email: email
-                })
+                const response = await sendCode(email as string)
 
                 setCountdown(TIMER_DURATIONS.SEND_NEW_CODE);
                 setCanResend(false);
                 showNotification();
             } catch (error) {
                 console.log(error)
+                Alert.alert('something went wrong, try again later')
             }
         }
     };
