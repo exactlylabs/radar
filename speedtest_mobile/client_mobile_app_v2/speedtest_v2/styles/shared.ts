@@ -7,10 +7,20 @@ export const colors = {
     gray500: '#737381',
     blue200: '#4B7BE5',
     blueBackground: '#15152E',
-    bgGradientPrimary: '#1B1860',
-    bgGradientSecondary: '#0B0B1A',
+    bgGradientPrimary: '#1A1B2E',
+    bgGradientSecondary: '#12132A',
     red400: '#E54B4B',
     bgPrimary: '#15152E',
+    // @ToDo Verify these colors, added for my radar screen
+    background: '#1A1B2E',
+    backgroundGradientStart: '#1A1B2E',
+    backgroundGradientEnd: '#12132A',
+    primary: '#4B7BF5',
+    text: '#FFFFFF',
+    inactive: '#6B6B78',
+    tabBarBackground: '#1B1B3A',
+    iconInactive: '#484964',
+    radarIconBg: '#3F3C70',
 }
 
 export const fonts = {
