@@ -1,0 +1,121 @@
+---
+import '../../global.css';
+import ParallaxLayout from "../../layouts/ParallaxLayout.astro";
+import styles from './styles/connectivity_issues_in_rural_michigan_healthcare.module.css';
+import templateStyles from './styles/template.module.css';
+import commonStyles from '../../common.module.css';
+import HeroWithText from "../../components/common/content/HeroWithText.astro";
+import Epigraph from "../../components/stories/Epigraph.astro";
+import Quote from "../../components/stories/Quote.astro";
+
+import hero from '../../assets/images/michigan-story-hero.webp';
+import barn from '../../assets/images/barn-michigan-story.webp';
+import snowHouse from '../../assets/images/snow-house-michigan.webp';
+import woodsHouse from '../../assets/images/woods-house-michigan.webp';
+import road from '../../assets/images/road-michigan.webp';
+import openField from '../../assets/images/open-field-michigan.webp';
+import manCouch from '../../assets/images/man-couch-michigan.webp';
+---
+
+<ParallaxLayout
+  bgImageSrc={hero.src}
+  title="Connectivity Issues in Rural Michigan Healthcare"
+  description="Unreliable internet disrupts patient care and staff efficiency in Michigan clinics."
+>
+
+  <section class={templateStyles.header}>
+    <div class={templateStyles.overlay} id="parallax-overlay"></div>
+    <div class={templateStyles.verticalWhiteLine} id="vertical-white-line"></div>
+    <div class={templateStyles.mainHeroContainer} id="parallax-main-hero-text">
+      <HeroWithText
+        head="Stories"
+        title="Connectivity Issues in Rural Michigan Healthcare"
+        content="Unreliable internet disrupts patient care and staff efficiency in Michigan clinics."
+      />
+    </div>
+  </section>
+
+  <img src={hero.src}
+   class={templateStyles.contentImage}
+   alt="Couple walking in the woods with their dogs"
+   id="parallax-content-image"
+   loading="eager"
+  />
+
+  <section class={commonStyles.paddedSection} id="parallax-reference-container">
+    <div class={templateStyles.textContainer}>
+      <HeroWithText head="Manistee, Mi"
+                    title="Connectivity Challenges Undermining Rural Healthcare in Michigan"
+                    content="Northwest Michigan Health Services (NMHSI) faces ongoing challenges with broadband connectivity, directly impacting patient care and staff efficiency. As part of a larger HRSA-funded study examining broadband in rural communities, the clinics have highlighted the growing need for reliable internet to support telehealth services and other essential operations."
+      />
+      <br/>
+      <p class={templateStyles.paddedText}>The organization operates seven clinics, including a small location in Manistee, where limited public transportation already poses significant challenges for patients. "We rely heavily on telehealth to connect with patients who can't easily come into the clinic," explained Kim Corliss, Director of Administrative Operations at NMHS. However, poor internet connectivity often disrupts video visits, forcing staff to switch to less effective phone consultations or reschedule in-person visits, creating delays in care.</p>
+    </div>
+
+    <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
+      <Quote
+        quote="We rely heavily on telehealth to connect with patients who can't easily come into the clinic."
+        author="Kim Corliss, Director of Administrative Operations at NMHS"
+      />
+    </div>
+    
+    <div id="three-image-carrousel" class={templateStyles.threeImageCarrousel}>
+      <img src={barn.src} alt="Old lady in an office" loading="eager"/>
+      <img src={snowHouse.src} alt="Street image" loading="eager"/>
+      <img src={woodsHouse.src} alt="Woman in an office" loading="eager"/>
+    </div>
+    <div class={templateStyles.epigraphContainer}>
+      <Epigraph text="Many patients in Michigan rely on telehealth due to difficulties in accessing clinics."/>
+    </div>
+    
+    <p class={templateStyles.paddedText}>Technical assessments conducted during the study identified several issues with the clinics' Wi-Fi infrastructure, including prolonged signal drops and improperly configured access points. These problems have led to frequent interruptions in Electronic Medical Record (EMR) systems, requiring staff to repeatedly log back in while charting patient information. "It's frustrating for the staff," Corliss noted. "They end up taking work home just to complete patient charts, which affects their morale and limits the number of patients they can see."</p>
+    
+    <div class={templateStyles.quoteWrapper}>
+      <Quote
+        quote="It's frustrating for the staff. They end up taking work home just to complete patient charts, which affects their morale and limits the number of patients they can see."
+        author="Kim Corliss, Director of Administrative Operations at NMHS"
+      />
+    </div>
+  </section>
+
+  <section class={templateStyles.verticallyAnimatedImagesContainer}>
+    <img alt="road image" src={road.src} class={templateStyles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
+    <img alt="open field image" src={openField.src} class={templateStyles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
+  </section>
+
+  <section class={styles.reliableInternetSection}>
+    <div class={templateStyles.textContainer}>
+      <h3>Reliable Internet in Patient Care</h3>
+      <p>Patients requiring interpreter services have also faced significant disruptions.
+        <br/><br/>"When the Wi-Fi signal drops, we lose the interpreter," Corliss said. "Logging back in connects us with someone new, which undermines the continuity of care. It's frustrating for both patients and staff".
+        <br/><br/>Despite incremental improvements, such as fiber connections for hardwired setups, Wi-Fi connectivity remains a persistent issue. Corliss emphasized the broader implications of the problem: "Improved internet would mean faster visits, better access to telehealth, and comprehensive visit summaries for patients, which are crucial for follow-up care".
+      </p>
+    </div>
+
+    <div class={templateStyles.quoteWrapper}>
+      <Quote
+        quote="Improved internet would mean faster visits, better access to telehealth, and comprehensive visit summaries for patients, which are crucial for follow-up care."
+        author="Kim Corliss, Director of Administrative Operations at NMHS"
+      />
+    </div>
+
+    <div class={`${templateStyles.subRegionalClinicContainer} ${styles.staticImage}`}>
+      <img src={manCouch.src} alt="Man lying on couch while on the phone" loading="eager"/>
+    </div>
+
+    <p class={templateStyles.paddedText}>
+        An analysis of the clinics' internet performance revealed that many of the connectivity issues stemmed from challenges beyond the scope of local IT expertise. In one instance, improperly configured internet routing meant that only a fraction—less than 10%—of the available bandwidth was actually usable. Similarly, a Wi-Fi issue known as a "bad roam" caused frequent disruptions to translation services, disconnecting interpreters mid-session and further complicating patient care. These technical problems required specialized assessments to identify and address, underscoring the complexity of maintaining reliable internet infrastructure in rural settings.
+    <br/><br/>By identifying these gaps, the study facilitated targeted interventions that alleviated some of the most pressing issues, such as reducing "bad roams" to stabilize translation services. While such improvements have had measurable benefits for staff and patients, the findings emphasize that rural clinics often lack the resources or expertise to resolve highly specialized connectivity problems.
+    </p>
+
+    <div class={templateStyles.verticallyAnimatedImagesContainer}>
+      <img src={''} class={templateStyles.verticalAnimated} loading="eager" style="outline: solid;"/>
+      <img src={''} class={templateStyles.verticalAnimated} loading="eager" style="outline: solid;"/>
+    </div>
+    <div class={templateStyles.epigraphContainer}>
+      <Epigraph text="Speed test results were taken before and after interventions. Speeds, along with latency, showed significant improvement following the fixes."/>
+    </div>
+
+    <p class={templateStyles.paddedText}>The findings from NMHSI highlight the urgency of addressing broadband disparities in rural healthcare settings. As the HRSA-funded study continues, it underscores a pressing need for systemic changes to improve internet access and ensure equitable healthcare delivery.</p>
+  </section>
+</ParallaxLayout>
