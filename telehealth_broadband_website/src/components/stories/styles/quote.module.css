@@ -41,12 +41,12 @@
 
 @media (max-width: 768px) {
   .quote {
-    padding-left: 3rem;
+    padding-left: 2.25rem;
     font-size: 1.25rem;
     letter-spacing: -0.4px;
   }
 
   .quoteAuthor {
-    padding-left: 3rem;
+    padding-left: 2.25rem;
   }
 }

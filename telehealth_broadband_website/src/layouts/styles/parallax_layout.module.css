@@ -13,6 +13,8 @@
 
 .parallaxBackgroundImage {
   width: auto;
+  min-width: 100vw;
+  max-width: 1680px;
   height: 100dvh;
   height: 100vh;
   aspect-ratio: var(--parallax-aspect-ratio);
@@ -35,8 +37,6 @@
   border-bottom-right-radius: 1rem;
   scale: 1.5;
 }
-
-
 
 @media (max-width: 768px) {
   .parallaxBackgroundImage {
