@@ -10,8 +10,6 @@ import { colors } from '@/styles/shared';
 import { RadarIcon } from '@/components/Icons';
 import radarLogo from '@/assets/images/RadarLogo.png';
 
-const RUNNING_STATUS_KEY = '@radar_running_status';
-
 export default function RadarScreen() {
   const [isRunning, setIsRunning] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -23,7 +21,7 @@ export default function RadarScreen() {
   const loadRunningState = async () => {
     try {
       setIsLoading(true);
-      // @ToDo implement fetch runnign state
+      // @ToDo implement fetch running state
       await new Promise(resolve => setTimeout(resolve, 500));
       setIsLoading(false);
     } catch (error) {
