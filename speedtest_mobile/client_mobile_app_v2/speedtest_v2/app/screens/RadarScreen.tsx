@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import TextComponent from "@/components/TextComponent";
@@ -10,8 +10,41 @@ import { colors } from '@/styles/shared';
 import { RadarIcon } from '@/components/Icons';
 import radarLogo from '@/assets/images/RadarLogo.png';
 
+const RUNNING_STATUS_KEY = '@radar_running_status';
+
 export default function RadarScreen() {
   const [isRunning, setIsRunning] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  useEffect(() => {
+    loadRunningState();
+  }, []);
+
+  const loadRunningState = async () => {
+    try {
+      setIsLoading(true);
+      // @ToDo implement fetch runnign state
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Failed to load running state:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const toggleRadar = useCallback(async () => {
+    try {
+      const newState = !isRunning;
+      setIsRunning(newState);
+      
+      // @ToDo implement execution of radar service
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+    } catch (error) {
+      console.error('Failed to toggle radar:', error);
+      setIsRunning(!isRunning);
+    }
+  }, [isRunning]);
 
   return (
     <View style={styles.container}>
@@ -32,8 +65,16 @@ export default function RadarScreen() {
           </View>
 
           <View style={styles.statusContainer}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>Not running</Text>
+            <View style={[
+              styles.statusDot,
+              isRunning && styles.statusDotActive
+            ]} />
+            <Text style={[
+              styles.statusText,
+              isRunning && styles.statusTextActive
+            ]}>
+              {isLoading ? 'Loading...' : (isRunning ? 'Running' : 'Not running')}
+            </Text>
           </View>
         </View>
 
@@ -43,8 +84,9 @@ export default function RadarScreen() {
         </View>
 
         <StartRadarButton 
-          onPress={() => setIsRunning(!isRunning)}
+          onPress={toggleRadar}
           isRunning={isRunning}
+          disabled={isLoading}
         />
 
         <BottomTabBar />
@@ -95,10 +137,16 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: colors.inactive,
   },
+  statusDotActive: {
+    backgroundColor: colors.success,
+  },
   statusText: {
     fontSize: 14,
     color: colors.inactive,
     fontWeight: '500',
+  },
+  statusTextActive: {
+    color: colors.success,
   },
   content: {
     flex: 1,

@@ -19,6 +19,7 @@ export const colors = {
     text: '#FFFFFF',
     inactive: '#6B6B78',
     tabBarBackground: '#1B1B3A',
+    success: '#34C759',
 
     radarIconBg: '#3F3C70',
 }
