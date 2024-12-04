@@ -1,0 +1,34 @@
+.section {
+  --top-padding: 6rem;
+  width: 100vw;
+  padding-block: var(--top-padding) 5rem;
+  padding-inline: var(--side-padding);
+  background-size: cover;
+  background-position: 50% calc(-3 * var(--top-padding));
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.heroContainer {
+  max-width: 608px;
+  margin: 0 auto 3.5rem;
+  text-align: center;
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 50%));
+  grid-template-rows: 1fr;
+  gap: 0;
+  margin-block: 4rem;
+  border-block: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+.grid > div {
+  padding: 3.5rem 2.5rem;
+}
+
+.grid > div:not(:last-child) {
+  border-inline-end: solid 1px rgba(255, 255, 255, 0.1);
+}
