@@ -1,0 +1,38 @@
+.section {
+  padding-top: 4rem;
+  position: relative;
+}
+
+.heroContainer {
+  max-width: 608px;
+  margin: 0 auto 5rem;
+  text-align: center;
+}
+
+.leftLight {
+  width: 1500px;
+  height: auto;
+  aspect-ratio: 966 / 446;
+  position: absolute;
+  z-index: -1;
+  left: -60%;
+  top: -200px;
+}
+
+.rightLight {
+  width: 1500px;
+  height: auto;
+  aspect-ratio: 966 / 446;
+  position: absolute;
+  z-index: -1;
+  right: -60%;
+  top: -200px;
+}
+
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  gap: 2rem;
+}

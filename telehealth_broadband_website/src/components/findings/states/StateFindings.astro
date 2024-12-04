@@ -1,0 +1,25 @@
+---
+import styles from './styles/state_findings.module.css';
+import commonStyles from '../../../common.module.css';
+import HeroWithText from "../../common/content/HeroWithText.astro";
+
+import rightLight from '../../../assets/images/state-findings-right-light.webp';
+import leftLight from '../../../assets/images/state-findings-left-light.webp';
+
+const { title, subtitle } = Astro.props;
+---
+
+<section class={`${commonStyles.paddedSection} ${styles.section}`}>
+  <img src={leftLight.src} class={styles.leftLight}/>
+  <img src={rightLight.src} class={styles.rightLight}/>
+  <div class={styles.heroContainer}>
+    <HeroWithText
+      head={'The findings'}
+      title={title}
+      content={subtitle}
+    />
+  </div>
+  <div class={styles.grid}>
+    <slot/>
+  </div>
+</section>

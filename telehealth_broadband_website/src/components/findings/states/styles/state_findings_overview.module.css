@@ -1,0 +1,30 @@
+.section {
+  padding-top: 4rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.heroContainer {
+  max-width: 609px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 450px;
+}
+
+.heroContainer > p {
+  font-size: 1.125rem;
+  color: var(--text-color);
+  line-height: 1.556;
+}
+
+.stateImage {
+  max-width: 550px;
+  height: auto;
+  aspect-ratio: 552 / 410;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 450px;
+}
