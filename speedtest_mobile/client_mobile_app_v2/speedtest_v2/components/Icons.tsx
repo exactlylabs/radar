@@ -25,7 +25,7 @@ export const RadarIcon = ({ size = 24, color = colors.primary, opacity = 1 }: Ic
   );
 };
 
-export const SpeedometerIcon = ({ size = 26, color = colors.iconInactive, opacity = 1 }: IconProps) => {
+export const SpeedometerIcon = ({ size = 26, color = colors.gray400, opacity = 1 }: IconProps) => {
   return (
     <Svg width="26" height="24">
       <Path fill="none" stroke="#A09FB7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="translate(0.0244141 3)" d="M12 0C8.7929602 0.025750514 5.7269182 1.4042017 3.4764969 3.8320563C1.2260756 6.2599111 -0.024346054 9.5382528 0.00035924526 12.945755L0.00035924526 15.299632C0.00035924526 16.238493 0.71668273 16.999592 1.6003125 16.999592L22.399706 16.999592C23.283335 16.999592 23.999659 16.238493 23.999659 15.299632L23.999659 12.942355C24.049328 5.8478656 18.677135 0.053627197 12 0Z" fill-rule="evenodd"/>
@@ -37,7 +37,7 @@ export const SpeedometerIcon = ({ size = 26, color = colors.iconInactive, opacit
 }; 
 
 
-export const MapIcon = ({ size = 26, color = colors.iconInactive, opacity = 1 }: IconProps) => {
+export const MapIcon = ({ size = 26, color = colors.gray400, opacity = 1 }: IconProps) => {
   return (
     <Svg width="24" height="24">
       <Path fill="none" stroke="#A09FB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(4 4)" d="M5.3292308 14.769231L0 16L0 1.2307693L5.3292308 0L5.3292308 14.769231L5.3292308 14.769231Z" fill-rule="evenodd"/>

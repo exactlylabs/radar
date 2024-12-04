@@ -13,12 +13,12 @@ export const BottomTabBar = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.tab} activeOpacity={0.7}>
-        <SpeedometerIcon size={24} color={colors.iconInactive} />
+        <SpeedometerIcon size={24} color={colors.gray400} />
         <Text style={styles.tabText}>Speed tests</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.tab} activeOpacity={0.7}>
-        <MapIcon size={24} color={colors.iconInactive} />
+        <MapIcon size={24} color={colors.gray400} />
         <Text style={styles.tabText}>Explore</Text>
       </TouchableOpacity>
     </View>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 12,
-    color: colors.iconInactive,
+    color: colors.gray400,
     fontWeight: '500',
     fontFamily: 'MulishRegular',
   },

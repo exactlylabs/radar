@@ -52,6 +52,12 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Radar to use your location to find Wi-Fi hotspots and cell towers around you."
+        }
       ]
     ],
     "experiments": {

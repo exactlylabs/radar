@@ -13,13 +13,13 @@ export const colors = {
     bgPrimary: '#15152E',
     // @ToDo Verify these colors, added for my radar screen
     background: '#1A1B2E',
-    backgroundGradientStart: '#1A1B2E',
-    backgroundGradientEnd: '#12132A',
+    backgroundGradientStart: '#110E4C',
+    backgroundGradientEnd: '#0B0B20',
     primary: '#4B7BF5',
     text: '#FFFFFF',
     inactive: '#6B6B78',
     tabBarBackground: '#1B1B3A',
-    iconInactive: '#484964',
+
     radarIconBg: '#3F3C70',
 }
 

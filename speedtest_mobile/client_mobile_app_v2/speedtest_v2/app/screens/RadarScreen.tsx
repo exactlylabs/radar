@@ -14,11 +14,12 @@ export default function RadarScreen() {
   const [isRunning, setIsRunning] = React.useState(false);
 
   return (
-    <LinearGradient
-      colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
-      style={styles.container}
-    >
-      <StatusBar style="light" backgroundColor="transparent" />
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <LinearGradient
+        colors={[colors.backgroundGradientStart, colors.backgroundGradientEnd]}
+        style={[StyleSheet.absoluteFillObject]}
+      />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
@@ -37,7 +38,7 @@ export default function RadarScreen() {
         </View>
 
         <View style={styles.content}>
-          <RadarIcon size={140} opacity={0.15} color={colors.radarIconBg} />
+          <RadarIcon size={140} color={colors.radarIconBg} />
           <TextComponent text="When Radar is running, Wi-Fi hotspots, cell towers around you, and speed tests will appear here." centered />
         </View>
 
@@ -48,14 +49,14 @@ export default function RadarScreen() {
 
         <BottomTabBar />
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
-// @ToDo move this to sharedStyles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   safeArea: {
     flex: 1,
