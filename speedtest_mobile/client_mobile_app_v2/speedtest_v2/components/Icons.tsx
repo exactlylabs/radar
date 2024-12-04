@@ -1,6 +1,7 @@
+import { colors } from '@/styles/shared';
 import React from 'react';
 import Svg, { G, Path, Ellipse } from 'react-native-svg';
-import { colors } from '@/theme/colors';
+// import { colors } from '@/src/theme/colors';
 
 interface IconProps {
   size?: number;
