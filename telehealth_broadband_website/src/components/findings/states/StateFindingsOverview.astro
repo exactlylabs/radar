@@ -1,0 +1,16 @@
+---
+import styles from './styles/state_findings_overview.module.css';
+import commonStyles from '../../../common.module.css';
+import HeroWithText from "../../common/content/HeroWithText.astro";
+
+const { state, title, firstParagraph, secondParagraph, stateImageUrl } = Astro.props;
+---
+
+<section class={`${commonStyles.paddedSection} ${styles.section}`}>
+  <div class={styles.heroContainer}>
+    <HeroWithText head={'Overview'} title={title} content={firstParagraph} />
+    { secondParagraph && <br/> }
+    { secondParagraph && <p>{secondParagraph}</p> }
+  </div>
+  <img src={stateImageUrl} alt={`${state} geographical image`} class={styles.stateImage} />
+</section>

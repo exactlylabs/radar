@@ -1,0 +1,30 @@
+.section {
+  padding-block: 7.5rem 2.5rem;
+  position: relative;
+}
+
+.gradient {
+  --bottom-shift: 5px;
+  width: 100%;
+  height: calc(330px + var(--bottom-shift));
+  position: absolute;
+  bottom: calc(-1 * var(--bottom-shift));
+  left: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 14, 37, 0) 0%,
+    #0F0E25 100%
+  );
+  z-index: -1;
+}
+
+.heroContainer {
+  max-width: 670px;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.downloadButtonContainer {
+  width: fit-content;
+  margin: 0 auto;
+}

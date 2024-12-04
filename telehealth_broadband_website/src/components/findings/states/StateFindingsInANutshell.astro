@@ -1,0 +1,18 @@
+---
+import styles from './styles/state_findings_in_a_nuthsell.module.css';
+import commonStyles from '../../../common.module.css';
+import HeroWithText from "../../common/content/HeroWithText.astro";
+
+import confettiLights from '../../../assets/images/full-width-confetti-lights.webp';
+---
+
+<section class={styles.section} style={{backgroundImage: `url(${confettiLights.src})`}}>
+  <div class={commonStyles.paddedSection}>
+    <div class={styles.heroContainer}>
+      <HeroWithText head="In a Nutshell" title="Our Recommendations" />
+    </div>
+    <div class={styles.grid}>
+      <slot/>
+    </div>
+  </div>
+</section>
