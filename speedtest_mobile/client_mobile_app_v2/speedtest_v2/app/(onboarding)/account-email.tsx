@@ -1,4 +1,4 @@
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Title from "@/components/Title";
 
 import Button from "@/components/Button";
@@ -12,8 +12,7 @@ import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors, fonts } from "@/styles/shared";
-import { api } from "@/src/api/api";
-import { sendCode } from "../http/sendCode";
+import { sendCode } from "@/src/api/api";
 
 export default function AccountEmail() {
     const router = useRouter()
@@ -25,16 +24,17 @@ export default function AccountEmail() {
             setError('')
 
             try {
-                const response = await sendCode(emailRef.current)
+                await sendCode(emailRef.current)
 
-                if (response.status === 202) {
-                    router.push({
-                        pathname: '/account-validate-code',
+                router.push({
+                    pathname: '/account-validate-code',
                         params: { email: emailRef.current }
-                    })
-                }
+                })
+
             } catch (error) {
                 console.log(error)
+
+                Alert.alert('Something went wrong. Please try again.')
             }
         } else {
             setError('Invalid email format')

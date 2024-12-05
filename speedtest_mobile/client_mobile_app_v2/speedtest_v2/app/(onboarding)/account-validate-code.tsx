@@ -19,7 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
-import { api } from "@/src/api/api";
+import { api, getToken } from "@/src/api/api";
 import { sendCode } from "../http/sendCode";
 
 const CELL_COUNT = 6;
@@ -84,9 +84,7 @@ export default function AccountValidateCode() {
 
     const handleContinue = async () => {
         try {
-            const response = await api.post('/authenticate/get_token', {
-                code: value
-            })
+            const response = await getToken(value)
 
             router.push('/permissions_1_phone_access')
         } catch (error) {
