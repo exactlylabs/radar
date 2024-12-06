@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors, fonts } from "@/styles/shared";
-import { sendCode } from "@/src/api/api";
+import { sendCode } from "../http/authentication";
 
 export default function AccountEmail() {
     const router = useRouter()

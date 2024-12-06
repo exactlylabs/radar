@@ -19,8 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
-import { api, getToken } from "@/src/api/api";
-import { sendCode } from "../http/sendCode";
+import { sendCode, getToken } from "../http/authentication";
 
 const CELL_COUNT = 6;
 
