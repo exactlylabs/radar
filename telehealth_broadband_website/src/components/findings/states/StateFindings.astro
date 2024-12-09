@@ -6,7 +6,7 @@ import HeroWithText from "../../common/content/HeroWithText.astro";
 import rightLight from '../../../assets/images/state-findings-right-light.webp';
 import leftLight from '../../../assets/images/state-findings-left-light.webp';
 
-const { title, subtitle } = Astro.props;
+const { title, subtitle, mosaic } = Astro.props;
 ---
 
 <section class={`${commonStyles.paddedSection} ${styles.section}`}>
@@ -19,7 +19,7 @@ const { title, subtitle } = Astro.props;
       content={subtitle}
     />
   </div>
-  <div class={styles.grid}>
+  <div class={styles.grid} id="state-findings" data-mosaic={(!!mosaic).toString()}>
     <slot/>
   </div>
 </section>

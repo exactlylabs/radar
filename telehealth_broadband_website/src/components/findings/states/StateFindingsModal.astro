@@ -1,0 +1,17 @@
+---
+import styles from './styles/modals.module.css';
+
+const { head, title, heroImage } = Astro.props;
+---
+
+<div class={styles.bg}>
+  <img class={styles.bgImage} src={heroImage} alt="Hero Image"/>
+  <div class={styles.gradient}></div>
+</div>
+<div class={styles.content}>
+  <div class={styles.heroContainer}>
+    <span>{head}</span>
+    <h5>{title}</h5>
+  </div>
+  <slot/>
+</div>

@@ -54,7 +54,6 @@
   min-height: 300px;
   max-height: calc(100vh - 7rem);
   border-radius: 1.5rem;
-  background-color: #05041A;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -160,12 +159,17 @@
   }
 }
 
+.contentBody[data-clear-paddings='true'] {
+  padding: 0;
+}
+
 .header {
   width: max-content;
   height: var(--header-height);
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
+  z-index: 1000;
 }
 
 [aria-label="Close modal"] {

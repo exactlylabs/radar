@@ -5,9 +5,10 @@ import commonStyles from "../common.module.css";
 import styles from "./styles/_stories.module.css";
 import HeroWithText from "../components/common/content/HeroWithText.astro";
 import StoryGridCard from "../components/stories/StoryCard.astro";
+
+import michiganStory from '../assets/images/michigan-story-thumbnail.webp';
 import alaskaStory from "../assets/images/alaska-story-1.webp";
 import westVirginiaStory from "../assets/images/west-virginia-story-2.webp";
-import michiganStory from "../assets/images/michigan-story.webp";
 import texasStory from "../assets/images/texas-story.webp";
 import storiesHero from '../assets/images/stories-hero.webp';
 import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp";
@@ -29,11 +30,11 @@ import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp
   <section class={commonStyles.paddedSection}>
     <div class={styles.stories}>
       <StoryGridCard
-        head="Alaska"
-        title="Healthcare Sites Go Dark"
-        content="When a major internet cable was cut in Alaska, healthcare facilities were forced to switch from high-speed fiber to slower satellite connections. This shift limited doctors’ capabilities and left communities waiting months for restoration."
-        readMorePath="/stories/healthcare-sites-go-dark"
-        image={alaskaStory}
+        head="Manistee, Mi"
+        title="Connectivity Issues in Rural Michigan Healthcare"
+        content="Connectivity issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
+        readMorePath="/stories/connectivity-issues-in-rural-michigan-healthcare"
+        image={michiganStory}
       />
       <div class={styles.divider}></div>
       <div class={styles.twoStories}>
