@@ -3,7 +3,8 @@ import Title from "@/components/Title";
 import { colors, fonts, sharedStyles } from "@/styles/shared";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ArrowLeftIcon from '@/assets/images/icons/arrowbackicon.png'
 
 export default function Settings() {
     const router = useRouter();
@@ -11,7 +12,7 @@ export default function Settings() {
         <View style={styles.container}>
             <View style={styles.content}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <AntDesign name="arrowleft" size={24} color={colors.gray400} />
+                    <Image source={ArrowLeftIcon} width={30} height={30} />
                 </TouchableOpacity>
 
                 <View style={styles.titleContainer}>

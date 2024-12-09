@@ -1,7 +1,8 @@
 import { fonts } from "@/styles/shared"
 import { colors } from "@/styles/shared"
 import { AntDesign } from "@expo/vector-icons"
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import ArrowIcon from '@/assets/images/icons/arrowrighticon.png'
 
 interface SettingsItemProps {
     title: string
@@ -13,7 +14,7 @@ export function SettingsItem({ title, description }: SettingsItemProps) {
         <TouchableOpacity style={styles.item}>
             <View style={styles.itemHeader}>    
                 <Text style={styles.itemTitle}>{title}</Text>
-                <AntDesign name="right" size={16} color={colors.gray400} />
+                <Image source={ArrowIcon} width={10} height={10} />
             </View>
             {description && <Text style={styles.itemDescription}>{description}</Text>}
         </TouchableOpacity>
