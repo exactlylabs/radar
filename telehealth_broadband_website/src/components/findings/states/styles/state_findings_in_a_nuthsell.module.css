@@ -9,17 +9,31 @@
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  .section {
+    --top-padding: 4rem;
+    background-size: cover;
+    background-position: 50% -300px;
+    padding-block: var(--top-padding) 2rem;
+  }
+}
+
 .heroContainer {
   max-width: 608px;
   margin: 0 auto 3.5rem;
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  .heroContainer {
+    margin: 0 auto 2rem;
+  }
+}
+
 .grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 50%));
-  grid-template-rows: 1fr;
+  grid-auto-flow: column;
   gap: 0;
   margin-block: 4rem;
   border-block: solid 1px rgba(255, 255, 255, 0.1);
@@ -31,4 +45,21 @@
 
 .grid > div:not(:last-child) {
   border-inline-end: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-auto-flow: row;
+    margin-block: 2rem;
+  }
+
+  .grid > div,
+  .grid > div:not(:last-child) {
+    padding: 2rem 1.5rem;
+    border-inline: none;
+  }
+
+  .grid > div:not(:last-child) {
+    border-block-end: solid 1px rgba(255, 255, 255, 0.1);
+  }
 }

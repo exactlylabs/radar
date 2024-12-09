@@ -16,10 +16,10 @@ import OpportunitiesGrid from "../components/index/OpportunitiesGrid.astro";
 import PartnerLogoCarrousel from "../components/index/PartnerLogoCarrousel.astro";
 import fadedIcons from '../assets/images/faded-icons.png';
 import oldManHomepage from '../assets/images/old-man-homepage.webp';
-import ruralVsUrban from '../assets/images/rural-vs-urban.webp';
-import challengesInAlaska from '../assets/images/challenges-in-alaska.webp';
-import importanceOfLocal from '../assets/images/importance-of-local-expertise.webp';
-import diverseEngagementStrategies from '../assets/images/diverse-engagement-strategies.webp';
+import alaskaFindingsThumbnail from '../assets/images/alaska-findings-thumbnail-1.webp';
+import texasFindingsThumbnail from '../assets/images/texas-findings-thumbnail-1.webp';
+import wvFindingsThumbnail from '../assets/images/wv-findings-thumbnail-1.webp';
+import michiganFindingsThumbnail from '../assets/images/michigan-findings-thumbnail-1.webp';
 import lackOfTechnicalExpertiseStoryImage from '../assets/images/lack-of-technical-expertise-story.webp'
 import roadImage from '../assets/images/road.webp';
 import lackOfTechnicalExpertise from '../assets/images/lack-of-technical-expertise.webp';
@@ -29,6 +29,7 @@ import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizont
 import blueGradientConcavedLight from '../assets/images/blue-gradient-concaved-light.webp';
 import blueGradientZigZagSmallLight from '../assets/images/green-blue-zigzag-small-light.webp';
 import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigzag-blured-small-light.webp';
+import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wide.webp';
 ---
 
 <BaseLayout
@@ -92,22 +93,22 @@ import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigza
     </div>
     <div class={styles.findingsCarrouselContainer}>
       <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'}>
-        <HomepageFindingsCard title="Rural vs. Urban Internet Gaps"
-                              href="/findings/rural-vs-urban-internet-gaps"
-                              image={ruralVsUrban.src}
+        <HomepageFindingsCard title="Broadband Challenges in Remote Alaska"
+                              href="/findings/alaska"
+                              image={alaskaFindingsThumbnail.src}
         />
-        <HomepageFindingsCard title="Challenges in Alaska"
-                              href="/findings/challenges-in-alaska"
+        <HomepageFindingsCard title="Connectivity Barriers in Rural Michigan"
+                              href="/findings/michigan"
                               maxTextWidth="250px"
-                              image={challengesInAlaska.src}
+                              image={michiganFindingsThumbnail.src}
         />
-        <HomepageFindingsCard title="Importance of Local Expertise"
-                              href="/findings/importance-of-local-expertise"
-                              image={importanceOfLocal.src}
+        <HomepageFindingsCard title="A Look into the Rural Texas Communities"
+                              href="/findings/texas"
+                              image={texasFindingsThumbnail.src}
         />
-        <HomepageFindingsCard title="Diverse Engagement Strategies"
-                              href="/findings/diverse-engagement-strategies"
-                              image={diverseEngagementStrategies.src}
+        <HomepageFindingsCard title="West Virginia's Connectivity Landscape"
+                              href="/findings/west-virginia"
+                              image={wvFindingsThumbnail.src}
         />
       </Carrousel>
     </div>
@@ -126,7 +127,13 @@ import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigza
       </div>
     </div>
     <div class={styles.storiesCarrouselContainer}>
-      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={2}>
+      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={3}>
+        <HomepageStoriesCard head="Manistee, Mi"
+                             title="Connectivity Challenges Undermining Rural Healthcare in Michigan"
+                             content="Broadband issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
+                             image={michiganStoryThumbnail.src}
+                             link="/stories/connectivity-issues-in-rural-michigan-healthcare"
+        />
         <HomepageStoriesCard head="West Virginia"
           title="Community Centers as Lifelines"
           content="In many rural areas, reliable internet access exists only at community centers, leaving households disconnected. One young adult shared their shock at discovering high-speed internet for the first time upon arriving at college."

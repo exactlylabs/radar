@@ -3,6 +3,12 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding-block: 5rem 2.5rem;
+  }
+}
+
 .gradient {
   --bottom-shift: 5px;
   width: 100%;
@@ -18,10 +24,24 @@
   z-index: -1;
 }
 
+@media (max-width: 768px) {
+  .gradient {
+    height: 536px;
+    top: var(--navbar-height);
+    bottom: unset;
+  }
+}
+
 .heroContainer {
   max-width: 670px;
   margin: 0 auto 2.5rem;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .heroContainer {
+    max-width: calc(100% - 3rem);
+  }
 }
 
 .downloadButtonContainer {
