@@ -3,10 +3,22 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding-top: 2rem;
+  }
+}
+
 .heroContainer {
   max-width: 608px;
   margin: 0 auto 5rem;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .heroContainer {
+    margin: 0 auto 3rem;
+  }
 }
 
 .leftLight {
@@ -35,4 +47,66 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
   gap: 2rem;
+}
+
+.grid[data-mosaic="true"] {
+  display: grid;
+  grid-template-columns: repeat(8, calc(100% / 8 - 2rem));
+  grid-template-rows: repeat(4, 178px);
+  grid-column-gap: 2rem;
+  grid-row-gap: 2rem;
+}
+
+.grid[data-mosaic="true"] > button {
+  aspect-ratio: unset;
+  background-size: 100% 100%;
+}
+
+.grid[data-mosaic="true"] > button:first-child {
+  grid-area: 1 / 1 / 3 / 6;
+}
+.grid[data-mosaic="true"] > button:nth-child(2) {
+  grid-area: 1 / 6 / 3 / 9;
+  background-size: 200% 100%;
+}
+.grid[data-mosaic="true"] > button:nth-child(3) {
+  grid-area: 3 / 1 / 5 / 4;
+  background-size: 200% 100%;
+}
+.grid[data-mosaic="true"] > button:nth-child(4) {
+  grid-area: 3 / 4 / 5 / 9;
+}
+
+.grid[data-mosaic="true"] > button:hover {
+  background-size: 105% 105%;
+}
+
+.grid[data-mosaic="true"] > button:nth-child(2):hover,
+.grid[data-mosaic="true"] > button:nth-child(3):hover {
+  background-size: 210% 105%;
+}
+
+@media (max-width: 768px) {
+  .grid,
+  .grid[data-mosaic="true"] {
+    grid-auto-flow: row;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+  }
+
+  .grid[data-mosaic="true"] > button:first-child,
+  .grid[data-mosaic="true"] > button:nth-child(2),
+  .grid[data-mosaic="true"] > button:nth-child(3),
+  .grid[data-mosaic="true"] > button:nth-child(4) {
+    grid-area: unset;
+    background-size: cover;
+    aspect-ratio: 2;
+  }
+
+  .grid[data-mosaic="true"] > button:first-child:hover,
+  .grid[data-mosaic="true"] > button:nth-child(2):hover,
+  .grid[data-mosaic="true"] > button:nth-child(3):hover,
+  .grid[data-mosaic="true"] > button:nth-child(4):hover {
+    background-size: cover;
+  }
 }

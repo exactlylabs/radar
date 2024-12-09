@@ -3,7 +3,7 @@ import styles from './styles/state_findings_overview.module.css';
 import commonStyles from '../../../common.module.css';
 import HeroWithText from "../../common/content/HeroWithText.astro";
 
-const { state, title, firstParagraph, secondParagraph, stateImageUrl } = Astro.props;
+const { state, title, firstParagraph, secondParagraph, stateImageUrl, styleOverride } = Astro.props;
 ---
 
 <section class={`${commonStyles.paddedSection} ${styles.section}`}>
@@ -12,5 +12,5 @@ const { state, title, firstParagraph, secondParagraph, stateImageUrl } = Astro.p
     { secondParagraph && <br/> }
     { secondParagraph && <p>{secondParagraph}</p> }
   </div>
-  <img src={stateImageUrl} alt={`${state} geographical image`} class={styles.stateImage} />
+  <img src={stateImageUrl} alt={`${state} geographical image`} class={styles.stateImage} style={styleOverride ?? ''}/>
 </section>

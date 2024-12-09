@@ -3,10 +3,22 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding-top: 4rem;
+  }
+}
+
 .heroContainer {
   max-width: 608px;
   margin: 0 auto 4rem;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .heroContainer {
+    margin: 0 auto 2rem;
+  }
 }
 
 .light {
