@@ -1,7 +1,6 @@
 import { SettingsItem } from "@/components/SettingsItem";
 import Title from "@/components/Title";
-import { colors, fonts, sharedStyles } from "@/styles/shared";
-import { AntDesign } from "@expo/vector-icons";
+import { colors, fonts } from "@/styles/shared";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from '@/assets/images/icons/arrowbackicon.png'

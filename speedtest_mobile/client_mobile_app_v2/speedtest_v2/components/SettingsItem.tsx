@@ -1,6 +1,5 @@
 import { fonts } from "@/styles/shared"
 import { colors } from "@/styles/shared"
-import { AntDesign } from "@expo/vector-icons"
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import ArrowIcon from '@/assets/images/icons/arrowrighticon.png'
 
