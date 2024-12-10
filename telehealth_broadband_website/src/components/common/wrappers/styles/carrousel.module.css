@@ -64,7 +64,7 @@
 .button {
   height: 40px;
   width: 40px;
-  border: solid 1.5px white;
+  border: solid 1.5px rgba(255, 255, 255, 0.8);
   border-radius: 4px;
   background-color: transparent;
   cursor: pointer;
@@ -74,25 +74,29 @@
   transition: background-color 0.3s;
 }
 
-.button > svg[data-color="black"] {
-  display: none;
-}
-
-.button:not([disabled]):hover > svg[data-color="white"] {
-  display: none;
-}
-
-.button:not([disabled]):hover > svg[data-color="black"] {
-  display: block;
-}
-
-.button:not([disabled]):hover {
-  background-color: white;
-}
-
 .button[disabled] {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.button:not([disabled]):hover,
+.button:not([disabled]):focus {
+  border: solid 1.5px white;
+}
+
+.button:not([disabled]):hover > svg,
+.button:not([disabled]):focus > svg {
+  fill: white;
+}
+
+.button:not([disabled]):hover > svg > path[stroke-width],
+.button:not([disabled]):focus > svg > path[stroke-width] {
+  stroke: white;
+}
+
+.button:not([disabled]):hover > svg > path:not([stroke-width]),
+.button:not([disabled]):focus > svg > path:not([stroke-width]) {
+  fill: white;
 }
 
 .button[data-direction="left"] {

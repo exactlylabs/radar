@@ -9,54 +9,6 @@ interface CarrouselProps {
   elementCount?: number;
 }
 
-const arrowBlack = () => (
-  <svg xmlns="http://www.w3.org/2000/svg"
-       xmlnsXlink="http://www.w3.org/1999/xlink"
-       width="16"
-       height="16"
-       data-color="black"
-  >
-    <path fill="black"
-          transform="translate(1 7.25)"
-          d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
-          fillRule="evenodd"
-    />
-    <path fill="none"
-          stroke="black"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          transform="translate(8.5 2.5)"
-          d="M0 0L5.5023718 5.5L0 11"
-          fillRule="evenodd"
-    />
-  </svg>
-);
-
-const arrowWhite = () => (
-  <svg xmlns="http://www.w3.org/2000/svg"
-       xmlnsXlink="http://www.w3.org/1999/xlink"
-       width="16"
-       height="16"
-       data-color="white"
-  >
-    <path fill="white"
-          transform="translate(1 7.25)"
-          d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
-          fillRule="evenodd"
-    />
-    <path fill="none"
-          stroke="white"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          transform="translate(8.5 2.5)"
-          d="M0 0L5.5023718 5.5L0 11"
-          fillRule="evenodd"
-    />
-  </svg>
-);
-
 const AUTOMATIC_SWITCH_INTERVAL = 8000;
 
 /**
@@ -82,6 +34,8 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   const timeLeftRef = useRef(AUTOMATIC_SWITCH_INTERVAL);
   const timePausedRef = useRef(0);
   const pauseTime = useRef(0);
+  const [index, setIndex] = useState(0);
+  const [isDisabledNext, setIsDisabledNext] = useState(false);
   
   let isSmallScreen = window.innerWidth < 768;
   
@@ -172,11 +126,13 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     
     if (remainingDistanceToStart !== 0 && firstElementIndex === 0) firstElementIndex = 1;
     currentElementIndex.current = firstElementIndex;
+    setIndex(firstElementIndex);
     if(!arrowLess) {
       isDisabledNextRef.current = remainingDistanceToEnd <= 1;
     } else {
       isDisabledNextRef.current = firstElementIndex === elementCount! - 1;
     }
+    setIsDisabledNext(isDisabledNextRef.current);
     
   }
   
@@ -231,25 +187,63 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
       <button
         className={styles.button}
         onClick={moveToPrevious}
-        disabled={currentElementIndex.current === 0}
+        disabled={index === 0}
         data-direction="left"
       >
-        {arrowBlack()}
-        {arrowWhite()}
+        <svg xmlns="http://www.w3.org/2000/svg"
+             xmlnsXlink="http://www.w3.org/1999/xlink"
+             width="16"
+             height="16"
+             data-color="white"
+        >
+          <path fill="rgba(255, 255, 255, 0.8)"
+                transform="translate(1 7.25)"
+                d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
+                fillRule="evenodd"
+          />
+          <path fill="none"
+                stroke="rgba(255, 255, 255, 0.8)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                transform="translate(8.5 2.5)"
+                d="M0 0L5.5023718 5.5L0 11"
+                fillRule="evenodd"
+          />
+        </svg>
       </button>
       <button
         className={styles.button}
         onClick={moveToNext}
-        disabled={isDisabledNextRef.current}
+        disabled={isDisabledNext}
       >
-        {arrowBlack()}
-        {arrowWhite()}
+        <svg xmlns="http://www.w3.org/2000/svg"
+             xmlnsXlink="http://www.w3.org/1999/xlink"
+             width="16"
+             height="16"
+             data-color="white"
+        >
+          <path fill="rgba(255, 255, 255, 0.8)"
+                transform="translate(1 7.25)"
+                d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
+                fillRule="evenodd"
+          />
+          <path fill="none"
+                stroke="rgba(255, 255, 255, 0.8)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                transform="translate(8.5 2.5)"
+                d="M0 0L5.5023718 5.5L0 11"
+                fillRule="evenodd"
+          />
+        </svg>
       </button>
     </div>
   );
-
+  
   const handleMouseOver = () => {
-    if(!arrowLess) return;
+    if (!arrowLess) return;
     pauseAutomaticSwitch();
     const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
     const currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
@@ -257,7 +251,7 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   }
   
   const handleMouseOut = () => {
-    if(!arrowLess) return;
+    if (!arrowLess) return;
     playAutomaticSwitch();
     const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
     const currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
