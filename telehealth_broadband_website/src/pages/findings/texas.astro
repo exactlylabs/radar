@@ -51,8 +51,10 @@ import TexasGuidanceAndRecommendationsContent
           styleOverride="--aspect-ratio: 440 / 418; max-width: 440px;"
   />
 
-  <div class={styles.mainBodyImage} style={{backgroundImage: `url(${mainStateImage.src})`}}></div>
-
+  <div class={styles.mainBodyImageContainer} id="horizontal-shift-image">
+    <img src={mainStateImage.src} alt="Texas landscape" loading="eager"></img>
+  </div>
+  
   <StateFindings
           title="Insights in Rural Texas"
           subtitle="Explore the broadband gaps, telehealth challenges, and opportunities for community-driven solutions."
@@ -265,19 +267,4 @@ import TexasGuidanceAndRecommendationsContent
 </BaseLayout>
 
 
-<script>
-  function attachModals() {
-    const stateFindingsContainer = document.getElementById('state-findings')!;
-    const children = Array.from(stateFindingsContainer.children);
-    children.forEach(button => {
-      const modal = document.getElementById((button as HTMLButtonElement).dataset.modalId!);
-      if(modal) {
-        button.addEventListener('click', () => {
-          modal.dataset.isOpen = 'true';
-        });
-      }
-    });
-  }
-  
-  attachModals()
-</script>
+<script src="../../scripts/findings_template.ts"></script>
