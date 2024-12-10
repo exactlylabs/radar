@@ -1,0 +1,92 @@
+---
+import styles from './styles/navbar.module.css';
+import logo from '../../../assets/logos/navbar-logo.webp';
+---
+
+<nav class={styles.nav} data-responsive-menu-open="false" data-scrolled="false">
+  <a href="/">
+    <img
+      src={logo.src}
+      alt="Main navbar TBP logo"
+      height={28}
+      loading={'eager'}
+    />
+  </a>
+  <ul class={styles.links}>
+    <li><a href="/overview">Overview</a></li>
+    <li><a href="/findings">Findings</a></li>
+    <li><a href="/stories">Stories</a></li>
+    <li><a href="/opportunities">Opportunities</a></li>
+    <li><a href="/resources">Resources</a></li>
+  </ul>
+  <button id="toggle-menu" class={styles.menuButton}>
+    <svg data-hidden="false" id="open-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+      <path fill="#DBDEEA" transform="translate(0 4)" d="M0.75 0L15.25 0C15.664213 0 16 0.33578643 16 0.75C16 1.1642135 15.664213 1.5 15.25 1.5L0.75 1.5C0.33578643 1.5 0 1.1642135 0 0.75C0 0.37030423 0.28215387 0.05650904 0.64822942 0.006846616L0.75 0ZM0.75 6.5L15.25 6.5C15.664213 6.5 16 6.8357863 16 7.25C16 7.6642137 15.664213 8 15.25 8L0.75 8C0.33578643 8 0 7.6642137 0 7.25C0 6.8703041 0.28215387 6.556509 0.64822942 6.5068464L0.75 6.5Z" fill-rule="evenodd"/>
+    </svg>
+    <svg data-hidden="true" id="close-icon" style="rotate: 45deg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+      <path fill="#DBDEEA" transform="translate(1 7.25)" d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+      <path fill="#DBDEEA" transform="matrix(-4.37114e-08 1 -1 -4.37114e-08 8.75013 0.999874)" d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+    </svg>
+    <span>Menu</span>
+  </button>
+  <div id="responsive-menu" class={styles.responsiveMenu} hidden="hidden">
+    <ul class={styles.responsiveLinks}>
+      <li><a href="/overview">Overview</a></li>
+      <li><a href="/findings">Findings</a></li>
+      <li><a href="/stories">Stories</a></li>
+      <li><a href="/opportunities">Opportunities</a></li>
+      <li><a href="/resources">Resources</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<script>
+  const menuButton = document.getElementById('toggle-menu')!;
+  
+  function toggleMenu() {
+    const menuButton = document.getElementById('toggle-menu')!;
+    const menu = document.getElementById('responsive-menu')!;
+    const nav = document.querySelector('nav')!;
+    if(menu.hasAttribute('hidden')) {
+      menu.removeAttribute('hidden');
+      nav.setAttribute('data-responsive-menu-open', 'true');
+      menuButton.querySelector('span')!.textContent = 'Close';
+      menuButton.querySelector('#open-icon')!.setAttribute('data-hidden', 'true');
+      menuButton.querySelector('#close-icon')!.setAttribute('data-hidden', 'false');
+    } else {
+      const links = menu.querySelectorAll('ul > li > a');
+      links.forEach((link, i) => {
+        link.setAttribute('data-closing', 'true');
+        setTimeout(() => {
+          link.setAttribute('data-hidden', 'true');
+        }, (links.length - i - 1) * 50);
+      });
+      setTimeout(() => {
+        links.forEach(link => {
+          link.removeAttribute('data-closing');
+          link.removeAttribute('data-hidden');
+        });
+        menu.setAttribute('hidden', 'hidden');
+        nav.setAttribute('data-responsive-menu-open', 'false');
+        menuButton.querySelector('span')!.textContent = 'Menu';
+        menuButton.querySelector('#open-icon')!.setAttribute('data-hidden', 'false');
+        menuButton.querySelector('#close-icon')!.setAttribute('data-hidden', 'true');
+      }, 300);
+    }
+  }
+  
+  function checkScrollForNavbarBg(scrollableElement: HTMLElement | null = null) {
+    const toScroll = scrollableElement ?? window;
+    const scrollY = toScroll instanceof Window ? toScroll.scrollY : toScroll.scrollTop;
+    document.querySelector('nav')!.dataset.scrolled = (scrollY > 0).toString();
+  }
+  
+  menuButton.addEventListener('click', toggleMenu);
+  const possibleParalaxLayout = document.getElementById("parallax-scrollable-container");
+  if(possibleParalaxLayout)  {
+    possibleParalaxLayout.addEventListener('scroll', () => checkScrollForNavbarBg(possibleParalaxLayout));
+  } else {
+    window.addEventListener('scroll', () => checkScrollForNavbarBg());
+  }
+</script>

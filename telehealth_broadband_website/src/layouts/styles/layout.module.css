@@ -1,0 +1,34 @@
+:root {
+  --navbar-height: 65px;
+  --footer-height: 240px;
+  --side-padding: calc((100vw - var(--max-width)) / 2);
+}
+
+.main {
+  width: 100vw;
+  min-height: calc(100dvh - var(--navbar-height) - var(--footer-height));
+  min-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+  overflow-x: clip;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: var(--responsive-navbar-height);
+  }
+}
+
+.heroImage {
+  --shadow-blur: 65px;
+  --shadow-spread: 65px;
+  width: calc(100vw + 2 * var(--shadow-blur));
+  max-width: calc(var(--max-width) + 8 * var(--shadow-blur));
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-size: cover;
+  background-position-y: 50%;
+  background-repeat: no-repeat;
+  box-shadow: 0 -75px var(--shadow-blur) var(--shadow-spread) var(--bg-color) inset;
+}

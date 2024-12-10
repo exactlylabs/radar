@@ -1,0 +1,18 @@
+---
+import styles from './styles/bullet_point.module.css';
+const { title, content, direction, borderless, bigCircle } = Astro.props;
+---
+
+<div class={styles.container}
+  data-borderless={(!!borderless).toString()}
+  data-direction={direction}
+  data-big-circle={(!!bigCircle).toString()}
+>
+  <div class={styles.iconCircle}>
+    <slot/>
+  </div>
+  <div class={styles.textContainer}>
+    <h5 class={styles.title}>{title}</h5>
+    <p class={styles.content}>{content}</p>
+  </div>
+</div>

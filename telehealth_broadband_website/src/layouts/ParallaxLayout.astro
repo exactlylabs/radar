@@ -1,8 +1,8 @@
 ---
-import Navbar from "../components/common/Navbar.astro";
-import Footer from "../components/common/Footer.astro";
-import styles from './parallax_layout.module.css';
-import BaseHead from "../components/common/BaseHead.astro";
+import Navbar from "../components/common/layout/Navbar.astro";
+import Footer from "../components/common/layout/Footer.astro";
+import styles from './styles/parallax_layout.module.css';
+import BaseHead from "../components/common/layout/BaseHead.astro";
 
 const { bgImageSrc, title, description } = Astro.props;
 ---
@@ -172,6 +172,7 @@ const { bgImageSrc, title, description } = Astro.props;
       
       function handleHorizontalShiftImages() {
         const horizontalShiftImage = document.getElementById("horizontal-shift-image")!;
+        if(!horizontalShiftImage) return;
         const {top: horizontalShiftTop} = horizontalShiftImage.getBoundingClientRect();
         const targetShiftPx = 100;
         if (horizontalShiftTop <= window.innerHeight) {
@@ -183,12 +184,14 @@ const { bgImageSrc, title, description } = Astro.props;
       
       function handleThreeImageCarrousel() {
         const threeImageCarrousel = document.getElementById("three-image-carrousel")!;
+        if(!threeImageCarrousel) return;
         const { top: carrouselTop } = threeImageCarrousel.getBoundingClientRect();
-        const targetShiftPx = 100;
+        const firstImage = threeImageCarrousel.querySelector('img')!;
+        const targetShiftPx = firstImage.getBoundingClientRect().width / 4;
         if(carrouselTop <= window.innerHeight) {
           const topPercentage = carrouselTop / window.innerHeight;
-          const newValue = targetShiftPx - targetShiftPx * (1 - topPercentage);
-          threeImageCarrousel.style.left = `${newValue}px`;
+          let newValue = targetShiftPx * (1 - topPercentage);
+          threeImageCarrousel.style.left = `-${newValue}px`;
         }
       }
       

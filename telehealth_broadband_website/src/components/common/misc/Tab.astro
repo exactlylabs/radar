@@ -1,0 +1,9 @@
+---
+import styles from './styles/floating_tabs.module.css';
+const { id, label, isActive } = Astro.props;
+---
+
+<a data-active={(isActive === "true").toString()} class={styles.tab} href={`#${id}`}>
+  <slot/>
+  {label}
+</a>

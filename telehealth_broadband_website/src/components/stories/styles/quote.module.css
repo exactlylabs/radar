@@ -1,0 +1,52 @@
+.quoteContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 2rem 2.75rem 0;
+  gap: 1.125rem;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .quoteContainer {
+    padding: 2rem 0 0;
+  }
+}
+
+.quoteContainer::before {
+  content: '“';
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 4.625rem;
+  color: #4B7BE5;
+  font-style: italic;
+}
+
+.quote {
+  font-size: 1.5rem;
+  color: white;
+  letter-spacing: -0.48px;
+  text-align: left;
+  font-style: italic;
+}
+
+.quoteAuthor {
+  line-height: 1.625;
+  color: var(--text-color);
+  text-align: left;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .quote {
+    padding-left: 2.25rem;
+    font-size: 1.25rem;
+    letter-spacing: -0.4px;
+  }
+
+  .quoteAuthor {
+    padding-left: 2.25rem;
+  }
+}
