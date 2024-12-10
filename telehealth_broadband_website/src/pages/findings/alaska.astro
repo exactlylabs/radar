@@ -48,7 +48,9 @@ import mainStateImage from '../../assets/images/alaska-main-findings-image.webp'
     stateImageUrl={stateImage.src}
   />
   
-  <img class={styles.mainBodyImage} src={mainStateImage.src} alt="Alaska landscape" loading="eager"/>
+  <div class={styles.mainBodyImageContainer} id="horizontal-shift-image">
+    <img src={mainStateImage.src} alt="Alaska landscape" loading="eager" />
+  </div>
   
   <StateFindings
     title="Insights in Rural Alaska"
@@ -199,20 +201,4 @@ import mainStateImage from '../../assets/images/alaska-main-findings-image.webp'
   </Modal>
 </BaseLayout>
 
-
-<script>
-  function attachModals() {
-    const stateFindingsContainer = document.getElementById('state-findings')!;
-    const children = Array.from(stateFindingsContainer.children);
-    children.forEach(button => {
-      const modal = document.getElementById((button as HTMLButtonElement).dataset.modalId!);
-      if(modal) {
-        button.addEventListener('click', () => {
-          modal.dataset.isOpen = 'true';
-        });
-      }
-    });
-  }
-  
-  attachModals()
-</script>
+<script src="../../scripts/findings_template.ts"></script>

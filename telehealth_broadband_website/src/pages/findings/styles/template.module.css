@@ -15,16 +15,21 @@
   }
 }
 
-.mainBodyImage {
+.mainBodyImageContainer {
   width: calc(100vw - var(--side-padding));
   height: auto;
-  aspect-ratio: 1250 / 480;
+  max-height: 480px;
+  aspect-ratio: 1600 / 480;
   border-radius: 6px;
   margin: 4rem auto 2rem;
   display: block;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.mainBodyImageContainer > img {
+  width: calc(100vw - var(--side-padding) + 150px);
+  height: auto;
+  margin-left: 0;
 }
 
 @media (max-width: 1250px) {
