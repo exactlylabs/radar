@@ -4,8 +4,12 @@ import { colors, fonts } from "@/styles/shared";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from '@/assets/images/icons/arrowbackicon.png'
+import ArrowRightBlueIcon from '@/assets/images/icons/arrowrightblueicon.png'
+import CloseIcon from '@/assets/images/icons/closeicon.png'
+import { useState } from "react";
 
 export default function Settings() {
+    const [isProfileIncomplete, setIsProfileIncomplete] = useState(true);
     const router = useRouter();
     return (
         <View style={styles.container}>
@@ -17,6 +21,22 @@ export default function Settings() {
                 <View style={styles.titleContainer}>
                     <Title title="Settings" />
                 </View>
+
+                {isProfileIncomplete && (
+                    <View style={styles.profileContainer}>
+                        <TouchableOpacity style={styles.profileCloseButton} onPress={() => setIsProfileIncomplete(false)}>
+                            <Image source={CloseIcon} width={20} height={20} />
+                        </TouchableOpacity>
+                        <Text style={styles.profileText}>Help us understand how you're connected to the Internet.</Text>
+                        <View style={styles.profileDivider} />
+                        <TouchableOpacity style={styles.profileButton}>
+                            <Text style={styles.profileButtonText}>
+                                Complete your profile
+                            </Text>
+                            <Image source={ArrowRightBlueIcon} width={20} height={20} />
+                        </TouchableOpacity>
+                    </View>
+                )}
 
                 <View style={styles.itemsContainer}>
                     <Text style={styles.label}>ACCOUNT</Text>
@@ -90,4 +110,40 @@ const styles = StyleSheet.create({
         fontFamily: fonts.MulishBold,
         color: colors.red400,
     },
+    profileContainer: {
+        marginTop: 20,
+        backgroundColor: colors.bgSecondary,
+        padding: 20,
+        borderRadius: 10,
+    },
+    profileText: {
+        fontSize: 16,
+        fontFamily: fonts.MulishRegular,
+        color: colors.white,
+        maxWidth: 250,
+    },
+    profileDivider: {
+        borderBottomWidth: 0.5,
+        borderBottomColor: colors.borderColor,
+        marginTop: 20,
+    },
+    profileButton: {
+        marginTop: 20,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: 350,
+        gap: 10,
+    },
+    profileButtonText: {
+        fontSize: 16,
+        fontFamily: fonts.MulishBold,
+        color: colors.blue200,
+    },
+    profileCloseButton: {
+        position: 'absolute',
+        right: 10,
+        top: 10,
+    }
 })
