@@ -7,6 +7,23 @@
   background-position: 50% calc(-3 * var(--top-padding));
   background-repeat: no-repeat;
   overflow: hidden;
+  position: relative;
+}
+
+.section[data-right-side-lights="true"] {
+  background: linear-gradient(
+      180deg,
+      rgba(75, 123, 229, 0.1) 0%,
+      rgba(75, 123, 229, 0) 100%
+  );
+}
+
+.section[data-right-side-lights="true"] > div > img[data-right-side-lights="true"] {
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  object-fit: cover;
+  z-index: -1;
 }
 
 @media (max-width: 768px) {
@@ -22,6 +39,11 @@
   max-width: 608px;
   margin: 0 auto 3.5rem;
   text-align: center;
+}
+
+.heroContainer[data-text-align="left"] {
+  text-align: left;
+  margin: 0 auto 3.5rem 0;
 }
 
 @media (max-width: 768px) {
@@ -53,9 +75,13 @@
     margin-block: 2rem;
   }
 
+  .grid > div:not([data-variant]),
+  .grid > div:not(:last-child):not([data-variant]) {
+    padding: 2rem 1.5rem;
+  }
+
   .grid > div,
   .grid > div:not(:last-child) {
-    padding: 2rem 1.5rem;
     border-inline: none;
   }
 

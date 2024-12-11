@@ -1,0 +1,36 @@
+---
+import styles from './states/styles/state_findings_in_a_nuthsell.module.css';
+import commonStyles from '../../common.module.css';
+import HeroWithText from "../common/content/HeroWithText.astro";
+
+import confettiLights from '../../assets/images/full-width-confetti-lights.webp';
+import smallConfettiLights from '../../assets/images/small-confetti-lights.webp';
+
+const { head, title, textAlign, rightSideLights, backgroundColor } = Astro.props;
+
+const backgroundLightsSrc = rightSideLights ? smallConfettiLights.src : confettiLights.src;
+
+const sectionStyle: {background?: string, backgroundImage?: string} = {};
+
+if (!rightSideLights && backgroundColor) {
+  sectionStyle.background = backgroundColor;
+} else if(!rightSideLights) {
+  sectionStyle.backgroundImage = `url(${backgroundLightsSrc})`;
+}
+
+---
+
+<section class={styles.section}
+  style={sectionStyle}
+  data-right-side-lights={(!!rightSideLights).toString()}
+>
+  <div class={commonStyles.paddedSection}>
+    { !!rightSideLights && <img width="756" height="414" src={backgroundLightsSrc} class={styles.backgroundLight} data-right-side-lights="true"/> }
+    <div class={styles.heroContainer} data-text-align={textAlign ?? 'center'}>
+      <HeroWithText head={head ?? "In a Nutshell"} title={title ?? "Our Recommendations"} />
+    </div>
+    <div class={styles.grid}>
+      <slot/>
+    </div>
+  </div>
+</section>
