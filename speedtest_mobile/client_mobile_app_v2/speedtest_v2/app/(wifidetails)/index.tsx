@@ -30,7 +30,7 @@ interface WifiDetailsProps {
 export default function WifiDetailsScreen() {
     const [wifiDetails, setWifiDetails] = useState<WifiDetailsProps>({
         name: 'Starbucks-2034',
-        address: '203 East Pike Street, Seattle, WA 98122',
+        address: 'Seattle, WA 98122',
         signalStrength: 'Excellent (-34 dBm)',
         security: 'WPA2 Personal',
         macAddress: '00:1a:2b:3c:4d:5e',
@@ -38,7 +38,7 @@ export default function WifiDetailsScreen() {
         firstSeen: '10/20/2023',
         quantityOffSeen: 5
     })
-    
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
@@ -50,7 +50,7 @@ export default function WifiDetailsScreen() {
                         <Subtitle subtitle={wifiDetails.address} />
                     </View>
 
-                    <Image source={WifiGreenIcon} width={20} height={20} />
+                    <Image source={WifiGreenIcon} />
                 </View>
 
                 <View style={styles.labelContainer}>
@@ -76,8 +76,8 @@ export default function WifiDetailsScreen() {
                 <TouchableOpacity style={styles.buttonItemContainer}>
                     <View style={styles.buttonItemContent}>
                         <Text style={styles.itemLabelText}>Current signal strenght</Text>
-                        <View style={[styles.viewRow, { marginTop: 0 }]}>
-                            <Image source={SignalIcon} width={20} height={20} />
+                        <View style={[styles.viewRow, { marginTop: 0, gap: 10 }]}>
+                            <Image source={SignalIcon} />
                             <Text style={styles.itemTitle}>{wifiDetails.signalStrength}</Text>
                         </View>
                     </View>
@@ -129,9 +129,10 @@ export default function WifiDetailsScreen() {
                             <Text style={styles.itemTitle}>{wifiDetails.address}</Text>
                         </View>
                     </View>
-                    <Image source={ArrowRightIcon} width={20} height={20} />
+                    <Image source={ArrowRightIcon} />
                 </TouchableOpacity>
 
+                {/* T0D0: repleace this image with a map */}
                 <Image source={MapImage} style={styles.mapImage} />
 
                 <TouchableOpacity style={styles.buttonViewMap}>
