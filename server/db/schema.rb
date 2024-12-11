@@ -296,6 +296,7 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
     t.time "test_allowed_time_end"
     t.string "test_allowed_time_tz", default: "UTC"
     t.string "register_label"
+    t.boolean "assignable_for_scheduling", default: true
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
@@ -991,7 +992,6 @@ ActiveRecord::Schema.define(version: 2024_10_22_141132) do
   add_foreign_key "location_metadata_projections", "autonomous_system_orgs"
   add_foreign_key "location_metadata_projections", "locations"
   add_foreign_key "locations", "accounts"
-  add_foreign_key "locations", "clients", column: "scheduling_selected_client_id"
   add_foreign_key "locations", "clients", column: "wlan_selected_client_id"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"

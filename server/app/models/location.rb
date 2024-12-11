@@ -50,7 +50,6 @@ class Location < ApplicationRecord
   has_one :client_count_aggregate, :as => :aggregator
   has_and_belongs_to_many :geospaces
   has_one :location_metadata_projections
-  belongs_to :scheduling_selected_client, class_name: "Client", optional: true
   has_many :aggregated_measurements_by_hours
 
   before_validation :check_if_only_coordinates
@@ -100,7 +99,7 @@ class Location < ApplicationRecord
         ) current ON current.location_id = locations.id
       }, current_period_start, current_period_end])
     )
-    .select("*")
+    .select("locations.*, current.*, previous.*")
   }
 
   def event_data()
