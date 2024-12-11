@@ -30,6 +30,26 @@
   }
 }
 
+.container[data-variant="implementation-learnings-future"] {
+  padding: 3rem 2.5rem;
+}
+
+.container[data-variant="implementation-learnings-future"]:first-child {
+  padding: 3rem 2.5rem 3rem 1.5rem;
+}
+
+.container[data-variant="implementation-learnings-future"]:last-child {
+  padding: 3rem 1.5rem 3rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .container[data-variant="implementation-learnings-future"],
+  .container[data-variant="implementation-learnings-future"]:first-child,
+  .container[data-variant="implementation-learnings-future"]:last-child {
+    padding: 2rem 0;
+  }
+}
+
 .iconCircle {
   display: flex;
   align-items: center;
