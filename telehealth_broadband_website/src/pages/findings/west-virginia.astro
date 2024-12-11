@@ -48,7 +48,9 @@ import mainStateImage from '../../assets/images/wv-main-findings-image.webp';
           stateImageUrl={stateImage.src}
   />
 
-  <div class={styles.mainBodyImage} style={{backgroundImage: `url(${mainStateImage.src})`}}></div>
+  <div class={styles.mainBodyImageContainer} id="horizontal-shift-image">
+    <img src={mainStateImage.src} alt="West Virginia landscape" loading="eager"></img>
+  </div>
 
   <StateFindings
           title="Insights in Rural West Virginia"
@@ -197,19 +199,4 @@ import mainStateImage from '../../assets/images/wv-main-findings-image.webp';
 </BaseLayout>
 
 
-<script>
-  function attachModals() {
-    const stateFindingsContainer = document.getElementById('state-findings')!;
-    const children = Array.from(stateFindingsContainer.children);
-    children.forEach(button => {
-      const modal = document.getElementById((button as HTMLButtonElement).dataset.modalId!);
-      if(modal) {
-        button.addEventListener('click', () => {
-          modal.dataset.isOpen = 'true';
-        });
-      }
-    });
-  }
-  
-  attachModals()
-</script>
+<script src="../../scripts/findings_template.ts"></script>

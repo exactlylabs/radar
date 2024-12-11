@@ -92,6 +92,7 @@
     grid-auto-flow: row;
     grid-template-columns: unset;
     grid-template-rows: unset;
+    gap: 1rem;
   }
 
   .grid[data-mosaic="true"] > button:first-child,
