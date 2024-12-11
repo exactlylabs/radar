@@ -64,7 +64,7 @@ export default function WifiDetailsScreen() {
 
                 <View style={styles.infoItemContainer}>
                     <View style={styles.buttonItemContent}>
-                        <Text style={styles.itemLabelText}>Securityt</Text>
+                        <Text style={styles.itemLabelText}>Security</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
                             <Text style={styles.itemTitle}>WPA2 Personal</Text>
                         </View>
