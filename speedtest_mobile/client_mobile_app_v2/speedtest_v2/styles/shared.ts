@@ -12,7 +12,8 @@ export const colors = {
     bgGradientSecondary: '#0B0B1A',
     red400: '#E54B4B',
     bgPrimary: '#15152E',
-    borderColor: '#3F3C70'
+    borderColor: '#3F3C70',
+    bgSecondary: '#1c244a',
 }
 
 export const fonts = {
