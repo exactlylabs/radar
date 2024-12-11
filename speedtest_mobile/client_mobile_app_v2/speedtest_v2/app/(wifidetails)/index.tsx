@@ -14,8 +14,31 @@ import SignalIcon from '@/assets/images/icons/signalicon.png'
 import InfoBlueIcon from '@/assets/images/icons/infoblueicon.png'
 
 import MapImage from '@/assets/images/icons/mapimage.png'
+import { useState } from "react";
+
+interface WifiDetailsProps {
+    name: string
+    address: string
+    signalStrength: string
+    security: string
+    macAddress: string
+    channel: string
+    firstSeen: string
+    quantityOffSeen: number
+}
 
 export default function WifiDetailsScreen() {
+    const [wifiDetails, setWifiDetails] = useState<WifiDetailsProps>({
+        name: 'Starbucks-2034',
+        address: '203 East Pike Street, Seattle, WA 98122',
+        signalStrength: 'Excellent (-34 dBm)',
+        security: 'WPA2 Personal',
+        macAddress: '00:1a:2b:3c:4d:5e',
+        channel: '64 (5 GHz, 80 MHz)',
+        firstSeen: '10/20/2023',
+        quantityOffSeen: 5
+    })
+    
     return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
@@ -23,8 +46,8 @@ export default function WifiDetailsScreen() {
 
                 <View style={styles.headerContainer}>
                     <View>
-                        <SmallTitle title="Starbucks-2034" />
-                        <Subtitle subtitle="Seattle, WA" />
+                        <SmallTitle title={wifiDetails.name} />
+                        <Subtitle subtitle={wifiDetails.address} />
                     </View>
 
                     <Image source={WifiGreenIcon} width={20} height={20} />
@@ -36,7 +59,7 @@ export default function WifiDetailsScreen() {
                 </View>
 
                 <View style={styles.labelContainer}>
-                    <Text style={styles.labelText}>First seen: 10/20/2023</Text>
+                    <Text style={styles.labelText}>First seen: {wifiDetails.firstSeen}</Text>
                 </View>
 
                 <View style={styles.viewRow}>
@@ -46,7 +69,7 @@ export default function WifiDetailsScreen() {
                     </View>
                     <View style={styles.itemRow}>
                         <Image source={EyeIcon} width={20} height={20} />
-                        <Text style={styles.itemTitle}>Seen 5 times</Text>
+                        <Text style={styles.itemTitle}>Seen {wifiDetails.quantityOffSeen} times</Text>
                     </View>
                 </View>
 
@@ -55,7 +78,7 @@ export default function WifiDetailsScreen() {
                         <Text style={styles.itemLabelText}>Current signal strenght</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
                             <Image source={SignalIcon} width={20} height={20} />
-                            <Text style={styles.itemTitle}>Excellent (-34 dBm)</Text>
+                            <Text style={styles.itemTitle}>{wifiDetails.signalStrength}</Text>
                         </View>
                     </View>
                     <Image source={ArrowRightIcon} width={20} height={20} />
@@ -66,7 +89,7 @@ export default function WifiDetailsScreen() {
                     <View style={styles.buttonItemContent}>
                         <Text style={styles.itemLabelText}>Security</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
-                            <Text style={styles.itemTitle}>WPA2 Personal</Text>
+                            <Text style={styles.itemTitle}>{wifiDetails.security}</Text>
                         </View>
                     </View>
                     <TouchableOpacity>
@@ -79,7 +102,7 @@ export default function WifiDetailsScreen() {
                     <View style={styles.buttonItemContent}>
                         <Text style={styles.itemLabelText}>MAC Address</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
-                            <Text style={styles.itemTitle}>00:1a:2b:3c:4d:5e</Text>
+                            <Text style={styles.itemTitle}>{wifiDetails.macAddress}</Text>
                         </View>
                     </View>
                     <TouchableOpacity>
@@ -91,7 +114,7 @@ export default function WifiDetailsScreen() {
                     <View style={styles.buttonItemContent}>
                         <Text style={styles.itemLabelText}>Channel</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
-                            <Text style={styles.itemTitle}>64 (5 GHz, 80 MHz)</Text>
+                            <Text style={styles.itemTitle}>{wifiDetails.channel}</Text>
                         </View>
                     </View>
                     <TouchableOpacity>
@@ -103,7 +126,7 @@ export default function WifiDetailsScreen() {
                     <View style={styles.buttonItemContent}>
                         <Text style={[styles.itemTitle, { fontFamily: fonts.MulishBold }]}>203 East Pike Street</Text>
                         <View style={[styles.viewRow, { marginTop: 0 }]}>
-                            <Text style={styles.itemTitle}>Seattle, WA 98122</Text>
+                            <Text style={styles.itemTitle}>{wifiDetails.address}</Text>
                         </View>
                     </View>
                     <Image source={ArrowRightIcon} width={20} height={20} />
