@@ -31,6 +31,14 @@ class Projector
     raise "Not Implemented"
   end
 
+  def raw_connection
+    conn = ActiveRecord::Base.connection_pool.checkout
+    begin
+      yield conn.raw_connection
+    ensure
+      ActiveRecord::Base.connection_pool.checkin(conn)
+    end
+  end
 
   # Compare states with a caching mechanism to avoid duplicated queries
   def with_previous_state(model, current_state, aggregate_id, timestamp)

@@ -1,11 +1,12 @@
-class OnlineClientCountHandler
-  include Fetchers
+class OnlineClientCountHandler < Projector
+
+  self.projection_model = OnlineClientCountProjection
 
   MAX_QUEUE_SIZE = 50000
   DEFAULT_BATCH_SIZE = 10000
 
   def initialize()
-    @consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "OnlineClientCountProjection")
+    super
     @insertion_queue = []
 
     # Cached data to avoid repeated DB queries
@@ -17,20 +18,10 @@ class OnlineClientCountHandler
     @last_timestamp = nil
   end
 
-  def self.clear
-    ActiveRecord::Base.connection.transaction do
-      ActiveRecord::Base.connection.execute("TRUNCATE TABLE online_client_count_projections")
-      ConsumerOffset.find_by(consumer_id: "OnlineClientCountProjection")&.destroy
-    end
-  end
-
-  def aggregate!()
-    conn = ActiveRecord::Base.connection_pool.checkout
-    begin
-      @raw = conn.raw_connection
+  def process!()
+    self.raw_connection do |raw|
+      @raw = raw
       self._aggregate!
-    ensure
-      ActiveRecord::Base.connection_pool.checkin(conn)
     end
   end
 
@@ -76,7 +67,7 @@ class OnlineClientCountHandler
   def handle_client_event!(event)
     return if event["snapshot_id"].nil?
     aggregate_id = event["aggregate_id"]
-    self.with_previous_pod_state(event["snapshot_state"], aggregate_id, event["timestamp"]) do |previous_state, state|
+    self.with_previous_state(Client, event["snapshot_state"], aggregate_id, event["timestamp"]) do |previous_state, state|
       online_changed = state["online"] != previous_state&.fetch("online", false)
       account_changed = state["account_id"] != previous_state&.fetch("account_id", nil)
       location_changed = state["location_id"] != previous_state&.fetch("location_id", nil)
@@ -279,26 +270,6 @@ class OnlineClientCountHandler
     @last_projections["#{count.account_id}-#{count.autonomous_system_id}-#{count.location_id}"] = count
   end
 
-  def pod_was_online?(aggregate_type, aggregate_id, timestamp)
-    if @pods_status[aggregate_id].nil?
-      snap = Snapshot.where(aggregate_type: aggregate_type, aggregate_id: aggregate_id).prior_to(timestamp).ordered_by_event.last
-      @pods_status[aggregate_id] = snap&.state&.fetch("online") || false
-    end
-    @pods_status[aggregate_id]
-  end
-
-  def to_be_processed_events(**opts)
-    batch_size = opts[:batch_size] || DEFAULT_BATCH_SIZE
-    Enumerator.new { |g|
-      events = Event.where(
-          "id > ? AND (aggregate_type = ? OR aggregate_type = ? OR aggregate_type = ?)",
-          @consumer_offset.offset, Client.name, SystemOutage.name, Location.name
-      ).order('timestamp ASC, version ASC').preload(:snapshot, :aggregate).find_each(batch_size: batch_size) do |event|
-        g.yield event
-      end
-    }
-  end
-
   def flush_insertion_queue
     if @insertion_queue.empty?
       return
@@ -324,18 +295,6 @@ class OnlineClientCountHandler
       Rails.logger.info "Insertion took #{Time.now - t} seconds"
     end
     @insertion_queue = []
-  end
-
-  # Compare states with a caching mechanism to avoid duplicated queries
-  def with_previous_pod_state(current_state, aggregate_id, timestamp)
-    @pod_state ||= {}
-    if @pod_state[aggregate_id].nil?
-      previous_event = Event.of(Client).where(aggregate_id: aggregate_id).where("timestamp < ?", timestamp).order(:timestamp => :asc, :version => :asc).last
-      @pod_state[aggregate_id] = previous_event&.snapshot&.state
-    end
-    yield @pod_state[aggregate_id], current_state
-
-    @pod_state[aggregate_id] = current_state
   end
 
 end

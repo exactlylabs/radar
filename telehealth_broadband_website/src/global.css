@@ -54,9 +54,3 @@ body {
 a {
   cursor: pointer;
 }
-
-a:hover:not(:has(img)) {
-  opacity: 0.8;
-  text-decoration: none;
-  text-underline: none;
-}

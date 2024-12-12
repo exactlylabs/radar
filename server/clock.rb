@@ -27,8 +27,8 @@ end
 
 scheduler.every '15s', overlap: false do
   begin
-    # Location.request_scheduled_tests! # TODO: Uncomment after UI has migrated scheduling at Network-level
-    Client.request_scheduled_tests! # TODO: Remove after UI has migrated scheduling at Network-level
+    # Location.request_scheduled_tests! # TODO: Uncomment after UI has migrated scheduling at Network-level -> currently on hold until someone sponsor it.
+    Client.request_scheduled_tests! # TODO: Remove after UI has migrated scheduling at Network-level -> currently on hold until someone sponsor it.
     Rails.application.send_cronjob_heartbeat(BETTERSTACK_KEYS[:request_tests_cron])
   rescue => e
     Sentry.capture_exception(e)

@@ -16,7 +16,6 @@
 }
 
 .card:hover {
-  opacity: 0.8;
   background-size: 230%;
   background-position: 50% 15%;
 }
@@ -27,7 +26,6 @@
 }
 
 .card#pods-modal-trigger:hover {
-  opacity: 0.8;
   background-size: 135%;
   background-position: 20% 45%;
 }
@@ -38,7 +36,6 @@
 }
 
 .card#speed-test-modal-trigger:hover {
-  opacity: 0.8;
   background-size: 215%;
   background-position: 20% 45%;
 }
@@ -106,4 +103,8 @@
 
 .openButton > * {
   pointer-events: none;
+}
+
+.card:hover > .openButton {
+  background-color: rgba(255, 255, 255, 0.3);
 }

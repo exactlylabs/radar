@@ -1,0 +1,30 @@
+.quotePadder {
+  padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .quotePadder {
+    padding-bottom: 2.5rem;
+  }
+}
+
+.reliableInternetSection {
+  padding-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .reliableInternetSection {
+    padding-inline: 1.5rem;
+  }
+
+  .reliableInternetSection > div > p > br {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .staticImage {
+    overflow: hidden;
+    border-radius: 6px;
+  }
+}
