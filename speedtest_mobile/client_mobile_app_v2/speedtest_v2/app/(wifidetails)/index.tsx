@@ -67,11 +67,11 @@ export default function WifiDetailsScreen() {
 
                     <View style={styles.viewRow}>
                         <View style={styles.itemRow}>
-                            <Image source={WifiBlueIcon} width={20} height={20} />
+                            <Image source={WifiBlueIcon} />
                             <Text style={styles.itemTitle}>Wi-Fi</Text>
                         </View>
                         <View style={styles.itemRow}>
-                            <Image source={EyeIcon} width={20} height={20} />
+                            <Image source={EyeIcon} />
                             <Text style={styles.itemTitle}>Seen {wifiDetails.quantityOffSeen} times</Text>
                         </View>
                     </View>
@@ -84,7 +84,7 @@ export default function WifiDetailsScreen() {
                                 <Text style={styles.itemTitle}>{wifiDetails.signalStrength}</Text>
                             </View>
                         </View>
-                        <Image source={ArrowRightIcon} width={20} height={20} />
+                        <Image source={ArrowRightIcon} />
                     </TouchableOpacity>
 
 
@@ -109,7 +109,7 @@ export default function WifiDetailsScreen() {
                             </View>
                         </View>
                         <TouchableOpacity onPress={() => setShowModalInfoSecurity(true)}>
-                            <Image source={InfoBlueIcon} width={20} height={20} />
+                            <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
 
@@ -121,7 +121,7 @@ export default function WifiDetailsScreen() {
                             </View>
                         </View>
                         <TouchableOpacity>
-                            <Image source={InfoBlueIcon} width={20} height={20} />
+                            <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
 
