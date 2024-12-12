@@ -13,6 +13,7 @@ export const colors = {
     red400: '#E54B4B',
     bgPrimary: '#15152E',
     borderColor: '#3F3C70',
+    modalBackground: '#1B1B3A',
 }
 
 export const fonts = {

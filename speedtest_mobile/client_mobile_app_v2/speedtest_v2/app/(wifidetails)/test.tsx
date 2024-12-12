@@ -1,6 +1,6 @@
 import BackButton from "@/components/BackButton";
 import { colors, fonts, sharedStyles } from "@/styles/shared";
-import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import WifiGreenIcon from '@/assets/images/icons/wifigreenicon.png'
 import SmallTitle from "@/components/SmallTitle";
@@ -12,6 +12,7 @@ import EyeIcon from '@/assets/images/icons/eyeblue.png'
 import ArrowRightIcon from '@/assets/images/icons/arrowrighticon.png'
 import SignalIcon from '@/assets/images/icons/signalicon.png'
 import InfoBlueIcon from '@/assets/images/icons/infoblueicon.png'
+import CloseIcon from '@/assets/images/icons/closeicon.png'
 
 import MapImage from '@/assets/images/icons/mapimage.png'
 import { useState } from "react";
@@ -38,8 +39,8 @@ export default function WifiDetailsScreen() {
         firstSeen: '10/20/2023',
         quantityOffSeen: 5
     })
+    const [showModalInfoSecurity, setShowModalInfoSecurity] = useState(false);
     const [showModalInfoMacAddress, setShowModalInfoMacAddress] = useState(false);
-
     return (
         <>
             <ScrollView style={styles.container}>
@@ -66,11 +67,11 @@ export default function WifiDetailsScreen() {
 
                     <View style={styles.viewRow}>
                         <View style={styles.itemRow}>
-                            <Image source={WifiBlueIcon} width={20} height={20} />
+                            <Image source={WifiBlueIcon} />
                             <Text style={styles.itemTitle}>Wi-Fi</Text>
                         </View>
                         <View style={styles.itemRow}>
-                            <Image source={EyeIcon} width={20} height={20} />
+                            <Image source={EyeIcon} />
                             <Text style={styles.itemTitle}>Seen {wifiDetails.quantityOffSeen} times</Text>
                         </View>
                     </View>
@@ -83,7 +84,7 @@ export default function WifiDetailsScreen() {
                                 <Text style={styles.itemTitle}>{wifiDetails.signalStrength}</Text>
                             </View>
                         </View>
-                        <Image source={ArrowRightIcon} width={20} height={20} />
+                        <Image source={ArrowRightIcon} />
                     </TouchableOpacity>
 
 
@@ -94,8 +95,8 @@ export default function WifiDetailsScreen() {
                                 <Text style={styles.itemTitle}>{wifiDetails.security}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity>
-                            <Image source={InfoBlueIcon} width={20} height={20} />
+                        <TouchableOpacity onPress={() => setShowModalInfoSecurity(true)}>
+                            <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
 
@@ -107,8 +108,8 @@ export default function WifiDetailsScreen() {
                                 <Text style={styles.itemTitle}>{wifiDetails.macAddress}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity>
-                            <Image source={InfoBlueIcon} width={20} height={20} />
+                        <TouchableOpacity onPress={() => setShowModalInfoMacAddress(true)}>
+                            <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
 
@@ -120,7 +121,7 @@ export default function WifiDetailsScreen() {
                             </View>
                         </View>
                         <TouchableOpacity>
-                            <Image source={InfoBlueIcon} width={20} height={20} />
+                            <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
 
@@ -137,11 +138,12 @@ export default function WifiDetailsScreen() {
                     {/* T0D0: repleace this image with a map */}
                     <Image source={MapImage} style={styles.mapImage} />
 
-                    <TouchableOpacity style={styles.buttonViewMap}>
+                    <TouchableOpacity style={styles.buttonViewMap} onPress={() => Alert.alert('teste')}>
                         <Text style={styles.buttonViewMapTitle}>View on the map</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
             <Modal
                 visible={showModalInfoMacAddress}
                 transparent={true}
