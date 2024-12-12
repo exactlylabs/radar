@@ -8,13 +8,13 @@ interface StartRadarButtonProps {
   disabled?: boolean;
 }
 
-export const StartRadarButton = ({ 
-  onPress, 
-  isRunning, 
-  disabled = false 
+export const StartRadarButton = ({
+  onPress,
+  isRunning,
+  disabled = false
 }: StartRadarButtonProps) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[
         styles.button,
         disabled && styles.buttonDisabled
@@ -35,25 +35,25 @@ export const StartRadarButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.bgLightBlueButtomPrimary,
     marginHorizontal: 16,
     marginBottom: 32,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonDisabled: {
     backgroundColor: colors.inactive,
     opacity: 0.7,
   },
   buttonText: {
-    color: colors.text,
+    color: colors.white,
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'MulishRegular',
+    fontWeight: "600",
+    fontFamily: "MulishRegular",
   },
   buttonTextDisabled: {
     opacity: 0.7,
   },
-}); 
+});

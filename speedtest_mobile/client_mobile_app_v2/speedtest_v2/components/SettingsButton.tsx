@@ -12,11 +12,11 @@ export const SettingsButton = () => {
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       activeOpacity={0.7}
       onPress={handlePress}
     >
-      <Ionicons name="settings-outline" size={24} color={colors.text} />
+      <Ionicons name="settings-outline" size={24} color={colors.white} />
     </TouchableOpacity>
   );
-}; 
+};

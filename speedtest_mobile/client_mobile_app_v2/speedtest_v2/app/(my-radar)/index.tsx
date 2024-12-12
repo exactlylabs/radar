@@ -34,10 +34,10 @@ export default function MyRadarScreen() {
     try {
       const newState = !isRunning;
       setIsRunning(newState);
-      
+
       // @ToDo implement execution of radar service
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
     } catch (error) {
       console.error('Failed to toggle radar:', error);
       setIsRunning(!isRunning);
@@ -55,7 +55,7 @@ export default function MyRadarScreen() {
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <View style={styles.placeholderWidth}></View>
-            <Image 
+            <Image
               source={radarLogo}
               style={styles.headerLogo}
             />
@@ -81,7 +81,7 @@ export default function MyRadarScreen() {
           <TextComponent text="When Radar is running, Wi-Fi hotspots, cell towers around you, and speed tests will appear here." centered />
         </View>
 
-        <StartRadarButton 
+        <StartRadarButton
           onPress={toggleRadar}
           isRunning={isRunning}
           disabled={isLoading}
@@ -155,10 +155,10 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'center',
-    color: colors.text,
+    color: colors.white,
     fontSize: 16,
     marginTop: 24,
     opacity: 0.7,
     lineHeight: 24,
   },
-}); 
+});

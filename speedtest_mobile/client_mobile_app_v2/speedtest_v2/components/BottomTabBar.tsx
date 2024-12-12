@@ -8,7 +8,7 @@ export const BottomTabBar = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.tab} activeOpacity={0.7}>
-        <RadarIcon size={24} color={colors.primary} />
+        <RadarIcon size={24} color={colors.bgLightBlueButtomPrimary} />
         <Text style={[styles.tabText, styles.activeTabText]}>My Radar</Text>
       </TouchableOpacity>
 
@@ -27,23 +27,23 @@ export const BottomTabBar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: colors.tabBarBackground,
     paddingBottom: 32,
     paddingTop: 16,
   },
   tab: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 6,
   },
   tabText: {
     fontSize: 12,
     color: colors.gray400,
-    fontWeight: '500',
-    fontFamily: 'MulishRegular',
+    fontWeight: "500",
+    fontFamily: "MulishRegular",
   },
   activeTabText: {
-    color: colors.primary,
+    color: colors.bgLightBlueButtomPrimary,
   },
-}); 
+});
