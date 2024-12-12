@@ -40,7 +40,7 @@ export default function WifiDetailsScreen() {
         quantityOffSeen: 5
     })
     const [showModalInfoSecurity, setShowModalInfoSecurity] = useState(false);
-
+    const [showModalInfoMacAddress, setShowModalInfoMacAddress] = useState(false);
     return (
         <>
             <ScrollView style={styles.container}>
@@ -108,7 +108,7 @@ export default function WifiDetailsScreen() {
                                 <Text style={styles.itemTitle}>{wifiDetails.macAddress}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity onPress={() => setShowModalInfoSecurity(true)}>
+                        <TouchableOpacity onPress={() => setShowModalInfoMacAddress(true)}>
                             <Image source={InfoBlueIcon} />
                         </TouchableOpacity>
                     </View>
@@ -145,28 +145,28 @@ export default function WifiDetailsScreen() {
             </ScrollView>
 
             <Modal
-                visible={showModalInfoSecurity}
+                visible={showModalInfoMacAddress}
                 transparent={true}
                 animationType="slide"
-                onRequestClose={() => setShowModalInfoSecurity(false)}
+                onRequestClose={() => setShowModalInfoMacAddress(false)}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.modalCloseButton}
-                            onPress={() => setShowModalInfoSecurity(false)}
+                            onPress={() => setShowModalInfoMacAddress(false)}
                         >
                             <Image source={CloseIcon} />
                         </TouchableOpacity>
 
-                        <Text style={styles.modalTitle}>Security</Text>
+                        <Text style={styles.modalTitle}>MAC Address</Text>
                         <Text style={styles.modalDescription}>
-                            This is the type of Wi-Fi security or encryption used by the network.
+                            The MAC Address is the unique identifier for the Wi-Fi access point.
                         </Text>
 
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.okModalButton}
-                            onPress={() => setShowModalInfoSecurity(false)}
+                            onPress={() => setShowModalInfoMacAddress(false)}
                         >
                             <Text style={styles.okModalButtonText}>OK</Text>
                         </TouchableOpacity>
