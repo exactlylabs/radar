@@ -29,7 +29,7 @@
 }
 
 .buttonsContainer {
-  padding-top: 2.5rem;
+  padding-top: 2.625rem;
   display: flex;
   gap: 1.5rem;
   align-items: center;
@@ -56,8 +56,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 2rem;
-  padding-top: 5rem;
+  padding-top: 5.5rem;
 }
 
 @media (max-width: 768px) {
@@ -72,7 +71,8 @@
   text-transform: uppercase;
   font-size: 0.875rem;
   font-variation-settings: 'wght' 700;
-  color: var(--text-color);
+  letter-spacing: 0.88px;
+  color: var(--text-300);
   margin: 0 auto 2rem;
 }
 
@@ -86,7 +86,7 @@
 
 .secondSection {
   width: 100%;
-  padding-top: 140px;
+  padding-top: 4.55rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -158,7 +158,7 @@
 
 .cardsSection {
   padding-top: 7.125rem;
-  padding-bottom: 8.5rem;
+  padding-bottom: 8rem;
 }
 
 @media (max-width: 768px) {
@@ -170,7 +170,7 @@
 
 .findingsSection {
   width: 100%;
-  height: 900px;
+  height: 850px;
   position: relative;
 }
 
@@ -181,10 +181,9 @@
 }
 
 .findingsGradient {
-  --shadow-spread: 50px;
-  width: 100%;
-  max-width: calc(var(--max-width) + 8* var(--shadow-spread));
-  height: 534px;
+  width: 100vw;
+  max-width: 1600px;
+  height: 494px;
   position: absolute;
   top: 0;
   left: 50%;
@@ -192,9 +191,24 @@
   z-index: 0;
   background: linear-gradient(
     180deg,
-    rgba(5, 4, 26, 0.65) 0%,
-    #0A081C 100%);
+    rgba(15, 14, 37, 0.65) 0%,
+    #0F0E25 100%);
   box-shadow: 0 -75px var(--shadow-spread) var(--shadow-spread) var(--bg-color) inset;
+  overflow: hidden;
+}
+
+.oldMan {
+  --shadow-spread: 50px;
+  z-index: -1;
+  width: 100vw;
+  max-width: 1600px;
+  height: auto;
+  max-height: 494px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
 }
 
 @media (max-width: 768px) {
@@ -205,13 +219,14 @@
 
 .findingsTextContainer {
   --shadow-spread: 50px;
+  --asset-width: 1600px;
+  --asset-height: 600px;
+  --aspect-ratio: 1600 / 600;
   text-align: left;
   padding-top: 6rem;
   z-index: 1;
   position: relative;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+
   max-width: var(--max-width);
   margin: 0 auto;
 }

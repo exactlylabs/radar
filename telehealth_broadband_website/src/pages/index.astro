@@ -44,10 +44,11 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
       <HeroWithText head=""
                     title="Uncovering Rural America's Internet Reality"
                     content="The Telehealth Broadband Pilot partnered with communities in Alaska, Michigan, Texas, and West Virginia to gather data on rural broadband access and its impact on healthcare, education, and daily life."
+                    mainHero
       />
     </div>
     <div class={styles.buttonsContainer}>
-      <PrimaryButton href="/findings">Explore our findings</PrimaryButton>
+      <PrimaryButton href="/findings">Explore Our Findings</PrimaryButton>
       <TransparentSecondaryButton href="/stories">Read the Stories</TransparentSecondaryButton>
     </div>
     <div class={styles.partnersContainer}>
@@ -61,7 +62,7 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
     <div class={styles.approachHero}>
       <HeroWithText head="Our approach"
                     title="Uncovering Rural Connectivity Challenges"
-                    content="The Telehealth Broadband Pilot Program identified actionable opportunities to enhance internet experiences in rural communities, focusing on the full journey of accessing and using online services."
+                    content="The Telehealth Broadband Pilot partnered with local leaders to understand connectivity issues, using community engagement and monitoring tools to identify broadband gaps, inform telehealth policy, and support infrastructure improvements."
       />
     </div>
     <img src={fadedIcons.src} alt="Faded Icons" class={styles.fadedIcons} width="494" height="288"/>
@@ -78,8 +79,9 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
   </section>
   
   <section class={styles.findingsSection}>
-    <div class={styles.findingsTextContainer} style={`background-image: url(${oldManHomepage.src})`}>
-        <div class={styles.findingsGradient}></div>
+    <div class={styles.findingsTextContainer}>
+      <div class={styles.findingsGradient}></div>
+      <img src={oldManHomepage.src} class={styles.oldMan} alt="Old man looking at river" />
       <div class={commonStyles.paddedSection} id="findings-alignment-reference-id">
         <div class={styles.findingsHeroContainer}>
           <HeroWithText head="Findings"
@@ -87,7 +89,7 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
                         content="Our evaluation uncovered critical insights into the complexities of rural internet access, beyond just ISP availability and overall speed. Key factors like the user's technical knowledge, device setup, and infrastructure configuration play a significant role in determining broadband quality."/>
         </div>
         <div class={styles.findingsButtonContainer}>
-          <PrimaryButton href="/findings">Explore our findings</PrimaryButton>
+          <PrimaryButton href="/findings">Explore Our Findings</PrimaryButton>
         </div>
       </div>
     </div>
