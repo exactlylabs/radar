@@ -44,7 +44,7 @@ export default class LineChartController extends ChartController {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
     const index = this.getIndexFromMouseX(mouseX);
-    if(index < 0 || index == null) return;
+    if(index < 0 || index == null || this.adjustedData[index] === undefined) return;
     const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
     const TOOLTIP_TITLE_TOP_PADDING = 20;
     const TOOLTIP_DATA_TOP_PADDING = 53

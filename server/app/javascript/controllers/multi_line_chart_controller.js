@@ -309,7 +309,10 @@ export default class MultiLineChartController extends ChartController {
 
   getXValueAtIndex(index) {
     const firstEntryValues = this.adjustedData.entries().next().value[1];
-    if(index === -1) return firstEntryValues[firstEntryValues.length - 1].x
+    if(index === -1 || firstEntryValues[index] === undefined) {
+      if(firstEntryValues.length >= 1) return firstEntryValues[firstEntryValues.length - 1].x;
+      else return 0;
+    }
     return firstEntryValues[index].x;
   }
 
