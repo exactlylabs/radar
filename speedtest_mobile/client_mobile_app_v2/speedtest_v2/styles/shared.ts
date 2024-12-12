@@ -21,6 +21,10 @@ export const fonts = {
 }
 
 export const sharedStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colors.bgPrimary,
+    },
     colors: {
         white: colors.white,
         gray400: colors.gray400,

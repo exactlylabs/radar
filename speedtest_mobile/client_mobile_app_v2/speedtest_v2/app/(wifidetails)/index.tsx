@@ -1,5 +1,5 @@
 import BackButton from "@/components/BackButton";
-import { colors, fonts } from "@/styles/shared";
+import { colors, fonts, sharedStyles } from "@/styles/shared";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import WifiGreenIcon from '@/assets/images/icons/wifigreenicon.png'
