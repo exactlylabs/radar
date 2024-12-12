@@ -18,7 +18,7 @@
   text-transform: uppercase;
   line-height: 2.133;
   letter-spacing: 0.9375px;
-  color: #C4C8DD;
+  color: var(--text-300);
   text-align: inherit;
   width: 100%;
 }
@@ -55,6 +55,11 @@
   letter-spacing: -0.56px;
 }
 
+.heroContainer[data-main-hero="true"] > .title {
+  font-size: 3.125rem;
+  letter-spacing: -1px;
+}
+
 @media (max-width: 768px) {
   .title {
     font-size: 1.75rem;
@@ -83,6 +88,10 @@
 .heroContainer[data-in-card="true"] > .content {
   font-size: 1.125rem;
   line-height: 1.556;
+}
+
+.heroContainer[data-main-hero="true"] > .content {
+  color: var(--text-200);
 }
 
 @media (max-width: 768px) {

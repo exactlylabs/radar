@@ -57,7 +57,6 @@
 
 .card:not([data-open="true"]):hover {
   cursor: pointer;
-  opacity: 0.8;
 }
 
 .card[data-open="false"][data-first-closed="true"] {
