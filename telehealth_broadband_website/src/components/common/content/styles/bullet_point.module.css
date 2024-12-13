@@ -165,3 +165,7 @@
     scale: 0.6667;
   }
 }
+
+.container[data-variant="opportunities-in-a-nutshell"] > .textContainer > .title {
+  font-size: 1.25rem;
+}
