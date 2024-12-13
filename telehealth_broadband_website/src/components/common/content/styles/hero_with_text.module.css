@@ -88,6 +88,7 @@
 .heroContainer[data-in-card="true"] > .content {
   font-size: 1.125rem;
   line-height: 1.556;
+  color: var(--text-300);
 }
 
 .heroContainer[data-main-hero="true"] > .content {
