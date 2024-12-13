@@ -4,7 +4,7 @@ import Footer from "../components/common/layout/Footer.astro";
 import styles from './styles/layout.module.css';
 import BaseHead from "../components/common/layout/BaseHead.astro";
 
-const { title, description, heroBgStyle } = Astro.props;
+const { title, description, heroVariant, heroBgStyle } = Astro.props;
 ---
 
 <html lang="en">
@@ -17,7 +17,7 @@ const { title, description, heroBgStyle } = Astro.props;
   <BaseHead title={title} description={description} />
 </head>
 <body>
-  <div class={styles.heroImage} id="hero-image" style={heroBgStyle}></div>
+  <div class={styles.heroImage} id="hero-image" data-variant={heroVariant} style={heroBgStyle}></div>
   <Navbar/>
   <main class={styles.main}>
     <slot />

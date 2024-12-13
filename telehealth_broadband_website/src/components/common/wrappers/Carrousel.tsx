@@ -1,4 +1,4 @@
-import {type ReactElement, useEffect, useRef, useState} from "react";
+import {type ReactElement, useEffect, useMemo, useRef, useState} from "react";
 import styles from './styles/carrousel.module.css';
 
 interface CarrouselProps {
@@ -131,6 +131,7 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
       isDisabledNextRef.current = remainingDistanceToEnd <= 1;
     } else {
       isDisabledNextRef.current = firstElementIndex === elementCount! - 1;
+      setAutomaticSwitch();
     }
     setIsDisabledNext(isDisabledNextRef.current);
     
@@ -163,23 +164,23 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     return (
       <div className={styles.automaticSwitcher}>
         {
-          Array.from({length: elementCount!}, (_, index) => (
+          Array.from({length: elementCount!}, (_, idx) => (
             <button
-              key={index}
+              key={idx}
               className={styles.automaticDot}
               onClick={() => {
-                setCurrentDot(index);
-                currentElementIndex.current = index;
-                const scrollDistance = getItemWidth() * index;
+                setCurrentDot(idx);
+                currentElementIndex.current = idx;
+                const scrollDistance = getItemWidth() * idx;
                 carrousel.current!.scrollTo({left: scrollDistance, behavior: 'smooth'});
               }}
-              data-selected={index === 0}
+              data-selected={idx === index}
             >
             </button>
           ))
         }
       </div>
-    );
+    )
   }
   
   const manualSwitcher = () => (

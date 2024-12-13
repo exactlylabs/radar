@@ -45,9 +45,9 @@
 }
 
 .imagesContainer {
-  width: 609px;
+  width: 608px;
   height: auto;
-  aspect-ratio: 1.33;
+  aspect-ratio: 608 / 456;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -58,7 +58,6 @@
 @media (max-width: 768px) {
   .imagesContainer {
     width: 100%;
-    aspect-ratio: 1.33;
   }
 }
 

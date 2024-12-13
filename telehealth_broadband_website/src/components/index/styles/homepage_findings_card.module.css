@@ -9,6 +9,8 @@
   box-sizing: border-box;
   scroll-snap-align: center;
   transition: background-size 0.3s, scale 0.3s;
+  display: block;
+  z-index: 1;
 }
 
 .card:hover {
@@ -18,9 +20,10 @@
 
 @media (max-width: 768px) {
   .card {
-    width: 276px;
-    height: 176px;
-    background-size: 200%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 276 / 176;
+    background-size: cover;
     scroll-padding-inline-start: 2rem;
   }
 }
@@ -28,10 +31,17 @@
 .cardLink {
   width: 100%;
   height: 100%;
-  display: block;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2rem 2.5rem;
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .cardLink {
+    padding: 1.5rem 1.5rem 2rem;
+  }
 }
 
 .cardLink:hover > div > button > img {
@@ -73,5 +83,6 @@
 }
 
 .buttonContainer {
-  margin-top: 1.5rem;
+  margin-top: auto;
+  margin-bottom: 0;
 }

@@ -7,7 +7,13 @@
 
 @media (max-width: 1250px) {
   :root {
-    --side-padding: 3rem;
+    --side-padding: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --side-padding: 48px;
   }
 }
 
