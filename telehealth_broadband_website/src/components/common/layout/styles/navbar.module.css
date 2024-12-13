@@ -36,7 +36,7 @@
     transition: background-color 250ms ease-in-out, backdrop-filter 250ms ease-in-out;
   }
 
-  .nav[data-scrolled="true"] {
+  .nav[data-scrolled="true"]:not([data-responsive-menu-open="true"]) {
     background-color: rgba(15, 14, 37, 0.9);
     backdrop-filter: blur(10px);
   }
@@ -48,6 +48,10 @@
 
   .nav[data-responsive-menu-open="true"] {
     background-color: rgba(15, 14, 37, 0.9);
+  }
+
+  .nav[data-responsive-menu-open="true"] > .responsiveMenu {
+    backdrop-filter: blur(10px);
   }
 }
 
@@ -105,16 +109,30 @@ li > a {
 
 .responsiveMenu {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh);
+  background-color: rgba(15, 14, 37, 0.9);
+  backdrop-filter: blur(10px);
+  z-index: -1;
+  padding: calc(2rem + var(--responsive-navbar-height)) 1.5rem 2rem;
+  box-sizing: border-box;
+  animation: fade-in 250ms ease-in-out, display 250ms ease-in-out;
+}
+
+.responsiveMenu[data-hide="true"] {
+  animation: fade-out 100ms ease-in-out;
+}
+
+.responsiveMenu::before {
+  content: '';
+  position: fixed;
   top: var(--responsive-navbar-height);
   left: 0;
   width: 100vw;
-  height: calc(100vh - var(--responsive-navbar-height));
-  background-color: rgba(15, 14, 37, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 10000;
-  padding: 2rem 1.5rem;
-  box-sizing: border-box;
-  animation: fade-in 250ms ease-in-out;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .responsiveMenu[hidden] {
@@ -209,5 +227,14 @@ svg {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }

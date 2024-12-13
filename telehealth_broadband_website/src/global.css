@@ -8,6 +8,12 @@
   --text-400: #ACAFCD;
 }
 
+@media (max-width: 1250px) {
+  :root {
+    --max-width: 100%;
+  }
+}
+
 @font-face {
   font-family: 'Mulish';
   src: url("/fonts/Mulish-VariableFont_wght.ttf") format("truetype");

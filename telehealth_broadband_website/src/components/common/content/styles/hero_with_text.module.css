@@ -70,6 +70,11 @@
     font-size: 1.375rem;
     letter-spacing: -0.44px;
   }
+
+  .heroContainer[data-main-hero="true"] > .title {
+    font-size: 1.75rem;
+    letter-spacing: -0.56px;
+  }
 }
 
 .content {
