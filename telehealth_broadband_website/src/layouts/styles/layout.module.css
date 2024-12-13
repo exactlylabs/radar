@@ -12,6 +12,10 @@
 }
 
 @media (max-width: 768px) {
+  :root {
+    --side-padding: 48px;
+  }
+
   .main {
     padding-top: var(--responsive-navbar-height);
   }
@@ -30,7 +34,6 @@
   background-size: cover;
   background-position-y: 50%;
   background-repeat: no-repeat;
-  /*box-shadow: 0 -75px var(--shadow-blur) var(--shadow-spread) var(--bg-color) inset;*/
   -webkit-mask-image:
       linear-gradient(to top, transparent, var(--bg-color) 10%),
       linear-gradient(to left, transparent, var(--bg-color) 10%),
@@ -41,4 +44,19 @@
     linear-gradient(to top, transparent, var(--bg-color) 10%),
     linear-gradient(to left, transparent, var(--bg-color) 10%),
     linear-gradient(to right, transparent, var(--bg-color) 10%);
+}
+
+.heroImage[data-variant="homepage"] {
+  background-position-y: 75%;
+  height: 765px;
+}
+
+@media (max-width: 768px) {
+  .heroImage[data-variant="homepage"] {
+    --hero-image-aspect-ratio: 1600 / 765;
+    height: 600px;
+    width: auto;
+    aspect-ratio: var(--hero-image-aspect-ratio);
+    max-width: unset;
+  }
 }

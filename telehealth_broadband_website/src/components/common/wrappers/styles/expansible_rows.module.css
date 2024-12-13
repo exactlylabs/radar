@@ -38,12 +38,15 @@
     gap: .75rem;
   }
 
+  .topRow:has(.head) {
+    align-items: flex-start;
+  }
+
   .contentContainer[data-open="true"] > .topRow:has(.head) {
     align-items: flex-start;
     justify-content: flex-start;
     gap: .75rem;
   }
-
 }
 
 .topRow:hover > h4 {

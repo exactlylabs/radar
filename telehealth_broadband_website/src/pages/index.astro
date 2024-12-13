@@ -17,6 +17,7 @@ import PartnerLogoCarrousel from "../components/index/PartnerLogoCarrousel.astro
 import fadedIcons from '../assets/images/faded-icons.png';
 import oldManHomepage from '../assets/images/old-man-homepage.webp';
 
+import evaluationResultsFindingsThumbnail from '../assets/images/homepage-evaluation-results-findings-thumbnail.webp';
 import alaskaFindingsThumbnail from '../assets/images/homepage-alaska-findings-thumbnail.webp';
 import texasFindingsThumbnail from '../assets/images/homepage-texas-findings-thumbnail.webp';
 import wvFindingsThumbnail from '../assets/images/homepage-west-virginia-findings-thumbnail.webp';
@@ -36,7 +37,8 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
 <BaseLayout
   title="Telehealth Broadband Project - Uncovering Rural America's Internet Reality"
   description="Explore the findings of the Telehealth Broadband Pilot, highlighting the challenges and opportunities in rural broadband access and its impact on telehealth."
-  heroBgStyle={`background-image: url(${roadImage.src}); background-position-y: 75%; height: 765px;`}
+  heroVariant="homepage"
+  heroBgStyle={{backgroundImage: `url(${roadImage.src}`}}
 >
   <section class={styles.firstSection}>
     <img src={blueGradientDiagonalLight.src} alt="blue gradient diagonal" class={styles.blueGradientDiagonalLight} />
@@ -89,7 +91,7 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
         <div class={styles.findingsHeroContainer}>
           <HeroWithText head="Findings"
                         title="Finding the Real Barriers to Rural Broadband Access"
-                        content="Our evaluation uncovered critical insights into the complexities of rural internet access, beyond just ISP availability and overall speed. Key factors like the user's technical knowledge, device setup, and infrastructure configuration play a significant role in determining broadband quality."/>
+                        content="Our evaluation sheds light on the true complexities of rural internet access, where factors like technical knowledge, device setup, and infrastructure quality often outweigh ISP speed alone."/>
         </div>
         <div class={styles.findingsButtonContainer}>
           <PrimaryButton href="/findings">Explore Our Findings</PrimaryButton>
@@ -98,6 +100,10 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
     </div>
     <div class={styles.findingsCarrouselContainer}>
       <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'}>
+        <HomepageFindingsCard title="Evaluating Rural Telehealth Access"
+                              href="/findings/evaluation-results"
+                              image={evaluationResultsFindingsThumbnail.src}
+        />
         <HomepageFindingsCard title="Broadband Challenges in Remote Alaska"
                               href="/findings/alaska"
                               image={alaskaFindingsThumbnail.src}

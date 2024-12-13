@@ -17,8 +17,6 @@ interface AutoExpandingCardProps {
   openNext: () => void;
 }
 
-// TODO: stop timer if mouse is over the open card
-
 function AutoExpandingCard({content, isOpen, index, openCard, openNext, firstClosed, secondClosed}: AutoExpandingCardProps) {
   
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

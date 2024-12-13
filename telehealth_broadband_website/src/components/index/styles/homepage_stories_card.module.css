@@ -17,9 +17,9 @@
 
 @media (max-width: 768px) {
   .card {
-    width: calc(100vw - 6rem);
-    background-size: 225%;
-    background-position: 35% 55%;
+    width: calc(100vw - 48px);
+    background-size: cover;
+    background-position: center;
   }
 }
 
