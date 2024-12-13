@@ -10,19 +10,19 @@ import BroadbandModal from "../components/resources/BroadbandModal.astro";
 import ResourceCard from "../components/resources/ResourceCard.astro";
 import TransparentSecondaryButton from "../components/common/buttons/TransparentSecondaryButton.astro";
 import HeroWithText from "../components/common/content/HeroWithText.astro";
-
-import resourcesHeroImage from '../assets/images/resources-hero-image.webp';
-import broadbandCardImage from '../assets/images/broadband.webp';
-import videoThumbnail from '../assets/images/video-thumbnail.webp';
-import radarPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
-import broadbandMappingImage from '../assets/images/broadband-mapping-laptop.webp';
-import mobileTestingImage from '../assets/images/mobile-testing.webp';
 import MobileTestingModal from '../components/resources/MobileTestingModal.astro';
 import RadarPodsModal from '../components/resources/RadarPodsModal.astro';
 import SpeedtestModal from "../components/resources/SpeedtestModal.astro";
+
+import resourcesHeroImage from '../assets/images/resources-hero-image.webp';
+import videoThumbnail from '../assets/images/video-thumbnail.webp';
 import blueGreenVerticalLight from '../assets/images/blue-green-vertical-light.webp';
 import pinkYellowVerticalLight from '../assets/images/pink-yellow-vertical-light.webp';
 import dotsGrid from '../assets/images/dots-grid.webp';
+import thumbnail1 from '../assets/images/resources-card-thumbnail-1.webp';
+import thumbnail2 from '../assets/images/resources-card-thumbnail-2.webp';
+import thumbnail3 from '../assets/images/resources-card-thumbnail-3.webp';
+import thumbnail4 from '../assets/images/resources-card-thumbnail-4.webp';
 ---
 <BaseLayout
   title="Tools and Resources for Rural Connectivity"
@@ -38,6 +38,7 @@ import dotsGrid from '../assets/images/dots-grid.webp';
         <HeroWithText
           title="Innovative Tools for Monitoring Internet Connectivity"
           content="The Telehealth Broadband Program developed innovative tools that empower users to monitor and understand their internet quality. Discover real data showcasing internet performance in your community."
+          mainHero
         />
       </div>
       <img src={resourcesHeroImage.src}
@@ -56,25 +57,25 @@ import dotsGrid from '../assets/images/dots-grid.webp';
                     title="Explore Broadband Nationwide"
                     triggerId="broadband-modal-trigger"
                     modalId="broadband-modal"
-                    backgroundImage={broadbandCardImage.src}
+                    backgroundImage={thumbnail1.src}
       />
       <ResourceCard head="Radar Pods"
                     title="Real-Time Internet Monitoring"
                     triggerId="pods-modal-trigger"
                     modalId="pods-modal"
-                    backgroundImage={radarPodsImage.src}
+                    backgroundImage={thumbnail2.src}
       />
       <ResourceCard head="Radar Speed"
                     title="Web-Based Speed Testing"
                     triggerId="speed-test-modal-trigger"
                     modalId="speed-test-modal"
-                    backgroundImage={broadbandMappingImage.src}
+                    backgroundImage={thumbnail3.src}
       />
       <ResourceCard head="Mobile Testing"
                     title="On-the-Go Speed Testing"
                     triggerId="mobile-testing-trigger"
                     modalId="mobile-testing-modal"
-                    backgroundImage={mobileTestingImage.src}
+                    backgroundImage={thumbnail4.src}
       />
     </Carrousel>
   </section>
