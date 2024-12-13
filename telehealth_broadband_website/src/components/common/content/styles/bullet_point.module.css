@@ -92,3 +92,20 @@
   line-height: 1.529;
   color: var(--text-color);
 }
+
+.container[data-variant="homepage-opportunities"] {
+  gap: 2rem;
+}
+
+.container[data-variant="homepage-opportunities"] > .textContainer > .title {
+  font-size: 1.375rem;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.44px;
+  color: white;
+}
+
+.container[data-variant="homepage-opportunities"] > .textContainer > .content {
+  font-size: 1.0625rem;
+  line-height: 1.529;
+  color: var(--text-400);
+}

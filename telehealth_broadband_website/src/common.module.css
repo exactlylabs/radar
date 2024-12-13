@@ -7,13 +7,13 @@
 
 @media (max-width: 1250px) {
   .paddedSection {
-    max-width: calc(100vw - 3rem);
+    max-width: calc(100vw - 80px);
 
   }
 }
 
 @media (max-width: 768px) {
   .paddedSection {
-    max-width: calc(100vw - 3rem);
+    max-width: calc(100vw - 80px);
   }
 }
