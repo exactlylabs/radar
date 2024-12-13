@@ -5,7 +5,10 @@ import BulletPoint from "../common/content/BulletPoint.astro";
 
 <div class={styles.grid}>
   <BulletPoint title="Simple Fixes Create Big Changes"
-    content="Replace outdated hardware, like old modems and routers, to dramatically improve internet speeds and reliability without needing major infrastructure upgrades.">
+    content="Replace outdated hardware, like old modems and routers, to dramatically improve internet speeds and reliability without needing major infrastructure upgrades."
+    bigCircle
+    variant="homepage-opportunities"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="21">
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.2832 10.3333)" d="M28 0L0 0L0 7.4666667C0 8.4975986 0.83573514 9.333333 1.8666667 9.333333L26.133333 9.333333C27.164265 9.333333 28 8.4975986 28 7.4666667L28 0Z" fill-rule="evenodd"/>
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.2832 1)" d="M21.466667 0L6.5333333 0L0 9.333333L28 9.333333L21.466667 0Z" fill-rule="evenodd"/>
@@ -17,19 +20,20 @@ import BulletPoint from "../common/content/BulletPoint.astro";
     </svg>
   </BulletPoint>
   <BulletPoint title="Education and Awareness"
-               content="Many people we spoke to didn't realize better internet options were available to them. We found that education is key—knowing what services exist and how to access them can make a big diﬀerence."
-               iconScale="1.25"
+               content="Many people were unaware of better internet options. Education is key—knowing available services and access methods makes a big difference."
+               bigCircle
+               variant="homepage-opportunities"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="24">
-      <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 3.45)" d="M9 2.6219726C6.4113193 1.035096 3.4614589 0.13293166 0.428 0.00037253386C0.31658599 -0.0043705222 0.20802332 0.036340479 0.12719999 0.11317253C0.046558708 0.18928187 0.00059359026 0.29508838 0 0.40597254L0 13.799573C0.00022568832 14.01878 0.17299491 14.198954 0.39199999 14.208372C3.1693251 13.812761 5.989078 14.550492 8.2167997 16.255573C8.4645433 16.358225 8.7345295 16.395416 9.0008001 16.363573" fill-rule="evenodd"/>
-      <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(11.9992 3.45)" d="M0.00079999998 2.6219726C2.5894809 1.035096 5.539341 0.13293166 8.5727997 0.00037253386C8.6842136 -0.0043705222 8.7927771 0.036340479 8.8736 0.11317253C8.9548454 0.18985523 9.0008001 0.29665378 9.0008001 0.40837252L9.0008001 13.799573C9.0005741 14.01878 8.8278055 14.198954 8.6087999 14.208372C5.8314748 13.812761 3.0117221 14.550492 0.78399998 16.255573C0.53625655 16.358225 0.26627091 16.395416 0 16.363573" fill-rule="evenodd"/>
-      <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(11.3379 6.07197)" d="M0.66206896 0L0.66206896 13.7496" fill-rule="evenodd"/>
-      <path fill="none" stroke="#4B7BE5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.2 17.5824)" d="M0 0.0128L0 2.5936C-0.0003453251 2.717962 0.055936564 2.8357193 0.15292571 2.9135597C0.24991485 2.9914002 0.37706313 3.020858 0.49840158 2.9935999C2.9000089 2.4928246 5.3467398 2.2402968 7.8000016 2.24C10.10902 2.2387972 12.411244 2.4901586 14.665602 2.9895999C14.786862 3.0162208 14.913656 2.9865196 15.010478 2.908813C15.107301 2.8311067 15.163743 2.7137482 15.164001 2.5896001L15.164001 0" fill-rule="evenodd"/>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32">
+      <path fill="#4B7BE5" transform="translate(3 3.45)" d="M24.386801 0.0014030343C24.806301 -0.01645571 25.215065 0.13683097 25.51679 0.42366481C25.82534 0.71488571 26 1.1203794 26 1.5444981L26 19.400461C25.999147 20.227913 25.346989 20.90802 24.520302 20.943575L24.336313 20.934505C24.163847 20.909939 23.991249 20.888903 23.818617 20.871372L23.818666 23.298046C23.81769 23.766083 23.604902 24.208521 23.239883 24.501472C22.874866 24.794424 22.396856 24.906399 21.937834 24.805624C19.003218 24.155476 16.006292 23.828266 13.000121 23.829832C9.7976484 23.830219 6.6037021 24.159866 3.4837153 24.810316C3.0251145 24.913338 2.5445554 24.802 2.1779833 24.507801C1.811414 24.213606 1.5986966 23.768545 1.5999919 23.301298L1.599 20.937L1.4796984 20.943575C0.65301126 20.90802 0.00085244462 20.227911 0 19.399431L0 1.5359449C0.002269269 1.1147163 0.17688233 0.71277684 0.48061541 0.4261221C0.78493464 0.13683097 1.1936991 -0.01645571 1.614324 0.0014515358C5.6259503 0.17675559 9.5323324 1.3209286 13.000811 3.332232C16.468418 1.3207092 20.374489 0.17673647 24.386801 0.0014030343ZM3.599792 20.805695L3.5989978 22.748165L3.8789668 22.692307C5.5470767 22.374195 7.2299404 22.143652 8.9205904 22.001392C7.255784 21.231062 5.4414716 20.821672 3.599792 20.805695ZM17.176424 21.957382L17.048027 22.017733C18.575169 22.160595 20.0942 22.384699 21.598412 22.689287L21.816999 22.735001L21.818579 20.823839C20.359194 20.902279 18.925241 21.227554 17.57795 21.783646L17.176424 21.957382ZM23.999933 18.880001L23.999933 2.0250013L23.968176 2.0271988C20.455578 2.2585974 17.043911 3.2980659 13.999325 5.064209L13.999 21.471001L14.084182 21.411182C16.937471 19.460108 20.380825 18.559223 23.824036 18.862947L23.999933 18.880001ZM2 2.0250001L1.999 18.880001L2.1759634 18.862947C5.6531949 18.556223 9.1305695 19.478025 12.000216 21.46932L11.999675 5.0636287C9.1075602 3.3861279 5.8842959 2.3643169 2.5587168 2.0679905L2 2.0250001Z"/>
     </svg>
   </BulletPoint>
   <BulletPoint title="Empowering Communities"
-               content="Empower local leaders by collecting more accurate and real-time data on internet coverage and quality. This data will help communities identify service gaps and advocate for tailored solutions that address their specific needs.">
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="27">
+               content="Empower local leaders by collecting more accurate and real-time data on internet coverage and quality. This data will help communities identify service gaps and advocate for tailored solutions that address their specific needs."
+               bigCircle
+               variant="homepage-opportunities"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="27" style="scale: 1.18">
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.00195 11.878)" d="M4.6153908 0L4.6153908 10.771372C4.6164551 11.183655 4.4116893 11.56918 4.069746 11.798684L4.069746 11.798684C3.0024979 12.510404 1.6128931 12.510404 0.54564494 11.798684L0.54564494 11.798684C0.20370194 11.56918 -0.0010640295 11.183655 0 10.771372L0 0" fill-rule="evenodd"/>
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.00196 10.3371)" d="M0 1.5409688C0 2.3920224 1.0331886 3.0819376 2.3076913 3.0819376C3.5821941 3.0819376 4.6153827 2.3920224 4.6153827 1.5409688C4.6153827 0.68991524 3.5821941 0 2.3076913 0C1.0331886 0 0 0.68991524 0 1.5409688" fill-rule="evenodd"/>
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.69426 7.25514)" d="M4.6153908 0L4.6153908 15.394278C4.6164551 15.806561 4.4116893 16.192087 4.069746 16.421591L4.069746 16.421591C3.0024979 17.13331 1.6128931 17.13331 0.54564494 16.421591L0.54564494 16.421591C0.20370194 16.192087 -0.0010640295 15.806561 0 15.394278L0 0" fill-rule="evenodd"/>
@@ -39,8 +43,11 @@ import BulletPoint from "../common/content/BulletPoint.astro";
     </svg>
   </BulletPoint>
   <BulletPoint title="Communication with ISPs and IT"
-               content="Teach community members how to eﬀectively communicate with their ISPs or IT teams to report problems, ensuring that their issues are understood and resolved. Frequently IT teams and ISPs can't fix the problem as they don't know there is one.">
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30">
+               content="Teach community members to communicate effectively with ISPs or IT teams to report issues, ensuring problems are understood and resolved, as IT teams and ISPs are often unaware of issues."
+               bigCircle
+               variant="homepage-opportunities"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" style="scale: 1.08">
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(14.9288 1.01318)" d="M6.0662756 0C3.6857483 -0.011484114 1.5207071 1.3770212 0.53822172 3.5453768C-0.44426373 5.7137322 -0.060718067 8.2570066 1.5175384 10.039182L0.75845271 14.406525L4.7133241 11.967514C6.9845552 12.490937 9.3547268 11.665639 10.809668 9.8447571C12.264607 8.0238752 12.546546 5.530015 11.534842 3.4302723C10.523139 1.3305297 8.3970385 -0.0030835208 6.0662756 0Z" fill-rule="evenodd"/>
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.09757 11.4117)" d="M0 3.8994129C0 6.052999 1.7458266 7.7988257 3.8994129 7.7988257C6.052999 7.7988257 7.7988257 6.052999 7.7988257 3.8994129C7.7988257 1.7458266 6.052999 0 3.8994129 0C1.7458266 0 0 1.7458266 0 3.8994129" fill-rule="evenodd"/>
       <path fill="none" stroke="#4B7BE5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.0647 20.9468)" d="M13.864579 6.0625257C13.397775 2.5909772 10.435081 0 6.9322896 0C3.429497 0 0.46680388 2.5909772 0 6.0625257" fill-rule="evenodd"/>

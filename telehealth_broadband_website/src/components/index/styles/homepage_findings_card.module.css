@@ -8,7 +8,7 @@
   position: relative;
   box-sizing: border-box;
   scroll-snap-align: center;
-  transition: background-size 0.3s;
+  transition: background-size 0.3s, scale 0.3s;
 }
 
 .card:hover {

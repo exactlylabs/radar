@@ -16,10 +16,11 @@ import OpportunitiesGrid from "../components/index/OpportunitiesGrid.astro";
 import PartnerLogoCarrousel from "../components/index/PartnerLogoCarrousel.astro";
 import fadedIcons from '../assets/images/faded-icons.png';
 import oldManHomepage from '../assets/images/old-man-homepage.webp';
-import alaskaFindingsThumbnail from '../assets/images/alaska-findings-thumbnail-1.webp';
-import texasFindingsThumbnail from '../assets/images/texas-findings-thumbnail-1.webp';
-import wvFindingsThumbnail from '../assets/images/wv-findings-thumbnail-1.webp';
-import michiganFindingsThumbnail from '../assets/images/michigan-findings-thumbnail-1.webp';
+
+import alaskaFindingsThumbnail from '../assets/images/homepage-alaska-findings-thumbnail.webp';
+import texasFindingsThumbnail from '../assets/images/homepage-texas-findings-thumbnail.webp';
+import wvFindingsThumbnail from '../assets/images/homepage-west-virginia-findings-thumbnail.webp';
+import michiganFindingsThumbnail from '../assets/images/homepage-michigan-findings-thumbnail.webp';
 import lackOfTechnicalExpertiseStoryImage from '../assets/images/lack-of-technical-expertise-story.webp'
 import roadImage from '../assets/images/road.webp';
 import lackOfTechnicalExpertise from '../assets/images/lack-of-technical-expertise.webp';
@@ -80,8 +81,10 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
   
   <section class={styles.findingsSection}>
     <div class={styles.findingsTextContainer}>
-      <div class={styles.findingsGradient}></div>
-      <img src={oldManHomepage.src} class={styles.oldMan} alt="Old man looking at river" />
+      <div class={styles.findingsGradientImage}>
+        <div class={styles.gradient}></div>
+        <img src={oldManHomepage.src} class={styles.oldMan} alt="Old man looking at river" />
+      </div>
       <div class={commonStyles.paddedSection} id="findings-alignment-reference-id">
         <div class={styles.findingsHeroContainer}>
           <HeroWithText head="Findings"
@@ -101,7 +104,6 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
         />
         <HomepageFindingsCard title="Connectivity Barriers in Rural Michigan"
                               href="/findings/michigan"
-                              maxTextWidth="250px"
                               image={michiganFindingsThumbnail.src}
         />
         <HomepageFindingsCard title="A Look into the Rural Texas Communities"

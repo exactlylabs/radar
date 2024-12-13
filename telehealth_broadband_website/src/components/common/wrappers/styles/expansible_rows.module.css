@@ -97,7 +97,7 @@
 
 .contentContainer[data-open="true"] {
   grid-template-rows: 1fr;
-  padding-top: 1rem;
+  padding-top: .5rem;
   animation: fade-in 500ms ease forwards;
   animation-delay: 200ms;
 }
@@ -117,11 +117,10 @@
 }
 
 .content {
-  font-size: 1rem;
-  font-variation-settings: 'wght' 400;
+  font-size: 1.0625rem;
   color: var(--text-color);
   line-height: 1.529;
-  max-width: 500px;
+  max-width: 80%;
   overflow: hidden;
   text-align: left;
 }
@@ -165,12 +164,24 @@
   border: solid 1.5px white;
 }
 
-.button > img {
-  transition: transform 0.5s ease;
+.button > svg {
+  transition: display 300ms ease;
 }
 
-.row[data-open="true"] > .topRow > .button > img {
-  transform: rotate(-45deg);
+.button > svg[data-type="plus"] {
+  display: block;
+}
+
+.button > svg[data-type="minus"] {
+  display: none;
+}
+
+.row[data-open="true"] > .topRow > .button > svg[data-type="plus"] {
+  display: none;
+}
+
+.row[data-open="true"] > .topRow > .button > svg[data-type="minus"] {
+  display: block;
 }
 
 .row[data-open="true"] > .topRow > .button {
