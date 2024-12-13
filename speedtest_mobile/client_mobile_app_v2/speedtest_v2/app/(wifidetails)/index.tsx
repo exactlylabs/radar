@@ -28,6 +28,7 @@ interface WifiDetailsProps {
 }
 
 export default function WifiDetailsScreen() {
+    // ToDo: Fetch real data for wifi details
     const [wifiDetails, setWifiDetails] = useState<WifiDetailsProps>({
         name: 'Starbucks-2034',
         address: 'Seattle, WA 98122',
