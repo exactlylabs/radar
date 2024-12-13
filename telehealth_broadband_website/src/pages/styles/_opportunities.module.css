@@ -1,5 +1,5 @@
 .section {
-  padding: 2.5rem 0;
+  padding: 7.5rem 0 2.5rem;
 }
 
 .sectionsContainer {
@@ -102,8 +102,22 @@
   border-right: none;
 }
 
+.summaryItem:first-child {
+  padding: 3rem 2.375rem 4.625rem 1.5rem;
+}
+
+.summaryItem:nth-child(2) {
+  padding: 3rem 2.375rem 4.625rem 2.5rem;
+}
+
+.summaryItem:last-child {
+  padding: 3rem 2.5rem 3rem;
+}
+
 @media (max-width: 768px) {
-  .summaryItem {
+  .summaryItem:first-child,
+  .summaryItem:nth-child(2),
+  .summaryItem:last-child {
     width: 100%;
     padding: 2rem 0;
     border-right: none;
