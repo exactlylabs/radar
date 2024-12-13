@@ -113,8 +113,16 @@
   color: var(--text-color);
 }
 
-.container[data-variant="homepage-opportunities"] {
+.container[data-variant="homepage-opportunities"]:first-child,
+.container[data-variant="homepage-opportunities"]:nth-child(3) {
   gap: 2rem;
+  padding: 3.5rem 3rem 3.5rem 1.5rem;
+}
+
+.container[data-variant="homepage-opportunities"]:nth-child(2),
+.container[data-variant="homepage-opportunities"]:nth-child(4) {
+  gap: 2rem;
+  padding: 3.5rem 2rem 3.5rem 2.5rem;
 }
 
 .container[data-variant="homepage-opportunities"] > .textContainer > .title {
@@ -128,4 +136,52 @@
   font-size: 1.0625rem;
   line-height: 1.529;
   color: var(--text-400);
+}
+
+.container[data-variant="homepage-opportunities"]:nth-child(3) > .iconCircle > svg {
+  scale: 1.18;
+}
+
+.container[data-variant="homepage-opportunities"]:nth-child(4) > .iconCircle > svg {
+  scale: 1.08;
+}
+
+@media (max-width: 768px) {
+  .container[data-variant="homepage-opportunities"] {
+    gap: 1rem;
+    padding: 2rem 0;
+  }
+
+  .container[data-variant="homepage-opportunities"] > .textContainer > .title {
+    font-size: 1.125rem;
+    letter-spacing: -0.36px;
+    color: white;
+  }
+
+  .container[data-variant="homepage-opportunities"] > .textContainer > .content {
+    font-size: 1rem;
+    line-height: 1.625;
+    color: var(--text-400);
+  }
+
+  .container[data-variant="homepage-opportunities"] > .iconCircle {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .container[data-variant="homepage-opportunities"]:first-child > .iconCircle > svg {
+    scale: 0.625;
+  }
+
+  .container[data-variant="homepage-opportunities"]:nth-child(2) > .iconCircle > svg {
+    scale: 0.625;
+  }
+
+  .container[data-variant="homepage-opportunities"]:nth-child(3) > .iconCircle > svg {
+    scale: 0.8333 0.74;
+  }
+
+  .container[data-variant="homepage-opportunities"]:nth-child(4) > .iconCircle > svg {
+    scale: 0.6667;
+  }
 }

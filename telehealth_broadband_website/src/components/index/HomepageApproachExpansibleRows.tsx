@@ -26,7 +26,7 @@ export default function HomepageApproachExpansibleRows() {
       <ExpansibleRow content={{
         head: '02',
         title: 'Tools and Methods for Data Collection',
-        content: ''
+        content: 'The project developed a variety of tools to measure broadband performance, including monitoring Pods, speed test widgets, and mobile data collection. These tools provided reliable data on internet quality, helping to map connectivity gaps in rural regions accurately.'
       }}
                      isOpen={currentOpenIndex === 1}
                      index={1}
@@ -36,7 +36,7 @@ export default function HomepageApproachExpansibleRows() {
       <ExpansibleRow content={{
         head: '03',
         title: 'Analyzing Connectivity Challenges',
-        content: ''
+        content: 'Our analysis focused on understanding how connectivity issues impact rural communities. By examining the collected data, we identified patterns in broadband performance and barriers to telehealth adoption, offering communities insights into their unique digital landscape.'
       }}
                      isOpen={currentOpenIndex === 2}
                      index={2}

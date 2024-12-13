@@ -67,11 +67,17 @@ import logo from '../../../assets/logos/navbar-logo.webp';
           link.removeAttribute('data-closing');
           link.removeAttribute('data-hidden');
         });
-        menu.setAttribute('hidden', 'hidden');
+        menu.setAttribute('data-hide', 'true');
         nav.setAttribute('data-responsive-menu-open', 'false');
         menuButton.querySelector('span')!.textContent = 'Menu';
         menuButton.querySelector('#open-icon')!.setAttribute('data-hidden', 'false');
         menuButton.querySelector('#close-icon')!.setAttribute('data-hidden', 'true');
+        
+        setTimeout(() => {
+          menu.setAttribute('hidden', 'hidden');
+          menu.removeAttribute('data-hide');
+        }, 100);
+        
       }, 300);
     }
   }
