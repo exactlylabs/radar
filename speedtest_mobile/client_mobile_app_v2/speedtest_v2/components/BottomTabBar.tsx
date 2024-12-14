@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors } from '@/styles/shared';
+import { colors, fonts } from '@/styles/shared';
 import { RadarIcon, SpeedometerIcon, MapIcon } from './Icons';
 
 // @ToDo add functionality for switching tabs
@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tabText: {
-    fontSize: 12,
+    fontSize: fonts.tabBarTextSize,
     color: colors.gray400,
     fontWeight: "500",
-    fontFamily: "MulishRegular",
+    fontFamily: fonts.MulishRegular,
   },
   activeTabText: {
     color: colors.bgLightBlueButtomPrimary,

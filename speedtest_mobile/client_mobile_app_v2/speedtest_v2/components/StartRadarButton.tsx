@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors } from '@/styles/shared';
+import { colors, fonts } from '@/styles/shared';
 
 interface StartRadarButtonProps {
   onPress: () => void;
@@ -44,14 +44,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonDisabled: {
-    backgroundColor: colors.inactive,
+    backgroundColor: colors.inactiveRadarGray,
     opacity: 0.7,
   },
   buttonText: {
     color: colors.white,
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "MulishRegular",
+    fontFamily: fonts.MulishRegular,
   },
   buttonTextDisabled: {
     opacity: 0.7,

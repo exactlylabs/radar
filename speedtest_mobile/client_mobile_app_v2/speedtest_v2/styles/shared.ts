@@ -15,16 +15,17 @@ export const colors = {
     backgroundGradientStart: '#110E4C',
     backgroundGradientEnd: '#0B0B20',
     bgLightBlueButtomPrimary: '#4B7BF5',
-    inactive: '#6B6B78',
+    inactiveRadarGray: '#6B6B78',
     tabBarBackground: '#1B1B3A',
     success: '#34C759',
     radarIconBg: '#3F3C70',
 }
 
 export const fonts = {
-    MulishBold: 'MulishBold',
-    MulishRegular: 'MulishRegular',
-}
+  MulishBold: "MulishBold",
+  MulishRegular: "MulishRegular",
+  tabBarTextSize: 12,
+};
 
 export const sharedStyles = StyleSheet.create({
     colors: {

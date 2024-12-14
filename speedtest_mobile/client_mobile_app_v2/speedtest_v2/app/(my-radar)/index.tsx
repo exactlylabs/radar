@@ -133,14 +133,14 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.inactive,
+    backgroundColor: colors.inactiveRadarGray,
   },
   statusDotActive: {
     backgroundColor: colors.success,
   },
   statusText: {
     fontSize: 14,
-    color: colors.inactive,
+    color: colors.inactiveRadarGray,
     fontWeight: '500',
   },
   statusTextActive: {
