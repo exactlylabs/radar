@@ -26,7 +26,7 @@ export default function Settings() {
                     <Text style={styles.label}>ACCOUNT</Text>
                     <SettingsItem
                         title="Account settings"
-                        description="diogo@exactlylabs.com"
+                        description="demo@example.com"
                     />
                 </View>
 
