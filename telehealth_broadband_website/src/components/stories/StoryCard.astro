@@ -2,7 +2,7 @@
 import styles from "../../pages/styles/_stories.module.css";
 import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 import HeroWithText from "../common/content/HeroWithText.astro";
-const { head, title, content, readMorePath, image } = Astro.props;
+const { head, title, content, primary, readMorePath, image } = Astro.props;
 ---
 
 <div class={styles.storyCard}>
@@ -14,6 +14,7 @@ const { head, title, content, readMorePath, image } = Astro.props;
         title={title}
         content={content}
         inCard
+        variant={`story-card-${primary ? 'primary' : 'default'}`}
       />
     </div>
     <ReadMoreButton href={readMorePath}/>

@@ -1,13 +1,14 @@
 ---
 import styles from './styles/hero_with_text.module.css';
 
-const { head, title, content, mainHero, small, inCard } = Astro.props;
+const { head, title, content, mainHero, small, inCard, variant } = Astro.props;
 ---
 
 <div class={styles.heroContainer}
   data-small={(!!small).toString()}
   data-in-card={(!!inCard).toString()}
   data-main-hero={(!!mainHero).toString()}
+  data-variant={variant ?? 'default'}
 >
   { !!head && <span class={styles.head}>{head}</span> }
   <h3 class={styles.title}>{title}</h3>

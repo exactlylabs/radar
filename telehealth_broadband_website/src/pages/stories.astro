@@ -7,11 +7,9 @@ import HeroWithText from "../components/common/content/HeroWithText.astro";
 import StoryGridCard from "../components/stories/StoryCard.astro";
 
 import michiganStory from '../assets/images/michigan-story-thumbnail.webp';
-import alaskaStory from "../assets/images/alaska-story-1.webp";
 import westVirginiaStory from "../assets/images/west-virginia-story-2.webp";
 import texasStory from "../assets/images/texas-story.webp";
 import storiesHero from '../assets/images/stories-hero.webp';
-import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp";
 ---
 
 <BaseLayout
@@ -20,11 +18,11 @@ import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp
   heroBgStyle={`background-image: url(${storiesHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={styles.heroSection}>
-    <img src={blueGradientZigzag.src} alt="blue gradient light" class={styles.blueGradientZigzag} />
     <HeroWithText
       head="Stories"
       title="The Reality on the Ground"
       content="Firsthand experiences from the field, shared by our Community Lead Partners."
+      mainHero
     />
   </section>
   <section class={commonStyles.paddedSection}>
@@ -35,6 +33,7 @@ import blueGradientZigzag from "../assets/images/blue-gradient-zigzag-light.webp
         content="Connectivity issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
         readMorePath="/stories/connectivity-issues-in-rural-michigan-healthcare"
         image={michiganStory}
+        primary
       />
       <div class={styles.divider}></div>
       <div class={styles.twoStories}>

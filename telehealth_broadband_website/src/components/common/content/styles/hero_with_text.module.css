@@ -8,7 +8,9 @@
   text-align: inherit;
 }
 
-.heroContainer[data-in-card="true"] {
+.heroContainer[data-in-card="true"],
+.heroContainer[data-variant="story-card-primary"],
+.heroContainer[data-variant="story-card-default"] {
   gap: 0.75rem;
 }
 
@@ -26,6 +28,14 @@
 .heroContainer[data-small="true"] > .head {
   font-size: 0.875rem;
   letter-spacing: 0.88px;
+}
+
+.heroContainer[data-variant="story-card-default"] > .head,
+.heroContainer[data-variant="story-card-primary"] > .head {
+  font-size: 0.875rem;
+  letter-spacing: 0.88px;
+  color: var(--text-300);
+  line-height: 1;
 }
 
 @media (max-width: 768px) {
@@ -58,6 +68,16 @@
 .heroContainer[data-main-hero="true"] > .title {
   font-size: 3.125rem;
   letter-spacing: -1px;
+}
+
+.heroContainer[data-variant="story-card-default"] > .title {
+  font-size: 1.5rem;
+  letter-spacing: -0.48px;
+}
+
+.heroContainer[data-variant="story-card-primary"] > .title {
+  font-size: 1.75rem;
+  letter-spacing: -0.56px;
 }
 
 @media (max-width: 768px) {
@@ -100,14 +120,35 @@
   color: var(--text-200);
 }
 
+.heroContainer[data-variant="story-card-primary"] > .content {
+  font-size: 1.125rem;
+  line-height: 1.556;
+  color: var(--text-400);
+}
+
+.heroContainer[data-variant="story-card-default"] > .content {
+  font-size: 1rem;
+  line-height: 1.625;
+  color: var(--text-400);
+}
+
 @media (max-width: 768px) {
   .content {
     font-size: 1.0625rem;
     line-height: 1.529;
   }
 
-  .heroContainer[data-in-card="true"] > .content {
+  .heroContainer[data-in-card="true"] > .content,
+  .heroContainer[data-variant="story-card-default"] > .content,
+  .heroContainer[data-variant="story-card-primary"] > .content {
     font-size: 1rem;
     line-height: 1.625;
+  }
+
+  .heroContainer[data-variant="story-card-default"] > .title,
+  .heroContainer[data-variant="story-card-primary"] > .title {
+    font-size: 1.125rem;
+    letter-spacing: -0.36px;
+    line-height: 1.333;
   }
 }
