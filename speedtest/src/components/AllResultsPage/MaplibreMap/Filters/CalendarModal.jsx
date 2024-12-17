@@ -1,16 +1,12 @@
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import styles from './calendar_modal.module.css';
 import leftArrow from '../../../../assets/icons-simple-left-arrow.png';
 import rightArrow from '../../../../assets/icons-simple-right-arrow.png';
 import filtersPanelStyles from '../filters_panel.module.css';
+import FiltersContext from "../../../../context/FiltersContext";
+import {setMidnight} from "../../../../utils/dates";
 
-function CalendarModalInput({label, date, setDate}) {
-
-  const handleChange = (e) => {
-    const value = e.target.value; // yyyy-mm-dd
-    const date = new Date(value + 'T00:00:00');
-    setDate(date);
-  }
+function CalendarModalInput({error, label, date, setDate}) {
 
   /**
    * @param date: Date object
@@ -31,13 +27,14 @@ function CalendarModalInput({label, date, setDate}) {
         className={styles.input}
         id={label.replace(' ', '_')}
         value={parseDate(date)}
-        onChange={handleChange}
+        onChange={setDate}
+        data-error={error}
       />
     </div>
   )
 }
 
-function MonthView({handleClickDay, startDate, endDate, setStartDate, setEndDate, monthInView, yearInView}) {
+function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}) {
 
   const generateMonthlyCalendar = () => {
     const daysInMonth = new Date(yearInView, monthInView + 1, 0).getDate();
@@ -45,18 +42,17 @@ function MonthView({handleClickDay, startDate, endDate, setStartDate, setEndDate
     const lastDate = new Date(yearInView, monthInView, daysInMonth);
     const days = Array
       .from({length: daysInMonth}, (_, i) => i + 1)
-      .map(day => new Date(new Date(firstDate.setDate(day)).setHours(0, 0, 0, 0)));
+      .map(day => setMidnight(new Date(firstDate.setDate(day))));
     firstDate = new Date(yearInView, monthInView, 1);
     const daysFromFirstDayUntilLastMonday = firstDate.getDay() === 0 ? 6 : firstDate.getDay() - 1;
     const daysFromLastDayUntilNextSunday = lastDate.getDay() === 0 ? 0 : 7 - lastDate.getDay();
     const daysFromPreviousMonth = Array
       .from({length: daysFromFirstDayUntilLastMonday},
-      (_) => new Date(new Date(firstDate.setDate(firstDate.getDate() - 1)).setHours(0, 0, 0, 0)))
+      (_) => setMidnight(new Date(firstDate.setDate(firstDate.getDate() - 1))))
       .reverse();
     const daysFromNextMonth = Array
       .from({length: daysFromLastDayUntilNextSunday},
-      (_) => new Date(new Date(lastDate.setDate(lastDate.getDate() + 1)).setHours(0, 0, 0, 0)));
-
+      (_) => setMidnight(new Date(lastDate.setDate(lastDate.getDate() + 1))));
     return (
       <div className={styles.monthContainer}>
         <div className={styles.dayTitles}>
@@ -64,7 +60,7 @@ function MonthView({handleClickDay, startDate, endDate, setStartDate, setEndDate
             <div key={day} className={styles.dayOfWeek}>{day}</div>
           ))}
         </div>
-        <div className={styles.calendar}>
+        <div className={styles.calendar} data-has-end-set={endDate !== ''}>
           {daysFromPreviousMonth.map(day => (
             <div key={day}
               className={styles.day}
@@ -111,10 +107,24 @@ function MonthView({handleClickDay, startDate, endDate, setStartDate, setEndDate
 
 export default function CalendarModal({closeModal}) {
 
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [monthInView, setMonthInView] = useState(startDate === '' ? new Date().getMonth() : new Date(startDate).getMonth());
-  const [yearInView, setYearInView] = useState(startDate === '' ? new Date().getFullYear() : new Date(startDate).getFullYear());
+  const { filters, setDates } = useContext(FiltersContext);
+  const { from, to } = filters;
+
+  const [startDate, setStartDate] = useState(from ?? '');
+  const [endDate, setEndDate] = useState(to ?? '');
+  const [monthInView, setMonthInView] = useState(from === '' ? new Date().getMonth() : from.getMonth());
+  const [yearInView, setYearInView] = useState(from === '' ? new Date().getFullYear() : from.getFullYear());
+  const [erroredInputs, setErroredInputs] = useState([false, false]);
+  const [error, setError] = useState('test err');
+
+  useEffect(() => {
+    setStartDate(from);
+    setEndDate(to);
+    setMonthInView(from.getMonth());
+    setYearInView(from.getFullYear());
+    setErroredInputs([false, false]);
+    setError('');
+  }, [from, to]);
 
   const goToPreviousMonth = () => {
     const previousMonth = monthInView === 0 ? 11 : monthInView - 1;
@@ -131,23 +141,53 @@ export default function CalendarModal({closeModal}) {
   }
 
   const handleClickDay = (e) => {
-    const day = new Date(e.target.dataset.day);
+    setDate(setMidnight(new Date(e.target.dataset.day)));
+  }
+
+  const handleInputDateChange = (e) => {
+    const value = e.target.value; // yyyy-mm-dd
+    setDate(new Date(value + 'T00:00:00'));
+  }
+
+  const setDate = date => {
     if(startDate === '' ||
       (startDate !== '' && endDate !== '') ||
-      (endDate === '' && day.getTime() < startDate.getTime())
+      (endDate === '' && date.getTime() < startDate.getTime())
     ) {
-      setStartDate(day);
+      setStartDate(date);
       setEndDate('');
     } else if(startDate !== '' && endDate === '') {
-      setEndDate(day);
+      setEndDate(date);
     }
+  }
+
+  const showMissingFields = (startDateMissing, endDateMissing) => {
+    setErroredInputs([startDateMissing, endDateMissing]);
+    setError('Start and end dates are required');
+  }
+
+  const handleApply = (e) => {
+    e.preventDefault();
+    let missingFields = [(startDate === '' || isNaN(startDate.getTime())), (endDate === '' || isNaN(endDate.getTime()))];
+    if(!missingFields.every(field => !field)) {
+      showMissingFields(missingFields);
+      return;
+    }
+    setErroredInputs(missingFields);
+    if(startDate.getTime() > endDate.getTime()) {
+      setError('Start date must be before end date');
+      return;
+    }
+    setError('');
+    setDates(startDate, endDate);
+    closeModal();
   }
 
   return (
     <div className={styles.modalContainer}>
       <div className={styles.inputsContainer}>
-        <CalendarModalInput label={'Start date'} date={startDate} setDate={setStartDate}/>
-        <CalendarModalInput label={'End date'} date={endDate} setDate={setEndDate}/>
+        <CalendarModalInput error={erroredInputs[0]} label={'Start date'} date={startDate} setDate={handleInputDateChange}/>
+        <CalendarModalInput error={erroredInputs[1]} label={'End date'} date={endDate} setDate={handleInputDateChange}/>
       </div>
       <div className={styles.monthPicker}>
         <button className={styles.arrow} onClick={goToPreviousMonth}>
@@ -158,17 +198,11 @@ export default function CalendarModal({closeModal}) {
           <img src={leftArrow} alt={'right arrow'} width={16} height={16}/>
         </button>
       </div>
-      <MonthView startDate={startDate}
-                 endDate={endDate}
-                 setStartDate={setStartDate}
-                 setEndDate={setEndDate}
-                 monthInView={monthInView}
-                 yearInView={yearInView}
-                 handleClickDay={handleClickDay}
-      />
+      <MonthView startDate={startDate} endDate={endDate} monthInView={monthInView} yearInView={yearInView} handleClickDay={handleClickDay}/>
+      { error !== '' && <p className={styles.errorMessage}>{error}</p> }
       <div className={styles.responsiveDivider}></div>
       <div>
-        <button className={filtersPanelStyles.applyButton} onClick={closeModal}>Apply</button>
+        <button className={filtersPanelStyles.applyButton} onClick={handleApply}>Apply</button>
       </div>
     </div>
   )
