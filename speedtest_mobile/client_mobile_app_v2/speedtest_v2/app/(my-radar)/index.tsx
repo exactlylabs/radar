@@ -102,7 +102,7 @@ export default function MyRadarScreen() {
               <View style={[styles.statusDot]} />
             )}
             <TextComponent
-              text={isLoading ? "Loading..." : (isRunning ? `Started at ${startTimeFormatted}` : "Not running")}
+              text={isLoading ? "Loading..." : (isRunning ? `Running since ${startTimeFormatted}` : "Not running")}
               style={[styles.statusText, isRunning && styles.statusTextActive]}
             />
           </View>
