@@ -17,6 +17,7 @@ export const StartRadarButton = ({
     <TouchableOpacity
       style={[
         styles.button,
+        { backgroundColor: isRunning ? 'transparent' : colors.primary, borderColor: isRunning ? colors.primary : undefined, borderWidth: isRunning ? 2 : 0 },
         disabled && styles.buttonDisabled
       ]}
       onPress={onPress}
