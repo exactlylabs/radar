@@ -22,9 +22,7 @@ import alaskaFindingsThumbnail from '../assets/images/homepage-alaska-findings-t
 import texasFindingsThumbnail from '../assets/images/homepage-texas-findings-thumbnail.webp';
 import wvFindingsThumbnail from '../assets/images/homepage-west-virginia-findings-thumbnail.webp';
 import michiganFindingsThumbnail from '../assets/images/homepage-michigan-findings-thumbnail.webp';
-import lackOfTechnicalExpertiseStoryImage from '../assets/images/lack-of-technical-expertise-story.webp'
 import roadImage from '../assets/images/road.webp';
-import lackOfTechnicalExpertise from '../assets/images/lack-of-technical-expertise.webp';
 import blueGradientDiagonalLight from '../assets/images/blue-gradient-diagonal-light.webp';
 import yellowPinkHorizontalLight from '../assets/images/yellow-pink-horizontal-light.webp';
 import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizontal-blured-light.webp';
@@ -32,6 +30,8 @@ import blueGradientConcavedLight from '../assets/images/blue-gradient-concaved-l
 import blueGradientZigZagSmallLight from '../assets/images/green-blue-zigzag-small-light.webp';
 import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigzag-blured-small-light.webp';
 import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wide.webp';
+import westVirginiaStoryThumbnail from '../assets/images/west-virginia-story-thumbnail-wide.webp';
+import alaskaStoryThumbnail from '../assets/images/alaska-story-thumbnail-wide.webp';
 ---
 
 <BaseLayout
@@ -138,23 +138,23 @@ import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wi
     </div>
     <div class={styles.storiesCarrouselContainer}>
       <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={3}>
-        <HomepageStoriesCard head="Manistee, Mi"
+        <HomepageStoriesCard head="Michigan"
                              title="Connectivity Challenges Undermining Rural Healthcare in Michigan"
                              content="Broadband issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
                              image={michiganStoryThumbnail.src}
                              link="/stories/connectivity-issues-in-rural-michigan-healthcare"
         />
         <HomepageStoriesCard head="West Virginia"
-          title="Community Centers as Lifelines"
-          content="In many rural areas, reliable internet access exists only at community centers, leaving households disconnected. One young adult shared their shock at discovering high-speed internet for the first time upon arriving at college."
-          image={lackOfTechnicalExpertise.src}
-          link="/stories/west-virginia"
+          title="Breaking Barriers to Treatment in Rural West Virginia"
+          content="Connectivity issues in rural West Virginia disrupt operations and virtual treatment at the Jefferson Day Report Center, underscoring the need for reliable broadband to support rural services."
+          image={westVirginiaStoryThumbnail.src}
+          link="/stories/breaking-barriers-to-treatment-in-rural-west-virginia"
         />
         <HomepageStoriesCard head="Alaska"
-                             title="Lack of Technical Expertise"
-                             content="Rural Alaska clinics relying on satellite internet experienced severe delays, making many applications unusable. A lack of local expertise and vendor support left these clinics unable to fully utilize essential healthcare services."
-                             image={lackOfTechnicalExpertiseStoryImage.src}
-                             link="/stories/lack-of-technical-expertise"
+                             title="Connecting Alaska's Remote Communities"
+                             content="In Alaska's remote villages, unreliable broadband and lack of IT support create critical challenges for telehealth and essential services, highlighting the need for targeted solutions in isolated communities."
+                             image={alaskaStoryThumbnail.src}
+                             link="/stories/connecting-alaskas-remote-communities"
         />
       </Carrousel>
     </div>
