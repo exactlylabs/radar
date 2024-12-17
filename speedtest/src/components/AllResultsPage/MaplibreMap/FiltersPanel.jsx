@@ -21,7 +21,7 @@ function filtersIcon() {
   );
 }
 
-export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
+export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, applyFilters}) {
   return (
     <>
       <div className={styles.filtersPanel} data-open={isOpen.toString()}>
@@ -49,7 +49,7 @@ export default function FiltersPanel({isOpen, togglePanel, openCalendarModal}) {
           </section>
         </div>
         <div className={styles.applySection}>
-          <button className={styles.applyButton}>Apply</button>
+          <button className={styles.applyButton} onClick={applyFilters}>Apply</button>
         </div>
       </div>
       <button className={styles.filtersButton}

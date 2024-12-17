@@ -67,6 +67,10 @@
   color: var(--text-color);
 }
 
+.links > li > a:hover {
+  color: white;
+}
+
 @media (max-width: 768px) {
   .links[data-desktop="true"] {
     display: none;

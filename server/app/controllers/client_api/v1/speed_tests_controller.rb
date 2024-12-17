@@ -50,17 +50,30 @@ module ClientApi
         render json: @speed_tests
       end
 
+      ## VT tiles method now receives some extra parameters
+      # for filters
       def tiles
         x = params[:x].to_i
         y = params[:y].to_i
         z = params[:z].to_i
         is_global = params[:global] || @widget_client.id == 1
-        cache_key = "mvt_#{z}_#{x}_#{y}"
+        filters = get_vt_filters
+        cache_key = "mvt_#{z}_#{x}_#{y}-#{filters.to_s}"
 
-        if REDIS.exists?(cache_key)
+      if REDIS.exists?(cache_key) && !Rails.env.development?
           data = REDIS.get(cache_key)
         else
-          sql_params = {x: x, y: y, z: z}
+          sql_params = {
+            x: x,
+            y: y,
+            z: z,
+            isp: filters[:isp],
+            from: filters[:from],
+            to: filters[:to],
+            min_price: filters[:min_price],
+            max_price: filters[:max_price],
+            connection_type: filters[:connection_type]
+          }
 
           sql = %{
           WITH tile_bounds AS (
@@ -74,10 +87,12 @@ module ClientApi
               longitude,
               network_location,
               network_type,
+              network_cost,
               state,
               city,
               street,
               "autonomous_system_orgs"."name" AS autonomous_system_org_name,
+              "autonomous_system_orgs"."id" AS autonomous_system_org_id,
               download_avg,
               upload_avg,
               COALESCE(loss, 0) as loss,
@@ -92,17 +107,24 @@ module ClientApi
               CASE
                 WHEN download_avg > 100 THEN 2
                 WHEN download_avg > 25 THEN 1
+                WHEN download_avg IS NULL THEN -1
                 ELSE 0
               END AS download_quality,
               CASE
                 WHEN upload_avg > 20 THEN 2
                 WHEN upload_avg > 3 THEN 1
+                WHEN upload_avg IS NULL THEN -1
                 ELSE 0
               END AS upload_quality
             FROM client_speed_tests
             LEFT JOIN "autonomous_systems" ON "autonomous_systems"."id" = "client_speed_tests"."autonomous_system_id"
             LEFT JOIN "autonomous_system_orgs" ON "autonomous_system_orgs"."id" = "autonomous_systems"."autonomous_system_org_id"
             WHERE lonlat && (SELECT geom FROM tile_bounds)
+          }
+
+          sql += apply_vt_filters(filters)
+
+          sql += %{
             AND ST_Intersects(
               lonlat::geometry, -- Cast lonlat to geometry for spatial operations
               (SELECT geom FROM tile_bounds) -- Get the tile boundary for the current tile
@@ -112,8 +134,12 @@ module ClientApi
           sql += " AND tested_by = #{@widget_client.id}" unless is_global
 
           sql += %{
-            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13
-          )
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+          ), }
+
+          sql += apply_view_by_filters(filters)
+
+          sql += %{
           SELECT
             ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
           FROM (
@@ -130,8 +156,8 @@ module ClientApi
               city,
               street,
               autonomous_system_org_name,
-              download_avg,
-              upload_avg,
+              autonomous_system_org_id,
+              network_cost,
               loss,
               latency,
               -- Pulling this here to reduce complexity on the client side, plus, the mapbox/maplibre
@@ -139,7 +165,7 @@ module ClientApi
               -- is either very complex to follow, but also not intuitive at all. So we just give the client
               -- the correct representation for the dot's color.
               LEAST(download_quality, upload_quality) AS connection_quality
-            FROM filtered_tests
+            FROM view_by_filtered_tests
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
           ) AS tile_data;
           }
@@ -209,7 +235,140 @@ module ClientApi
         end
       end
 
+      def max_cost
+        render json: { max_cost: ClientSpeedTest.where("network_cost != 'Nan' AND network_cost IS NOT NULL AND network_cost <= 2000").maximum(:network_cost) }
+      end
+
       private
+
+      def apply_vt_filters(filters)
+        sql = ''
+        sql += ' AND "autonomous_system_orgs"."id" = :isp' unless filters[:isp].nil?
+        sql += ' AND "client_speed_tests"."tested_at" >= to_timestamp(:from)' unless filters[:from].nil?
+        sql += ' AND "client_speed_tests"."tested_at" <= to_timestamp(:to)' unless filters[:to].nil?
+        sql += ' AND "client_speed_tests"."network_type" ILIKE ANY(:connection_type)' unless filters[:connection_type].empty?
+        if filters[:include_no_cost]
+          sql += ' AND ("client_speed_tests"."network_cost" = 0 OR "client_speed_tests"."network_cost" IS NULL OR ("client_speed_tests"."network_cost" >= :min_price AND "client_speed_tests"."network_cost" <= :max_price))'
+        else
+          sql += ' AND ("client_speed_tests"."network_cost" != 0 AND "client_speed_tests"."network_cost" IS NOT NULL AND ("client_speed_tests"."network_cost" >= :min_price AND "client_speed_tests"."network_cost" <= :max_price))'
+        end
+        sql += " AND network_cost != 'NaN' " # Filter out NaN values that may have slipped
+        sql
+      end
+
+      def apply_view_by_filters(filters)
+        sql = ' view_by_filtered_tests AS (SELECT * FROM filtered_tests WHERE '
+        sql += '1 = 1)' if filters[:view_by_filters].nil?
+        view_by = filters[:view_by]
+        filtering_key = view_by == 'download' ? 'download_quality' :
+                        view_by == 'upload' ? 'upload_quality' :
+                        'connection_quality'
+        if filtering_key != 'connection_quality'
+          filters[:view_by_filters].each_with_index do |value, index|
+            sql += ' OR ' if index > 0
+            sql += "#{filtering_key} = #{value}"
+          end
+        else
+          filters[:view_by_filters].each_with_index do |value, index|
+            sql += ' OR ' if index > 0
+            lower_between_download_and_upload = 'LEAST(download_quality, upload_quality)'
+            sql += "#{lower_between_download_and_upload} = #{value}"
+          end
+        end
+        sql += ')'
+      end
+
+      # Get the filters for the vector tile query
+      # Incoming query params:
+      # - connection_type: Array of connection types to filter
+      #   - ['cellular', 'wifi', 'wired']
+      # - isp: Autonomous System Org Id || 'all_providers'
+      # - from: Start date for the tests, numeric timestamp
+      # - to: End date for the tests, numeric timestamp
+      # - min_price: Minimum price for the connection given for the speed test
+      # - max_price: Maximum price for the connection given for the speed test
+      # - maxed_out: Boolean to check if the max price is maxed out and we should ignore it
+      # - include_no_cost: Boolean to include tests with no cost
+      # - view_by: View by filter {'classification' | 'download' | 'upload'}
+      # - view_by_filters: Which filters to apply for the view_by filter. This determines the color of the dots to show.
+      #   - classification: ['no-internet' | 'unserved' | 'underserved' | 'served']
+      #   - download: ['no-internet' | 'low' | 'mid' | 'high']
+      #   - upload: [ 'no-internet' | 'low' | 'mid' | 'high']
+      def get_vt_filters
+        valid_params = vector_tile_params
+        filters = {}
+        filters[:connection_type] = get_connection_type_string(valid_params[:connection_type])
+        filters[:isp] = valid_params[:isp] == 'all_providers' ? nil : valid_params[:isp]
+        filters[:from] = valid_params[:from].to_i / 1000
+        filters[:to] = valid_params[:to].to_i / 1000
+        filters[:min_price] = valid_params[:min_price].to_i
+        filters[:max_price] = valid_params[:maxed_out] == 'true' ? "'/'Infinity/'::float8'" : valid_params[:max_price].to_i
+        filters[:include_no_cost] = valid_params[:include_no_cost] == 'true'
+        filters[:view_by] = valid_params[:view_by]
+        filters[:view_by_filters] = view_by_filters_to_values(valid_params[:view_by], valid_params[:view_by_filters])
+        filters
+      end
+
+      # Convert the connection types to a string to filter in sql via ILIKE ANY
+      def get_connection_type_string(connection_types)
+        return '{wifi, cellular, wired}' if connection_types.nil? || connection_types.empty?
+        str = '{'
+        connection_types.each_with_index do |type, index|
+          str += type
+          str += ',' if index < connection_types.length - 1
+        end
+        str += '}'
+      end
+
+      # Convert the view_by_filters to the values to filter in sql and show on the map
+      def view_by_filters_to_values(view_by, view_by_filters)
+        values = []
+        case view_by
+        when 'classification'
+          view_by_filters.map do |filter|
+            if filter == 'no-internet'
+              values.push(-1)
+            elsif filter == 'unserved'
+              values.push(0)
+            elsif filter == 'underserved'
+              values.push(1)
+            elsif filter == 'served'
+              values.push(2)
+            end
+          end
+        when 'download'
+          view_by_filters.map do |filter|
+            if filter == 'no-internet'
+              values.push(-1)
+            elsif filter == 'low'
+              values.push(0)
+            elsif filter == 'mid'
+              values.push(1)
+            elsif filter == 'high'
+              values.push(2)
+            end
+          end
+        when 'upload'
+          view_by_filters.map do |filter|
+            if filter == 'no-internet'
+              values.push(-1)
+            elsif filter == 'low'
+              values.push(0)
+            elsif filter == 'mid'
+              values.push(1)
+            elsif filter == 'high'
+              values.push(2)
+            end
+          end
+        else
+          raise 'Invalid view_by filter'
+        end
+        values
+      end
+
+      def vector_tile_params
+        params.permit(:isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
+      end
 
       def contact_params
         params.require(:speed_test).permit(:client_email, :client_phone, :client_first_name, :client_last_name)
@@ -274,7 +433,11 @@ module ClientApi
       def invalidate_cache(speed_test)
         (MIN_ZOOM..MAX_ZOOM).each do |zoom|
           x_y = get_xy_from_coordinates_and_zoom(speed_test.latitude, speed_test.longitude, zoom)
-          REDIS.del("mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}")
+          pattern = "mvt_#{zoom}_#{x_y[0]}_#{x_y[1]}-*"
+          keys = REDIS.keys(pattern)
+          keys.each do |key|
+            REDIS.del(key)
+          end
           # I'm clearing some adjacent tiles just to make sure the area is covered
           # as sometimes the calculation gives a result which is right at the edge
           # of the tile, so it could be a miss. The zoom >= 6 is because at smaller
@@ -283,7 +446,11 @@ module ClientApi
             x_range = (x_y[0] - 1..x_y[0] + 1).to_a
             y_range = (x_y[1] - 1..x_y[1] + 1).to_a
             x_range.product(y_range).each do |x, y|
-              REDIS.del("mvt_#{zoom}_#{x}_#{y}")
+              pattern = "mvt_#{zoom}_#{x}_#{y}-*"
+              keys = REDIS.keys(pattern)
+              keys.each do |key|
+                REDIS.del(key)
+              end
             end
           end
         end

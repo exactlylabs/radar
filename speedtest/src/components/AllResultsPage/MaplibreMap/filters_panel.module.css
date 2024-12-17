@@ -1,7 +1,7 @@
 :root {
   --filters-panel-width: 375px;
   --button-height: 46px;
-  --small-screen-breakpoint: 550px;
+  --small-screen-breakpoint: 750px;
 }
 
 .filtersPanel {
@@ -10,7 +10,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 1001;
   background-color: white;
   border: solid 1px rgba(0, 0, 0, 0.1);
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
@@ -27,7 +27,7 @@
   margin-left: 0;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 750px) {
   .filtersPanel {
     width: 100%;
     margin-left: 0;
@@ -79,7 +79,7 @@
   opacity: 0.8;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 750px) {
   .filtersButton {
     background-color: rgba(255, 255, 255, 0.9);
     color: black;
@@ -107,7 +107,7 @@
   fill: transparent;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 750px) {
   .filtersIcon {
     fill: black;
   }
@@ -184,7 +184,7 @@
   font-size: 0.9375rem;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 750px) {
   .resetFiltersButton {
     display: none;
   }

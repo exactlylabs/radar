@@ -131,7 +131,6 @@ class LocationTest < ActiveSupport::TestCase
     pod.reload
 
     assert pod.test_requested?
-    assert_equal pod, loc.scheduling_selected_client
   end
 
   test "when location with two online client and run is due, expect single pod test requested" do
@@ -148,10 +147,7 @@ class LocationTest < ActiveSupport::TestCase
     pod1.reload
     pod2.reload
 
-    assert_includes [pod1, pod2], loc.scheduling_selected_client
-    assert loc.scheduling_selected_client.test_requested?
-    assert_not [pod1, pod2].filter{ |obj| obj != loc.scheduling_selected_client }.first.test_requested?
-
+    assert_equal 1, [pod1.test_requested, pod2.test_requested].count(true)
   end
 
   test "when location with one online client and other offline, and run is due, expect online pod test requested" do
@@ -160,7 +156,6 @@ class LocationTest < ActiveSupport::TestCase
     pod2 = clients(:pod2)
     pod1.update(online: false, location: loc, test_requested: true)
     pod2.update(online: true, location: loc)
-    loc.update(scheduling_selected_client: pod1) # To test if it changes
 
     assert Location.where_pending_next_run.include?(loc)
     Location.request_scheduled_tests!
@@ -171,7 +166,6 @@ class LocationTest < ActiveSupport::TestCase
 
     assert_not pod1.test_requested?
     assert pod2.test_requested?
-    assert_equal pod2, loc.scheduling_selected_client
   end
 
   test "when location with selected pod pointing to different location, expect it gets removed" do
@@ -180,7 +174,6 @@ class LocationTest < ActiveSupport::TestCase
     pod2 = clients(:pod2)
     pod1.update(online: true, location: nil)
     pod2.update(online: true, location: loc)
-    loc.update(scheduling_selected_client: pod1)
 
     assert Location.where_pending_next_run.include?(loc)
     Location.request_scheduled_tests!
@@ -191,7 +184,6 @@ class LocationTest < ActiveSupport::TestCase
 
     assert_not pod1.test_requested?
     assert pod2.test_requested?
-    assert_equal pod2, loc.scheduling_selected_client
   end
 
   test "when data cap is set, and above max, expect pod not scheduled to run" do
@@ -251,7 +243,6 @@ class LocationTest < ActiveSupport::TestCase
     pod1.update(online: true, location: loc)
     now = Time.current
     SchedulingRestriction.create(location: loc, time_start: (now - 2.hour).time, time_end: (now - 1.hour).time, weekdays: [now.wday])
-
     Location.request_scheduled_tests!
     loc.reload
     pod1.reload

@@ -82,7 +82,7 @@
   background-color: white;
 }
 
-.calendar:has(.day[data-end-date="true"]) > .day[data-start-date="true"]::after {
+.calendar[data-has-end-set="true"] > .day[data-start-date="true"]::after {
   content: '';
   position: absolute;
   width: 72%;
@@ -176,6 +176,10 @@
   height: 1rem;
 }
 
+.input[data-error="true"] {
+  outline: solid 2px #c41d52;
+}
+
 .responsiveDivider {
   display: none;
 }
@@ -188,4 +192,12 @@
     background-color: #E3E3E8;
     margin: 0 -1.5rem;
   }
+}
+
+.errorMessage {
+  font-size: 0.9375rem;
+  color: #c41d52;
+  margin: -1rem 0;
+  text-align: center;
+  width: 100%;
 }

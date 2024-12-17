@@ -167,6 +167,10 @@
     max-width: unset;
     margin: 0 auto 2.5rem;
   }
+
+  .paddedText > br {
+    display: none;
+  }
 }
 
 .horizontalShiftContainer {
@@ -209,13 +213,13 @@
     padding-top: 3rem;
   }
 
-  .completeSection > .textContainer {
-    width: calc(100% - 3rem);
+  .textContainer {
+    width: 100%;
     margin: 0 auto;
   }
 }
 
-.completeSection > .textContainer > h3 {
+.textContainer > h3 {
   font-size: 2.5rem;
   color: white;
   letter-spacing: -0.8px;
@@ -224,14 +228,14 @@
 }
 
 @media (max-width: 768px) {
-  .completeSection > .textContainer > h3 {
+  .textContainer > h3 {
     font-size: 1.75rem;
     letter-spacing: -0.56px;
     margin-bottom: 1rem;
   }
 }
 
-.completeSection > .textContainer > p {
+.textContainer > p {
   font-size: 1.125rem;
   line-height: 1.556;
   color: var(--text-color);
@@ -239,7 +243,7 @@
 }
 
 @media (max-width: 768px) {
-  .completeSection > .textContainer > p {
+  .textContainer > p {
     font-size: 1rem;
     line-height: 1.625;
     margin-bottom: 1rem;
@@ -254,7 +258,7 @@
 @media (max-width: 768px) {
   .quoteWrapper {
     max-width: unset;
-    width: calc(100% - 3rem);
+    width: 100%;
   }
 }
 
@@ -317,12 +321,12 @@
   gap: 0 30px;
   margin: 0 auto;
   position: relative;
-  left: 100px;
+  left: 10px;
 }
 
 @media (max-width: 768px) {
   .threeImageCarrousel {
-    width: calc(100% - 3rem);
+    width: 100%;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, 1fr);
     gap: 1rem 0;
@@ -354,6 +358,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 823 / 462;
+  border-radius: 6px;
 }
 
 .subRegionalClinicContainer > div {
@@ -362,7 +367,7 @@
 
 @media (max-width: 768px) {
   .subRegionalClinicContainer {
-    width: calc(100% - 3rem);
+    width: 100%;
     max-width: unset;
     padding-block: 2.5rem 3rem;
     gap: 1rem;

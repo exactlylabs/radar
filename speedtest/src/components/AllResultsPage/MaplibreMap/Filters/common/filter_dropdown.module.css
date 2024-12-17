@@ -44,6 +44,16 @@
   gap: 8px;
 }
 
+.label {
+  font-size: 0.9375rem;
+  color: #110E4C;
+  margin: 0;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dropdownOptionsContainer {
   box-sizing: border-box;
   width: 100%;
@@ -152,6 +162,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 4px;
+  width: calc(100% - 16px - 8px);
 }
 
 .multiRowLabelContainer[data-selected="true"] > .optionLabel {
@@ -162,6 +173,10 @@
   font-size: 0.9375rem;
   color: #110E4C;
   margin: 0;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .optionSubLabel {

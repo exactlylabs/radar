@@ -1,5 +1,5 @@
 .card {
-  width: clamp(320px, calc(100vw - 6rem), 1250px);
+  width: clamp(320px, calc(100vw - 6rem), 1068px);
   height: 454px;
   border-radius: 6px;
   backdrop-filter: blur(10px);

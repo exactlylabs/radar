@@ -56,7 +56,7 @@ export default function FilterDropdown({
       >
         <div className={styles.labelContainer}>
           <img src={iconSrc} width={16} height={16} alt={'dropdown filter icon'}/>
-          {label}
+          <p className={styles.label}>{label}</p>
         </div>
         <img src={dropdownCaretIcon} width={16} height={16} alt={'dropdown caret'}/>
       </button>

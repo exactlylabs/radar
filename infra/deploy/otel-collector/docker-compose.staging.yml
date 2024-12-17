@@ -7,10 +7,10 @@ services:
     environment:
       - AWS_REGION=us-east-2
       - AWS_SHARED_CREDENTIALS_FILE=/var/run/secrets/AWS_OTEL_CREDENTIALS_FILE
-      - POSTGRESQL_HOST=db-01.staging.radartoolkit.com
+
     secrets:
       - AWS_OTEL_CREDENTIALS_FILE
-      - PODS_DATABASE_PASSWORD
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
@@ -20,13 +20,13 @@ services:
           - node.labels.network == aws
 
     configs:
-      - source: otel_config-v24
+      - source: otel_config-v25
         target: /etc/otel-agent-config.yaml
 
 configs:
   # To update config files, we must rename the config key name, and update the service to source from this new name.
   # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
-  otel_config-v24:
+  otel_config-v25:
     template_driver: golang
     file: ./configs/config.yaml
 
@@ -36,7 +36,5 @@ networks:
     attachable: true
 
 secrets:
-  PODS_DATABASE_PASSWORD:
-    external: true
   AWS_OTEL_CREDENTIALS_FILE:
     external: true

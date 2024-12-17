@@ -172,6 +172,7 @@ const { bgImageSrc, title, description } = Astro.props;
       
       function handleHorizontalShiftImages() {
         const horizontalShiftImage = document.getElementById("horizontal-shift-image")!;
+        if(!horizontalShiftImage) return;
         const {top: horizontalShiftTop} = horizontalShiftImage.getBoundingClientRect();
         const targetShiftPx = 100;
         if (horizontalShiftTop <= window.innerHeight) {
@@ -183,12 +184,14 @@ const { bgImageSrc, title, description } = Astro.props;
       
       function handleThreeImageCarrousel() {
         const threeImageCarrousel = document.getElementById("three-image-carrousel")!;
+        if(!threeImageCarrousel) return;
         const { top: carrouselTop } = threeImageCarrousel.getBoundingClientRect();
-        const targetShiftPx = 100;
+        const firstImage = threeImageCarrousel.querySelector('img')!;
+        const targetShiftPx = firstImage.getBoundingClientRect().width / 4;
         if(carrouselTop <= window.innerHeight) {
           const topPercentage = carrouselTop / window.innerHeight;
-          const newValue = targetShiftPx - targetShiftPx * (1 - topPercentage);
-          threeImageCarrousel.style.left = `${newValue}px`;
+          let newValue = targetShiftPx * (1 - topPercentage);
+          threeImageCarrousel.style.left = `-${newValue}px`;
         }
       }
       
