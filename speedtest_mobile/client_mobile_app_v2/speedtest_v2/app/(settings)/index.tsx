@@ -7,6 +7,7 @@ import ArrowLeftIcon from '@/assets/images/icons/arrowbackicon.png'
 
 export default function Settings() {
     const router = useRouter();
+    // TODO: get user data from api
     return (
         <View style={styles.container}>
             <View style={styles.content}>
@@ -22,7 +23,7 @@ export default function Settings() {
                     <Text style={styles.label}>ACCOUNT</Text>
                     <SettingsItem
                         title="Account settings"
-                        description="diogo@exactlylabs.com"
+                        description="user@example.com"
                     />
                 </View>
 
