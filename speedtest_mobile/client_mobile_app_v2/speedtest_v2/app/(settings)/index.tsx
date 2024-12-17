@@ -10,6 +10,7 @@ import CloseIcon from '@/assets/images/icons/closeicon.png'
 import { useState } from "react";
 
 export default function Settings() {
+    // TODO: implement save of data and submit to backend
     const [isProfileIncomplete, setIsProfileIncomplete] = useState(true);
     const router = useRouter();
     return (
@@ -43,7 +44,7 @@ export default function Settings() {
                     <Text style={styles.label}>ACCOUNT</Text>
                     <SettingsItem
                         title="Account settings"
-                        description="diogo@exactlylabs.com"
+                        description="user@example.com"
                     />
                 </View>
 
