@@ -1,0 +1,24 @@
+.staticImage {
+  padding-top: 0;
+}
+
+.quotePadder {
+  padding-top: 3.5rem;
+  padding-bottom: 5rem;
+}
+
+.paragraph {
+  font-size: 1.125rem;
+  line-height: 1.556;
+  color: var(--text-color);
+  max-width: 711px;
+  margin: 0 auto;
+}
+
+.topPaddedText {
+  padding-top: 3.5rem;
+}
+
+.bottomPaddedText {
+  padding-bottom: 5rem;
+}
