@@ -173,6 +173,9 @@
 }
 
 [aria-label="Close modal"] {
+  width: 2.5rem;
+  height: 2.5rem;
+  aspect-ratio: 1;
   padding: .75rem;
   margin-right: 1.5rem;
 }
