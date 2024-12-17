@@ -95,7 +95,14 @@
 @media (max-width: 768px) {
   .textContainer {
     max-width: unset;
+    width: calc(100% - calc(2 * var(--side-padding)));
+    margin: 0 auto;
+  }
+
+  .textContainer[data-variant="contained"] {
+    margin: 0;
     width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -165,7 +172,11 @@
     font-size: 1rem;
     line-height: 1.625;
     max-width: unset;
-    margin: 0 auto 2.5rem;
+    margin: 0 var(--side-padding) 2.5rem;
+  }
+
+  .paddedText[data-variant="contained"] {
+    margin: 0;
   }
 
   .paddedText > br {
@@ -211,11 +222,6 @@
 @media (max-width: 768px) {
   .completeSection {
     padding-top: 3rem;
-  }
-
-  .textContainer {
-    width: 100%;
-    margin: 0 auto;
   }
 }
 
@@ -375,6 +381,11 @@
     max-width: unset;
     padding-block: 2.5rem 3rem;
     gap: 1rem;
+  }
+
+  .subRegionalClinicContainer[data-variant="alaska"] {
+    max-width: calc(100% - 2 * var(--side-padding));
+    padding-block: 0 2.5rem;
   }
 
   .subRegionalClinicContainer > div {

@@ -43,13 +43,13 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
   />
 
   <section class={commonStyles.paddedSection} id="parallax-reference-container">
-    <div class={templateStyles.textContainer}>
+    <div class={templateStyles.textContainer} data-variant="contained">
       <HeroWithText head="Michigan"
                     title="Connectivity Challenges Undermining Rural Healthcare in Michigan"
                     content="Northwest Michigan Health Services (NMHSI) faces ongoing challenges with broadband connectivity, directly impacting patient care and staff efficiency. As part of a larger HRSA-funded study examining broadband in rural communities, the clinics have highlighted the growing need for reliable internet to support telehealth services and other essential operations."
       />
       <br/>
-      <p class={templateStyles.paddedText}>The organization operates seven clinics, including a small location in Manistee, where limited public transportation already poses significant challenges for patients. "We rely heavily on telehealth to connect with patients who can't easily come into the clinic," explained Kim Corliss, Director of Administrative Operations at NMHS. However, poor internet connectivity often disrupts video visits, forcing staff to switch to less effective phone consultations or reschedule in-person visits, creating delays in care.</p>
+      <p class={templateStyles.paddedText} data-variant="contained">The organization operates seven clinics, including a small location in Manistee, where limited public transportation already poses significant challenges for patients. "We rely heavily on telehealth to connect with patients who can't easily come into the clinic," explained Kim Corliss, Director of Administrative Operations at NMHS. However, poor internet connectivity often disrupts video visits, forcing staff to switch to less effective phone consultations or reschedule in-person visits, creating delays in care.</p>
     </div>
 
     <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
@@ -68,7 +68,7 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
       <Epigraph text="Many patients in Michigan rely on telehealth due to difficulties in accessing clinics."/>
     </div>
     
-    <p class={templateStyles.paddedText}>Technical assessments conducted during the study identified several issues with the clinics' Wi-Fi infrastructure, including prolonged signal drops and improperly configured access points. These problems have led to frequent interruptions in Electronic Medical Record (EMR) systems, requiring staff to repeatedly log back in while charting patient information. "It's frustrating for the staff," Corliss noted. "They end up taking work home just to complete patient charts, which affects their morale and limits the number of patients they can see."</p>
+    <p class={templateStyles.paddedText} data-variant="contained">Technical assessments conducted during the study identified several issues with the clinics' Wi-Fi infrastructure, including prolonged signal drops and improperly configured access points. These problems have led to frequent interruptions in Electronic Medical Record (EMR) systems, requiring staff to repeatedly log back in while charting patient information. "It's frustrating for the staff," Corliss noted. "They end up taking work home just to complete patient charts, which affects their morale and limits the number of patients they can see."</p>
     
     <div class={templateStyles.quoteWrapper}>
       <Quote
@@ -84,7 +84,7 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
   </section>
 
   <section class={styles.reliableInternetSection}>
-    <div class={templateStyles.textContainer}>
+    <div class={templateStyles.textContainer} data-variant="contained">
       <h3>Reliable Internet in Patient Care</h3>
       <p>Patients requiring interpreter services have also faced significant disruptions.
         <br/><br/>"When the Wi-Fi signal drops, we lose the interpreter," Corliss said. "Logging back in connects us with someone new, which undermines the continuity of care. It's frustrating for both patients and staff".
@@ -103,7 +103,7 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
       <img src={manCouch.src} alt="Man lying on couch while on the phone" loading="eager"/>
     </div>
 
-    <p class={templateStyles.paddedText}>
+    <p class={`${templateStyles.paddedText} ${styles.bottomPaddedText}`} data-variant="contained">
         An analysis of the clinics' internet performance revealed that many of the connectivity issues stemmed from challenges beyond the scope of local IT expertise. In one instance, improperly configured internet routing meant that only a fraction—less than 10%—of the available bandwidth was actually usable. Similarly, a Wi-Fi issue known as a "bad roam" caused frequent disruptions to translation services, disconnecting interpreters mid-session and further complicating patient care. These technical problems required specialized assessments to identify and address, underscoring the complexity of maintaining reliable internet infrastructure in rural settings.
     <br/><br/>By identifying these gaps, the study facilitated targeted interventions that alleviated some of the most pressing issues, such as reducing "bad roams" to stabilize translation services. While such improvements have had measurable benefits for staff and patients, the findings emphasize that rural clinics often lack the resources or expertise to resolve highly specialized connectivity problems.
     <br/><br/>The findings from NMHSI highlight the urgency of addressing broadband disparities in rural healthcare settings. As the HRSA-funded study continues, it underscores a pressing need for systemic changes to improve internet access and ensure equitable healthcare delivery.

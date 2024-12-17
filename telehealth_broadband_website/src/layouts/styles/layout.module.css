@@ -4,6 +4,18 @@
   --side-padding: calc((100vw - var(--max-width)) / 2);
 }
 
+@media (max-width: 1250px) {
+  :root {
+    --side-padding: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --side-padding: 24px;
+  }
+}
+
 .main {
   width: 100vw;
   min-height: calc(100dvh - var(--navbar-height) - var(--footer-height));
@@ -12,10 +24,6 @@
 }
 
 @media (max-width: 768px) {
-  :root {
-    --side-padding: 48px;
-  }
-
   .main {
     padding-top: var(--responsive-navbar-height);
   }

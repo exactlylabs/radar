@@ -80,7 +80,8 @@
 
 @media (max-width: 768px) {
   .twoStories {
-    flex-direction: column;
+    grid-auto-flow: row;
+    gap: 3rem;
   }
 }
 
