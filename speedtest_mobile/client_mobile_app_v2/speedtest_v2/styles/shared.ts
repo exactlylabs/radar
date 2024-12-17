@@ -1,26 +1,43 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    white: '#FFFFFF',
-    gray300: '#BCBBC7',
-    gray400: '#A09FB7',
-    gray500: '#737381',
-    gray600: '#58586c',
-    blue200: '#4B7BE5',
-    blueBackground: '#15152E',
-    bgGradientPrimary: '#1A1B2E',
-    bgGradientSecondary: '#12132A',
-    red400: '#E54B4B',
-    bgPrimary: '#15152E',
-    backgroundGradientStart: '#110E4C',
-    backgroundGradientEnd: '#0B0B20',
-    bgLightBlueButtomPrimary: '#4B7BF5',
-    inactiveRadarGray: '#6B6B78',
-    tabBarBackground: '#1B1B3A',
-    success: '#34C759',
-    radarIconBg: '#3F3C70',
-    primary: '#0066FF',
-}
+  // Colors from sketch palette
+  // primary colors
+  veryLightBlue: "#ECF2FC", // very light blue
+  darkBlue: "#436ECC", // dark blue
+  blue: "#4B7BE5", // blue
+
+  // neutral
+  deepBlue: "#110e4c", // deep blue
+  darkGray: "#3f3c70", // dark gray
+  gray: "#6d6a94", // gray
+  lightGray: "#a09fb7", // light gray
+  midLightGray: "#bcbbc7", // mid light gray
+  veryLightGray: "#e3e3e8", // very light gray
+
+  // Other colors
+  white: "#FFFFFF",
+  gray300: "#BCBBC7", // mid light gray
+  gray400: "#A09FB7",
+  gray500: "#737381",
+  gray600: "#58586c",
+  blue200: "#4B7BE5", // blue
+  blueBackground: "#15152E",
+  bgGradientPrimary: "#1A1B2E",
+  bgGradientSecondary: "#12132A",
+  red400: "#E54B4B",
+  bgPrimary: "#15152E",
+  backgroundGradientStart: "#110E4C",
+  backgroundGradientEnd: "#0B0B20",
+  bgLightBlueButtomPrimary: "#4B7BF5",
+  inactiveRadarGray: "#6B6B78",
+  tabBarBackground: "#1B1B3A",
+  success: "#34C759",
+  radarIconBg: "#3F3C70",
+  primary: "#0066FF",
+  wifiIconBg: "#31b36c",
+  cellTowerIconBg: "#F7AA5A",
+};
 
 export const fonts = {
   MulishBold: "MulishBold",

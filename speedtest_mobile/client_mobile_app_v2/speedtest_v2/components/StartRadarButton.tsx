@@ -5,29 +5,32 @@ import { colors, fonts } from '@/styles/shared';
 interface StartRadarButtonProps {
   onPress: () => void;
   isRunning: boolean;
-  disabled?: boolean;
+  isDisabled?: boolean;
 }
 
 export const StartRadarButton = ({
   onPress,
   isRunning,
-  disabled = false
+  isDisabled = false
 }: StartRadarButtonProps) => {
+  const buttonStyles = [
+    styles.button,
+    isRunning ? styles.buttonRunning : styles.buttonNotRunning,
+    isDisabled && styles.buttonDisabled
+  ];
+  const buttonTextStyles = [
+    styles.buttonText,
+    isDisabled && styles.buttonTextDisabled
+  ];
+
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        { backgroundColor: isRunning ? 'transparent' : colors.primary, borderColor: isRunning ? colors.primary : undefined, borderWidth: isRunning ? 2 : 0 },
-        disabled && styles.buttonDisabled
-      ]}
+      style={buttonStyles}
       onPress={onPress}
       activeOpacity={0.8}
-      disabled={disabled}
+      disabled={isDisabled}
     >
-      <Text style={[
-        styles.buttonText,
-        disabled && styles.buttonTextDisabled
-      ]}>
+      <Text style={buttonTextStyles}>
         {isRunning ? 'Stop Radar' : 'Start Radar'}
       </Text>
     </TouchableOpacity>
@@ -36,13 +39,20 @@ export const StartRadarButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.bgLightBlueButtomPrimary,
     marginHorizontal: 16,
     marginBottom: 32,
     height: 56,
     borderRadius: 28,
     justifyContent: "center",
     alignItems: "center",
+  },
+  buttonRunning: {
+    backgroundColor: 'transparent',
+    borderColor: colors.blue,
+    borderWidth: 1.5
+  },
+  buttonNotRunning: {
+    backgroundColor: colors.primary
   },
   buttonDisabled: {
     backgroundColor: colors.inactiveRadarGray,
