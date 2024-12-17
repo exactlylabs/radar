@@ -27,23 +27,24 @@ export const BottomTabBar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: colors.tabBarBackground,
-    paddingBottom: 32,
-    paddingTop: 16,
+    paddingBottom: 20,
+    paddingTop: 12,
+    borderTopWidth: 0,
   },
   tab: {
     flex: 1,
-    alignItems: "center",
-    gap: 6,
+    alignItems: 'center',
+    gap: 4,
   },
   tabText: {
-    fontSize: fonts.tabBarTextSize,
-    color: colors.gray400,
-    fontWeight: "500",
-    fontFamily: fonts.MulishRegular,
+    color: colors.white,
+    fontSize: 12,
+    opacity: 0.7,
   },
   activeTabText: {
-    color: colors.bgLightBlueButtomPrimary,
+    opacity: 1,
+    color: colors.primary,
   },
 });

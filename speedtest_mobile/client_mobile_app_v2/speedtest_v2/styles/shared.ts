@@ -19,6 +19,7 @@ export const colors = {
     tabBarBackground: '#1B1B3A',
     success: '#34C759',
     radarIconBg: '#3F3C70',
+    primary: '#0066FF',
 }
 
 export const fonts = {
