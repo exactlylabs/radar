@@ -29,7 +29,6 @@ interface WifiDetailsProps {
 }
 
 export default function WifiDetailsScreen() {
-    // ToDo: Fetch real data for wifi details
     const [wifiDetails, setWifiDetails] = useState<WifiDetailsProps>({
         name: 'Starbucks-2034',
         address: 'Seattle, WA 98122',
@@ -136,10 +135,10 @@ export default function WifiDetailsScreen() {
                         <Image source={ArrowRightIcon} />
                     </TouchableOpacity>
 
-                    {/* T0D0: repleace this image with a map and implement the click to open the map */}
+                    {/* T0D0: repleace this image with a map */}
                     <Image source={MapImage} style={styles.mapImage} />
 
-                    <TouchableOpacity style={styles.buttonViewMap}>
+                    <TouchableOpacity style={styles.buttonViewMap} onPress={() => Alert.alert('teste')}>
                         <Text style={styles.buttonViewMapTitle}>View on the map</Text>
                     </TouchableOpacity>
                 </View>
