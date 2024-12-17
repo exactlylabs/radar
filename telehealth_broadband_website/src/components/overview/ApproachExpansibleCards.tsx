@@ -22,6 +22,7 @@ export default function ApproachExpansibleRows() {
           isOpen={currentOpenIndex === 0}
           index={0}
           toggleOpen={handleToggleCard}
+          variant={'overview-project-metrics'}
         />
         <ExpansibleRow
           content={{
@@ -32,6 +33,7 @@ export default function ApproachExpansibleRows() {
           isOpen={currentOpenIndex === 2}
           index={2}
           toggleOpen={handleToggleCard}
+          variant={'overview-project-metrics'}
         />
         <ExpansibleRow
           content={{
@@ -42,6 +44,7 @@ export default function ApproachExpansibleRows() {
           isOpen={currentOpenIndex === 4}
           index={4}
           toggleOpen={handleToggleCard}
+          variant={'overview-project-metrics'}
         />
       </div>
       <div className={styles.column}>
@@ -54,6 +57,7 @@ export default function ApproachExpansibleRows() {
           isOpen={currentOpenIndex === 1}
           index={1}
           toggleOpen={handleToggleCard}
+          variant={'overview-project-metrics'}
         />
         <ExpansibleRow
           content={{
@@ -64,6 +68,7 @@ export default function ApproachExpansibleRows() {
           isOpen={currentOpenIndex === 3}
           index={3}
           toggleOpen={handleToggleCard}
+          variant={'overview-project-metrics'}
         />
       </div>
     </div>

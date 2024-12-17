@@ -7,6 +7,7 @@ interface CarrouselProps {
   fullWidth?: boolean;
   alignmentRefId?: string;
   elementCount?: number;
+  variant?: 'default' | 'overview-data-collection';
 }
 
 const AUTOMATIC_SWITCH_INTERVAL = 8000;
@@ -20,9 +21,10 @@ const AUTOMATIC_SWITCH_INTERVAL = 8000;
  * @param fullWidth
  * @param alignmentRefId
  * @param elementCount
+ * @param variant
  * @constructor
  */
-export default function Carrousel({children, arrowLess, fullWidth, alignmentRefId, elementCount}: CarrouselProps) {
+export default function Carrousel({children, arrowLess, fullWidth, alignmentRefId, elementCount, variant}: CarrouselProps) {
   
   const container = useRef<HTMLDivElement>(null);
   const carrousel = useRef<HTMLDivElement>(null);
@@ -262,7 +264,7 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   return (
     <div id={'scroll-gallery-feature-cards'} style={{width: '100%', margin: '0 auto', position: 'relative'}} ref={container}>
       <div className={styles.carrousel} ref={carrousel} data-full-width={fullWidth?.toString() ?? 'false'}>
-        <ul className={styles.cardSet} ref={cardSet} onMouseEnter={handleMouseOver} onMouseLeave={handleMouseOut}>
+        <ul className={styles.cardSet} data-variant={variant ?? 'default'} ref={cardSet} onMouseEnter={handleMouseOver} onMouseLeave={handleMouseOut}>
           {children}
         </ul>
       </div>

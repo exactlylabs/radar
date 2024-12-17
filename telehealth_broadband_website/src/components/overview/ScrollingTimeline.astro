@@ -8,16 +8,19 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
     title='Optimizing Data Collection'
     content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
     side='right'
+    threshold="0.6"
   />
   <ScrollingTimelineItem
     title='Understanding Rural Connectivity'
     content='Identifying and testing approaches that can reliably assess internet experience, with a focus on replicable strategies for rural connectivity studies.'
     side='left'
+    threshold="0.8"
   />
   <ScrollingTimelineItem
     title='Guiding Policy and Funding'
     content='Using analyzed data to guide policies and funding  that address broadband inequities and enhance telehealth access, supporting federal and state-level decision-makers.'
     side='right'
+    threshold="0.9"
   />
   <div class={styles.timelineLine}></div>
 </div>
@@ -27,16 +30,19 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
           title='Optimizing Data Collection'
           content='Collecting local internet data to identify challenges and opportunities for enhancing broadband and digital equity in underserved communities.'
           side='right'
+          threshold="0.6"
   />
   <ScrollingTimelineItem
           title='Understanding Rural Connectivity'
           content='Identifying and testing approaches that can reliably assess internet experience, with a focus on replicable strategies for rural connectivity studies.'
           side='right'
+          threshold="0.8"
   />
   <ScrollingTimelineItem
           title='Guiding Policy and Funding'
           content='Using analyzed data to guide policies and funding  that address broadband inequities and enhance telehealth access, supporting federal and state-level decision-makers.'
           side='right'
+          threshold="0.95"
   />
   <div class={styles.timelineLine}></div>
 </div>
@@ -82,9 +88,16 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
     const rootMargin = `0px 0px -50% 0px`;
     const callback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry: IntersectionObserverEntry) => {
-        if (entry.isIntersecting) {
-          (entry.target as HTMLElement).style.opacity = '1';
-          entry.target.classList.add(styles.timelineItemVisible);
+        if (entry.isIntersecting &&
+          !entry.target.classList.contains(styles.timelineItemVisible)
+        ) {
+          const target = (entry.target as HTMLElement);
+          let opacity = Math.max(0.3, entry.intersectionRatio);
+          const threshold = Number(target.dataset.threshold);
+          if(opacity >= threshold) opacity = 1;
+          target.style.opacity = `${opacity}`;
+          
+          if(entry.intersectionRatio >= threshold) target.classList.add(styles.timelineItemVisible);
         }
       });
     };
@@ -92,17 +105,17 @@ import ScrollingTimelineItem from './ScrollingTimelineItem.astro';
     // We use different observers to tweak the timing of the observer's intersection getting triggered
     const firstObserver = new IntersectionObserver(callback, {
       rootMargin: rootMargin,
-      threshold: 0.6
+      threshold: Array.from({length: 101}, (_, i) => i / 100)
     });
     
     const secondObserver = new IntersectionObserver(callback, {
       rootMargin: rootMargin,
-      threshold: 0.8
+      threshold: Array.from({length: 101}, (_, i) => i / 100)
     });
     
     const thirdObserver = new IntersectionObserver(callback, {
       rootMargin: rootMargin,
-      threshold: 0.9
+      threshold: Array.from({length: 101}, (_, i) => i / 100)
     });
     
     timelineItems.forEach((item, index) => {

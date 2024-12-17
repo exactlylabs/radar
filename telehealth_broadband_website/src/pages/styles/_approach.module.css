@@ -4,8 +4,8 @@
   max-width: 668px;
   margin-inline: auto;
   box-sizing: border-box;
-  padding-top: 8.75rem;
-  padding-bottom: 6rem;
+  padding-top: 7.75rem;
+  padding-bottom: 7.5rem;
 }
 
 @media (max-width: 768px) {
@@ -20,10 +20,10 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 0;
-  padding-bottom: 7.5rem;
+  padding-bottom: 4rem;
 }
 
 @media (max-width: 768px) {
@@ -62,17 +62,8 @@
 
 @media (max-width: 768px) {
   .pilotHeroContainer {
-    max-width: calc(100% - 3rem);
-  }
-}
-
-.dataCollectionSection {
-  padding-bottom: 7rem;
-}
-
-@media (max-width: 768px) {
-  .dataCollectionSection {
-    padding-bottom: 5.5rem;
+    max-width: 100%;
+    min-width: unset;
   }
 }
 
@@ -81,6 +72,12 @@
   text-align: center;
   margin: 0 auto;
   padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .dataCollectionHeroContainer {
+    padding-bottom: 3rem;
+  }
 }
 
 .projectMetricsSection {
@@ -92,11 +89,14 @@
     rgba(75, 123, 229, 0.1) 0%,
     rgba(75, 123, 229, 0) 100%
   );
+  position: relative;
+  margin-top: 7rem;
 }
 
 @media (max-width: 768px) {
   .projectMetricsSection {
     padding-block: 3.5rem;
+    margin-top: 5.5rem;
   }
 }
 
@@ -117,6 +117,12 @@
   padding-bottom: 6.5rem;
 }
 
+@media (max-width: 768px) {
+  .enablingCommunitiesSection {
+    padding-top: 2rem;
+  }
+}
+
 .enablingCommunitiesHeroContainer {
   max-width: 640px;
   text-align: center;
@@ -133,17 +139,16 @@
 }
 
 .projectLeadershipSection {
-  padding-top: 6rem;
   padding-bottom: 7.5rem;
+  width: 100%;
+  position: relative;
+  overflow: clip;
   background: linear-gradient(
       180deg,
       rgba(75, 123, 229, 0.1) 0%,
       rgba(75, 123, 229, 0) 100%
   );
-  width: 100%;
-  padding-inline: 2rem;
-  position: relative;
-  overflow: clip;
+  padding-top: 6rem;
 }
 
 @media (max-width: 768px) {
@@ -177,35 +182,42 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
-  padding-block: 7.5rem;
+  padding-bottom: 5.5rem;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
   .communityLeadPartnersHero {
     flex-direction: column;
     gap: 3rem;
-    padding: 5.5rem 0 3rem;
+    padding: 0 0 3rem;
   }
 }
 
 .communityLeadPartnersHeroContainer {
-  max-width: 608px;
   text-align: left;
+  flex-basis: 400px;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 @media (max-width: 768px) {
   .communityLeadPartnersHeroContainer {
-    max-width: calc(100% - 3rem);
+    max-width: 100%;
   }
 }
 
 .communityLeadPartnersHeroImage {
-  width: 502px;
-  height: 296px;
-  min-width: 50%;
+  width: 50%;
+  flex-basis: 400px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-width: 504px;
+  height: auto;
+  aspect-ratio: 504 / 342;
   border-radius: 6px;
-  background-size: 250%;
-  background-position: 40% 40%;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
@@ -267,9 +279,9 @@
   z-index: -1;
 }
 
-.projectMetricsSection > .dotsGrid {
+.dotsGrid {
   position: absolute;
-  top: 2100px;
+  top: -40px;
   left: 50%;
   z-index: -1;
   height: 460px;
@@ -278,7 +290,7 @@
 
 .blueGradientZigZagBluredLight {
   position: absolute;
-  top: 1950px;
+  top: -200px;
   right: -250px;
   height: 698px;
   aspect-ratio: 1063 / 698;
@@ -312,13 +324,6 @@
   aspect-ratio: 1139 / 759;
 }
 
-@media (max-width: 1080px) {
-  .projectMetricsSection > .dotsGrid {
-    top: 2000px;
-    left: 0;
-  }
-}
-
 @media (max-width: 768px) {
   .yellowPinkZigZagLight {
     display: none;
@@ -328,24 +333,8 @@
     display: none;
   }
 
-  .projectMetricsSection > .dotsGrid {
-    top: 1800px;
-    left: 0;
-  }
-
-  .blueGradientZigZagBluredLight {
-    top: 1850px;
-    right: -700px;
-  }
-
-  .enablingCommunitiesSection > .dotsGrid {
-    top: -150px;
-    left: 0;
-  }
-
   .blueGradientHorizontalLight {
     top: -300px;
-
   }
 
   .pinkYellowHorizontalLight {
@@ -353,8 +342,33 @@
   }
 }
 
-@media (max-width: 450px) {
-  .projectMetricsSection > .dotsGrid {
-    top: 2050px;
+
+.flyingLine {
+  height: 2px;
+  width: 400px;
+  position: absolute;
+  left: -100%;
+  bottom: 0;
+  z-index: 100;
+  background: linear-gradient(
+      90deg,
+      rgba(75, 123, 229, 0) 0%,
+      rgba(75, 123, 229, 0.2) 100%
+  );
+  animation: fly 5s infinite;
+}
+
+@keyframes fly {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .flyingLine {
+    display: none;
   }
 }

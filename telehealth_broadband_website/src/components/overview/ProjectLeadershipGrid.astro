@@ -2,11 +2,11 @@
 import styles from './styles/project_leadership_grid.module.css';
 import anthcLogo from '../../assets/logos/anthc.webp';
 import rtecLogo from '../../assets/logos/rtec.webp';
-
+import uamsLogo from '../../assets/logos/uams.webp';
 ---
 
 <div class={styles.grid}>
-  <div class={styles.cell}>
+  <div class={styles.cell} data-variant="left">
     <h5>Data Collection</h5>
     <p>Led by the Alaska Native Tribal Health Consortium (ANTHC), leveraging its community connections and outreach strategies to conduct data collection tailored to the needs of rural populations.</p>
     <a href="https://www.anthc.org/" target="_blank" class={styles.logoLink}>
@@ -17,6 +17,7 @@ import rtecLogo from '../../assets/logos/rtec.webp';
     <h5>Data Analysis</h5>
     <p>Led by the Rural Telehealth Evaluation Center (RTEC) at the University of Arkansas for Medical Sciences, which provides in-depth analysis and publications that transform data into insights for policy and program development.</p>
     <a href="https://idhi.uams.edu/rtec/" target="_blank" class={styles.logoLink}>
+      <img src={uamsLogo.src} alt="UAMS logo" height="41" />
       <img src={rtecLogo.src} alt="RTEC logo" width="144" height="41" />
     </a>
   </div>
