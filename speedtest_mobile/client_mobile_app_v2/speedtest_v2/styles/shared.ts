@@ -37,6 +37,7 @@ export const colors = {
   primary: "#0066FF",
   wifiIconBg: "#31b36c",
   cellTowerIconBg: "#F7AA5A",
+  radarResultsBg: "#FFFFFF0D",
 };
 
 export const fonts = {

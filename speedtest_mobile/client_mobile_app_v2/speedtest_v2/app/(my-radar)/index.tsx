@@ -1,9 +1,8 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import TextComponent from "@/components/TextComponent";
 import { LinearGradient } from 'expo-linear-gradient';
-import { BottomTabBar } from '@/components/BottomTabBar';
 import { SettingsButton } from '@/components/SettingsButton';
 import { StartRadarButton } from '@/components/StartRadarButton';
 import { colors } from '@/styles/shared';
@@ -14,10 +13,14 @@ import wifiIcon from '@/assets/images/icons/wifiicon.png';
 import cellTowerIcon from '@/assets/images/icons/celltowericon.png';
 import activeIndicator from '@/assets/images/icons/activeindicator.png';
 
-const getFormattedTime = () => {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
+const getFormattedTime = (startTime: number | null) => {
+  if (startTime === null) {
+    return "Not running";
+  }
+  const now = Date.now();
+  const elapsedTime = now - startTime;
+  const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
   const ampm = hours >= 12 ? 'pm' : 'am';
   const formattedHours = hours % 12 || 12;
   const formattedMinutes = minutes.toString().padStart(2, '0');
@@ -25,13 +28,15 @@ const getFormattedTime = () => {
 };
 
 export default function MyRadarScreen() {
-  const [isRunning, setIsRunning] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [stats, setStats] = React.useState<RadarStats>({
+  const [isRunning, setIsRunning] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<RadarStats>({
     wifiCount: 0,
     cellTowerCount: 0,
     items: []
   });
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [startTimeFormatted, setStartTimeFormatted] = useState<string | null>(null);
 
   useEffect(() => {
     loadRunningState();
@@ -55,14 +60,18 @@ export default function MyRadarScreen() {
       setIsRunning(newState);
 
       if (newState) {
+        const now = new Date();
+        const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        setStartTimeFormatted(formattedTime);
         await radarService.startScanning();
-        // Mock initial stats
+        // @ToDO Mocked data. Fetch real results
         setStats({
           wifiCount: 0,
           cellTowerCount: 1,
           items: []
         });
       } else {
+        setStartTimeFormatted(null);
         await radarService.stopScanning();
       }
     } catch (error) {
@@ -93,7 +102,7 @@ export default function MyRadarScreen() {
               <View style={[styles.statusDot]} />
             )}
             <TextComponent
-              text={isLoading ? "Loading..." : (isRunning ? `Running since ${getFormattedTime()}` : "Not running")}
+              text={isLoading ? "Loading..." : (isRunning ? `Started at ${startTimeFormatted}` : "Not running")}
               style={[styles.statusText, isRunning && styles.statusTextActive]}
             />
           </View>
@@ -151,7 +160,6 @@ export default function MyRadarScreen() {
           isDisabled={isLoading}
         />
 
-        {/* <BottomTabBar /> */}
       </SafeAreaView>
     </View>
   );
@@ -201,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray300,
   },
   statusDotActive: {
-    backgroundColor: "#34C759",
+    backgroundColor: colors.success,
   },
   activeIndicator: {
     width: 12,
@@ -250,7 +258,7 @@ const styles = StyleSheet.create({
     color: colors.lightGray,
   },
   radarResultsContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: colors.radarResultsBg,
     borderRadius: 16,
     padding: 16,
     width: "100%",
