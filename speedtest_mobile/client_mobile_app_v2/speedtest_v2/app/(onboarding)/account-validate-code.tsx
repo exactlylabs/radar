@@ -19,7 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
-import { sendCode, getToken } from "../http/authentication";
+import { sendCode, getToken } from "@/app/http/authentication";
 
 const CELL_COUNT = 6;
 
@@ -69,7 +69,7 @@ export default function AccountValidateCode() {
     const handleResendCode = async () => {
         if (canResend) {
             try {
-                const response = await sendCode(email as string)
+                await sendCode(email as string)
 
                 setCountdown(TIMER_DURATIONS.SEND_NEW_CODE);
                 setCanResend(false);
