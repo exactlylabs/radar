@@ -1,0 +1,107 @@
+---
+import '../../global.css';
+import ParallaxLayout from "../../layouts/ParallaxLayout.astro";
+import styles from './styles/connecting_alaskas_remote_communities.module.css';
+import templateStyles from './styles/template.module.css';
+import commonStyles from '../../common.module.css';
+import HeroWithText from "../../components/common/content/HeroWithText.astro";
+import Epigraph from "../../components/stories/Epigraph.astro";
+import Quote from "../../components/stories/Quote.astro";
+
+import hero from '../../assets/images/alaska-story-hero.webp';
+import threeImage1 from '../../assets/images/alaska-story-image-1.webp';
+import threeImage2 from '../../assets/images/alaska-story-image-2.webp';
+import threeImage3 from '../../assets/images/alaska-story-image-3.webp';
+import verticalImage1 from '../../assets/images/alaska-story-vertical-image-1.webp';
+import verticalImage2 from '../../assets/images/alaska-story-vertical-image-2.webp';
+import bigImage from '../../assets/images/alaska-story-big-image.webp';
+---
+
+<ParallaxLayout
+        bgImageSrc={hero.src}
+        title="Connecting Alaska's Remote Communities"
+        description="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+>
+  <section class={templateStyles.header}>
+    <div class={templateStyles.overlay} id="parallax-overlay"></div>
+    <div class={templateStyles.verticalWhiteLine} id="vertical-white-line"></div>
+    <div class={templateStyles.mainHeroContainer} id="parallax-main-hero-text">
+      <HeroWithText
+              head="Stories"
+              title="Connecting Alaska's Remote Communities"
+              content="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+      />
+    </div>
+  </section>
+
+  <img src={hero.src}
+       class={templateStyles.contentImage}
+       alt="Couple walking in the woods with their dogs"
+       id="parallax-content-image"
+       loading="eager"
+  />
+
+  <section class={commonStyles.paddedSection} id="parallax-reference-container">
+    <div class={templateStyles.textContainer}>
+      <HeroWithText head="Alaska"
+                    title="Simple Fixes, Big Changes: Tackling Alaska's Telehealth Challenges"
+                    content="In Alaska’s remote villages, where roads often give way to boardwalks and access requires planes or snow machines, connectivity isn’t just about convenience—it’s a lifeline. Yet, broadband infrastructure in the state lags far behind national benchmarks, with most areas failing to meet even outdated speed standards. For rural Alaskans relying on telehealth, this digital divide poses critical challenges."
+      />
+    </div>
+
+    <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
+      <Quote
+              quote="Alaska is a uniquely challenging environment for connectivity. Infrastructure here is expensive to maintain, and many communities are so isolated that even basic troubleshooting can take weeks, if not months."
+              author="Garret Spargo, Director of Enterprise Architecture at the Alaska Native Tribal Health Consortium"
+      />
+    </div>
+
+    <div id="three-image-carrousel" class={templateStyles.threeImageCarrousel}>
+      <img src={threeImage1.src} alt="Gray lake image" loading="eager"/>
+      <img src={threeImage2.src} alt="Street image" loading="eager"/>
+      <img src={threeImage3.src} alt="Gray highway image" loading="eager"/>
+    </div>
+    <div class={templateStyles.epigraphContainer}>
+      <Epigraph text="Infrastructure is expensive to maintain and many communities are isolated in Alaska."/>
+    </div>
+
+    <p class={styles.paragraph}>"Alaska is a uniquely challenging environment for connectivity," said Garret Spargo, Director of Enterprise Architecture at the Alaska Native Tribal Health Consortium. "Infrastructure here is expensive to maintain, and many communities are so isolated that even basic troubleshooting can take weeks, if not months."</p>
+    <br/>
+    <p class={styles.paragraph}>Spargo was speaking about his role as a principal investigator for the Telehealth Broadband Pilot (TBP) Program, an initiative aimed at improving telehealth access in underserved regions. His firsthand experiences illustrate how simple interventions can transform lives.</p>
+    <br/>
+    <p class={styles.paragraph}>Take the case of a remote clinic where the x-ray machine had been offline for months. Patients had to travel to another facility for imaging, causing delays in care and creating logistical headaches for providers. Spargo recounted what he found during a routine site visit. "It turned out the Ethernet cable for the x-ray system had been unplugged and repurposed for a separate computer," he explained. "Fixing it was as simple as reconnecting the cable, but without someone on the ground with basic IT skills, the system stayed down for months."</p>
+
+    <div class={templateStyles.verticallyAnimatedImagesContainer}>
+      <img alt="open field image" src={verticalImage1.src} class={templateStyles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
+      <img alt="open field image" src={verticalImage2.src} class={templateStyles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
+    </div>
+  </section>
+
+  <section class={styles.reliableInternetSection}>
+    <div class={templateStyles.textContainer}>
+      <h3>Small Fixes, Big Impact</h3>
+      <p>Such small technical issues are surprisingly common in Alaska's clinics. With many communities lacking dedicated IT staff, healthcare workers often wear multiple hats, managing everything from boiler operations to troubleshooting computers. Spargo described this as "a reality of rural Alaska," where limited resources force people to adapt.
+      <br/><br/>Another success story from the TBP Program involved the use of measurement pods—small devices designed to monitor broadband performance. When a logistics office reported persistent connectivity issues, the pods revealed that the network was misconfigured, throttling speeds to just 3 Mbps. "The network team reconfigured the system, and speeds jumped to the expected 80 Mbps," said Spargo. "Suddenly, their tools and systems were working smoothly, and the difference was immediate."</p>
+    </div>
+
+    <div class={templateStyles.quoteWrapper}>
+      <Quote
+              quote="It's a game-changer. Communities that were previously unreachable are now coming online."
+              author="Garret Spargo, Director of Enterprise Architecture at the Alaska Native Tribal Health Consortium"
+      />
+    </div>
+
+    <p class={`${templateStyles.paddedText} ${styles.topPaddedText}`}>Despite these successes, the challenges are far from resolved. In Alaska, where 88% of consumer broadband tests fell below a minimum 25 Mbps download and 3 Mbps upload benchmark, the stakes are high. Poor connectivity impacts not only healthcare but also education, employment, and overall quality of life. However, new technologies like Low Earth Orbit satellites are beginning to close the gap. "It's a game-changer," said Spargo. "Communities that were previously unreachable are now coming online."</p>
+  </section>
+
+  <div class={templateStyles.subRegionalClinicContainer} data-variant="alaska">
+    <img src={bigImage.src} alt="Old man using laptop on dining table" loading="eager"/>
+  </div>
+
+  <section>
+    <p class={`${templateStyles.paddedText} ${styles.bottomPaddedText}`}>
+        While innovative technology plays a role, Spargo emphasized that sometimes the biggest changes come from the simplest actions. "People think solutions have to be complex, but they don't," he said. "Just having someone there to check the cables or identify a misconfiguration can make all the difference."
+        <br/><br/>The TBP Program's findings highlight Alaska's potential to overcome its connectivity challenges through a combination of technical support, community involvement, and targeted interventions. For Spargo, the work isn't just about improving broadband—it's about ensuring that even in the most remote corners of the state, people can access the care they deserve.
+    </p>
+  </section>
+</ParallaxLayout>

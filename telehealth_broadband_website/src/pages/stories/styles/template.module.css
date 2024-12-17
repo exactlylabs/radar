@@ -354,6 +354,10 @@
   gap: 1.5rem;
 }
 
+.subRegionalClinicContainer[data-variant="alaska"] {
+  padding-block: 0 5rem;
+}
+
 .subRegionalClinicContainer > img {
   width: 100%;
   height: auto;
