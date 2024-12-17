@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import TextComponent from "@/components/TextComponent";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -92,15 +92,10 @@ export default function MyRadarScreen() {
             ) : (
               <View style={[styles.statusDot]} />
             )}
-            <Text
+            <TextComponent
+              text={isLoading ? "Loading..." : (isRunning ? `Running since ${getFormattedTime()}` : "Not running")}
               style={[styles.statusText, isRunning && styles.statusTextActive]}
-            >
-              {isLoading
-                ? "Loading..."
-                : isRunning
-                ? `Running since ${getFormattedTime()}`
-                : "Not running"}
-            </Text>
+            />
           </View>
         </View>
 
@@ -114,8 +109,8 @@ export default function MyRadarScreen() {
                       <Image source={wifiIcon} style={styles.statIcon} />
                     </View>
                   </View>
-                  <Text style={styles.statCount}>{stats.wifiCount}</Text>
-                  <Text style={styles.statLabel}>Wi-Fi</Text>
+                  <TextComponent text={stats.wifiCount.toString()} style={styles.statCount} />
+                  <TextComponent text="Wi-Fi" style={styles.statLabel} />
                 </View>
                 <View style={styles.statItem}>
                   <View style={styles.statLabelContainer}>
@@ -125,17 +120,17 @@ export default function MyRadarScreen() {
                       <Image source={cellTowerIcon} style={styles.statIcon} />
                     </View>
                   </View>
-                  <Text style={styles.statCount}>{stats.cellTowerCount}</Text>
-                  <Text style={styles.statLabel}>Cell towers</Text>
+                  <TextComponent text={stats.cellTowerCount.toString()} style={styles.statCount} />
+                  <TextComponent text="Cell towers" style={styles.statLabel} />
                 </View>
               </View>
 
               <View style={styles.radarResultsContainer}>
-                <Text style={styles.radarTitle}>RADAR</Text>
-                <Text style={styles.noItemsText}>No items found yet.</Text>
+                <TextComponent text="RADAR" style={styles.radarTitle} />
+                <TextComponent text="No items found yet." style={styles.noItemsText} />
                 <TouchableOpacity style={styles.viewResultsButton}>
-                  <Text style={styles.viewResultsText}>View results</Text>
-                  <Text style={styles.viewResultsArrow}>›</Text>
+                  <TextComponent text="View results" style={styles.viewResultsText} />
+                  <TextComponent text="›" style={styles.viewResultsArrow} />
                 </TouchableOpacity>
               </View>
             </>
@@ -153,7 +148,7 @@ export default function MyRadarScreen() {
         <StartRadarButton
           onPress={toggleRadar}
           isRunning={isRunning}
-          disabled={isLoading}
+          isDisabled={isLoading}
         />
 
         {/* <BottomTabBar /> */}
@@ -165,7 +160,7 @@ export default function MyRadarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   safeArea: {
     flex: 1,
@@ -178,9 +173,9 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   placeholderWidth: {
@@ -189,12 +184,12 @@ const styles = StyleSheet.create({
   headerLogo: {
     width: 120,
     height: 29,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     marginBottom: 16,
     height: 34,
@@ -203,31 +198,31 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.inactiveRadarGray,
+    backgroundColor: colors.gray300,
   },
   statusDotActive: {
-    backgroundColor: '#34C759',
+    backgroundColor: "#34C759",
   },
   activeIndicator: {
     width: 12,
     height: 12,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   statusText: {
     fontSize: 14,
-    color: colors.inactiveRadarGray,
-    fontWeight: '500',
+    color: colors.gray300,
+    fontWeight: "500",
   },
   statusTextActive: {
-    color: colors.inactiveRadarGray,
+    color: colors.gray300,
   },
   content: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 24,
   },
   description: {
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.white,
     fontSize: 16,
     marginTop: 24,
@@ -235,56 +230,56 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 48,
     marginBottom: 32,
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: 12,
   },
   statCount: {
-    fontSize: 32,
-    color: colors.white,
-    fontWeight: '600',
+    fontSize: 20,
+    color: colors.veryLightBlue,
+    fontWeight: "600",
+    marginBottom: -5,
   },
   statLabel: {
-    fontSize: 14,
-    color: colors.white,
-    opacity: 0.7,
+    fontSize: 13,
+    color: colors.lightGray,
   },
   radarResultsContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 16,
     padding: 16,
-    width: '100%',
+    width: "100%",
     marginHorizontal: 0,
   },
   radarTitle: {
     fontSize: 12,
-    color: colors.white,
-    opacity: 0.5,
+    color: colors.lightGray,
     marginBottom: 8,
-    fontWeight: '600',
+    fontWeight: "700",
   },
   noItemsText: {
-    fontSize: 16,
+    fontSize: 15,
     color: colors.white,
+    opacity: 0.4,
     marginBottom: 12,
   },
   viewResultsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   viewResultsText: {
     fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
+    color: colors.blue,
+    fontWeight: "500",
   },
   viewResultsArrow: {
     fontSize: 14,
-    color: colors.primary,
+    color: colors.blue,
     marginLeft: 4,
   },
   statIcon: {
@@ -292,21 +287,21 @@ const styles = StyleSheet.create({
     height: 20,
   },
   statLabelContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
+    flexDirection: "column",
+    alignItems: "center",
     gap: 4,
   },
   iconBackground: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   wifiIconBg: {
-    backgroundColor: '#34C759',
+    backgroundColor: colors.wifiIconBg,
   },
   cellTowerIconBg: {
-    backgroundColor: '#FF9500',
+    backgroundColor: colors.cellTowerIconBg,
   },
 });

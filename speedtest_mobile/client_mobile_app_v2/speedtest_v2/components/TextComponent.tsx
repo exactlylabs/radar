@@ -2,12 +2,14 @@ import { sharedStyles } from "@/styles/shared";
 import { StyleSheet, Text } from "react-native";
 
 type TextComponentProps = {
-    text: string;
+    text?: string;
     centered?: boolean;
+    style?: object;
+    children?: React.ReactNode;
 }
 
-export default function TextComponent({ text, centered = false }: TextComponentProps) {
-    return <Text style={[styles.text, centered && styles.centered]}>{text}</Text>;
+export default function TextComponent({ text, centered = false, style = {}, children }: TextComponentProps) {
+    return <Text style={[styles.text, centered && styles.centered, style]}>{text}{children}</Text>;
 }
 
 const styles = StyleSheet.create({
