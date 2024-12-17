@@ -1,0 +1,111 @@
+---
+import '../../global.css';
+import ParallaxLayout from "../../layouts/ParallaxLayout.astro";
+import styles from './styles/breaking_barriers_to_treatment_in_rural_west_virginia.module.css';
+import templateStyles from './styles/template.module.css';
+import commonStyles from '../../common.module.css';
+import HeroWithText from "../../components/common/content/HeroWithText.astro";
+import Epigraph from "../../components/stories/Epigraph.astro";
+import Quote from "../../components/stories/Quote.astro";
+
+import hero from '../../assets/images/west-virginia-story-hero.webp';
+import threeImage1 from '../../assets/images/wv-story-image-1.webp';
+import threeImage2 from '../../assets/images/wv-story-image-2.webp';
+import threeImage3 from '../../assets/images/wv-story-image-3.webp';
+import verticalImage1 from '../../assets/images/wv-story-vertical-image-1.webp';
+import verticalImage2 from '../../assets/images/wv-story-vertical-image-2.webp';
+import bigImage from '../../assets/images/wv-story-big-image.webp';
+---
+
+<ParallaxLayout
+        bgImageSrc={hero.src}
+        title="Breaking Barriers to Treatment in Rural West Virginia"
+        description="How improved broadband transformed critical virtual services at the Jefferson Day Report Center."
+>
+
+  <section class={templateStyles.header}>
+    <div class={templateStyles.overlay} id="parallax-overlay"></div>
+    <div class={templateStyles.verticalWhiteLine} id="vertical-white-line"></div>
+    <div class={templateStyles.mainHeroContainer} id="parallax-main-hero-text">
+      <HeroWithText
+              head="Stories"
+              title="Breaking Barriers to Treatment in Rural West Virginia"
+              content="How improved broadband transformed critical virtual services at the Jefferson Day Report Center."
+      />
+    </div>
+  </section>
+
+  <img src={hero.src}
+       class={templateStyles.contentImage}
+       alt="Couple walking in the woods with their dogs"
+       id="parallax-content-image"
+       loading="eager"
+  />
+
+  <section class={commonStyles.paddedSection} id="parallax-reference-container">
+    <div class={templateStyles.textContainer}>
+      <HeroWithText head="West Virginia"
+                    title="Connecting the Disconnected: Broadband Fixes Transform Rural Treatment Services"
+                    content="The Jefferson Day Report Center (JDRC), a treatment facility primarily serving community corrections referrals, faces significant challenges with broadband connectivity. These challenges affect their ability to provide critical virtual treatment services for individuals across rural areas, underscoring the stark disparities in internet access throughout West Virginia."
+      />
+    </div>
+
+    <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
+      <Quote
+              quote="After COVID, a lot of our services moved to virtual platforms. To ensure privacy and effective communication during treatment, clients need a reliable internet connection, but that's not always feasible in many parts of the state."
+              author="Corey Walton, Case Management Coordinator at JDRC"
+      />
+    </div>
+
+    <div id="three-image-carrousel" class={templateStyles.threeImageCarrousel}>
+      <img src={threeImage1.src} alt="Gray lake image" loading="eager"/>
+      <img src={threeImage2.src} alt="Street image" loading="eager"/>
+      <img src={threeImage3.src} alt="Gray highway image" loading="eager"/>
+    </div>
+    <div class={templateStyles.epigraphContainer}>
+      <Epigraph text="A reliable internet connection is often not feasible in many parts of the state."/>
+    </div>
+
+    <p class={styles.paragraph}>For clients who lack home internet access, JDRC provides loaner hotspots. "In some cases, even with a hotspot, connectivity remains spotty due to the lack of cell signal," Walton explained. "And for clients unfamiliar with technology, using these devices can be a barrier in itself."</p>
+    <br/>
+    <p class={styles.paragraph}>Before improvements supported by the Telehealth Broadband Pilot (TBP) study, JDRC's internet infrastructure was unreliable. "Our building is in a wooded area, and its construction made it nearly impossible for a single router to cover the space," Walton recalled. "The internet was spotty, cutting in and out, which hindered our daily tasks, from maintaining client records to accessing drug testing systems. It was frustrating and inefficient."</p>
+    <br/>
+    <p class={styles.paragraph}>What may seem like minor technical issues—such as a router with insufficient range or outdated equipment—can create cascading disruptions in critical operations. Staff at JDRC often found themselves repeating tasks or waiting on systems to reconnect, reducing productivity and morale. "It was very spotty, cutting in and out most of the day, and just made it really difficult for you to do your day-to-day tasks," Walton said. "There's a lot of different systems we use, whether it's drug testing systems, or the system we keep all of our profiles and client records in. We need great, speedy internet, and that was very difficult to do before the adjustments."</p>
+
+    <div class={`${templateStyles.subRegionalClinicContainer} ${styles.staticImage}`}>
+      <img src={bigImage.src} alt="Old man using laptop on dining table" loading="eager"/>
+    </div>
+  </section>
+
+  <section class={styles.reliableInternetSection}>
+    <div class={templateStyles.textContainer}>
+      <h3>Small Fixes, Big Impact</h3>
+      <p>With support from the TBP study, JDRC upgraded its broadband capabilities by implementing simple but effective fixes, such as better Wi-Fi equipment and optimized placement of network devices. These targeted changes transformed day-to-day operations. "The difference is night and day," Walton said. "Now, we can efficiently multitask with multiple systems running simultaneously. It's been a game changer for both staff and clients."</p>
+    </div>
+
+    <div class={templateStyles.quoteWrapper}>
+      <Quote
+              quote="The difference is night and day. Now, we can efficiently multitask with multiple systems running simultaneously. It's been a game changer for both staff and clients."
+              author="Corey Walton, Case Management Coordinator at JDRC"
+      />
+    </div>
+    
+    <p class={`${templateStyles.paddedText} ${styles.topPaddedText}`}>
+      With support from the TBP study, JDRC upgraded its broadband capabilities by implementing simple but effective fixes, such as better Wi-Fi equipment and optimized placement of network devices. These targeted changes transformed day-to-day operations. "The difference is night and day," Walton said. "Now, we can efficiently multitask with multiple systems running simultaneously. It's been a game changer for both staff and clients."
+      <br/><br/>This experience highlights a broader issue seen across rural areas nationwide: the lack of access to skilled IT support often leaves facilities like JDRC struggling to address basic connectivity problems. “A lot of rural organizations don’t have dedicated IT teams,” Walton noted. Even straightforward fixes can take a long time to implement, if they’re addressed at all.
+    </p>
+  </section>
+
+  <section class={templateStyles.verticallyAnimatedImagesContainer}>
+    <img alt="open field image" src={verticalImage1.src} class={templateStyles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
+    <img alt="open field image" src={verticalImage2.src} class={templateStyles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
+  </section>
+
+  <section>
+    <p class={`${templateStyles.paddedText} ${styles.topPaddedText} ${styles.bottomPaddedText}`}>
+      Beyond operational efficiency, the improved internet connectivity has fostered a sense of resilience and adaptability within JDRC’s team. Staff can now conduct virtual meetings without interruptions and access cloud-based resources essential for client care. This has allowed them to focus on their core mission: providing effective treatment and support to clients, free from the distractions of connectivity issues.
+      <br/><br/>For clients, reliable internet has opened doors to more flexible treatment options. Virtual sessions eliminate the need for long commutes, especially for those in remote areas without public transportation. With these improvements, clients experience reduced stress and are better able to engage in their treatment plans, contributing to higher success rates.
+      <br/><br/>The experiences of JDRC highlight the broader implications of broadband inequity in rural America. While targeted improvements can make a significant impact, the persistent gaps in connectivity underscore the urgent need for comprehensive solutions to ensure rural communities can access essential services without barriers.
+    </p>
+  </section>
+</ParallaxLayout>
