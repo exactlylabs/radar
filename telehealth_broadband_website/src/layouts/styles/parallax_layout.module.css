@@ -1,20 +1,7 @@
 :root {
   --navbar-height: 65px;
   --footer-height: 240px;
-  --side-padding: calc((100vw - var(--max-width)) / 2);
   --parallax-aspect-ratio: 1.6;
-}
-
-@media (max-width: 1250px) {
-  :root {
-    --side-padding: 80px;
-  }
-}
-
-@media (max-width: 768px) {
-  :root {
-    --side-padding: 48px;
-  }
 }
 
 .parallaxBackgroundImage {

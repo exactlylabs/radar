@@ -11,10 +11,30 @@
   margin: 0 auto;
 }
 
+@media (max-width: 768px) {
+  .paragraph {
+    font-size: 1rem;
+    line-height: 1.625;
+    max-width: 100%;
+  }
+}
+
 .topPaddedText {
   padding-top: 3.5rem;
 }
 
+@media (max-width: 768px) {
+  .topPaddedText {
+    padding-top: 1.5rem;
+  }
+}
+
 .bottomPaddedText {
   padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .bottomPaddedText {
+    padding-bottom: 2.5rem;
+  }
 }

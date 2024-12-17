@@ -42,7 +42,7 @@ import bigImage from '../../assets/images/alaska-story-big-image.webp';
   />
 
   <section class={commonStyles.paddedSection} id="parallax-reference-container">
-    <div class={templateStyles.textContainer}>
+    <div class={templateStyles.textContainer} data-variant="contained">
       <HeroWithText head="Alaska"
                     title="Simple Fixes, Big Changes: Tackling Alaska's Telehealth Challenges"
                     content="In Alaska’s remote villages, where roads often give way to boardwalks and access requires planes or snow machines, connectivity isn’t just about convenience—it’s a lifeline. Yet, broadband infrastructure in the state lags far behind national benchmarks, with most areas failing to meet even outdated speed standards. For rural Alaskans relying on telehealth, this digital divide poses critical challenges."
@@ -71,10 +71,11 @@ import bigImage from '../../assets/images/alaska-story-big-image.webp';
     <br/>
     <p class={styles.paragraph}>Take the case of a remote clinic where the x-ray machine had been offline for months. Patients had to travel to another facility for imaging, causing delays in care and creating logistical headaches for providers. Spargo recounted what he found during a routine site visit. "It turned out the Ethernet cable for the x-ray system had been unplugged and repurposed for a separate computer," he explained. "Fixing it was as simple as reconnecting the cable, but without someone on the ground with basic IT skills, the system stayed down for months."</p>
 
-    <div class={templateStyles.verticallyAnimatedImagesContainer}>
-      <img alt="open field image" src={verticalImage1.src} class={templateStyles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
-      <img alt="open field image" src={verticalImage2.src} class={templateStyles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
-    </div>
+  </section>
+  
+  <section class={templateStyles.verticallyAnimatedImagesContainer}>
+    <img alt="open field image" src={verticalImage1.src} class={templateStyles.verticalAnimated} data-position="left" id="vertical-offset-image-left" loading="eager"/>
+    <img alt="open field image" src={verticalImage2.src} class={templateStyles.verticalAnimated} data-position="right" id="vertical-offset-image-right" loading="eager"/>
   </section>
 
   <section class={styles.reliableInternetSection}>
@@ -92,11 +93,12 @@ import bigImage from '../../assets/images/alaska-story-big-image.webp';
     </div>
 
     <p class={`${templateStyles.paddedText} ${styles.topPaddedText}`}>Despite these successes, the challenges are far from resolved. In Alaska, where 88% of consumer broadband tests fell below a minimum 25 Mbps download and 3 Mbps upload benchmark, the stakes are high. Poor connectivity impacts not only healthcare but also education, employment, and overall quality of life. However, new technologies like Low Earth Orbit satellites are beginning to close the gap. "It's a game-changer," said Spargo. "Communities that were previously unreachable are now coming online."</p>
+    
+    <div class={templateStyles.subRegionalClinicContainer} data-variant="alaska">
+      <img src={bigImage.src} alt="Old man using laptop on dining table" loading="eager"/>
+    </div>
   </section>
 
-  <div class={templateStyles.subRegionalClinicContainer} data-variant="alaska">
-    <img src={bigImage.src} alt="Old man using laptop on dining table" loading="eager"/>
-  </div>
 
   <section>
     <p class={`${templateStyles.paddedText} ${styles.bottomPaddedText}`}>
