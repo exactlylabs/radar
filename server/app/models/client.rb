@@ -111,6 +111,7 @@ class Client < ApplicationRecord
   scope :where_in_service, -> { where(in_service: true) }
   scope :where_not_in_service, -> { where(in_service: false) }
   scope :where_no_account, -> { where("account_id IS NULL") }
+  scope :assignable_for_scheduling, -> { where(assignable_for_scheduling: true)}
 
   def pod_connection
     super || create_pod_connection

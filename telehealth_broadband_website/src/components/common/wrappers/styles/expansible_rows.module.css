@@ -46,7 +46,7 @@
 
 }
 
-.topRow:hover {
+.topRow:hover > h4 {
   opacity: 0.8;
 }
 
@@ -150,7 +150,7 @@
   width: 40px;
   min-width: 40px;
   min-height: 40px;
-  border: solid 1.5px white;
+  border: solid 1.5px rgba(255, 255, 255, 0.8);
   border-radius: 4px;
   background-color: transparent;
   cursor: pointer;
@@ -161,8 +161,8 @@
   margin-left: auto;
 }
 
-.button:hover {
-  opacity: 0.8;
+.topRow:hover > .button {
+  border: solid 1.5px white;
 }
 
 .button > img {
@@ -171,6 +171,10 @@
 
 .row[data-open="true"] > .topRow > .button > img {
   transform: rotate(-45deg);
+}
+
+.row[data-open="true"] > .topRow > .button {
+  border: solid 1.5px white;
 }
 
 .divider {

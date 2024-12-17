@@ -62,7 +62,7 @@ class NetworkStatusHistoryProjector < Projector
 
     pod_id = event["aggregate_id"]
     pod_state = event["snapshot_state"]
-    @pods_metadata[pod_id] = pod_state   
+    @pods_metadata[pod_id] = pod_state
     location_id = pod_state["location_id"]
 
     timestamp = event["timestamp"]
@@ -116,9 +116,9 @@ class NetworkStatusHistoryProjector < Projector
 
   def handle_location_offline(pod_id, location_id, timestamp)
     network_metadata(location_id)["online"] = false
-    
+
     current_online_status = network_metadata(location_id)["current_online_status"]
-    
+
     if current_online_status.present? && current_online_status["status"] == "went_online"
       current_online_status["finished_at"] = timestamp
       if current_online_status["id"].present?
@@ -137,7 +137,7 @@ class NetworkStatusHistoryProjector < Projector
         "autonomous_system_id" => as_id,
         "reason" => @state["system_outage"] ? "system_outage" : "disconnected",
       }
-    end    
+    end
   end
 
   def handle_location_online(pod_id, location_id, timestamp)
@@ -241,7 +241,7 @@ class NetworkStatusHistoryProjector < Projector
       handle_location_online(pod_id, location_id, timestamp)
     end
 
-    
+
   end
 
   def handle_pod_removed_from_location(pod_id, location_id, timestamp)
@@ -258,16 +258,15 @@ class NetworkStatusHistoryProjector < Projector
   end
 
   def network_metadata(location_id)
-    @networks_metadata[location_id] ||= {
+    @networks_metadata[location_id.to_s] ||= {
       "pods" => [],
       "online" => false
     }
   end
 
   def pod_metadata(pod_id)
-    @pods_metadata[pod_id] ||= {
+    @pods_metadata[pod_id.to_s] ||= {
       "online" => false
     }
   end
-
 end

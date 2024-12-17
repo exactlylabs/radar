@@ -17,8 +17,8 @@ import NewPopup from "../NewPopup";
 import FiltersPanel from "./FiltersPanel";
 import CalendarModal from "./Filters/CalendarModal";
 import ClassificationAndLayersPanel from "./ClassificationAndLayersPanel";
-import LayersPopup from "./Filters/LayersPopup";
 import {ResultsTabs, TABS} from "./ResultsTabs";
+import FiltersContext from "../../../context/FiltersContext";
 
 const popupOptions = {
   offset: [-165, -350],
@@ -38,18 +38,20 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {lastManualMapUpdate, setVisibleIspList, getFiltersAsSearchParams, setMaxPrice, setMaxCost, costDistributionList, setCostDistributionList} = useContext(FiltersContext);
 
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isSmallSizeScreen);
+  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isMediumSizeScreen && !isSmallSizeScreen);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
   const [layersPopupOpen, setLayersPopupOpen] = useState(false);
   const [resultsTabSelected, setResultsTabSelected] = useState(TABS.ALL_RESULTS);
+  const [updateFiltersDate, setUpdateFiltersDate] = useState(new Date());
+  const [initialLoadFinished, setInitialLoadFinished] = useState(false);
 
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
-
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       center: centerCoordinates,
@@ -76,41 +78,8 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     map.current.addControl(new maplibregl.NavigationControl({showCompass: false}), 'top-right');
 
     map.current.on('load', () => {
-      // Add vector tile source and layer here
-      map.current.addSource('custom-tiles', {
-        type: 'vector',
-        tiles: [VECTOR_TILES_URL + '?client_id=' + config.clientId],
-        minzoom: 0,
-        maxzoom: 14,
-      });
-
-      map.current.addLayer({
-        id: 'circle-layer',
-        type: 'circle',
-        source: 'custom-tiles',
-        'source-layer': 'tests',
-        paint: {
-          'circle-radius': [
-            'interpolate',
-            ['linear'],  // This specifies a linear interpolation
-            ['zoom'],    // Using the current zoom level for interpolation
-            5, 5,
-            15, 8
-          ],
-          'circle-color': [
-            'case',
-            ['>=', ['get', 'connection_quality'], 2],
-            NEW_SPEED_HIGH, // Color for served
-            ['>=', ['get', 'connection_quality'], 1],
-            NEW_SPEED_MEDIUM, // Color for underserved
-            ['>=', ['get', 'connection_quality'], 0],
-            NEW_SPEED_LOW, // Color for unserved
-            // Default color for all other cases
-            DEFAULT_DOWNLOAD_FILTER_NONE
-          ],
-          'circle-stroke-width': 0,
-        },
-      });
+      loadLayers('initial');
+      setInitialLoadFinished(true);
     });
 
     map.current.on('click', (e) => {
@@ -157,10 +126,105 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       map.current.getCanvas().style.cursor = 'default';
     });
 
+    map.current.on('sourcedata', (e) => {
+      if (e.isSourceLoaded) {
+        //check if circle-layer exists in the current map
+        let ispMap = new Map();
+        let distributions = [];
+        const desiredBarCount = 10;
+        const maxCost = 500;
+        const idealStep = maxCost / desiredBarCount;
+        for (let i = 0; i <= maxCost; i += idealStep) {
+          distributions.push({count: 0, value: i, visible: true});
+        }
+        if (map.current.getLayer('circle-layer')) {
+          const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
+          features.forEach(feature => {
+            if(!!feature.properties.autonomous_system_org_name && feature.properties.autonomous_system_org_name !== '') {
+              const { autonomous_system_org_name, autonomous_system_org_id } = feature.properties;
+              if (ispMap.has(autonomous_system_org_id)) {
+                ispMap.set(autonomous_system_org_id, {label: autonomous_system_org_name, count: ispMap.get(autonomous_system_org_id).count + 1});
+              } else {
+                ispMap.set(autonomous_system_org_id, {label: autonomous_system_org_name, count: 1});
+              }
+            }
+            let cost = Number(feature.properties.network_cost);
+            if(isNaN(cost)) return;
+            const distribution = distributions.find(distribution => distribution.value >= cost);
+            if(distribution) distribution.count++;
+          });
+        }
+        setVisibleIspList(ispMap);
+        setCostDistributionList(distributions);
+      }
+    });
+
     return () => {
       map.current.remove();
     }
   }, []);
+
+  useEffect(() => {
+    if(map.current && initialLoadFinished) {
+      loadLayers('update');
+    }
+  }, [updateFiltersDate, lastManualMapUpdate]);
+
+  const loadLayers = (source) => {
+    if(source !== 'initial' && !initialLoadFinished) return;
+    if(map.current.getLayer('circle-layer')) {
+      map.current.removeLayer('circle-layer');
+      map.current.removeSource('custom-tiles');
+    }
+
+    //close popup if it's open
+    if(popupRef.current) popupRef.current.remove();
+    setVisibleIspList(new Map());
+
+    // Add vector tile source and layer here
+    map.current.addSource('custom-tiles', {
+      type: 'vector',
+      tiles: [vectorTilesUrl()],
+      minzoom: 0,
+      maxzoom: 14,
+    });
+
+    map.current.addLayer({
+      id: 'circle-layer',
+      type: 'circle',
+      source: 'custom-tiles',
+      'source-layer': 'tests',
+      paint: {
+        'circle-radius': [
+          'interpolate',
+          ['linear'],  // This specifies a linear interpolation
+          ['zoom'],    // Using the current zoom level for interpolation
+          5, 5,
+          15, 8
+        ],
+        'circle-color': [
+          'case',
+          ['>=', ['get', 'connection_quality'], 2],
+          NEW_SPEED_HIGH, // Color for served
+          ['>=', ['get', 'connection_quality'], 1],
+          NEW_SPEED_MEDIUM, // Color for underserved
+          ['>=', ['get', 'connection_quality'], 0],
+          NEW_SPEED_LOW, // Color for unserved
+          // Default color for all other cases
+          DEFAULT_DOWNLOAD_FILTER_NONE
+        ],
+        'circle-stroke-width': 0,
+      },
+    });
+  }
+
+  // Need to append as strings instead of using a native URL object
+  // otherwise Maplibre doesn't render the tiles correctly
+  const vectorTilesUrl = () => {
+    return VECTOR_TILES_URL +
+      '?client_id=' + config.clientId + '&' +
+      getFiltersAsSearchParams().toString();
+  }
 
   const getMapContainerHeight = () => {
     if(config.widgetMode || config.webviewMode) {
@@ -191,6 +255,16 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     setResultsTabSelected(tab);
   }
 
+  const handleOnHelpClicked = () => {
+    setLayersPopupOpen(false);
+    setClassificationsModalOpen(true)
+  }
+
+  const handleApplyFilters = (e) => {
+    e.preventDefault();
+    setUpdateFiltersDate(new Date());
+  }
+
   return (
     <>
       <div id={'speedtest--all-results-page--map-container'}
@@ -202,14 +276,17 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           isOpen={filtersPanelOpen}
           togglePanel={toggleFiltersPanel}
           openCalendarModal={() => setCalendarModalOpen(true)}
+          applyFilters={handleApplyFilters}
         />
-        <ClassificationAndLayersPanel 
-        isOpen={layersPopupOpen} 
-        toggleLayersPopup={toggleLayersPopup} 
-        layerSelected={"classification"} 
-        onHelpClick={() => setClassificationsModalOpen(true)}
+        <ClassificationAndLayersPanel
+          isOpen={layersPopupOpen}
+          toggleLayersPopup={toggleLayersPopup}
+          onHelpClick={handleOnHelpClicked}
         />
-        <ResultsTabs tabSelected={resultsTabSelected} onTabChanged={toggleResultsTab}  />
+        <ResultsTabs filtersPanelOpen={filtersPanelOpen}
+          tabSelected={resultsTabSelected}
+          onTabChanged={toggleResultsTab}
+        />
       </div>
       <CustomModal isOpen={calendarModalOpen}
         closeModal={closeCalendarModal}

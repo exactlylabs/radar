@@ -52,7 +52,7 @@ class Snapshot < ApplicationRecord
 
           last_snap = cached_snapshot[aggregate]
           if last_snap.nil? || last_snap.event.timestamp > event["timestamp"]
-            last_snap = Snapshot.preload(:event).from_aggregate(aggregate).prior_to_or_at(event["timestamp"]).ordered_by_event.last
+            last_snap = Snapshot.preload(:event).from_aggregate(aggregate).prior_to_or_at(event["timestamp"]).where.not(event_id: event["id"]).ordered_by_event.last
           end
           state = last_snap&.state || {}
           event["data"] = JSON.parse(event["data"]).with_indifferent_access

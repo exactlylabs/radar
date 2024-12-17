@@ -1,0 +1,20 @@
+---
+import styles from './styles/state_findings_button.module.css';
+
+const { head, title, modalId, backgroundImage } = Astro.props;
+---
+
+<button data-modal-id={modalId}
+  class={styles.button}
+  style={{ backgroundImage: `url(${backgroundImage})` }}
+>
+  <span class={styles.gradient}></span>
+  <span class={styles.head}>{head}</span>
+  <span class={styles.title}>{title}</span>
+  <span class={styles.trigger}>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+      <path fill="white" transform="translate(1 7.25)" d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+      <path fill="white" transform="matrix(-4.37114e-08 1 -1 -4.37114e-08 8.75013 0.999874)" d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+    </svg>
+  </span>
+</button>

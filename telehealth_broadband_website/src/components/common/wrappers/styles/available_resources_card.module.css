@@ -65,6 +65,16 @@
   gap: 0.25rem;
 }
 
+.listItem > a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.listItem:hover > a > svg > path[fill-rule],
+.listItem > a:hover > svg > path[fill-rule] {
+  fill: #FFFFFF;
+}
+
 @media (max-width: 768px) {
   .listItem > a {
     font-size: 0.9375rem;

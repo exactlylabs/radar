@@ -128,16 +128,17 @@ module Schedulable extend ActiveSupport::Concern
 
     def request_scheduled_tests!
       self.where_pending_next_run.each do |location|
-        client = location.scheduling_selected_client
-        if client.nil? || client.location != location || !client.online?
-          # This client got removed from the network or is offline, pick a different one
-          # If is offline, but same location, then cancel any requested tests to avoid duplicates
+        candidate_clients = location.clients.assignable_for_scheduling.to_a
+        client_with_test_requested = candidate_clients.find { |c| c.test_requested? }
 
-          client.update(test_requested: false) if client.present? && client.location == location
-          client = location.clients.where_online.first
-          location.update(scheduling_selected_client: client)
+        if client_with_test_requested.present? && client_with_test_requested.online
+          next
+        elsif client_with_test_requested.present?
+          client_with_test_requested.update(test_requested: false)
         end
-        client.update(test_requested: true) unless client.nil? || client.test_requested?
+
+        # For the candidate clients, pick the first online
+        candidate_clients.find { |c| c.online }&.update(test_requested: true)
       end
     end
   end

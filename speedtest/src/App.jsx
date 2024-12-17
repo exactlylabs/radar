@@ -6,6 +6,7 @@ import MainPage from "./components/MainPage/MainPage";
 import {UserDataContextProvider} from "./context/UserData";
 import {SpeedTestContextProvider} from "./context/SpeedTestContext";
 import {AlertsContextProvider} from "./context/AlertsContext";
+import {FiltersContextProvider} from "./context/FiltersContext";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -21,7 +22,9 @@ const App = ({ config }) => {
             <ConnectionContextProvider>
               <UserDataContextProvider>
                 <SpeedTestContextProvider>
-                  <MainPage config={config}/>
+                  <FiltersContextProvider>
+                    <MainPage config={config}/>
+                  </FiltersContextProvider>
                 </SpeedTestContextProvider>
               </UserDataContextProvider>
             </ConnectionContextProvider>

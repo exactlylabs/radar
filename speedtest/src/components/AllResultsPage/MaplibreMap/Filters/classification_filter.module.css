@@ -1,6 +1,6 @@
 :root {
-  --slider-max-height: 0;
-  --slider-thumb-width: 0;
+  --slider-max-height: 36px;
+  --inputs-height: 54px;
 }
 
 .container {
