@@ -5,10 +5,12 @@ import plusIcon from "../../../assets/icons/plus.svg";
 import minusIcon from "../../../assets/icons/minus.svg";
 
 interface ExpansibleRowsProps {
+  variant?: 'default' | 'overview-project-metrics';
   content: CardContent[];
 }
 
 interface ExpansibleRowProps {
+  variant?: 'default' | 'overview-project-metrics';
   content: CardContent;
   isOpen: boolean;
   index: number;
@@ -16,10 +18,10 @@ interface ExpansibleRowProps {
 }
 
 // TODO: make the text fade in a bit with opacity so the height growth doesn't feel choppy
-export function ExpansibleRow({content, isOpen, index, toggleOpen}: ExpansibleRowProps) {
+export function ExpansibleRow({variant, content, isOpen, index, toggleOpen}: ExpansibleRowProps) {
   
   return (
-    <div className={styles.row} data-open={isOpen.toString()}>
+    <div className={styles.row} data-open={isOpen.toString()} data-variant={variant}>
       <div className={styles.topRow} onClick={() => toggleOpen(index)}>
         { content.head && <span className={styles.head}>{content.head}</span> }
         <h4 className={styles.title}>{content.title}</h4>
@@ -46,7 +48,7 @@ export function ExpansibleRow({content, isOpen, index, toggleOpen}: ExpansibleRo
   )
 }
 
-export default function ExpansibleRows({content}: ExpansibleRowsProps) {
+export default function ExpansibleRows({content, variant}: ExpansibleRowsProps) {
   
   const [currentOpenIndex, setCurrentOpenIndex] = useState<number | null>(null);
   
@@ -57,16 +59,16 @@ export default function ExpansibleRows({content}: ExpansibleRowsProps) {
   return (
     <div className={styles.container}>
       <div className={styles.column}>
-        <ExpansibleRow content={content[0]} index={0} isOpen={currentOpenIndex === 0} toggleOpen={handleToggleOpen}/>
+        <ExpansibleRow content={content[0]} index={0} isOpen={currentOpenIndex === 0} toggleOpen={handleToggleOpen} variant={variant}/>
         <div className={styles.divider}></div>
-        <ExpansibleRow content={content[1]} index={1} isOpen={currentOpenIndex === 1} toggleOpen={handleToggleOpen}/>
+        <ExpansibleRow content={content[1]} index={1} isOpen={currentOpenIndex === 1} toggleOpen={handleToggleOpen} variant={variant}/>
         <div className={styles.divider}></div>
-        <ExpansibleRow content={content[2]} index={2} isOpen={currentOpenIndex === 2} toggleOpen={handleToggleOpen}/>
+        <ExpansibleRow content={content[2]} index={2} isOpen={currentOpenIndex === 2} toggleOpen={handleToggleOpen} variant={variant}/>
       </div>
       <div className={styles.column}>
-        <ExpansibleRow content={content[3]} index={3} isOpen={currentOpenIndex === 3} toggleOpen={handleToggleOpen}/>
+        <ExpansibleRow content={content[3]} index={3} isOpen={currentOpenIndex === 3} toggleOpen={handleToggleOpen} variant={variant}/>
         <div className={styles.divider}></div>
-        <ExpansibleRow content={content[4]} index={4} isOpen={currentOpenIndex === 4} toggleOpen={handleToggleOpen}/>
+        <ExpansibleRow content={content[4]} index={4} isOpen={currentOpenIndex === 4} toggleOpen={handleToggleOpen} variant={variant}/>
       </div>
     </div>
   );

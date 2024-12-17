@@ -132,6 +132,11 @@
   color: var(--text-400);
 }
 
+.heroContainer[data-variant="overview-pilot"] > .content {
+  font-size: 1.0625rem;
+  line-height: 1.529;
+}
+
 @media (max-width: 768px) {
   .content {
     font-size: 1.0625rem;

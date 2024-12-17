@@ -1,10 +1,10 @@
 ---
 import styles from './styles/scrolling_timeline.module.css';
 
-const { title, content, side } = Astro.props;
+const { title, content, side, threshold } = Astro.props;
 ---
 
-<div class={styles.timelineItem} data-side={side}>
+<div class={styles.timelineItem} data-side={side} data-threshold={threshold}>
   <h6 class={styles.timelineItemTitle}>{title}</h6>
   <p class={styles.timelineItemContent}>{content}</p>
 </div>

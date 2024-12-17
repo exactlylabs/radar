@@ -21,6 +21,10 @@
   padding-block: 1rem;
 }
 
+.cardSet[data-variant="overview-data-collection"] {
+  column-gap: 2.5rem;
+}
+
 @media (max-width: 1250px) {
   .cardSet {
     padding-inline: 2.5rem;
