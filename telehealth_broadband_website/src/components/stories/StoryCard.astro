@@ -5,7 +5,7 @@ import HeroWithText from "../common/content/HeroWithText.astro";
 const { head, title, content, primary, readMorePath, image } = Astro.props;
 ---
 
-<div class={styles.storyCard}>
+<div class={styles.storyCard} data-variant={primary ? 'primary' : 'default'}>
   <img src={image.src} alt={head} class={styles.storyImage}/>
   <div class={styles.storySummary}>
     <div class={styles.heroContainer}>
