@@ -54,6 +54,10 @@
   -ms-overflow-style: none;
 }
 
+html {
+  color-scheme: dark;
+}
+
 body {
   background-color: var(--bg-color);
   position: relative;
