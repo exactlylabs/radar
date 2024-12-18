@@ -14,7 +14,8 @@
 }
 
 .cell[data-variant="left"] {
-  padding: 3rem 7.5rem 3rem 0;
+  padding-block: 3rem;
+  padding-left: 0;
 }
 
 .cell:last-child {
@@ -42,6 +43,11 @@
   margin-top: auto;
 }
 
+.linksRow {
+  display: flex;
+  gap: 1.5rem;
+}
+
 .logoLink {
   height: 41px;
   width: max-content;
@@ -56,6 +62,18 @@
 .logoLink:hover {
   cursor: pointer;
   opacity: 0.9;
+}
+
+@media (max-width: 1080px) {
+  .logoLink {
+    height: 36px;
+    width: auto;
+  }
+
+  .logoLink > img {
+    height: 36px;
+    width: auto;
+  }
 }
 
 @media (max-width: 768px) {
@@ -78,15 +96,5 @@
     font-size: 1rem;
     margin-bottom: 1.5rem;
     max-width: 100%;
-  }
-
-  .logoLink {
-    height: 36px;
-    width: auto;
-  }
-
-  .logoLink > img {
-    height: 36px;
-    width: auto;
   }
 }
