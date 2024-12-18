@@ -38,8 +38,8 @@ export default function ApproachExpansibleRows() {
         <ExpansibleRow
           content={{
             head: '03',
-            title: 'Publications and Research Contributions',
-            content: "Number of publications produced by the Rural Telehealth Evaluation Center (RTEC) focused on broadband access, rural telehealth, and connectivity issues. These publications contribute to the broader understanding of telehealth access challenges and inform policymakers and community advocates alike."
+            title: 'Evaluation and Research Contributions',
+            content: "The analysis and evaluation from the Rural Telehealth Evaluation Center focused on broadband access, rural telehealth, and connectivity issues. These learnings contribute to the broader understanding of telehealth access challenges and inform policymakers and community advocates."
           }}
           isOpen={currentOpenIndex === 4}
           index={4}
