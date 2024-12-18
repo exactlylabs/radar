@@ -1,7 +1,8 @@
 .container {
   position: sticky;
   top: 0;
-  width: 100%;
+  left: 50vw;
+  width: 100vw;
   z-index: 10;
   display: flex;
   flex-direction: row;
@@ -14,7 +15,6 @@
 @media (max-width: 1080px) {
   .container {
     padding-right: 1rem;
-    width: 100vw;
     padding-top: 1rem;
     backdrop-filter: blur(10px);
   }
@@ -27,6 +27,7 @@
 }
 
 .staticContainer {
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -70,19 +71,18 @@
   text-wrap: nowrap;
 }
 
-.tab:hover {
-  opacity: 0.8;
-}
-
 .tab[data-active="true"] {
   color: white;
   background-color: rgba(255, 255, 255, 0.1);
   outline: none;
 }
 
-.tab[data-active="true"] > svg > path {
-  stroke: none;
+.tab[data-active="true"] > svg > path:not([stroke]) {
   fill: white;
+}
+
+.tab:not([data-active="true"]) > svg > path:not([stroke]) {
+  fill: #ACAFCD;
 }
 
 .divider {
