@@ -120,7 +120,14 @@ const { bgImageSrc, title, description } = Astro.props;
         swapIfNecessary(percentageScrolled, incomingImage, parallaxImageContainer);
       }
       
+      function bothImagesAreOutsideViewport() {
+        const { incomingImageBottom } = initialSetup();
+        const { bottom: parallaxBottom } = document.getElementById("parallax-background-image")!.getBoundingClientRect();
+        return incomingImageBottom < 0 || parallaxBottom < 0;
+      }
+      
       function handleMainParallaxImage() {
+        if(bothImagesAreOutsideViewport()) return;
         const { referenceWidth } = initialSetup();
         const { incomingImage, parallaxImageContainer, parallaxImage, currentPixelsScrolled } = getReferences();
         const SIX_REM = 6 * 16;
@@ -157,18 +164,31 @@ const { bgImageSrc, title, description } = Astro.props;
         swapIfNecessary(percentageScrolled, incomingImage, parallaxImageContainer);
       }
       
+      function resetVerticalShiftedImages() {
+        const verticalShiftedImagesLeft = document.querySelectorAll("img[data-image-type='vertical-offset'][data-position='left']")! as NodeListOf<HTMLImageElement>;
+        Array.from<HTMLImageElement>(verticalShiftedImagesLeft).forEach((verticalShiftImageLeft: HTMLImageElement) => {
+          const parent = verticalShiftImageLeft.parentElement!;
+          const verticalShiftImageRight = parent.querySelector("img[data-image-type='vertical-offset'][data-position='right']")! as HTMLImageElement;
+          verticalShiftImageLeft.style.marginTop = '0';
+          verticalShiftImageRight.style.marginBottom = '0';
+        });
+      }
+      
       function handleVerticallyShiftedImages() {
-        const verticalShiftImageLeft = document.getElementById("vertical-offset-image-left")!;
-        const verticalShiftImageRight = document.getElementById("vertical-offset-image-right")!;
-        const { top: leftTop } = verticalShiftImageLeft.getBoundingClientRect();
-        if(leftTop <= window.innerHeight) {
-          const topPercentage = leftTop / window.innerHeight;
-          const initialMargin = -40;
-          const marginShift = 80;
-          const newValue = initialMargin + (marginShift * (1 - topPercentage));
-          verticalShiftImageLeft.style.marginTop = `${newValue}px`;
-          verticalShiftImageRight.style.marginBottom = `${newValue}px`;
-        }
+        const verticalShiftedImagesLeft = document.querySelectorAll("img[data-image-type='vertical-offset'][data-position='left']")! as NodeListOf<HTMLImageElement>;
+        Array.from<HTMLImageElement>(verticalShiftedImagesLeft).forEach((verticalShiftImageLeft: HTMLImageElement) => {
+          const parent = verticalShiftImageLeft.parentElement!;
+          const { top: leftTop } = verticalShiftImageLeft.getBoundingClientRect();
+          const verticalShiftImageRight = parent.querySelector("img[data-image-type='vertical-offset'][data-position='right']")! as HTMLImageElement;
+          if(leftTop <= window.innerHeight) {
+            const topPercentage = leftTop / window.innerHeight;
+            const initialMargin = -40;
+            const marginShift = 80;
+            const newValue = initialMargin + (marginShift * (1 - topPercentage));
+            verticalShiftImageLeft.style.marginTop = `${newValue}px`;
+            verticalShiftImageRight.style.marginBottom = `${newValue}px`;
+          }
+        });
       }
       
       function handleHorizontalShiftImages() {
@@ -181,6 +201,12 @@ const { bgImageSrc, title, description } = Astro.props;
           const newValue = targetShiftPx * (1 - topPercentage);
           horizontalShiftImage.style.transform = `translate3d(calc(-45% - ${newValue}px), -50%, 0)`;
         }
+      }
+      
+      function resetThreeImageCarrousel() {
+        const threeImageCarrousel = document.getElementById("three-image-carrousel")!;
+        if(!threeImageCarrousel) return;
+        threeImageCarrousel.style.left = '0';
       }
       
       function handleThreeImageCarrousel() {
@@ -204,6 +230,8 @@ const { bgImageSrc, title, description } = Astro.props;
           handleHorizontalShiftImages();
           handleThreeImageCarrousel();
         } else {
+          resetVerticalShiftedImages();
+          resetThreeImageCarrousel();
           handleResponsiveMainParallaxImage();
         }
       }
@@ -218,6 +246,17 @@ const { bgImageSrc, title, description } = Astro.props;
         initialWhiteLineHeight = document.getElementById("vertical-white-line")!.clientHeight;
         document.getElementById("parallax-scrollable-container")!.removeEventListener('scroll', handleScroll);
         document.getElementById("parallax-scrollable-container")!.addEventListener('scroll', handleScroll);
+        const windowWidth = window.innerWidth;
+        if(windowWidth > 768) {
+          handleMainParallaxImage();
+          handleVerticallyShiftedImages();
+          handleHorizontalShiftImages();
+          handleThreeImageCarrousel();
+        } else {
+          resetVerticalShiftedImages();
+          resetThreeImageCarrousel();
+          handleResponsiveMainParallaxImage();
+        }
       }
       
       if(!parallaxImage.complete) {

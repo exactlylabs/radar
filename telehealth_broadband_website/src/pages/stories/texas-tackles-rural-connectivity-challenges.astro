@@ -1,0 +1,159 @@
+---
+import '../../global.css';
+import ParallaxLayout from "../../layouts/ParallaxLayout.astro";
+import styles from './styles/texas_tackles_rural_connectivity_challenges.module.css';
+import templateStyles from './styles/template.module.css';
+import commonStyles from '../../common.module.css';
+import HeroWithText from "../../components/common/content/HeroWithText.astro";
+import Epigraph from "../../components/stories/Epigraph.astro";
+import Quote from "../../components/stories/Quote.astro";
+import CommonIssuesList from "../../components/stories/CommonIssuesList.astro";
+
+import hero from '../../assets/images/texas-story-hero.webp';
+import threeImage1 from '../../assets/images/texas-story-image-1.webp';
+import threeImage2 from '../../assets/images/texas-story-image-2.webp';
+import threeImage3 from '../../assets/images/texas-story-image-3.webp';
+import verticalImage1 from '../../assets/images/texas-story-vertical-image-1.webp';
+import verticalImage2 from '../../assets/images/texas-story-vertical-image-2.webp';
+import verticalImage3 from '../../assets/images/texas-story-vertical-image-3.webp';
+import verticalImage4 from '../../assets/images/texas-story-vertical-image-4.webp';
+import bigImage from '../../assets/images/texas-story-big-image.webp';
+---
+
+<ParallaxLayout
+        bgImageSrc={hero.src}
+        title="Texas Tackles Rural Connectivity Challenges"
+        description="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+>
+
+    <section class={templateStyles.header}>
+        <div class={templateStyles.overlay} id="parallax-overlay"></div>
+        <div class={templateStyles.verticalWhiteLine} id="vertical-white-line"></div>
+        <div class={templateStyles.mainHeroContainer} id="parallax-main-hero-text">
+            <HeroWithText
+                    head="Stories"
+                    title="Texas Tackles Rural Connectivity Challenges"
+                    content="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+            />
+        </div>
+    </section>
+
+    <img src={hero.src}
+         class={templateStyles.contentImage}
+         alt="Couple walking in the woods with their dogs"
+         id="parallax-content-image"
+         loading="eager"
+    />
+
+    <section class={commonStyles.paddedSection} id="parallax-reference-container">
+        <div class={templateStyles.textContainer} data-variant="contained">
+            <HeroWithText head="Texas"
+                          title="Texas Tackles Rural Connectivity Challenges"
+                          content="In the sprawling rural counties of Texas, where towns are dotted with cattle ranches and agriculture reigns supreme, residents face a daily struggle with internet connectivity. From slow speeds to persistent outages, unreliable broadband has become a defining challenge for families, businesses, and local institutions."
+            />
+            <br/>
+            <p class={styles.paragraph}>The Telehealth Broadband Pilot (TBP) Program in Texas has been led by Michael Mangel and Rance Standridge, both program managers with Texas Tech University Health Sciences Center (TTUHSC). With extensive experience working in rural communities, Mangel and Standridge have spent years traveling across the state, gathering data and hearing firsthand about the impact of poor internet connectivity.</p>
+            <br/>
+            <p class={styles.paragraph}>"Most of the areas we visited were very rural," explained Michael Mangel, a program manager who traveled extensively across Texas communities. "These were places where schools often served as the focal point of the community, but for local residents, internet was slow, expensive, and often unreliable."</p>
+        </div>
+    </section>
+
+    <section class={templateStyles.verticallyAnimatedImagesContainer}>
+        <img alt="open field image" src={verticalImage1.src} class={templateStyles.verticalAnimated} data-position="left" data-image-type="vertical-offset" loading="eager"/>
+        <img alt="open field image" src={verticalImage2.src} class={templateStyles.verticalAnimated} data-position="right" data-image-type="vertical-offset" loading="eager"/>
+    </section>
+    
+    <section class={styles.quoteSection}>
+      <div class={templateStyles.quoteWrapper}>
+        <Quote
+                quote="Most of the areas we visited were very rural. These were places where schools often served as the focal point of the community, but for local residents, internet was slow, expensive, and often unreliable.”"
+                author="Michael Mangel, Program Managet with Texas Tech University Health Sciences Center (TTUHSC)"
+        />
+      </div>
+    </section>
+
+    <section class={styles.reliableInternetSection}>
+      <div class={templateStyles.textContainer}>
+        <h3>Daily Experiences with Internet Challenges</h3>
+        <p>For many Texans in these rural areas, internet access remains stuck in the past. Hunter’s Ammo and Camo, a small business in Fisher County, exemplifies the struggle.
+        <br/><br/>"They were practically getting dial-up speeds," said Rance Standridge, another program manager. "That was the best they could get, and it severely impacted their ability to run the business."
+        <br/><br/>The challenges don't end there. Residents described internet outages that occurred like clockwork. "In one town, the internet went down every day at 2:00 PM for 10 to 15 minutes," Mangel recalled. "It became part of their routine, but it impacted everything from running a business to connecting with family."
+        <br/><br/>Even those who paid premium prices for their internet often received little in return. At-home users frequently reported speeds far below advertised rates, with some connections dropping to less than 2 Mbps—rendering activities like streaming or video calls impossible.
+        </p>
+      </div>
+
+      <div class={templateStyles.quoteWrapper}>
+        <Quote
+                quote=`They were practically getting dial-up speeds. That was the best they could get, and it severely impacted their ability to run the business.`
+                author="Rance Standridge, Program Manager with Texas Tech University Health Sciences Center (TTUHSC)"
+        />
+      </div>
+
+        <div class={`${templateStyles.subRegionalClinicContainer} ${styles.staticImage}`}>
+          <img src={bigImage.src} alt="Old man using laptop on dining table" loading="eager"/>
+        </div>
+    </section>
+
+    <section class={styles.reliableInternetSection}>
+        <div class={templateStyles.textContainer}>
+            <h3>Measuring the Impact of Poor Broadband</h3>
+            <p>Across Texas, data revealed a troubling trend: over 57% of consumer speed tests fell below a benchmark of 25 Mbps download and 3 Mbps upload – too slow for many types of commonly used services. Schools and government buildings often fared better, but homes, small businesses, and healthcare sites routinely experienced significant shortfalls.
+            <br/><br/>The implications were particularly severe for education and healthcare. Schools, often the only locations with acceptable internet, served as critical hubs for connectivity. However, outside school walls, students struggled to complete homework assignments or attend online classes.
+            </p>
+        </div>
+    </section>
+
+    <section class={templateStyles.verticallyAnimatedImagesContainer}>
+      <img alt="open field image" src={verticalImage3.src} class={templateStyles.verticalAnimated} data-position="left" data-image-type="vertical-offset" loading="eager"/>
+      <img alt="open field image" src={verticalImage4.src} class={templateStyles.verticalAnimated} data-position="right" data-image-type="vertical-offset" loading="eager"/>
+    </section>
+
+    <section class={styles.reliableInternetSection}>
+        <div class={templateStyles.textContainer}>
+            <h3>Healthcare at a Standstill</h3>
+            <p>The lack of reliable internet hit healthcare access hard. While telehealth has the potential to bridge gaps in rural medical care, many households simply couldn’t sustain a video consultation.
+            <br/><br/>"We spoke to a lot of folks who couldn't even consider telehealth because of their internet," said Standridge. "In many areas, the connection just wasn't strong enough to support video calls."
+            <br/><br/>Healthcare providers also encountered challenges. Clinics in rural areas reported that slow internet hampered their ability to update electronic health records or connect with specialists remotely. Without improvements, telehealth adoption remains a distant goal.
+            </p>
+        </div>
+
+        <div class={templateStyles.quoteWrapper}>
+            <Quote
+                    quote=`We spoke to a lot of folks who couldn’t even consider telehealth because of their internet.`
+                    author="Rance Standridge, Program Manager with Texas Tech University Health Sciences Center (TTUHSC)"
+            />
+        </div>
+    </section>
+
+    <section class={styles.threeImageSection}>
+        <div id="three-image-carrousel" class={templateStyles.threeImageCarrousel}>
+            <img src={threeImage1.src} alt="Gray lake image" loading="eager"/>
+            <img src={threeImage2.src} alt="Street image" loading="eager"/>
+            <img src={threeImage3.src} alt="Gray highway image" loading="eager"/>
+        </div>
+        <div class={templateStyles.epigraphContainer}>
+            <Epigraph text="For many Texans in rural areas, internet access remains stuck in the past."/>
+        </div>
+    </section>
+
+    <section class={styles.commonIssuesSection}>
+        <div class={templateStyles.textContainer} data-variant="contained">
+            <h3>Common Issues Affecting Rural Broadband</h3>
+            <p class={styles.paragraph}>Through conversations with residents and data analysis, the team identified the most persistent broadband issues:</p>
+        </div>
+        <div class={styles.commonIssuesListContainer}>
+          <CommonIssuesList/>
+        </div>
+        <p class={styles.paragraph}>For residents, these problems were more than technical glitches—they were barriers to basic needs like education, healthcare, and economic opportunity. In one instance, a business owner chose to relocate entirely because the local internet couldn't support their operations.</p>
+    </section>
+
+    <section class={styles.lastSection}>
+        <div class={templateStyles.textContainer} data-variant="contained">
+            <h3>A Way Forward?</h3>
+            <p class={styles.paragraph}>The experiences of rural Texans underscore the urgent need for broadband infrastructure investments. Residents remain resilient, adapting to their circumstances, but there is a growing recognition that poor internet is no longer an acceptable trade-off for rural living.
+            <br/><br/>"People know there's better internet out there," said Mangel. "They visit friends in cities, see the difference, and realize how far behind their communities are."
+            <br/><br/>While the journey toward better broadband remains long, these stories shine a spotlight on the challenges rural Texans face every day. For many, access to reliable internet isn't just about convenience—it's about being able to fully participate in modern life.
+            </p>
+        </div>
+    </section>
+</ParallaxLayout>
