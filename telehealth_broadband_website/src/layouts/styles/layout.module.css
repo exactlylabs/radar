@@ -43,15 +43,15 @@
   background-position-y: 50%;
   background-repeat: no-repeat;
   -webkit-mask-image:
-      linear-gradient(to top, transparent, var(--bg-color) 10%),
-      linear-gradient(to left, transparent, var(--bg-color) 10%),
-      linear-gradient(to right, transparent, var(--bg-color) 10%);
+      linear-gradient(to top, transparent, var(--bg-color) 40%),
+      linear-gradient(to left, transparent, var(--bg-color) 5%),
+      linear-gradient(to right, transparent, var(--bg-color) 5%);
   -webkit-mask-composite: destination-in;
   mask-composite: intersect;
   mask-image:
-    linear-gradient(to top, transparent, var(--bg-color) 10%),
-    linear-gradient(to left, transparent, var(--bg-color) 10%),
-    linear-gradient(to right, transparent, var(--bg-color) 10%);
+    linear-gradient(to top, transparent, var(--bg-color) 40%),
+    linear-gradient(to left, transparent, var(--bg-color) 5%),
+    linear-gradient(to right, transparent, var(--bg-color) 5%);
 }
 
 .heroImage[data-variant="homepage"] {
@@ -67,4 +67,9 @@
     aspect-ratio: var(--hero-image-aspect-ratio);
     max-width: unset;
   }
+}
+
+.heroImage[data-variant="evaluation-results"] {
+  height: 536px;
+  aspect-ratio: 1600 / 536;
 }

@@ -10,7 +10,7 @@
   position: relative;
   width: 100%;
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 6rem auto 5rem;
 }
 
 .introductionSection {
@@ -152,6 +152,8 @@
 }
 
 .exploreOpportunitiesSection {
+  width: calc(100vw - 2 * var(--side-padding));
+  margin: 0 auto 5.5rem;
   display: flex;
   flex-direction: column;
   gap: 5rem;
@@ -252,4 +254,7 @@
   }
 }
 
-
+.scrollerContainer {
+  width: 100vw;
+  position: relative;
+}

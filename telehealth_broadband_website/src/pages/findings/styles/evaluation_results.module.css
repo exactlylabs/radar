@@ -27,7 +27,7 @@
   align-items: flex-start;
   justify-content: space-between;
   position: relative;
-  width: 100%;
+  width: calc(100vw - 2 * var(--side-padding));
   max-width: 1100px;
   margin: 6rem auto 0;
 }
