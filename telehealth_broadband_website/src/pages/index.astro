@@ -32,6 +32,7 @@ import yellowPinkZigZagBluredSmallLight from '../assets/images/yellow-pink-zigza
 import michiganStoryThumbnail from '../assets/images/michigan-story-thumbnail-wide.webp';
 import westVirginiaStoryThumbnail from '../assets/images/west-virginia-story-thumbnail-wide.webp';
 import alaskaStoryThumbnail from '../assets/images/alaska-story-thumbnail-wide.webp';
+import texasStoryThumbnail from '../assets/images/texas-story-thumbnail.webp';
 ---
 
 <BaseLayout
@@ -137,7 +138,7 @@ import alaskaStoryThumbnail from '../assets/images/alaska-story-thumbnail-wide.w
       </div>
     </div>
     <div class={styles.storiesCarrouselContainer}>
-      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={3}>
+      <Carrousel client:only="react" fullWidth alignmentRefId={'stories-alignment-ref'} arrowLess elementCount={4}>
         <HomepageStoriesCard head="Michigan"
                              title="Connectivity Challenges Undermining Rural Healthcare in Michigan"
                              content="Broadband issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
@@ -155,6 +156,12 @@ import alaskaStoryThumbnail from '../assets/images/alaska-story-thumbnail-wide.w
                              content="In Alaska's remote villages, unreliable broadband and lack of IT support create critical challenges for telehealth and essential services, highlighting the need for targeted solutions in isolated communities."
                              image={alaskaStoryThumbnail.src}
                              link="/stories/connecting-alaskas-remote-communities"
+        />
+        <HomepageStoriesCard head="Texas"
+                             title="Texas Tackles Rural Connectivity Challenges"
+                             content="In rural Texas, inconsistent broadband access limits telehealth services, with residents and healthcare providers struggling to meet connectivity standards."
+                             image={texasStoryThumbnail.src}
+                             link="/stories/texas-tackles-rural-connectivity-challenges"
         />
       </Carrousel>
     </div>
