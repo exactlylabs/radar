@@ -71,15 +71,15 @@
   }
 }
 
-.twoStories {
+.threeStories {
   width: 100%;
   display: grid;
   grid-auto-flow: column;
-  gap: 4rem;
+  gap: 2rem;
 }
 
 @media (max-width: 768px) {
-  .twoStories {
+  .threeStories {
     grid-auto-flow: row;
     gap: 3rem;
   }

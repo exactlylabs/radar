@@ -147,7 +147,10 @@
 }
 
 @media (max-width: 768px) {
-  .container[data-variant="homepage-opportunities"] {
+  .container[data-variant="homepage-opportunities"]:first-child,
+  .container[data-variant="homepage-opportunities"]:nth-child(2),
+  .container[data-variant="homepage-opportunities"]:nth-child(3),
+  .container[data-variant="homepage-opportunities"]:nth-child(4) {
     gap: 1rem;
     padding: 2rem 0;
   }

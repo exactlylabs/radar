@@ -9,6 +9,7 @@ import StoryGridCard from "../components/stories/StoryCard.astro";
 import michiganStory from '../assets/images/michigan-story-thumbnail.webp';
 import westVirginiaStory from "../assets/images/west-virginia-story-thumbnail.webp";
 import alaskaStory from "../assets/images/alaska-story-thumbnail.webp";
+import texasStory from "../assets/images/texas-story-thumbnail.webp";
 import storiesHero from '../assets/images/stories-hero.webp';
 ---
 
@@ -36,7 +37,7 @@ import storiesHero from '../assets/images/stories-hero.webp';
         primary
       />
       <div class={styles.divider}></div>
-      <div class={styles.twoStories}>
+      <div class={styles.threeStories}>
         <StoryGridCard
           head="West Virginia"
           title="Breaking Barriers to Treatment in Rural West Virginia"
@@ -50,6 +51,13 @@ import storiesHero from '../assets/images/stories-hero.webp';
           content="In Alaska's remote villages, unreliable broadband and lack of IT support create critical challenges for telehealth and essential services, highlighting the need for targeted solutions in isolated communities."
           readMorePath="/stories/connecting-alaskas-remote-communities"
           image={alaskaStory}
+        />
+        <StoryGridCard
+          head="Texas"
+          title="Texas Tackles Rural Connectivity Challenges"
+          content="In rural Texas, inconsistent broadband access limits telehealth services, with residents and healthcare providers struggling to meet connectivity standards."
+          readMorePath="/stories/texas-tackles-rural-connectivity-challenges"
+          image={texasStory}
         />
       </div>
       <!--<div class={styles.divider}></div>-->
