@@ -1,6 +1,5 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity, Image } from 'react-native';
 import { colors } from '@/styles/shared';
 import { useRouter } from 'expo-router';
 
@@ -16,7 +15,7 @@ export const SettingsButton = () => {
       activeOpacity={0.7}
       onPress={handlePress}
     >
-      <Ionicons name="settings-outline" size={24} color={colors.white} />
+      <Image source={require('@/assets/images/icons/gearicon.png')} style={{ width: 24, height: 24, tintColor: colors.white }} />
     </TouchableOpacity>
   );
 };
