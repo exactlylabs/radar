@@ -1,0 +1,108 @@
+.quotePadder {
+  padding-top: 3.5rem;
+  padding-bottom: 5rem;
+}
+
+.paragraph {
+  font-size: 1.125rem;
+  line-height: 1.556;
+  color: var(--text-color);
+  max-width: 711px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .paragraph {
+    font-size: 1rem;
+    line-height: 1.625;
+    max-width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+.topPaddedText {
+  padding-top: 3.5rem;
+}
+
+@media (max-width: 768px) {
+  .topPaddedText {
+    padding-top: 1.5rem;
+  }
+}
+
+.bottomPaddedText {
+  padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .bottomPaddedText {
+    padding-bottom: 2.5rem;
+  }
+}
+
+.quoteSection {
+  margin-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+  .quoteSection {
+    margin-bottom: 3rem;
+  }
+}
+
+.threeImageSection {
+  margin-block: 5rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .threeImageSection {
+    width: calc(100vw - 2 * var(--side-padding));
+    margin: 3rem auto 1rem;
+  }
+
+  .threeImageSection > #three-image-carrousel {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.commonIssuesSection,
+.lastSection {
+  max-width: 711px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .commonIssuesSection,
+  .lastSection {
+    max-width: unset;
+    width: calc(100vw - 2 * var(--side-padding));
+  }
+}
+
+.commonIssuesListContainer {
+  margin-bottom: 3.5rem;
+}
+
+.commonIssuesSection,
+.lastSection {
+  padding-bottom: 6rem;
+}
+
+.commonIssuesSection > div > .paragraph {
+  margin-bottom: 3.5rem;
+}
+
+@media (max-width: 768px) {
+  .commonIssuesSection {
+    padding-bottom: 3rem;
+  }
+  .lastSection {
+    padding-bottom: 4rem;
+  }
+
+
+  .commonIssuesSection > div > .paragraph {
+    margin-bottom: 1rem;
+  }
+}

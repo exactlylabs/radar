@@ -104,6 +104,10 @@
     width: 100%;
     max-width: 100%;
   }
+
+  br {
+    display: none;
+  }
 }
 
 .verticallyAnimatedImagesContainer {
@@ -241,7 +245,7 @@
   }
 }
 
-.textContainer > p {
+.textContainer:not([data-variant="contained"]) > p {
   font-size: 1.125rem;
   line-height: 1.556;
   color: var(--text-color);
@@ -249,7 +253,7 @@
 }
 
 @media (max-width: 768px) {
-  .textContainer > p {
+  .textContainer > p:not([class]) {
     font-size: 1rem;
     line-height: 1.625;
     margin-bottom: 1rem;
@@ -263,8 +267,8 @@
 
 @media (max-width: 768px) {
   .quoteWrapper {
+    width: calc(100vw - 2 * var(--side-padding));
     max-width: unset;
-    width: 100%;
   }
 }
 
@@ -277,7 +281,7 @@
   overflow: clip;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 823px) {
   .videoContainer {
     width: calc(100% - 3rem);
     max-width: unset;
@@ -375,9 +379,9 @@
   margin-left: 3.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 823px) {
   .subRegionalClinicContainer {
-    width: 100%;
+    width: calc(100vw - 2 * var(--side-padding));
     max-width: unset;
     padding-block: 2.5rem 3rem;
     gap: 1rem;
