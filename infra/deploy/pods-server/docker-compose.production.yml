@@ -20,8 +20,8 @@ services:
 
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - BUCKET_NAME=radar-pods-production
-      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - BUCKET_NAME=radar-pods-production-new
+      - BUCKET_ACCESS_KEY=005cba2f46227b40000000008
       - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
@@ -37,7 +37,7 @@ services:
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
-      - source: PODS_BUCKET_SECRET_KEY
+      - source: PODS_BUCKET_SECRET_KEY_V2
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
         target: SECRET_KEY_BASE
@@ -95,8 +95,8 @@ services:
       - RAILS_ENV=production
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - BUCKET_NAME=radar-pods-production
-      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - BUCKET_NAME=radar-pods-production-new
+      - BUCKET_ACCESS_KEY=005cba2f46227b40000000008
       - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
@@ -114,7 +114,7 @@ services:
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
-      - source: PODS_BUCKET_SECRET_KEY
+      - source: PODS_BUCKET_SECRET_KEY_V2
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
         target: SECRET_KEY_BASE
@@ -154,8 +154,8 @@ services:
       - RAILS_ENV=production
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - BUCKET_NAME=radar-pods-production
-      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - BUCKET_NAME=radar-pods-production-new
+      - BUCKET_ACCESS_KEY=005cba2f46227b40000000008
       - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
@@ -171,7 +171,7 @@ services:
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
-      - source: PODS_BUCKET_SECRET_KEY
+      - source: PODS_BUCKET_SECRET_KEY_V2
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
         target: SECRET_KEY_BASE
@@ -206,8 +206,8 @@ services:
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
       - MALLOC_ARENA_MAX=2 # From https://github.com/sidekiq/sidekiq/wiki/Memory#bloat
-      - BUCKET_NAME=radar-pods-production
-      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - BUCKET_NAME=radar-pods-production-new
+      - BUCKET_ACCESS_KEY=005cba2f46227b40000000008
       - HEALTHCHECK_URL=https://pods.radartoolkit.com/health
       - REDIS_URL=redis://redis:6379
       - TAILSCALE_CLIENT_ID=kBsnYW5CNTRL
@@ -223,7 +223,7 @@ services:
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
-      - source: PODS_BUCKET_SECRET_KEY
+      - source: PODS_BUCKET_SECRET_KEY_V2
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
         target: SECRET_KEY_BASE
@@ -263,7 +263,7 @@ networks:
 secrets:
   PODS_GEOAPIFY_KEY:
     external: true
-  PODS_BUCKET_SECRET_KEY:
+  PODS_BUCKET_SECRET_KEY_V2:
     external: true
   PODS_SECRET_KEY:
     external: true

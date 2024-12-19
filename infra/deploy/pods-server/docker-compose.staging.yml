@@ -7,8 +7,8 @@ services:
       - RAILS_MAX_THREADS=5
       - SENTRY_HOST=o1197382.ingest.sentry.io
       - SENTRY_PROJECT_ID=6320151
-      - BUCKET_NAME=radar-pods-staging
-      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - BUCKET_NAME=radar-pods-staging-new
+      - BUCKET_ACCESS_KEY=005cba2f46227b40000000007
       - HEALTHCHECK_URL=https://pods.staging.radartoolkit.com/health
       - WEB_CONCURRENCY=3
       - REDIS_URL=redis://redis:6379
@@ -21,7 +21,7 @@ services:
     secrets:
       - source: PODS_GEOAPIFY_KEY
         target: GEOAPIFY_KEY
-      - source: PODS_BUCKET_SECRET_KEY
+      - source: PODS_BUCKET_SECRET_KEY_V2
         target: BUCKET_SECRET_KEY
       - source: PODS_SECRET_KEY
         target: SECRET_KEY_BASE
@@ -117,7 +117,7 @@ networks:
 secrets:
   PODS_GEOAPIFY_KEY:
     external: true
-  PODS_BUCKET_SECRET_KEY:
+  PODS_BUCKET_SECRET_KEY_V2:
     external: true
   PODS_SECRET_KEY:
     external: true

@@ -11,9 +11,9 @@ backblaze:
   service: S3
   access_key_id: <%= ENV["BUCKET_ACCESS_KEY"] %>
   secret_access_key: <%= ENV["BUCKET_SECRET_KEY"] %>
-  endpoint: https://s3.us-west-004.backblazeb2.com
+  endpoint: https://s3.us-east-005.backblazeb2.com
   bucket: <%= ENV["BUCKET_NAME"] %>
-  region: "us-west-004"
+  region: "us-east-005"
   retry_base_delay: 0.5
   retry_limit: 5
 
