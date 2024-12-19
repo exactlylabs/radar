@@ -1,0 +1,14 @@
+---
+import StoryGridCard from "./StoryCard.astro";
+import texasStory from "../../assets/images/texas-story-thumbnail.webp";
+const { primary } = Astro.props;
+---
+
+<StoryGridCard
+  head="Texas"
+  title="Texas Tackles Rural Connectivity Challenges"
+  content="In rural Texas, inconsistent broadband access limits telehealth services, with residents and healthcare providers struggling to meet connectivity standards."
+  readMorePath="/stories/texas-tackles-rural-connectivity-challenges"
+  image={texasStory}
+  primary={primary}
+/>

@@ -8,6 +8,10 @@ import HeroWithText from "../../components/common/content/HeroWithText.astro";
 import Epigraph from "../../components/stories/Epigraph.astro";
 import Quote from "../../components/stories/Quote.astro";
 import CommonIssuesList from "../../components/stories/CommonIssuesList.astro";
+import AlaskaStoryCard from "../../components/stories/AlaskaStoryCard.astro";
+import MoreStoriesSection from "../../components/stories/MoreStoriesSection.astro";
+import WestVirginiaStoryCard from "../../components/stories/WestVirginiaStoryCard.astro";
+import MichiganStoryCard from "../../components/stories/MichiganStoryCard.astro";
 
 import hero from '../../assets/images/texas-story-hero.webp';
 import threeImage1 from '../../assets/images/texas-story-image-1.webp';
@@ -156,4 +160,10 @@ import bigImage from '../../assets/images/texas-story-big-image.webp';
             </p>
         </div>
     </section>
+
+    <MoreStoriesSection>
+      <WestVirginiaStoryCard/>
+      <MichiganStoryCard/>
+      <AlaskaStoryCard/>
+    </MoreStoriesSection>
 </ParallaxLayout>

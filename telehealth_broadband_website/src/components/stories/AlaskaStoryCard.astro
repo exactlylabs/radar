@@ -1,0 +1,14 @@
+---
+import StoryGridCard from "./StoryCard.astro";
+import alaskaStory from "../../assets/images/alaska-story-thumbnail.webp";
+const { primary } = Astro.props;
+---
+
+<StoryGridCard
+  head="Alaska"
+  title="Connecting Alaska's Remote Communities"
+  content="In Alaska's remote villages, unreliable broadband and lack of IT support create critical challenges for telehealth and essential services, highlighting the need for targeted solutions in isolated communities."
+  readMorePath="/stories/connecting-alaskas-remote-communities"
+  image={alaskaStory}
+  primary={primary}
+/>

@@ -4,12 +4,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import commonStyles from "../common.module.css";
 import styles from "./styles/_stories.module.css";
 import HeroWithText from "../components/common/content/HeroWithText.astro";
-import StoryGridCard from "../components/stories/StoryCard.astro";
+import WestVirginiaStoryCard from "../components/stories/WestVirginiaStoryCard.astro";
+import MichiganStoryCard from "../components/stories/MichiganStoryCard.astro";
+import AlaskaStoryCard from "../components/stories/AlaskaStoryCard.astro";
+import TexasStoryCard from "../components/stories/TexasStoryCard.astro";
 
-import michiganStory from '../assets/images/michigan-story-thumbnail.webp';
-import westVirginiaStory from "../assets/images/west-virginia-story-thumbnail.webp";
-import alaskaStory from "../assets/images/alaska-story-thumbnail.webp";
-import texasStory from "../assets/images/texas-story-thumbnail.webp";
 import storiesHero from '../assets/images/stories-hero.webp';
 ---
 
@@ -28,37 +27,12 @@ import storiesHero from '../assets/images/stories-hero.webp';
   </section>
   <section class={commonStyles.paddedSection}>
     <div class={styles.stories}>
-      <StoryGridCard
-        head="Michigan"
-        title="Connectivity Issues in Rural Michigan Healthcare"
-        content="Connectivity issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
-        readMorePath="/stories/connectivity-issues-in-rural-michigan-healthcare"
-        image={michiganStory}
-        primary
-      />
+      <MichiganStoryCard primary/>
       <div class={styles.divider}></div>
       <div class={styles.threeStories}>
-        <StoryGridCard
-          head="West Virginia"
-          title="Breaking Barriers to Treatment in Rural West Virginia"
-          content="Connectivity issues in rural West Virginia disrupt operations and virtual treatment at the Jefferson Day Report Center, underscoring the need for reliable broadband to support rural services."
-          readMorePath="/stories/breaking-barriers-to-treatment-in-rural-west-virginia"
-          image={westVirginiaStory}
-        />
-        <StoryGridCard
-          head="Alaska"
-          title="Connecting Alaska's Remote Communities"
-          content="In Alaska's remote villages, unreliable broadband and lack of IT support create critical challenges for telehealth and essential services, highlighting the need for targeted solutions in isolated communities."
-          readMorePath="/stories/connecting-alaskas-remote-communities"
-          image={alaskaStory}
-        />
-        <StoryGridCard
-          head="Texas"
-          title="Texas Tackles Rural Connectivity Challenges"
-          content="In rural Texas, inconsistent broadband access limits telehealth services, with residents and healthcare providers struggling to meet connectivity standards."
-          readMorePath="/stories/texas-tackles-rural-connectivity-challenges"
-          image={texasStory}
-        />
+        <WestVirginiaStoryCard/>
+        <AlaskaStoryCard/>
+        <TexasStoryCard/>
       </div>
     </div>
   </section>

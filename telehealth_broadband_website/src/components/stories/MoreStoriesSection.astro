@@ -1,0 +1,14 @@
+---
+import commonStyles from '../../common.module.css';
+import templateStyles from '../../pages/stories/styles/template.module.css';
+import HeroWithText from "../common/content/HeroWithText.astro";
+---
+
+<section class={`${commonStyles.paddedSection} ${templateStyles.moreStoriesSection}`}>
+  <div class={templateStyles.moreStoriesHeroContainer}>
+    <HeroWithText head="More Stories" title="You might also be interested"/>
+  </div>
+  <div class={templateStyles.moreStoriesGrid}>
+    <slot/>
+  </div>
+</section>
