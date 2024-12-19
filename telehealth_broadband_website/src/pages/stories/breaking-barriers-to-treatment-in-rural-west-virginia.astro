@@ -7,6 +7,10 @@ import commonStyles from '../../common.module.css';
 import HeroWithText from "../../components/common/content/HeroWithText.astro";
 import Epigraph from "../../components/stories/Epigraph.astro";
 import Quote from "../../components/stories/Quote.astro";
+import AlaskaStoryCard from "../../components/stories/AlaskaStoryCard.astro";
+import TexasStoryCard from "../../components/stories/TexasStoryCard.astro";
+import MichiganStoryCard from "../../components/stories/MichiganStoryCard.astro";
+import MoreStoriesSection from "../../components/stories/MoreStoriesSection.astro";
 
 import hero from '../../assets/images/west-virginia-story-hero.webp';
 import threeImage1 from '../../assets/images/wv-story-image-1.webp';
@@ -107,4 +111,10 @@ import bigImage from '../../assets/images/wv-story-big-image.webp';
       <br/><br/>The experiences of JDRC highlight the broader implications of broadband inequity in rural America. While targeted improvements can make a significant impact, the persistent gaps in connectivity underscore the urgent need for comprehensive solutions to ensure rural communities can access essential services without barriers.
     </p>
   </section>
+  
+  <MoreStoriesSection>
+    <AlaskaStoryCard/>
+    <TexasStoryCard/>
+    <MichiganStoryCard/>
+  </MoreStoriesSection>
 </ParallaxLayout>

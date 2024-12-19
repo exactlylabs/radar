@@ -1,0 +1,14 @@
+---
+import StoryGridCard from "./StoryCard.astro";
+import westVirginiaStory from "../../assets/images/west-virginia-story-thumbnail.webp";
+const { primary } = Astro.props;
+---
+
+<StoryGridCard
+  head="West Virginia"
+  title="Breaking Barriers to Treatment in Rural West Virginia"
+  content="Connectivity issues in rural West Virginia disrupt operations and virtual treatment at the Jefferson Day Report Center, underscoring the need for reliable broadband to support rural services."
+  readMorePath="/stories/breaking-barriers-to-treatment-in-rural-west-virginia"
+  primary={primary}
+  image={westVirginiaStory}
+/>

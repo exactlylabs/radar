@@ -7,6 +7,10 @@ import commonStyles from '../../common.module.css';
 import HeroWithText from "../../components/common/content/HeroWithText.astro";
 import Epigraph from "../../components/stories/Epigraph.astro";
 import Quote from "../../components/stories/Quote.astro";
+import TexasStoryCard from "../../components/stories/TexasStoryCard.astro";
+import MichiganStoryCard from "../../components/stories/MichiganStoryCard.astro";
+import MoreStoriesSection from "../../components/stories/MoreStoriesSection.astro";
+import WestVirginiaStoryCard from "../../components/stories/WestVirginiaStoryCard.astro";
 
 import hero from '../../assets/images/alaska-story-hero.webp';
 import threeImage1 from '../../assets/images/alaska-story-image-1.webp';
@@ -106,4 +110,10 @@ import bigImage from '../../assets/images/alaska-story-big-image.webp';
         <br/><br/>The TBP Program's findings highlight Alaska's potential to overcome its connectivity challenges through a combination of technical support, community involvement, and targeted interventions. For Spargo, the work isn't just about improving broadband—it's about ensuring that even in the most remote corners of the state, people can access the care they deserve.
     </p>
   </section>
+
+  <MoreStoriesSection>
+    <WestVirginiaStoryCard/>
+    <TexasStoryCard/>
+    <MichiganStoryCard/>
+  </MoreStoriesSection>
 </ParallaxLayout>

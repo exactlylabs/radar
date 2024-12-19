@@ -1,0 +1,14 @@
+---
+import StoryGridCard from './StoryCard.astro';
+import michiganStory from '../../assets/images/michigan-story-thumbnail.webp';
+const { primary } = Astro.props;
+---
+
+<StoryGridCard
+  head="Michigan"
+  title="Connectivity Issues in Rural Michigan Healthcare"
+  content="Connectivity issues at Northwest Michigan Health Services clinics highlight the vital role of reliable internet for telehealth, medical records, and patient care, emphasizing the need for systemic improvements."
+  readMorePath="/stories/connectivity-issues-in-rural-michigan-healthcare"
+  image={michiganStory}
+  primary={primary}
+/>

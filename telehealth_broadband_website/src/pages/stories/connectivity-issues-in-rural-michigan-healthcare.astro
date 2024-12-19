@@ -7,6 +7,10 @@ import commonStyles from '../../common.module.css';
 import HeroWithText from "../../components/common/content/HeroWithText.astro";
 import Epigraph from "../../components/stories/Epigraph.astro";
 import Quote from "../../components/stories/Quote.astro";
+import TexasStoryCard from "../../components/stories/TexasStoryCard.astro";
+import MoreStoriesSection from "../../components/stories/MoreStoriesSection.astro";
+import WestVirginiaStoryCard from "../../components/stories/WestVirginiaStoryCard.astro";
+import AlaskaStoryCard from "../../components/stories/AlaskaStoryCard.astro";
 
 import hero from '../../assets/images/michigan-story-hero.webp';
 import barn from '../../assets/images/barn-michigan-story.webp';
@@ -109,4 +113,10 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
     <br/><br/>The findings from NMHSI highlight the urgency of addressing broadband disparities in rural healthcare settings. As the HRSA-funded study continues, it underscores a pressing need for systemic changes to improve internet access and ensure equitable healthcare delivery.
     </p>
   </section>
+
+  <MoreStoriesSection>
+    <WestVirginiaStoryCard/>
+    <TexasStoryCard/>
+    <AlaskaStoryCard/>
+  </MoreStoriesSection>
 </ParallaxLayout>
