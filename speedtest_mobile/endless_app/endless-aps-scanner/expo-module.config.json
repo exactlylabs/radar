@@ -1,0 +1,17 @@
+{
+  "platforms": [
+    "apple",
+    "android",
+    "web"
+  ],
+  "apple": {
+    "modules": [
+      "EndlessApsScannerModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "com.exactlylabs.endlessapsscanner.EndlessApsScannerModule"
+    ]
+  }
+}

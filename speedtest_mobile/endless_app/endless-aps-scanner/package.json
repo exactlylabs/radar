@@ -1,0 +1,43 @@
+{
+  "name": "endless-aps-scanner",
+  "version": "0.1.0",
+  "description": "This module will allow you to scan APs in a periodic way",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "endless-aps-scanner",
+    "EndlessApsScanner"
+  ],
+  "repository": "https://github.com/Exactlylabs/radar/",
+  "bugs": {
+    "url": "https://github.com/Exactlylabs/radar//issues"
+  },
+  "author": "ignaciograsso <ignacio@exactlylabs.com> (https://github.com/ignaciograsso)",
+  "license": "MIT",
+  "homepage": "https://github.com/Exactlylabs/radar/#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "expo-module-scripts": "^4.0.2",
+    "expo": "~52.0.0",
+    "react-native": "0.76.0"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "endless-aps-scanner": ["../src/index"],
+      "endless-aps-scanner/*": ["../src/*"]
+    }
+  }
+}
