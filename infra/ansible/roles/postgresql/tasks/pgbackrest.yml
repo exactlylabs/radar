@@ -4,7 +4,7 @@
   apt:
     name:
       - pgbackrest
-        - cron
+      - cron
     state: present
 
 - name: Configure PGBackRest
