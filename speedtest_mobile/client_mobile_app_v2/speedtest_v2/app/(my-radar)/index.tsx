@@ -23,24 +23,29 @@ export default function MyRadarScreen() {
       setIsLoading(true);
       // @ToDo implement fetch running state
       await new Promise(resolve => setTimeout(resolve, 500));
-      setIsLoading(false);
     } catch (error) {
       console.error('Failed to load running state:', error);
+    } finally {
       setIsLoading(false);
     }
   };
 
+  const startRadarService = async () => {
+    // @ToDo implement start of radar service
+    await new Promise(resolve => setTimeout(resolve, 300));
+  };
+
+  const stopRadarService = async () => {
+    // @ToDo implement stop of radar service
+    await new Promise(resolve => setTimeout(resolve, 300));
+  };
+
   const toggleRadar = useCallback(async () => {
     try {
-      const newState = !isRunning;
-      setIsRunning(newState);
-
-      // @ToDo implement execution of radar service
-      await new Promise(resolve => setTimeout(resolve, 300));
-
+      !isRunning ? await startRadarService() : await stopRadarService();
+      setIsRunning(!isRunning);
     } catch (error) {
       console.error('Failed to toggle radar:', error);
-      setIsRunning(!isRunning);
     }
   }, [isRunning]);
 

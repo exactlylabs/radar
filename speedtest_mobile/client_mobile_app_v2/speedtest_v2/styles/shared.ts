@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ImageStyle } from 'react-native';
 
 export const colors = {
     white: '#FFFFFF',
@@ -26,6 +26,13 @@ export const fonts = {
   MulishRegular: "MulishRegular",
   tabBarTextSize: 12,
 };
+
+export const iconStyles = StyleSheet.create({
+    icon24: {
+        width: 24,
+        height: 24,
+    } as ImageStyle,
+});
 
 export const sharedStyles = StyleSheet.create({
     colors: {

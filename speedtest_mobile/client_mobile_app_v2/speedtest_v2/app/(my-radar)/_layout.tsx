@@ -1,7 +1,8 @@
 import { RadarIcon } from "@/components/Icons";
-import { colors, fonts } from "@/styles/shared";
+import { colors, fonts, iconStyles } from "@/styles/shared";
 import { Tabs } from "expo-router";
-import { Image } from "react-native";
+import { Image, StyleSheet } from "react-native";
+import { sharedStyles } from "@/styles/shared";
 
 export default function MyRadarLayout() {
     return (
@@ -19,14 +20,16 @@ export default function MyRadarLayout() {
                 tabBarActiveTintColor: colors.blue200,
                 tabBarInactiveTintColor: colors.gray300,
             }}
-
         >
             <Tabs.Screen
                 name="index"
                 options={{
                     title: 'My Radar',
                     tabBarIcon: ({ color }) => (
-                        <Image source={require('@/assets/images/icons/radartabicon.png')} style={{ width: 24, height: 24, tintColor: color }} />
+                        <Image
+                            source={require('@/assets/images/icons/radartabicon.png')}
+                            style={[iconStyles.icon24, { tintColor: color }]}
+                        />
                     ),
                 }}
             />
@@ -36,7 +39,10 @@ export default function MyRadarLayout() {
                 options={{
                     title: 'Speed Tests',
                     tabBarIcon: ({ color }) => (
-                        <Image source={require('@/assets/images/icons/speedtesticon.png')} style={{ width: 24, height: 24, tintColor: color }} />
+                        <Image
+                            source={require('@/assets/images/icons/speedtesticon.png')}
+                            style={[iconStyles.icon24, { tintColor: color }]}
+                        />
                     ),
                 }}
             />
@@ -46,7 +52,10 @@ export default function MyRadarLayout() {
                 options={{
                     title: 'Explore',
                     tabBarIcon: ({ color }) => (
-                        <Image source={require('@/assets/images/icons/exploretabicon.png')} style={{ width: 24, height: 24, tintColor: color }} />
+                        <Image
+                            source={require('@/assets/images/icons/exploretabicon.png')}
+                            style={[iconStyles.icon24, { tintColor: color }]}
+                        />
                     ),
                 }}
             />
