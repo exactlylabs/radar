@@ -11,6 +11,7 @@ import TexasStoryCard from "../../components/stories/TexasStoryCard.astro";
 import MoreStoriesSection from "../../components/stories/MoreStoriesSection.astro";
 import WestVirginiaStoryCard from "../../components/stories/WestVirginiaStoryCard.astro";
 import AlaskaStoryCard from "../../components/stories/AlaskaStoryCard.astro";
+import { Image } from 'astro:assets';
 
 import hero from '../../assets/images/michigan-story-hero.webp';
 import barn from '../../assets/images/barn-michigan-story.webp';
@@ -22,7 +23,7 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
 ---
 
 <ParallaxLayout
-  bgImageSrc={hero.src}
+  bgImageSrc={hero}
   title="Connectivity Issues in Rural Michigan Healthcare"
   description="Unreliable internet disrupts patient care and staff efficiency in Michigan clinics."
 >
@@ -38,12 +39,17 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
       />
     </div>
   </section>
-
-  <img src={hero.src}
+ 
+  <Image
+   src={hero}
    class={templateStyles.contentImage}
    alt="Couple walking in the woods with their dogs"
    id="parallax-content-image"
    loading="eager"
+   quality={'high'}
+   format='webp'
+   widths={[hero.width/2, hero.width]}
+   sizes={`(max-width: 768px) ${hero.width/2}px, ${hero.width}px`}
   />
 
   <section class={commonStyles.paddedSection} id="parallax-reference-container">
@@ -64,9 +70,9 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
     </div>
     
     <div id="three-image-carrousel" class={templateStyles.threeImageCarrousel}>
-      <img src={barn.src} alt="Old lady in an office" loading="eager"/>
-      <img src={snowHouse.src} alt="Street image" loading="eager"/>
-      <img src={woodsHouse.src} alt="Woman in an office" loading="eager"/>
+      <Image src={barn} alt="Old lady in an office" loading="eager"/>
+      <Image src={snowHouse} alt="Street image" loading="eager"/>
+      <Image src={woodsHouse} alt="Woman in an office" loading="eager"/>
     </div>
     <div class={templateStyles.epigraphContainer}>
       <Epigraph text="Many patients in Michigan rely on telehealth due to difficulties in accessing clinics."/>
@@ -83,8 +89,8 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
   </section>
 
   <section class={templateStyles.verticallyAnimatedImagesContainer}>
-    <img alt="road image" src={road.src} class={templateStyles.verticalAnimated} data-position="left" data-image-type="vertical-offset" loading="eager"/>
-    <img alt="open field image" src={openField.src} class={templateStyles.verticalAnimated} data-position="right" data-image-type="vertical-offset" loading="eager"/>
+    <Image densities={[1,2,3]} alt="road image" src={road} class={templateStyles.verticalAnimated} data-position="left" data-image-type="vertical-offset" loading="eager"/>
+    <Image densities={[1,2,3]} alt="open field image" src={openField} class={templateStyles.verticalAnimated} data-position="right" data-image-type="vertical-offset" loading="eager"/>
   </section>
 
   <section class={styles.reliableInternetSection}>
@@ -104,7 +110,7 @@ import manCouch from '../../assets/images/man-couch-michigan.webp';
     </div>
 
     <div class={`${templateStyles.subRegionalClinicContainer} ${styles.staticImage}`}>
-      <img src={manCouch.src} alt="Man lying on couch while on the phone" loading="eager"/>
+      <Image densities={[1,2,3]} src={manCouch} alt="Man lying on couch while on the phone" loading="eager"/>
     </div>
 
     <p class={`${templateStyles.paddedText} ${styles.bottomPaddedText}`} data-variant="contained">

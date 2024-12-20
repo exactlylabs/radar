@@ -4,6 +4,7 @@ import Footer from "../components/common/layout/Footer.astro";
 import styles from './styles/parallax_layout.module.css';
 import '../layouts/styles/layout.module.css';
 import BaseHead from "../components/common/layout/BaseHead.astro";
+import { Image } from 'astro:assets';
 
 const { bgImageSrc, title, description } = Astro.props;
 ---
@@ -22,9 +23,14 @@ const { bgImageSrc, title, description } = Astro.props;
       <div id="parallax-background-image"
            class={styles.parallaxBackgroundImage}
       >
-        <img src={bgImageSrc}
+        <Image
+          src={bgImageSrc}
           alt="Parallax Background Image"
           loading="eager"
+          quality={'high'}
+          format='webp'
+          widths={[bgImageSrc.width/2, bgImageSrc.width]}
+          sizes={`(max-width: 768px) ${bgImageSrc.width/2}px, ${bgImageSrc.width}px`}
         />
       </div>
       <Navbar/>
