@@ -353,6 +353,13 @@
   border-radius: 6px;
 }
 
+@media (max-width: 768px) {
+  .threeImageCarrousel > img {
+    width: 345px;
+    height: auto;
+  }
+}
+
 .subRegionalClinicContainer {
   width: 100%;
   max-width: 823px;
