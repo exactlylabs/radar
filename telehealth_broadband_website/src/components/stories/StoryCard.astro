@@ -7,7 +7,7 @@ const { head, title, content, primary, readMorePath, image } = Astro.props;
 ---
 
 <div class={styles.storyCard} data-variant={primary ? 'primary' : 'default'}>
-  <Image densities={[1,2,3]} src={image} alt={head} class={styles.storyImage}/>
+  <Image densities={[1,2,3]} src={image} alt={head} class={styles.storyImage} />
   <div class={styles.storySummary}>
     <div class={styles.heroContainer}>
       <HeroWithText

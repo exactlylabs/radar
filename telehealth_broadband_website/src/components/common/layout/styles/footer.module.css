@@ -1,5 +1,11 @@
 .footer {
   width: 100vw;
+  background-color: #14132D;
+}
+
+.footerContent {
+  max-width: var(--max-width);
+  margin-inline: auto;
   padding-block: 2rem 3rem;
   padding-inline: 0;
   display: flex;
@@ -9,28 +15,26 @@
   gap: 1rem;
   position: relative;
   overflow: clip;
-  max-width: var(--max-width);
-  margin-inline: auto;
 }
 
 @media (min-width: 1250px) {
-  .footer {
+  .footerContent {
     overflow-x: visible;
     padding-block: 2.5rem;
   }
 }
 
 @media (min-width: 1080px) and (max-width: 1250px) {
-  .footer {
+  .footerContent {
     padding-inline: 3rem;
     gap: 2rem;
   }
 }
 
 @media (max-width: 1080px) {
-  .footer {
-    border-top: solid 1px rgba(255, 255, 255, 0.1);
+  .footerContent {
     padding-inline: 1.5rem;
+    border-top: solid 1px rgba(255, 255, 255, 0.1);
     gap: 1.5rem;
   }
 }
@@ -114,13 +118,13 @@
 .footerLights {
   width: var(--max-width);
   height: auto;
-  z-index: -1;
   position: absolute;
   bottom: -50%;
   left: 50%;
   transform: translateX(-50%);
   filter: blur(60px);
   opacity: .6;
+  z-index: 0;
 }
 
 @media (min-width: 1250px) {
@@ -251,6 +255,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   text-align: center;
+  z-index: 1;
 
   .questionsFeedbackContainer {
     width: 100%;
