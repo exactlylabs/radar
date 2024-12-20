@@ -1,31 +1,98 @@
 ---
 import styles from './styles/footer.module.css';
+import {Image} from 'astro:assets';
+
 import footerLogo from '../../../assets/logos/footer-logo.webp';
 import footerLights from '../../../assets/images/footer-lights.webp';
+import FooterMobileLinks from "./FooterMobileLinks.astro";
 ---
 
 <footer class={styles.footer}>
   <div class={styles.topRow}>
-    <img src={footerLogo.src}
-         alt="Main footer TBP logo"
-         height={28}
-         loading={'eager'}
-    />
-    <ul class={styles.links} data-desktop="true">
-      <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
-    </ul>
+    <div class={styles.topLeftColumn}>
+      <Image src={footerLogo}
+           alt="Main footer TBP logo"
+           height={28}
+           loading={'eager'}
+           densities={[1,2,3]}
+           quality={'max'}
+      />
+      <p class:list={[styles.footerText, styles.maxWidthText]}>The Telehealth Broadband Pilot Program is made possible by grant #GA5RH40183 and #GA6R40184 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
+      <div class={styles.questionsFeedbackContainer}>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+          <path fill="#ACAFCD" transform="translate(0.25 2.25)" d="M13.75 0C13.977571 0 14.267833 0.046562746 14.575234 0.19450012C15.136582 0.46464887 15.5 0.9893325 15.5 1.7125L15.5 9.4125004C15.5 9.6424084 15.449636 9.933259 15.290554 10.239492C15.008415 10.78261 14.47482 11.125 13.75 11.125L1.75 11.125C1.5224289 11.125 1.2321676 11.078437 0.92476529 10.9305C0.36341724 10.660351 0 10.135668 0 9.4125004L0 1.7125C0 1.4825914 0.050363723 1.1917409 0.20944594 0.88550764C0.49158511 0.34238976 1.0251795 0 1.75 0L13.75 0ZM14 2.4230001L9.540966 5.7250743C8.4830875 6.508359 7.0169125 6.508359 5.9590797 5.7251081L1.5 2.424L1.5 9.4125004C1.5 9.5315199 1.5115827 9.5482426 1.5752348 9.5788755C1.6428324 9.6114063 1.7275711 9.625 1.75 9.625L13.75 9.625C13.90018 9.625 13.929085 9.606452 13.959446 9.548008C13.987864 9.4933033 14 9.4232168 14 9.4125004L14 2.4230001ZM12.726 1.5L2.773 1.5L6.8516331 4.5195589C7.3792162 4.9101973 8.1207838 4.9101973 8.6484127 4.5195251L12.726 1.5Z"/>
+        </svg>
+        <p>Questions or feedback? <a href="mailto:info@telehealthbroadbandproject.com">Get in touch with us</a>.</p>
+      </div>
+    </div>
+    <div class={styles.rightLeftColumn}>
+      <div class={styles.linksColumn}>
+        <span>PROJECT</span>
+        <a href="/overview">Overview</a>
+      </div>
+      <div class={styles.linksColumn}>
+        <span>FINDINGS</span>
+        <a href="/findings">Our Findings</a>
+        <a href="/findings/evaluation-results">Evaluation Results</a>
+        <a href="/findings/alaska">Alaska</a>
+        <a href="/findings/michigan">Michigan</a>
+        <a href="/findings/texas">Texas</a>
+        <a href="/findings/west-virginia">West Virginia</a>
+      </div>
+      <div class={styles.linksColumn}>
+        <span>STORIES</span>
+        <a href="/stories">Our Stories</a>
+        <a href="/stories/connecting-alaskas-remote-communities">Alaska</a>
+        <a href="/stories/connectivity-issues-in-rural-michigan-healthcare">Michigan</a>
+        <a href="/stories/texas-tackles-rural-connectivity-challenges">Texas</a>
+        <a href="/stories/breaking-barriers-to-treatment-in-rural-west-virginia">West Virginia</a>
+      </div>
+      <div class={styles.linksColumn}>
+        <span>GUIDANCE & TOOLS</span>
+        <a href="/opportunities">Opportunities</a>
+        <a href="/resources">Resources</a>
+      </div>
+    </div>
   </div>
   <div class={styles.bottomRow}>
-    <p class={styles.footerText}>© 2024. All rights reserved.</p>
-    <p class:list={[styles.footerText, styles.maxWidthText]}>The Telehealth Broadband Pilot Program is made possible by grant #GA5RH40183 and #GA6R40184 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
-    <ul class={styles.links} data-mobile="true">
-        <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
+    <ul class={styles.bottomLinks}>
+      <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
+      <li><a href="mailto:info@telehealthbroadband.com">Contact Us</a></li>
     </ul>
+    <p class={styles.footerText}>© 2024 Telehealth Broadband Project</p>
   </div>
-  <img src={footerLights.src}
-       alt="Footer lights"
-       loading={'eager'}
-       class={styles.footerLights}
-       id="footer-lights"
+  
+  <div class={styles.responsiveContainer}>
+    <div class={styles.responsiveLogoContainer}>
+      <Image src={footerLogo}
+             alt="Main responsive footer TBP logo"
+             height={27}
+             loading={'eager'}
+             densities={[1,2,3]}
+             quality={'max'}
+      />
+    </div>
+    <FooterMobileLinks/>
+    <p class:list={[styles.footerText]}>The Telehealth Broadband Pilot Program is made possible by grant #GA5RH40183 and #GA6R40184 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
+    <div class={styles.questionsFeedbackContainer}>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+        <path fill="#ACAFCD" transform="translate(0.25 2.25)" d="M13.75 0C13.977571 0 14.267833 0.046562746 14.575234 0.19450012C15.136582 0.46464887 15.5 0.9893325 15.5 1.7125L15.5 9.4125004C15.5 9.6424084 15.449636 9.933259 15.290554 10.239492C15.008415 10.78261 14.47482 11.125 13.75 11.125L1.75 11.125C1.5224289 11.125 1.2321676 11.078437 0.92476529 10.9305C0.36341724 10.660351 0 10.135668 0 9.4125004L0 1.7125C0 1.4825914 0.050363723 1.1917409 0.20944594 0.88550764C0.49158511 0.34238976 1.0251795 0 1.75 0L13.75 0ZM14 2.4230001L9.540966 5.7250743C8.4830875 6.508359 7.0169125 6.508359 5.9590797 5.7251081L1.5 2.424L1.5 9.4125004C1.5 9.5315199 1.5115827 9.5482426 1.5752348 9.5788755C1.6428324 9.6114063 1.7275711 9.625 1.75 9.625L13.75 9.625C13.90018 9.625 13.929085 9.606452 13.959446 9.548008C13.987864 9.4933033 14 9.4232168 14 9.4125004L14 2.4230001ZM12.726 1.5L2.773 1.5L6.8516331 4.5195589C7.3792162 4.9101973 8.1207838 4.9101973 8.6484127 4.5195251L12.726 1.5Z"/>
+      </svg>
+      <p>Questions or feedback? <a href="mailto:info@telehealthbroadbandproject.com">Get in touch with us</a>.</p>
+    </div>
+    <div class={styles.responsiveDivider}></div>
+    <ul class={styles.bottomLinks}>
+      <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
+      <li><a href="mailto:info@telehealthbroadband.com">Contact Us</a></li>
+    </ul>
+    <p class={styles.footerText}>© 2024 Telehealth Broadband Project</p>
+  </div>
+  
+  <Image src={footerLights}
+     alt="Footer lights"
+     loading={'eager'}
+     class={styles.footerLights}
+     id="footer-lights"
+     densities={[1,2,3]}
   />
 </footer>
