@@ -1,7 +1,6 @@
 import { colors } from '@/styles/shared';
 import React from 'react';
 import Svg, { G, Path, Ellipse } from 'react-native-svg';
-// import { colors } from '@/src/theme/colors';
 
 interface IconProps {
   size?: number;
@@ -11,10 +10,10 @@ interface IconProps {
 
 export const RadarIcon = ({ size = 24, color = colors.primary, opacity = 1 }: IconProps) => {
   return (
-    <Svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
       opacity={opacity}
     >
       <G transform={`translate(1.5, 3.4)`} fill={color} fillRule="nonzero">
@@ -35,7 +34,7 @@ export const SpeedometerIcon = ({ size = 26, color = colors.gray400, opacity = 1
     </Svg>
 
   );
-}; 
+};
 
 
 export const MapIcon = ({ size = 26, color = colors.gray400, opacity = 1 }: IconProps) => {
@@ -44,7 +43,7 @@ export const MapIcon = ({ size = 26, color = colors.gray400, opacity = 1 }: Icon
       <Path fill="none" stroke="#A09FB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(4 4)" d="M5.3292308 14.769231L0 16L0 1.2307693L5.3292308 0L5.3292308 14.769231L5.3292308 14.769231Z" fill-rule="evenodd"/>
       <Path fill="none" stroke="#A09FB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(9.32923 4)" d="M0 14.769231L5.3415384 16L5.3415384 1.2307693L0 0L0 14.769231L0 14.769231Z" fill-rule="evenodd"/>
       <Path fill="none" stroke="#A09FB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(14.6708 4)" d="M5.3292308 14.769231L0 16L0 1.2307693L5.3292308 0L5.3292308 14.769231L5.3292308 14.769231Z" fill-rule="evenodd"/>
-    </Svg>    
+    </Svg>
   );
-}; 
+};
 
