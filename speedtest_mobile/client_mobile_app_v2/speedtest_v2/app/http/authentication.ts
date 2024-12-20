@@ -1,13 +1,13 @@
 import { api } from "@/src/api/api"
 import { GetTokenResponse, SendCodeRequest, GetTokenRequest } from "@/src/types/api"
 import { AxiosError } from "axios"
-import * as Application from 'expo-application';
+import { getAndroidId } from 'expo-application';
 
 let cachedDeviceId: string | null = null;
 
 const getDeviceId = async (): Promise<string> => {
     if (!cachedDeviceId) {
-        cachedDeviceId = await Application.getAndroidId();
+        cachedDeviceId = getAndroidId();
     }
     return cachedDeviceId;
 }
@@ -25,9 +25,7 @@ export const sendCode = async (email: string): Promise<void> => {
         }
         await api.post('/authenticate/new_code', request)
     } catch (error) {
-        if (error instanceof AxiosError) {
-            throw error
-        }
+        console.error(error)
         throw new Error('Failed to send verification code')
     }
 }
@@ -47,9 +45,7 @@ export const getToken = async (code: string): Promise<GetTokenResponse> => {
         const response = await api.post<GetTokenResponse>('/authenticate/get_token', request)
         return response.data
     } catch (error) {
-        if (error instanceof AxiosError) {
-            throw error
-        }
+        console.error(error)
         throw new Error('Failed to get authentication token')
     }
 }
