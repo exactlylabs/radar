@@ -42,6 +42,14 @@
       letter-spacing: 0.88px;
       font-variation-settings: 'wght' 700;
     }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:hover > span:not(:has(svg)) {
+      color: white;
+    }
   }
 
   &[data-open="false"] > button > span > svg[data-type="plus"] {
@@ -67,6 +75,10 @@
       line-height: 1.5;
       color: var(--text-200);
       text-decoration: none;
+    }
+
+    a:hover {
+      color: white;
     }
   }
 
