@@ -67,7 +67,28 @@ li {
   list-style: none;
 }
 
+li:has(a[data-popover-target-id]) {
+  position: relative;
+}
+
+a[data-popover-target-id='stories-popover'] {
+  anchor-name: --stories-popover;
+}
+
+div[data-dropdown-id='stories-popover'] {
+  position-anchor: --stories-popover;
+}
+
+a[data-popover-target-id='findings-popover'] {
+  anchor-name: --findings-popover;
+}
+
+div[data-dropdown-id='findings-popover'] {
+  position-anchor: --findings-popover;
+}
+
 li > a {
+  cursor: pointer;
   text-decoration: none;
   text-underline: none;
   font-variation-settings: 'wght' 600;
@@ -147,46 +168,74 @@ li > a {
   gap: 2rem;
 }
 
-.responsiveLinks > li > a {
+.responsiveLinks > li > a,
+.responsiveLinks > li > button {
   font-size: 1.25rem;
   font-variation-settings: 'wght' 600;
   color: white;
   animation: slide-in 250ms ease-in-out;
   animation-fill-mode: backwards;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
 
-.responsiveLinks > li > a[data-hidden="true"] {
+.responsiveLinks > li > a[data-hidden="true"],
+.responsiveLinks > li > button[data-hidden="true"] {
   margin-left: -100px;
   opacity: 0;
 }
 
-.responsiveLinks > li > a[data-closing="true"] {
+.responsiveLinks > li > a[data-closing="true"],
+.responsiveLinks > li > button[data-closing="true"] {
   animation: slide-out 250ms ease-in-out;
 }
 
 .responsiveLinks > li:nth-child(1) > a,
-.responsiveLinks > li:nth-child(5) > a[data-closing="true"] {
+.responsiveLinks > li:nth-child(5) > a[data-closing="true"],
+.responsiveLinks > li:nth-child(1) > button,
+.responsiveLinks > li:nth-child(5) > button[data-closing="true"] {
   animation-delay: 0ms;
 }
 
 .responsiveLinks > li:nth-child(2) > a,
-.responsiveLinks > li:nth-child(4) > a[data-closing="true"] {
+.responsiveLinks > li:nth-child(4) > a[data-closing="true"],
+.responsiveLinks > li:nth-child(2) > button,
+.responsiveLinks > li:nth-child(4) > button[data-closing="true"] {
   animation-delay: 50ms;
 }
 
 .responsiveLinks > li:nth-child(3) > a,
-.responsiveLinks > li:nth-child(3) > a[data-closing="true"] {
+.responsiveLinks > li:nth-child(3) > a[data-closing="true"],
+.responsiveLinks > li:nth-child(3) > button,
+.responsiveLinks > li:nth-child(3) > button[data-closing="true"] {
   animation-delay: 100ms;
 }
 
 .responsiveLinks > li:nth-child(4) > a,
-.responsiveLinks > li:nth-child(2) > a[data-closing="true"] {
+.responsiveLinks > li:nth-child(2) > a[data-closing="true"],
+.responsiveLinks > li:nth-child(4) > button,
+.responsiveLinks > li:nth-child(2) > button[data-closing="true"] {
   animation-delay: 150ms;
 }
 
 .responsiveLinks > li:nth-child(5) > a,
-.responsiveLinks > li:nth-child(1) > a[data-closing="true"] {
+.responsiveLinks > li:nth-child(1) > a[data-closing="true"],
+.responsiveLinks > li:nth-child(5) > button,
+.responsiveLinks > li:nth-child(1) > button[data-closing="true"] {
   animation-delay: 200ms;
+}
+
+.responsiveLinks > li > button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+.responsiveLinks > li > button > svg {
+  transition: rotate 150ms ease-in-out;
 }
 
 @keyframes slide-in {
@@ -217,7 +266,7 @@ svg[data-hidden="true"] {
   display: none;
 }
 
-svg {
+svg:not([static]) {
   animation: fade-in 0.5s ease-in-out;
 }
 
@@ -237,4 +286,8 @@ svg {
   to {
     opacity: 0;
   }
+}
+
+li:has(button[data-target-responsive-menu-id]) {
+  width: 100%;
 }

@@ -1,0 +1,9 @@
+---
+import styles from './styles/navbar_responsive_dropdown.module.css';
+
+const { id } = Astro.props;
+---
+
+<div class={styles.container} data-open="false" id={id}>
+  <slot/>
+</div>

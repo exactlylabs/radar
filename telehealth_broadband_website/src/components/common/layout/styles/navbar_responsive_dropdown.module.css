@@ -1,0 +1,41 @@
+.container {
+  width: 100%;
+  border-block: solid 1px rgba(255, 255, 255, 0.1);
+  padding: 1.5rem 1rem;
+  display: none;
+  opacity: 0;
+  margin-top: 1.5rem;
+}
+
+
+.container[data-open="true"] {
+  display: block;
+  opacity: 1;
+  animation: fade-in 150ms ease-in-out;
+}
+
+.container[data-open="true"][data-closing="true"] {
+  animation: fade-out 150ms ease-in-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+}

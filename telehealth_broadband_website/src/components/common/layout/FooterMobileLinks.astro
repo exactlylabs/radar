@@ -87,7 +87,6 @@ import styles from './styles/footer_mobile_links.module.css';
   const boxes = document.querySelectorAll('div[data-type="responsive-link-box"]');
   boxes.forEach(box => {
     const trigger = box.querySelector('button[data-box-id]')!;
-    console.log(trigger)
     trigger.addEventListener('click', () => {
       const isOpen = box.getAttribute('data-open')! === 'true';
       box.setAttribute('data-open', (!isOpen).toString());
