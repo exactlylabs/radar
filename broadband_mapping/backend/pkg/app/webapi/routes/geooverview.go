@@ -10,6 +10,7 @@ import (
 )
 
 // To edit the swagger doc, see: https://github.com/swaggo/swag
+// @Tags Internal
 // @Param id path string true "Geospace ID"
 // @Param asn_id query string false "Additionally filter by an ASN"
 // @Param time query storages.SummaryFilter false "filters by time"

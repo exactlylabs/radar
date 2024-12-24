@@ -22,26 +22,9 @@ import (
 var summariesCache *bigcache.BigCache
 var geojsonCache *bigcache.BigCache
 
-func init() {
-	summariesCacheConf := bigcache.DefaultConfig(5 * time.Minute)
-	summariesCacheConf.HardMaxCacheSize = 100e6 // 100MB
-	var err error
-	summariesCache, err = bigcache.New(context.Background(), summariesCacheConf)
-	if err != nil {
-		panic(err)
-	}
-
-	geojsonCacheConf := bigcache.DefaultConfig(1 * time.Hour)
-	geojsonCacheConf.HardMaxCacheSize = 100e6 // 100MB
-	geojsonCache, err = bigcache.New(context.Background(), geojsonCacheConf)
-	if err != nil {
-		panic(err)
-	}
-}
-
 type GeoJSONArgs struct {
-	Namespace string  `json:"namespace"`
-	ASNOrgId  *string `json:"asn_id"`
+	Namespace string  `json:"namespace" validate:"required" enums:"states,counties,tribal_tracts"`
+	ASNOrgId  *string `json:"asn_id" format:"uuid"` // Id from the ASNs list endpoint
 	storages.SummaryFilter
 }
 
@@ -72,6 +55,7 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 }
 
 // To edit the swagger doc, see: https://github.com/swaggo/swag
+// @Tags Internal
 // @Param args query GeoJSONArgs true "query params"
 // @Success 200 {object} geo.GeoJSON
 // @Failure 400 {object} apierrors.RequestError
@@ -79,12 +63,7 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo.GeoJSONServers, summaries storages.SummariesStorage) {
 	useGzip := gzipAllowed(ctx)
 	cacheKey := fmt.Sprintf("%s_%t", ctx.Request.URL.String(), useGzip)
-	for _, encoding := range ctx.Request.Header.Values("Accept-Encoding") {
-		if encoding == "gzip" {
-			useGzip = true
-			break
-		}
-	}
+
 	if v, err := geojsonCache.Get(cacheKey); err == nil && conf.UseCache() {
 		if useGzip {
 			ctx.ResponseHeader().Add("Content-Encoding", "gzip")
@@ -92,60 +71,26 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 		ctx.Write(v)
 		return
 	}
+
 	args := &GeoJSONArgs{}
 	args.Parse(ctx)
 	if ctx.HasErrors() {
 		return
 	}
-	geoJsonServer, err := servers.Get(args.PortNamespace())
-	if err == geo.ErrWrongNamespace {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "provided namespace is not supported",
-			Code:    "namespace_not_found",
-		})
-		return
-	} else if err != nil {
-		panic(errors.Wrap(err, "routes.HandleGetGeoJSON Get"))
-	}
-	collection, err := geoJsonServer.Get()
-	if err != nil {
-		panic(errors.Wrap(err, "routes.HandleGetGeoJSON GetGeoJSON"))
-	}
-	if collection == nil {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "no available geojson for this query",
-			Code:    "geojson_not_available",
-		})
-		return
-	}
 
+	collection := getGeoJSONCollection(ctx, servers)
 	summaryMap, err := getSummary(summaries, args.PortNamespace(), args.ASNOrgId, args.SummaryFilter, false)
 	if err != nil {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON getSummary"))
 	}
 	// Complement this collection's features with the measurement summary for each one
-	for _, feature := range collection.GetFeatures() {
-		props := feature.GetProperties()
-		geospaceId, exists := props["ID"]
+	mountGeoJSONProperties(summaryMap, collection)
 
-		if !exists || geospaceId == nil {
-			continue
-		}
-		summary, exists := summaryMap[geospaceId.(string)]
-		if exists {
-			feature.SetProperty("summary", summary)
-		}
-	}
-	data, err := collection.Marshal(useGzip)
-	if err != nil {
-		panic(errors.Wrap(err, "routes.HandleGetGeoJSON MarshalJSON"))
-	}
-	if useGzip {
-		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
-	}
-	ctx.Write(data)
+	data := writeGeoJsonResponse(ctx, collection, useGzip)
 	geojsonCache.Set(cacheKey, data)
 }
+
+// ##### Helper Functions ###### //
 
 func parseSummaryFilter(c *webcontext.Context) storages.SummaryFilter {
 	filter := storages.SummaryFilter{}
@@ -204,135 +149,6 @@ func validateNamespace(ns string, c *webcontext.Context) bool {
 		return false
 	}
 	return true
-}
-
-type ServeVectorTilesArgs struct {
-	ASNOrgId *string `json:"asn_id"`
-	storages.SummaryFilter
-}
-
-func (gja *ServeVectorTilesArgs) Parse(c *webcontext.Context) {
-	gja.SummaryFilter = parseSummaryFilter(c)
-	asnId := c.QueryParams().Get("asn_id")
-	if asnId != "" {
-		gja.ASNOrgId = &asnId
-	}
-}
-
-func convertNamespace(ns string) namespaces.Namespace {
-	switch ns {
-	case "states":
-		return namespaces.US_STATE
-	case "counties":
-		return namespaces.US_COUNTY
-	case "tribal_tracts":
-		return namespaces.US_TTRACT
-	default:
-		return ""
-	}
-}
-
-// To edit the swagger doc, see: https://github.com/swaggo/swag
-// @Param namespace path string true "Namespace to return the tiles"
-// @Param z path int true "zoom level"
-// @Param x path int true "tile x position"
-// @Param y path int true "tile y position"
-// @Param args query ServeVectorTilesArgs true "query args"
-// @Produce application/vnd.mapbox-vector-tile
-// @Success 200 {string} string "encoded vector tile"
-// @Failure 400 {object} apierrors.RequestError
-// @Router /namespaces/{namespace}/tiles/{z}/{x}/{y} [get]
-func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo.TilesetServers, summaries storages.SummariesStorage) {
-	useGzip := gzipAllowed(ctx)
-	args := &ServeVectorTilesArgs{}
-	args.Parse(ctx)
-	ns := ctx.UrlParameters()["namespace"]
-	validateNamespace(ns, ctx)
-	if ctx.HasErrors() {
-		return
-	}
-	namespace := convertNamespace(ns)
-	tilesetServer, err := servers.Get(namespace)
-	if err != nil {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "provided namespace is not supported",
-			Code:    "namespace_not_found",
-		})
-		return
-	}
-	urlParams := ctx.UrlParameters()
-	xStr := urlParams["x"]
-	yStr := urlParams["y"]
-	zStr := urlParams["z"]
-	x, err := strconv.ParseUint(xStr, 10, 64)
-	if err != nil {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "x must be an integer",
-			Code:    "invalid_type_integer",
-		})
-		return
-	}
-	y, err := strconv.ParseUint(yStr, 10, 64)
-	if err != nil {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "x must be an integer",
-			Code:    "invalid_type_integer",
-		})
-		return
-	}
-	z, err := strconv.ParseUint(zStr, 10, 64)
-	if err != nil {
-		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
-			Message: "x must be an integer",
-			Code:    "invalid_type_integer",
-		})
-		return
-	}
-
-	vt, err := tilesetServer.Get(x, y, z)
-	if err == geo.ErrEmptyTile {
-		return
-	} else if err != nil {
-		panic(errors.Wrap(err, "routes.ServeVectorTiles GetVectorTile"))
-	}
-
-	summaryMap, err := getSummary(summaries, namespace, args.ASNOrgId, args.SummaryFilter, conf.UseCache())
-	if err != nil {
-		panic(errors.Wrap(err, "routes.ServeVectorTiles getSummary"))
-	}
-
-	features, err := vt.GetFeatures(namespace)
-	if err != nil {
-		panic(errors.Wrap(err, "routes.ServeVectorTiles GetFeatures"))
-	}
-	for _, f := range features {
-		geospaceId := f.GetProperties()["ID"].(string)
-		if summary, exists := summaryMap[geospaceId]; exists {
-			// If passing summary directly, the library fails to encode it
-			// we need to pass a non-comparable type to it
-			f.SetProperty("summary", map[string]any{
-				"geospace":        summary.Geospace,
-				"asn":             summary.ASNOrg,
-				"download_median": summary.DownloadMedian,
-				"upload_median":   summary.UploadMedian,
-				"latency_median":  summary.LatencyMedian,
-				"upload_scores":   summary.UploadScores,
-				"download_scores": summary.DownloadScores,
-			})
-		}
-	}
-
-	vtData, err := vt.Marshal(useGzip)
-	if err != nil {
-		panic(errors.Wrap(err, "routes.ServeVectorTiles Marshal"))
-	}
-
-	ctx.ResponseHeader().Add("Content-Type", "application/vnd.mapbox-vector-tile")
-	ctx.ResponseHeader().Add("Content-Length", fmt.Sprintf("%d", len(vtData)))
-	if useGzip {
-		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
-	}
-	ctx.Write(vtData)
 }
 
 func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namespace, asnOrgId *string, filter storages.SummaryFilter, useCache bool) (map[string]storages.GeospaceSummaryResult, error) {
@@ -395,4 +211,81 @@ func gzipAllowed(ctx *webcontext.Context) bool {
 		}
 	}
 	return false
+}
+
+func getGeoJSONCollection(ctx *webcontext.Context, servers *geo.GeoJSONServers) geo.GeoJSON {
+	args := &GeoJSONArgs{}
+	args.Parse(ctx)
+	if ctx.HasErrors() {
+		return nil
+	}
+	geoJsonServer, err := servers.Get(args.PortNamespace())
+	if err == geo.ErrWrongNamespace {
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
+			Message: "provided namespace is not supported",
+			Code:    "namespace_not_found",
+		})
+		return nil
+	} else if err != nil {
+		panic(errors.Wrap(err, "routes.HandleGetGeoJSON Get"))
+	}
+	collection, err := geoJsonServer.Get()
+	if err != nil {
+		panic(errors.Wrap(err, "routes.HandleGetGeoJSON GetGeoJSON"))
+	}
+	if collection == nil {
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
+			Message: "no available geojson for this query",
+			Code:    "geojson_not_available",
+		})
+		return nil
+	}
+
+	return collection
+}
+
+func mountGeoJSONProperties(summaries map[string]storages.GeospaceSummaryResult, collection geo.GeoJSON) {
+	// Complement this collection's features with the measurement summary for each one
+	for _, feature := range collection.GetFeatures() {
+		props := feature.GetProperties()
+		geospaceId, exists := props["ID"]
+
+		if !exists || geospaceId == nil {
+			continue
+		}
+		summary, exists := summaries[geospaceId.(string)]
+		if exists {
+			feature.SetProperty("summary", summary)
+		}
+	}
+}
+
+func writeGeoJsonResponse(ctx *webcontext.Context, collection geo.GeoJSON, gzip bool) []byte {
+	data, err := collection.Marshal(gzip)
+	if err != nil {
+		panic(errors.Wrap(err, "routes.HandleGetGeoJSON MarshalJSON"))
+	}
+	if gzip {
+		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
+	}
+	ctx.Write(data)
+
+	return data
+}
+
+func init() {
+	summariesCacheConf := bigcache.DefaultConfig(5 * time.Minute)
+	summariesCacheConf.HardMaxCacheSize = 100e6 // 100MB
+	var err error
+	summariesCache, err = bigcache.New(context.Background(), summariesCacheConf)
+	if err != nil {
+		panic(err)
+	}
+
+	geojsonCacheConf := bigcache.DefaultConfig(1 * time.Hour)
+	geojsonCacheConf.HardMaxCacheSize = 100e6 // 100MB
+	geojsonCache, err = bigcache.New(context.Background(), geojsonCacheConf)
+	if err != nil {
+		panic(err)
+	}
 }

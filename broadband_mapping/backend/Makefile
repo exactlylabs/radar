@@ -9,6 +9,10 @@ setup:
 	go run cmd/setup_shapes/main.go
 
 
+.PHONY: run-server
+run-server:
+	./scripts/run_server.sh
+
 .PHONY: ingestor
 ingestor:
 	go build -o mlab-ingestor cmd/ingestor_service/main.go

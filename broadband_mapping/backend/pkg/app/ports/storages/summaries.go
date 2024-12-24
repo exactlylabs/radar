@@ -35,10 +35,10 @@ type GeoASNsResult struct {
 // All other fields require that the Year is also provided, so their value is referenced to that year.
 type SummaryFilter struct {
 	Year     *int `json:"year"`
-	Semester *int `json:"semester"`
-	Quarter  *int `json:"quarter"`
-	Month    *int `json:"month"`
-	Week     *int `json:"week"` // Weeks of the Year.
+	Semester *int `json:"semester" minimum:"1" maximum:"2"`
+	Quarter  *int `json:"quarter" minimum:"1" maximum:"4"`
+	Month    *int `json:"month" minimum:"1" maximum:"12"`
+	Week     *int `json:"week" minimum:"0" maximum:"53"` // Weeks of the Year.
 }
 
 func (sf SummaryFilter) String() string {

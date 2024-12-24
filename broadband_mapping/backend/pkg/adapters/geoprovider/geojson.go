@@ -3,7 +3,7 @@ package geoprovider
 import (
 	"bytes"
 	"compress/gzip"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
@@ -56,7 +56,7 @@ func readGeoJSON(path string) (*GeoJSON, error) {
 		return nil, errors.Wrap(err, "geo#readGeoJSON Open")
 	}
 	defer f.Close()
-	data, err := ioutil.ReadAll(f)
+	data, err := io.ReadAll(f)
 	if err != nil {
 		return nil, errors.Wrap(err, "geo#readGeoJSON ReadAll")
 	}
@@ -64,6 +64,7 @@ func readGeoJSON(path string) (*GeoJSON, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "geo#readGeoJSON UnmarshalJSON")
 	}
+	fc.ExtraMembers = nil
 	return &GeoJSON{fc: *fc}, nil
 }
 

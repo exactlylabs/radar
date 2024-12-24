@@ -25,6 +25,8 @@ import (
 // @accept   json
 // @produce  json
 // @BasePath /api/v1
+// @tag.name Public
+// @tag.description Public endpoints, for usage with ArcGIS
 func NewMappingAPI(
 	conf *config.Config,
 	storages *storages.MappingAppStorages,
@@ -50,10 +52,11 @@ func NewMappingAPI(
 	api.Route("/api/v1/asns", routes.ListASNs)
 	api.Route("/api/v1/namespaces/{namespace}/geospaces", routes.ListNamespaceGeospaces)
 	api.Route("/api/v1/geojson", routes.HandleGetGeoJSON)
-	if conf.Environment != config.ProdConfig.Environment {
-		api.Route("/swagger.json", routes.HandleSwaggerSpec)
-		api.Route("/swagger", routes.HandleSwaggerUI)
-	}
+	api.Route("/api/v1/arcgis-geojson", routes.HandleGetGeoJSONArcGIS)
+	// if conf.Environment != config.ProdConfig.Environment {
+	api.Route("/swagger.json", routes.HandleSwaggerSpec)
+	api.Route("/swagger", routes.HandleSwaggerUI)
+	// }
 
 	api.InjectAsDependency(
 		storages.SummariesStorage,

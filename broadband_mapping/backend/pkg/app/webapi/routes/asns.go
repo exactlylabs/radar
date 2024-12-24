@@ -10,6 +10,7 @@ import (
 )
 
 // To edit the swagger doc, see: https://github.com/swaggo/swag
+// @Tags Internal
 // @Param id path string true "Geospace ID"
 // @Param query query string  false "text to filter for"
 // @Param args query paginator.PaginationArgs false "pagination arguments"
@@ -35,6 +36,9 @@ func GeospaceASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// @Summary List ANS
+// @Description List all existing ASNs
+// @Tags Public, Internal
 // @Param query query string  false "text to filter for"
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
