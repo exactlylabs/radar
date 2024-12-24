@@ -1,0 +1,106 @@
+.popover {
+  min-width: 310px;
+  padding: .5rem;
+  border-radius: .5rem;
+  background-color: rgba(77, 76, 99, 0.55);
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  position: absolute;
+  left: anchor(left);
+  top: calc(anchor(bottom) + 1rem);
+  margin-top: -1rem;
+  border: none;
+  opacity: 0;
+  transition: display 100ms ease-in,
+    opacity 100ms ease-in,
+    margin-top 100ms ease-in;
+  transition-behavior: allow-discrete;
+}
+
+.popover:popover-open {
+  display: block;
+  opacity: 1;
+  margin-top: 0;
+
+  @starting-style {
+    opacity: 0;
+    margin-top: -1rem;
+  }
+}
+
+.linksContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.linksContainer[data-responsive="true"] {
+  gap: .5rem;
+}
+
+.link {
+  width: 100%;
+  padding: .5rem .75rem;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 1rem;
+  color: var(--text-200);
+  font-variation-settings: 'wght' 600;
+}
+
+.link[data-responsive="true"] {
+  width: calc(100% + .5rem);
+  font-size: 1.0625rem;
+  padding: .5rem;
+  margin-left: -.5rem;
+}
+
+.link:hover {
+  cursor: pointer;
+  background-color: rgba(91, 89, 122, 0.5);
+}
+
+.link > svg:first-of-type {
+  margin-left: 0;
+  margin-right: .75rem;
+}
+
+.link > svg:last-of-type {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.divider {
+  width: calc(100% + 1rem);
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-left: -.5rem;
+  margin-block: .5rem 1rem;
+}
+
+.divider[data-responsive="true"] {
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  margin-block: 1.5rem;
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-variation-settings: 'wght' 700;
+  color: rgba(196, 200, 221, 0.6);
+  margin-bottom: .5rem;
+  margin-left: .75rem;
+}
+
+.subtitle[data-responsive="true"] {
+  margin-left: 0;
+  margin-bottom: 1.5rem;
+}

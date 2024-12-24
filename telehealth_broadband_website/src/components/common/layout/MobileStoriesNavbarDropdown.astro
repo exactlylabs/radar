@@ -1,0 +1,27 @@
+---
+import sharedStyles from './styles/navbar_dropdown.module.css';
+import MobileNavbarDropdown from "./MobileNavbarDropdown.astro";
+---
+
+<MobileNavbarDropdown id={'stories-responsive-menu'}>
+	<div class={sharedStyles.linksContainer}>
+		<a href="/stories" class={sharedStyles.link} data-responsive="true" data-with-icons="true">
+			<svg static xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 32 32">
+				<path fill="#DBDEEA" transform="translate(3 3.45)" d="M24.386801 0.0014030343C24.806301 -0.01645571 25.215065 0.13683097 25.51679 0.42366481C25.82534 0.71488571 26 1.1203794 26 1.5444981L26 19.400461C25.999147 20.227913 25.346989 20.90802 24.520302 20.943575L24.336313 20.934505C24.163847 20.909939 23.991249 20.888903 23.818617 20.871372L23.818666 23.298046C23.81769 23.766083 23.604902 24.208521 23.239883 24.501472C22.874866 24.794424 22.396856 24.906399 21.937834 24.805624C19.003218 24.155476 16.006292 23.828266 13.000121 23.829832C9.7976484 23.830219 6.6037021 24.159866 3.4837153 24.810316C3.0251145 24.913338 2.5445554 24.802 2.1779833 24.507801C1.811414 24.213606 1.5986966 23.768545 1.5999919 23.301298L1.599 20.937L1.4796984 20.943575C0.65301126 20.90802 0.00085244462 20.227911 0 19.399431L0 1.5359449C0.002269269 1.1147163 0.17688233 0.71277684 0.48061541 0.4261221C0.78493464 0.13683097 1.1936991 -0.01645571 1.614324 0.0014515358C5.6259503 0.17675559 9.5323324 1.3209286 13.000811 3.332232C16.468418 1.3207092 20.374489 0.17673647 24.386801 0.0014030343ZM3.599792 20.805695L3.5989978 22.748165L3.8789668 22.692307C5.5470767 22.374195 7.2299404 22.143652 8.9205904 22.001392C7.255784 21.231062 5.4414716 20.821672 3.599792 20.805695ZM17.176424 21.957382L17.048027 22.017733C18.575169 22.160595 20.0942 22.384699 21.598412 22.689287L21.816999 22.735001L21.818579 20.823839C20.359194 20.902279 18.925241 21.227554 17.57795 21.783646L17.176424 21.957382ZM23.999933 18.880001L23.999933 2.0250013L23.968176 2.0271988C20.455578 2.2585974 17.043911 3.2980659 13.999325 5.064209L13.999 21.471001L14.084182 21.411182C16.937471 19.460108 20.380825 18.559223 23.824036 18.862947L23.999933 18.880001ZM2 2.0250001L1.999 18.880001L2.1759634 18.862947C5.6531949 18.556223 9.1305695 19.478025 12.000216 21.46932L11.999675 5.0636287C9.1075602 3.3861279 5.8842959 2.3643169 2.5587168 2.0679905L2 2.0250001Z"/>
+			</svg>
+			Our Stories
+			<svg static xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+				<path fill="white" transform="translate(1 7.25)" d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+				<path fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.5 2.5)" d="M0 0L5.5023718 5.5L0 11" fill-rule="evenodd"/>
+			</svg>
+		</a>
+	</div>
+	<div class={sharedStyles.divider} data-responsive="true"></div>
+	<p class={sharedStyles.subtitle} data-responsive="true">STORIES BY STATE</p>
+	<div class={sharedStyles.linksContainer} data-responsive="true">
+		<a href="/stories/connecting-alaskas-remote-communities" class={sharedStyles.link} data-responsive="true">Alaska</a>
+		<a href="/stories/connectivity-issues-in-rural-michigan-healthcare" class={sharedStyles.link} data-responsive="true">Michigan</a>
+		<a href="/stories/texas-tackles-rural-connectivity-challenges" class={sharedStyles.link} data-responsive="true">Texas</a>
+		<a href="/stories/breaking-barriers-to-treatment-in-rural-west-virginia" class={sharedStyles.link} data-responsive="true">West Virginia</a>
+	</div>
+</MobileNavbarDropdown>

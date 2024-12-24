@@ -1,6 +1,10 @@
 ---
 import styles from './styles/navbar.module.css';
 import logo from '../../../assets/logos/navbar-logo.webp';
+import StoriesNavbarDropdown from "./StoriesNavbarDropdown.astro";
+import FindingsNavbarDropdown from "./FindingsNavbarDropdown.astro";
+import MobileStoriesNavbarDropdown from "./MobileStoriesNavbarDropdown.astro";
+import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
 ---
 
 <nav class={styles.nav} data-responsive-menu-open="false" data-scrolled="false">
@@ -14,8 +18,14 @@ import logo from '../../../assets/logos/navbar-logo.webp';
   </a>
   <ul class={styles.links}>
     <li><a href="/overview">Overview</a></li>
-    <li><a href="/findings">Findings</a></li>
-    <li><a href="/stories">Stories</a></li>
+    <li>
+      <a href="/findings" data-popover-target-id="findings-popover">Findings</a>
+	    <FindingsNavbarDropdown />
+    </li>
+    <li>
+      <a href="/stories" data-popover-target-id="stories-popover">Stories</a>
+      <StoriesNavbarDropdown />
+    </li>
     <li><a href="/opportunities">Opportunities</a></li>
     <li><a href="/resources">Resources</a></li>
   </ul>
@@ -32,30 +42,51 @@ import logo from '../../../assets/logos/navbar-logo.webp';
   <div id="responsive-menu" class={styles.responsiveMenu} hidden="hidden">
     <ul class={styles.responsiveLinks}>
       <li><a href="/overview">Overview</a></li>
-      <li><a href="/findings">Findings</a></li>
-      <li><a href="/stories">Stories</a></li>
+      <li>
+	      <button data-target-responsive-menu-id="findings-responsive-menu">
+	        Findings
+		      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+			      <path fill="white" transform="translate(1.75119 4.49881)" d="M12.280216 6.7828159C12.573173 6.4899859 12.573275 6.0151119 12.280444 5.7221556L6.7804446 0.21978424C6.487525 -0.07326141 6.012475 -0.07326141 5.7195554 0.21978424L0.21955562 5.7221556C-0.073274463 6.0151119 -0.073172107 6.4899859 0.21978424 6.7828159C0.51274061 7.0756459 0.98761433 7.0755439 1.2804444 6.7825875L6.2509999 1.8113716L11.219556 6.7825875C11.485765 7.0489111 11.902423 7.0732069 12.196082 6.8554158L12.280216 6.7828159Z"/>
+		      </svg>
+        </button>
+        <MobileFindingsNavbarDropdown />
+      </li>
+      <li>
+        <button data-target-responsive-menu-id="stories-responsive-menu">
+          Stories
+	        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+		        <path fill="white" transform="translate(1.75119 4.49881)" d="M12.280216 6.7828159C12.573173 6.4899859 12.573275 6.0151119 12.280444 5.7221556L6.7804446 0.21978424C6.487525 -0.07326141 6.012475 -0.07326141 5.7195554 0.21978424L0.21955562 5.7221556C-0.073274463 6.0151119 -0.073172107 6.4899859 0.21978424 6.7828159C0.51274061 7.0756459 0.98761433 7.0755439 1.2804444 6.7825875L6.2509999 1.8113716L11.219556 6.7825875C11.485765 7.0489111 11.902423 7.0732069 12.196082 6.8554158L12.280216 6.7828159Z"/>
+	        </svg>
+        </button>
+        <MobileStoriesNavbarDropdown />
+      </li>
       <li><a href="/opportunities">Opportunities</a></li>
       <li><a href="/resources">Resources</a></li>
     </ul>
   </div>
 </nav>
+<script is:inline>
+  if(!("anchorName" in document.documentElement.style)) {
+    window.ANCHOR_POSITIONING_POLYFILL_OPTIONS = {
+      elements: document.querySelectorAll('a[data-popover-target-id]')
+    };
+    import("https://unpkg.com/@oddbird/css-anchor-positioning");
+  }
 
-
-<script>
-  const menuButton = document.getElementById('toggle-menu')!;
+  const menuButton = document.getElementById('toggle-menu');
   
   function toggleMenu() {
-    const menuButton = document.getElementById('toggle-menu')!;
-    const menu = document.getElementById('responsive-menu')!;
-    const nav = document.querySelector('nav')!;
+    const menuButton = document.getElementById('toggle-menu');
+    const menu = document.getElementById('responsive-menu');
+    const nav = document.querySelector('nav');
     if(menu.hasAttribute('hidden')) {
       menu.removeAttribute('hidden');
       nav.setAttribute('data-responsive-menu-open', 'true');
-      menuButton.querySelector('span')!.textContent = 'Close';
-      menuButton.querySelector('#open-icon')!.setAttribute('data-hidden', 'true');
-      menuButton.querySelector('#close-icon')!.setAttribute('data-hidden', 'false');
+      menuButton.querySelector('span').textContent = 'Close';
+      menuButton.querySelector('#open-icon').setAttribute('data-hidden', 'true');
+      menuButton.querySelector('#close-icon').setAttribute('data-hidden', 'false');
     } else {
-      const links = menu.querySelectorAll('ul > li > a');
+      const links = menu.querySelectorAll('ul > li > a, ul > li > button');
       links.forEach((link, i) => {
         link.setAttribute('data-closing', 'true');
         setTimeout(() => {
@@ -69,9 +100,9 @@ import logo from '../../../assets/logos/navbar-logo.webp';
         });
         menu.setAttribute('data-hide', 'true');
         nav.setAttribute('data-responsive-menu-open', 'false');
-        menuButton.querySelector('span')!.textContent = 'Menu';
-        menuButton.querySelector('#open-icon')!.setAttribute('data-hidden', 'false');
-        menuButton.querySelector('#close-icon')!.setAttribute('data-hidden', 'true');
+        menuButton.querySelector('span').textContent = 'Menu';
+        menuButton.querySelector('#open-icon').setAttribute('data-hidden', 'false');
+        menuButton.querySelector('#close-icon').setAttribute('data-hidden', 'true');
         
         setTimeout(() => {
           menu.setAttribute('hidden', 'hidden');
@@ -82,10 +113,80 @@ import logo from '../../../assets/logos/navbar-logo.webp';
     }
   }
   
-  function checkScrollForNavbarBg(scrollableElement: HTMLElement | null = null) {
+  function checkScrollForNavbarBg(scrollableElement = null) {
     const toScroll = scrollableElement ?? window;
     const scrollY = toScroll instanceof Window ? toScroll.scrollY : toScroll.scrollTop;
-    document.querySelector('nav')!.dataset.scrolled = (scrollY > 0).toString();
+    document.querySelector('nav').dataset.scrolled = (scrollY > 0).toString();
+  }
+  
+  let timeoutIds = new Map();
+  timeoutIds.set('findings-popover', null);
+  timeoutIds.set('stories-popover', null);
+  
+  function associateLinksToDropdowns() {
+    const linksWithDropdownReferences = document.querySelectorAll('a[data-popover-target-id]');
+    linksWithDropdownReferences.forEach((link) => {
+      link.addEventListener('mouseenter', (e) => {
+         if(timeoutIds.get(link.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(link.dataset.popoverTargetId));
+         const dropdown = document.getElementById(e.target.dataset.popoverTargetId);
+         dropdown.showPopover();
+         
+         dropdown.addEventListener('mouseenter', (e) => {
+           e.target.setAttribute('data-hovered', 'true');
+         });
+         
+          dropdown.addEventListener('mouseleave', (e) => {
+            e.target.removeAttribute('data-hovered');
+            e.target.hidePopover();
+          });
+      });
+      link.addEventListener('mouseout', () => {
+         if(timeoutIds.get(link.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(link.dataset.popoverTargetId));
+         
+         const id = setTimeout(() => {
+           const dropdown = document.getElementById(link.dataset.popoverTargetId);
+           if(dropdown.hasAttribute('data-hovered')) return;
+           dropdown.hidePopover();
+         }, 250);
+         
+          timeoutIds.set(link.dataset.popoverTargetId, id);
+      });
+    });
+  }
+  
+  function associateButtonsToMobileDropdowns() {
+    const buttons = document.querySelectorAll('button[data-target-responsive-menu-id]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        Array.from(buttons)
+          .filter(b => b.getAttribute('data-target-responsive-menu-id') !== e.target.dataset.targetResponsiveMenuId)
+          .map(b => ({button: b, dropdown: document.getElementById(b.dataset.targetResponsiveMenuId)}))
+          .filter(obj => obj.dropdown.getAttribute('data-open') === 'true')
+          .forEach(obj => {
+            obj.dropdown.setAttribute('data-closing', 'true');
+            setTimeout(() => {
+              obj.dropdown.removeAttribute('data-closing');
+              obj.dropdown.setAttribute('data-open', 'false');
+              obj.button.querySelector('svg').style.rotate = '0deg';
+            }, 140);
+          });
+        
+        const dropdown = document.getElementById(e.target.dataset.targetResponsiveMenuId);
+        const isOpen = dropdown.getAttribute('data-open') === 'true';
+        const chevron = button.querySelector('svg');
+        if(isOpen) {
+          dropdown.setAttribute('data-closing', 'true');
+          setTimeout(() => {
+            dropdown.removeAttribute('data-closing');
+            dropdown.setAttribute('data-open', 'false');
+            chevron.style.rotate = '0deg';
+          }, 140);
+        } else {
+          dropdown.setAttribute('data-open', 'true');
+          chevron.style.rotate = '180deg';
+        }
+      });
+    });
   }
   
   menuButton.addEventListener('click', toggleMenu);
@@ -95,4 +196,6 @@ import logo from '../../../assets/logos/navbar-logo.webp';
   } else {
     window.addEventListener('scroll', () => checkScrollForNavbarBg());
   }
+  associateLinksToDropdowns();
+  associateButtonsToMobileDropdowns();
 </script>

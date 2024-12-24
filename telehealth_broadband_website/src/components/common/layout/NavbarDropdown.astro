@@ -1,0 +1,9 @@
+---
+import styles from './styles/navbar_dropdown.module.css';
+
+const { id } = Astro.props;
+---
+
+<div popover id={id} data-dropdown-id={id} class={styles.popover}>
+  <slot/>
+</div>
