@@ -1,4 +1,4 @@
-import {type ReactElement, useEffect, useMemo, useRef, useState} from "react";
+import React, {type ReactElement, useEffect, useMemo, useRef, useState} from "react";
 import styles from './styles/carrousel.module.css';
 
 interface CarrouselProps {
@@ -36,6 +36,7 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   const timeLeftRef = useRef(AUTOMATIC_SWITCH_INTERVAL);
   const timePausedRef = useRef(0);
   const pauseTime = useRef(0);
+  const forcedRef = useRef(false);
   const [index, setIndex] = useState(0);
   const [isDisabledNext, setIsDisabledNext] = useState(false);
   
@@ -63,19 +64,27 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     breakParentPadding();
     
     window.addEventListener('resize', breakParentPadding);
+    if(isMobileDevice()) carrousel.current!.addEventListener('touchend', updateIndexBasedOnScroll);
     carrousel.current!.addEventListener('scrollend', updateIndexBasedOnScroll);
     if(arrowLess) {
       if(elementCount === undefined || elementCount === null) throw new Error('If carrousel is arrowLess, elementCount must be provided');
       setAutomaticSwitch();
+      if(isMobileDevice()) carrousel.current!.addEventListener('touchstart', pauseAutomaticSwitch);
+      carrousel.current!.addEventListener('scrollstart', pauseAutomaticSwitch);
     }
     return () => {
       window.removeEventListener('resize', breakParentPadding);
-      carrousel.current!.removeEventListener('scroll', updateIndexBasedOnScroll);
+      if(isMobileDevice()) carrousel.current!.removeEventListener('touchend', updateIndexBasedOnScroll);
+      carrousel.current!.removeEventListener('scrollend', updateIndexBasedOnScroll);
       if(automaticSwitchTimeout.current) {
         clearInterval(automaticSwitchTimeout.current);
       }
     }
   }, []);
+  
+  const isMobileDevice = () => {
+    return matchMedia('(pointer: coarse)').matches && matchMedia('(hover: none)').matches;
+  }
   
   const setAutomaticSwitch = () => {
     if(!arrowLess) return;
@@ -120,27 +129,70 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     setAutomaticSwitch();
   }
   
+  const updateValuesManually = (nextIndex: number, scrollDistance: number) => {
+    const remainingDistanceToEnd = carrousel.current!.scrollWidth - carrousel.current!.scrollLeft - carrousel.current!.clientWidth - scrollDistance;
+    const remainingDistanceToStart = carrousel.current!.scrollLeft + scrollDistance;
+    
+    if(remainingDistanceToEnd <= 1) nextIndex = elementCount! - 1;
+    else if(remainingDistanceToStart <= 1) nextIndex = 0;
+    currentElementIndex.current = nextIndex;
+    setIndex(nextIndex);
+    isDisabledNextRef.current = nextIndex === elementCount! - 1;
+    setIsDisabledNext(isDisabledNextRef.current);
+  }
+  
   const updateIndexBasedOnScroll = () => {
     if (!carrousel.current) return;
     let firstElementIndex = Math.floor(carrousel.current.scrollLeft / getItemWidth());
     const remainingDistanceToEnd = carrousel.current!.scrollWidth - carrousel.current!.scrollLeft - carrousel.current!.clientWidth;
     const remainingDistanceToStart = carrousel.current!.scrollLeft;
     
-    if (remainingDistanceToStart !== 0 && firstElementIndex === 0) firstElementIndex = 1;
+    if (arrowLess && remainingDistanceToEnd === 0) firstElementIndex = elementCount! - 1;
+    else if (remainingDistanceToStart !== 0 && firstElementIndex === 0) firstElementIndex = 1;
+    
+    if(arrowLess && firstElementIndex === currentElementIndex.current) {
+      setAutomaticSwitch();
+      return;
+    }
+    
     currentElementIndex.current = firstElementIndex;
     setIndex(firstElementIndex);
     if(!arrowLess) {
       isDisabledNextRef.current = remainingDistanceToEnd <= 1;
     } else {
       isDisabledNextRef.current = firstElementIndex === elementCount! - 1;
-      setAutomaticSwitch();
+      setCurrentDot(firstElementIndex);
+      forcedRef.current = false;
+      if(!isMobileDevice() && isMouseOver()) {
+        pauseAutomaticSwitch();
+        undoAllPauseStates();
+        const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
+        let currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}:nth-child(${firstElementIndex + 1})`);
+        currentActiveAutomaticDot!.setAttribute('data-paused', 'true');
+      }
     }
     setIsDisabledNext(isDisabledNextRef.current);
-    
+  }
+  
+  const isMouseOver = () => {
+    const mousePosition = JSON.parse(document.body.getAttribute('data-mouse-position')!);
+    if(!mousePosition) return false;
+    const {x, y} = mousePosition;
+    const carrouselRect = carrousel.current!.getBoundingClientRect();
+    return x >= carrouselRect.left && x <= carrouselRect.right && y >= carrouselRect.top && y <= carrouselRect.bottom;
+  }
+  
+  const undoAllPauseStates = () => {
+    const allDots = document.querySelectorAll(`#${container.current!.id} .${styles.automaticDot}`);
+    allDots.forEach(dot => {
+      dot.removeAttribute('data-paused');
+    });
   }
   
   const moveToFirst = () => {
+    forcedRef.current = true;
     carrousel.current!.scrollTo({left: 0, behavior: 'smooth'});
+    if(isMobileDevice()) moveToIndex(0);
   }
   
   const moveToNext = () => {
@@ -152,14 +204,30 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     if (isDisabledNextRef.current) return;
     const remainingDistance = carrousel.current!.scrollWidth - carrousel.current!.scrollLeft - carrousel.current!.clientWidth;
     let scrollDistance = Math.min(getItemWidth(), remainingDistance);
-    setCurrentDot(currentElementIndex.current + 1);
+    if(arrowLess) setCurrentDot(currentElementIndex.current + 1);
     carrousel.current!.scrollBy({left: scrollDistance, behavior: 'smooth'});
+    if(isMobileDevice()) {
+      updateValuesManually(currentElementIndex.current + 1, scrollDistance);
+    }
   }
   
   const moveToPrevious = () => {
     const scrollDistance = Math.min(getItemWidth(), carrousel.current!.scrollLeft);
     carrousel.current!.scrollBy({left: -1 * scrollDistance, behavior: 'smooth'});
     setCurrentDot(currentElementIndex.current - 1);
+    if(isMobileDevice()) {
+      updateValuesManually(currentElementIndex.current - 1, -1 * scrollDistance);
+    }
+  }
+  
+  const moveToIndex = (index: number) => {
+    currentElementIndex.current = index;
+    setIndex(index);
+    undoAllPauseStates();
+    setCurrentDot(index);
+    forcedRef.current = false;
+    isDisabledNextRef.current = index === elementCount! - 1;
+    setIsDisabledNext(isDisabledNextRef.current);
   }
   
   const arrowLessSwitcher = () => {
@@ -171,10 +239,17 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
               key={idx}
               className={styles.automaticDot}
               onClick={() => {
-                setCurrentDot(idx);
-                currentElementIndex.current = idx;
+                if(isMobileDevice()) return;
+                forcedRef.current = true;
                 const scrollDistance = getItemWidth() * idx;
                 carrousel.current!.scrollTo({left: scrollDistance, behavior: 'smooth'});
+              }}
+              onTouchStart={() => {
+                if(!isMobileDevice()) return;
+                forcedRef.current = true;
+                const scrollDistance = getItemWidth() * idx;
+                carrousel.current!.scrollTo({left: scrollDistance, behavior: 'smooth'});
+                moveToIndex(idx);
               }}
               data-selected={idx === index}
             >
@@ -189,7 +264,12 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     <div className={styles.buttonsContainer}>
       <button
         className={styles.button}
-        onClick={moveToPrevious}
+        onClick={() => {
+          if(!isMobileDevice()) moveToPrevious();
+        }}
+        onTouchStart={() => {
+          if(isMobileDevice()) moveToPrevious();
+        }}
         disabled={index === 0}
         data-direction="left"
       >
@@ -217,7 +297,12 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
       </button>
       <button
         className={styles.button}
-        onClick={moveToNext}
+        onClick={() => {
+          if(!isMobileDevice()) moveToNext();
+        }}
+        onTouchStart={() => {
+          if(isMobileDevice()) moveToNext();
+        }}
         disabled={isDisabledNext}
       >
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +334,7 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
     if (!arrowLess) return;
     pauseAutomaticSwitch();
     const automaticSwitcher = document.querySelector(`#${container.current!.id} .${styles.automaticSwitcher}`);
-    const currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
+    let currentActiveAutomaticDot = automaticSwitcher!.querySelector(`.${styles.automaticDot}[data-selected="true"]`);
     currentActiveAutomaticDot!.setAttribute('data-paused', 'true');
   }
   
@@ -264,7 +349,13 @@ export default function Carrousel({children, arrowLess, fullWidth, alignmentRefI
   return (
     <div id={'scroll-gallery-feature-cards'} style={{width: '100%', margin: '0 auto', position: 'relative'}} ref={container}>
       <div className={styles.carrousel} ref={carrousel} data-full-width={fullWidth?.toString() ?? 'false'}>
-        <ul className={styles.cardSet} data-variant={variant ?? 'default'} ref={cardSet} onMouseEnter={handleMouseOver} onMouseLeave={handleMouseOut}>
+        <ul className={styles.cardSet} data-variant={variant ?? 'default'} ref={cardSet}
+          onMouseOver={handleMouseOver}
+          onMouseEnter={handleMouseOver}
+          onMouseLeave={handleMouseOut}
+          onTouchStart={handleMouseOver}
+          onTouchEnd={handleMouseOut}
+        >
           {children}
         </ul>
       </div>

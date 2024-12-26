@@ -100,7 +100,7 @@ import texasStoryThumbnail from '../assets/images/texas-story-thumbnail.webp';
       </div>
     </div>
     <div class={styles.findingsCarrouselContainer}>
-      <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'}>
+      <Carrousel client:only="react" alignmentRefId={'findings-alignment-reference-id'} elementCount={5}>
         <HomepageFindingsCard title="Evaluating Rural Telehealth Access"
                               href="/findings/evaluation-results"
                               image={evaluationResultsFindingsThumbnail.src}

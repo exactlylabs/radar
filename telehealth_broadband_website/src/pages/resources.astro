@@ -52,7 +52,7 @@ import thumbnail4 from '../assets/images/resources-card-thumbnail-4.webp';
     <div class={commonStyles.paddedSection} id="carrousel-alignment-ref">
       <h3 class={styles.exploreToolsTitle}>Explore the Tools</h3>
     </div>
-    <Carrousel client:only="react" alignmentRefId={'carrousel-alignment-ref'}>
+    <Carrousel client:only="react" alignmentRefId={'carrousel-alignment-ref'} elementCount={4}>
       <ResourceCard head="Broadband Mapping"
                     title="Explore Broadband Nationwide"
                     triggerId="broadband-modal-trigger"
