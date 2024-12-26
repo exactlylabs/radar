@@ -67,11 +67,11 @@ li {
   list-style: none;
 }
 
-li:has(a[data-popover-target-id]) {
+li:has(button[data-popover-target-id]) {
   position: relative;
 }
 
-a[data-popover-target-id='stories-popover'] {
+button[data-popover-target-id='stories-popover'] {
   anchor-name: --stories-popover;
 }
 
@@ -79,7 +79,7 @@ div[data-dropdown-id='stories-popover'] {
   position-anchor: --stories-popover;
 }
 
-a[data-popover-target-id='findings-popover'] {
+button[data-popover-target-id='findings-popover'] {
   anchor-name: --findings-popover;
 }
 
@@ -87,7 +87,10 @@ div[data-dropdown-id='findings-popover'] {
   position-anchor: --findings-popover;
 }
 
-li > a {
+li > a,
+li > button {
+  border: none;
+  background-color: transparent;
   cursor: pointer;
   text-decoration: none;
   text-underline: none;
@@ -266,7 +269,7 @@ svg[data-hidden="true"] {
   display: none;
 }
 
-svg:not([static]) {
+svg:not([data-static="true"]) {
   animation: fade-in 0.5s ease-in-out;
 }
 

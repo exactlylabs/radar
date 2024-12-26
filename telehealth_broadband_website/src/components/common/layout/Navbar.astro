@@ -19,11 +19,11 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
   <ul class={styles.links}>
     <li><a href="/overview">Overview</a></li>
     <li>
-      <a href="/findings" data-popover-target-id="findings-popover">Findings</a>
+      <button data-popover-target-id="findings-popover">Findings</button>
 	    <FindingsNavbarDropdown />
     </li>
     <li>
-      <a href="/stories" data-popover-target-id="stories-popover">Stories</a>
+      <button data-popover-target-id="stories-popover">Stories</button>
       <StoriesNavbarDropdown />
     </li>
     <li><a href="/opportunities">Opportunities</a></li>
@@ -123,34 +123,66 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
   timeoutIds.set('findings-popover', null);
   timeoutIds.set('stories-popover', null);
   
+  function isMobileDevice() {
+    return matchMedia('(pointer: coarse)').matches && matchMedia('(hover: none)').matches;
+  }
+  
   function associateLinksToDropdowns() {
-    const linksWithDropdownReferences = document.querySelectorAll('a[data-popover-target-id]');
-    linksWithDropdownReferences.forEach((link) => {
-      link.addEventListener('mouseenter', (e) => {
-         if(timeoutIds.get(link.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(link.dataset.popoverTargetId));
-         const dropdown = document.getElementById(e.target.dataset.popoverTargetId);
-         dropdown.showPopover();
-         
-         dropdown.addEventListener('mouseenter', (e) => {
-           e.target.setAttribute('data-hovered', 'true');
-         });
-         
-          dropdown.addEventListener('mouseleave', (e) => {
-            e.target.removeAttribute('data-hovered');
-            e.target.hidePopover();
-          });
+    const buttonsWithDropdownReferences = document.querySelectorAll('button[data-popover-target-id]');
+    const isMobile = isMobileDevice();
+    if(isMobile) {
+      window.addEventListener('touchstart', (e) => {
+        const possibleOpenPopovers = document.querySelectorAll('[data-dropdown-id]:popover-open');
+        possibleOpenPopovers.forEach((popover) => {
+          if(!popover.contains(e.target)) {
+            popover.hidePopover();
+          }
+        });
       });
-      link.addEventListener('mouseout', () => {
-         if(timeoutIds.get(link.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(link.dataset.popoverTargetId));
-         
-         const id = setTimeout(() => {
-           const dropdown = document.getElementById(link.dataset.popoverTargetId);
-           if(dropdown.hasAttribute('data-hovered')) return;
-           dropdown.hidePopover();
-         }, 250);
-         
-          timeoutIds.set(link.dataset.popoverTargetId, id);
+    }
+    buttonsWithDropdownReferences.forEach((button) => {
+      if (isMobile) {
+        addMobileDeviceEventListeners(button);
+      } else {
+        addDesktopDeviceEventListeners(button);
+      }
+    });
+  }
+  
+  function addMobileDeviceEventListeners(button) {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const dropdown = document.getElementById(e.target.dataset.popoverTargetId);
+      dropdown.togglePopover();
+    });
+  }
+  
+  function addDesktopDeviceEventListeners(button) {
+    button.addEventListener('mouseenter', (e) => {
+      if(timeoutIds.get(button.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(button.dataset.popoverTargetId));
+      const dropdown = document.getElementById(e.target.dataset.popoverTargetId);
+      dropdown.showPopover();
+      
+      dropdown.addEventListener('mouseenter', (e) => {
+        e.target.setAttribute('data-hovered', 'true');
       });
+      
+      dropdown.addEventListener('mouseleave', (e) => {
+        e.target.removeAttribute('data-hovered');
+        e.target.hidePopover();
+      });
+    });
+    button.addEventListener('mouseout', () => {
+      if(timeoutIds.get(button.dataset.popoverTargetId) !== null) clearTimeout(timeoutIds.get(button.dataset.popoverTargetId));
+      
+      const id = setTimeout(() => {
+        const dropdown = document.getElementById(button.dataset.popoverTargetId);
+        if(dropdown.hasAttribute('data-hovered')) return;
+        dropdown.hidePopover();
+      }, 250);
+      
+      timeoutIds.set(button.dataset.popoverTargetId, id);
     });
   }
   
