@@ -10,9 +10,11 @@
   transition: background-size 0.5s, scale .5s;
 }
 
-.card:hover {
-  scale: 1.015;
-  background-size: 105% 105%;
+@media (pointer: fine) {
+  .card:hover {
+    scale: 1.015;
+    background-size: 105% 105%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -35,8 +37,10 @@
   }
 }
 
-.cardLink:hover > button > img {
-  transform: translateX(0.25rem);
+@media (pointer: fine) {
+  .cardLink:hover > button > img {
+    transform: translateX(0.25rem);
+  }
 }
 
 .heroContainer {

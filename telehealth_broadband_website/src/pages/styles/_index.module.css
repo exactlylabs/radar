@@ -6,6 +6,7 @@
   margin-inline: auto;
   box-sizing: border-box;
   height: 700px;
+  overflow-x: clip;
 }
 
 @media (max-width: 768px) {

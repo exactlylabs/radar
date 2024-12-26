@@ -23,5 +23,12 @@ const { title, description, heroVariant, heroBgStyle } = Astro.props;
     <slot />
   </main>
   <Footer/>
+  
+  
+  <script>
+    window.addEventListener('mousemove', (event) => {
+      document.body.setAttribute('data-mouse-position', JSON.stringify({ x: event.clientX, y: event.clientY }));
+    });
+  </script>
 </body>
 </html>

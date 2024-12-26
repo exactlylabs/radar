@@ -57,12 +57,13 @@
 
 html {
   color-scheme: dark;
+  overflow-x: hidden;
 }
 
 body {
   background-color: var(--bg-color);
   position: relative;
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 a {

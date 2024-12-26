@@ -13,9 +13,11 @@
   z-index: 1;
 }
 
-.card:hover {
-  scale: 1.015;
-  background-size: 102.5% 102.5%;
+@media (pointer: fine) {
+  .card:hover {
+    scale: 1.015;
+    background-size: 102.5% 102.5%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -44,8 +46,10 @@
   }
 }
 
-.cardLink:hover > div > button > img {
-  transform: translateX(0.25rem);
+@media (pointer: fine) {
+  .cardLink:hover > div > button > img {
+    transform: translateX(0.25rem);
+  }
 }
 
 .gradient {
