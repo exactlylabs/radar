@@ -1,7 +1,7 @@
 ---
 import HeroWithText from "../common/content/HeroWithText.astro";
 import styles from './styles/mobile_testing_modal.module.css';
-import image from '../../assets/images/mobile-testing.webp';
+import image from '../../assets/images/mobile-testing-modal-bg.webp';
 import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
 import BulletPoint from "../common/content/BulletPoint.astro";
 
@@ -12,7 +12,6 @@ import Epigraph from "../stories/Epigraph.astro";
 <div id="mobile-testing-modal-content" class={styles.content}>
   <section class={styles.modalHero}>
     <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
-    <div class={styles.gradient}></div>
     <div class={styles.heroContainer}>
       <HeroWithText head="Mobile Testing" title="On-the-Go Speed Testing" content="The Radar Speed app enables users to run manual and scheduled speed tests, view their test history, and compare results with the community. With Radar mode enabled, the app also identifies cell towers and Wi-Fi access points, mapping coverage gaps and connectivity performance across various regions." />
     </div>

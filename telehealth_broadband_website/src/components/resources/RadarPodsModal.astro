@@ -1,7 +1,7 @@
 ---
 import HeroWithText from "../common/content/HeroWithText.astro";
 import styles from './styles/radar_pods_modal.module.css';
-import image from '../../assets/images/radar-pods.webp';
+import image from '../../assets/images/pods-modal-bg.webp';
 import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
 import BulletPoint from "../common/content/BulletPoint.astro";
 
@@ -16,7 +16,6 @@ import Epigraph from "../stories/Epigraph.astro";
 <div id="radar-pods-modal-content" class={styles.content}>
   <section class={styles.modalHero}>
     <div class={styles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
-    <div class={styles.gradient}></div>
     <div class={styles.heroContainer}>
       <HeroWithText head="Radar Pods" title="Real-Time Internet Monitoring" content="The Radar Pod is a device that tracks internet performance. Connected to a router via ethernet or Wi-Fi, it offers key metrics like speed, latency, and outages through a online dashboard. Ideal for individuals and institutions, the Pod monitors internet quality and helps diagnose connection issues. While a web-based speed test can find a problem at a single point in time, a Pod can detect changes as they happen over time." />
     </div>

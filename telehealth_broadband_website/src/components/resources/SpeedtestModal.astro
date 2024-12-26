@@ -2,7 +2,7 @@
 import HeroWithText from "../common/content/HeroWithText.astro";
 import styles from './styles/speedtest_modal.module.css';
 import sharedModalStyles from './styles/shared_modals.module.css';
-import image from '../../assets/images/broadband-mapping-laptop.webp';
+import image from '../../assets/images/speed-test-modal-bg.webp';
 import GoToLinkButton from "../common/buttons/GoToLinkButton.astro";
 import BulletPoint from "../common/content/BulletPoint.astro";
 
@@ -14,7 +14,6 @@ import Epigraph from "../stories/Epigraph.astro";
 <div class={sharedModalStyles.content}>
   <section class={sharedModalStyles.modalHero}>
     <div class={sharedModalStyles.bgImage} data-bg-image={'true'} style={`background-image: url(${image.src})`}></div>
-    <div class={sharedModalStyles.gradient}></div>
     <div class={sharedModalStyles.heroContainer}>
       <HeroWithText head="Radar Speed" title="Web-Based Speed Testing" content="Radar Speed is a web-based tool for quick internet speed checks. It provides access to test history and allows speed comparisons with the community across different locations via a public map where results are plotted." />
     </div>

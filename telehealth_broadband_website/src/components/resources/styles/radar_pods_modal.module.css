@@ -16,10 +16,6 @@
   position: relative;
 }
 
-div[data-bg-image="true"] {
-  background-position: 50% 0%;
-}
-
 .content {
   min-width: 600px;
   max-width: 825px;
