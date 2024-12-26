@@ -1,6 +1,6 @@
 :root {
   --header-height: 4rem;
-  --content-padding-top: 18.75rem;
+  --content-padding-top: 15rem;
   --content-padding-inline: 6.75rem;
   --content-padding-bottom: 5rem;
 }
@@ -143,6 +143,20 @@
   padding: 18.75rem 6.75rem 5rem;
   max-height: calc(100vh - 10rem);
   overflow-y: auto;
+  overflow-x: clip;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-width: thin;
+}
+
+.contentBody::-webkit-scrollbar {
+  width: initial;
+}
+.contentBody::-webkit-scrollbar-track {
+  background: initial;
+}
+.contentBody::-webkit-scrollbar-thumb {
+  background: initial;
+  border: initial;
 }
 
 @media (max-width: 1080px) {
@@ -192,12 +206,17 @@
 
 div[data-bg-image="true"] {
   width: calc(100% + 2 * var(--content-padding-inline));
-  height: 500px;
+  height: auto;
+  aspect-ratio: 1037 / 500;
   position: absolute;
   top: calc(-1 * var(--content-padding-top) - var(--header-height));
   left: calc(-1 * var(--content-padding-inline));
   z-index: -1;
-  background-position: 65% 35%;
-  background-size: 125%;
+  background-position: center;
+  background-size: cover;
   background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(to top, transparent, var(--bg-color) 100%);
+  -webkit-mask-composite: destination-in;
+  mask-composite: intersect;
+  mask-image: linear-gradient(to top, transparent, var(--bg-color) 100%);
 }
