@@ -53,6 +53,7 @@
   width: clamp(450px, 75%, 1050px);
   min-height: 300px;
   max-height: calc(100vh - 7rem);
+  height: fit-content;
   border-radius: 1.5rem;
   position: fixed;
   top: 50%;
@@ -219,4 +220,16 @@ div[data-bg-image="true"] {
   -webkit-mask-composite: destination-in;
   mask-composite: intersect;
   mask-image: linear-gradient(to top, transparent, var(--bg-color) 100%);
+}
+
+.container[data-is-open="false"] > [data-type] {
+  display: none;
+}
+
+.container[data-is-open="true"] > [data-type] {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.container[data-closing="true"] > [data-type] {
+  animation: fade-out 0.55s ease-in-out;
 }
