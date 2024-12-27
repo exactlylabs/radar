@@ -1,11 +1,12 @@
 ---
 import buttonStyles from '../buttons/styles/buttons.module.css';
 import styles from './styles/modal.module.css';
-const { id, isOpen, clearPaddings, bgColor } = Astro.props;
+const { id, isOpen, clearPaddings, bgColor, carrouselMode } = Astro.props;
 ---
 
 <div class={styles.container} id={id} data-is-open={isOpen.toString()}>
   <div class={styles.underlay} id={`${id}-underlay`}></div>
+  <slot name="carrousel-controls"/>
   <div class={styles.modal} id={`${id}-modal`} style={{backgroundColor: bgColor ?? '#05041A'}}>
     <div class={styles.header}>
       <button class={buttonStyles.readMore} aria-label="Close modal" id={`${id}-close`}>
@@ -15,7 +16,7 @@ const { id, isOpen, clearPaddings, bgColor } = Astro.props;
         </svg>
       </button>
     </div>
-    <div class={styles.contentBody} data-clear-paddings={(!!clearPaddings).toString()}>
+    <div class={styles.contentBody} data-carrousel-mode={(!!carrouselMode).toString()} data-clear-paddings={(!!clearPaddings).toString()}>
       <slot/>
     </div>
   </div>

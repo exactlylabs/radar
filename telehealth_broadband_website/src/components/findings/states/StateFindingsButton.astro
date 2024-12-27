@@ -1,10 +1,11 @@
 ---
 import styles from './styles/state_findings_button.module.css';
 
-const { head, title, modalId, backgroundImage } = Astro.props;
+const { head, title, modalId, backgroundImage, index } = Astro.props;
 ---
 
 <button data-modal-id={modalId}
+  data-modal-index={index}
   class={styles.button}
   style={{ backgroundImage: `url(${backgroundImage})` }}
 >

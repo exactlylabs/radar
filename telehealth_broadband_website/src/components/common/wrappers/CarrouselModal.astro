@@ -1,0 +1,102 @@
+---
+import styles from './styles/carrousel_modal.module.css';
+import Modal from "./Modal.astro";
+
+const { elementCount, isOpen, id } = Astro.props;
+---
+
+<Modal id={id} isOpen={isOpen} clearPaddings carrouselMode bgColor="#0F0E25">
+	<div class={styles.carrouselContentContainer}>
+		<div class={styles.scrollableContainer} data-container="true" data-current-index="0">
+      <slot/>
+    </div>
+  </div>
+	<button slot="carrousel-controls" class={styles.floatingButton} data-type="prev" disabled>
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+			<path fill="rgba(255, 255, 255, 0.8)" transform="translate(1 7.25)" d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+			<path fill="none" stroke="rgba(255, 255, 255, 0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.5 2.5)" d="M0 0L5.5023718 5.5L0 11" fill-rule="evenodd"/>
+		</svg>
+  </button>
+	<button slot="carrousel-controls" class={styles.floatingButton} data-type="next">
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+			<path fill="rgba(255, 255, 255, 0.8)" transform="translate(1 7.25)" d="M0.75 0L12.250252 0C12.664466 -7.6089797e-17 13.000252 0.33578643 13.000252 0.75C13.000252 1.1642135 12.664466 1.5 12.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z" fill-rule="evenodd"/>
+			<path fill="none" stroke="rgba(255, 255, 255, 0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(8.5 2.5)" d="M0 0L5.5023718 5.5L0 11" fill-rule="evenodd"/>
+		</svg>
+  </button>
+	<div slot="carrousel-controls" class={styles.floatingDotsContainer} data-type="floating-dots">
+    { Array.from({length: elementCount}).map((_, index) => (
+				<button class={styles.dot} data-selected={index === 0} data-type="dot"></button>
+    ))}
+	</div>
+	<div slot="carrousel-controls" class={styles.counter} data-type="counter">
+	  1 of 3
+  </div>
+</Modal>
+
+<script define:vars={{id, elementCount}}>
+  const contentCards = document.querySelectorAll(`[data-index]`);
+  const container = contentCards[0].parentElement;
+  const previousButton = document.querySelector(`button[data-type="prev"]`);
+  const nextButton = document.querySelector(`button[data-type="next"]`);
+  const dots = document.querySelectorAll(`button[data-type="dot"]`);
+  const counter = document.querySelector('[data-type="counter"]');
+  const modal = document.getElementById(`${id}-modal`);
+  
+  function updateButtons(nextIndex) {
+    if(nextIndex === elementCount - 1) {
+      nextButton.setAttribute('disabled', 'true');
+    } else {
+      nextButton.removeAttribute('disabled');
+    }
+    
+    if(nextIndex === 0) {
+      previousButton.setAttribute('disabled', 'true');
+    } else {
+      previousButton.removeAttribute('disabled');
+    }
+    
+    dots.forEach((dot, index) => {
+      dot.setAttribute('data-selected', (index === nextIndex).toString());
+    });
+    
+    counter.textContent = `${nextIndex + 1} of ${elementCount}`;
+  }
+  
+  nextButton.addEventListener('click', () => {
+    const currentIndex = Number(container.getAttribute('data-current-index'));
+    updateButtons(currentIndex + 1);
+    const nextIndex = currentIndex + 1;
+    container.setAttribute('data-current-index', nextIndex.toString());
+    contentCards.forEach(c => c.style.left = `-${nextIndex * 100}%`);
+  });
+  
+  previousButton.addEventListener('click', () => {
+    const currentIndex = Number(container.getAttribute('data-current-index'));
+    updateButtons(currentIndex - 1);
+    const previousIndex = currentIndex - 1;
+    container.setAttribute('data-current-index', previousIndex.toString());
+    contentCards.forEach(c => c.style.left = `-${previousIndex * 100}%`);
+  });
+  
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      updateButtons(index);
+      container.setAttribute('data-current-index', index.toString());
+      contentCards.forEach(c => c.style.left = `-${index * 100}%`);
+    });
+  });
+  
+  function positionDots(mutations, observer) {
+    if(!modal) return;
+    mutations?.forEach(mutation => {
+      if(mutation.attributeName === 'style') {
+        const { height } = modal.getBoundingClientRect();
+        const dotsContainer = dots[0].parentElement;
+        dotsContainer.style.top = `calc(50vh + ${height / 2}px + 1.5rem)`;
+        observer.disconnect();
+      }
+    });
+  }
+  const mutationObserver = new MutationObserver(positionDots);
+  mutationObserver.observe(modal, { attributes: true, childList: true, subtree: true });
+</script>
