@@ -55,6 +55,8 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       center: centerCoordinates,
+      minZoom: 3,
+      maxZoom: 14,
       style: {
         version: 8,
         sources: {
@@ -185,7 +187,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     map.current.addSource('custom-tiles', {
       type: 'vector',
       tiles: [vectorTilesUrl()],
-      minzoom: 0,
+      minzoom: 3,
       maxzoom: 14,
     });
 
@@ -199,8 +201,8 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           'interpolate',
           ['linear'],  // This specifies a linear interpolation
           ['zoom'],    // Using the current zoom level for interpolation
-          5, 5,
-          15, 8
+          3, 5,
+          14, 8
         ],
         'circle-color': [
           'case',

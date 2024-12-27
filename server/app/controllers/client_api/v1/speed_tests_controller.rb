@@ -170,14 +170,18 @@ module ClientApi
           ) AS tile_data;
           }
 
-          query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([sql, sql_params]))
-          data = query_response[0]['mvt']
+          begin
+            query_response = ActiveRecord::Base.connection.execute(ApplicationRecord.sanitize_sql([sql, sql_params]))
+            data = query_response[0]['mvt']
 
-          # Not sure if 1 hour is the best TTL for this cache
-          # I'm open to suggestions
-          REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
+            # Not sure if 1 hour is the best TTL for this cache
+            # I'm open to suggestions
+            REDIS.set(cache_key, data, ex: 1.hour.in_seconds)
+          rescue Exception => e
+            Sentry.capture_exception(e)
+            data = ''
+          end
         end
-
         @tiles = ActiveRecord::Base.connection.unescape_bytea(data)
 
         response.headers['Content-Type'] = 'application/vnd.mapbox-vector-tile'
@@ -367,7 +371,7 @@ module ClientApi
       end
 
       def vector_tile_params
-        params.permit(:isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
+        params.permit(:client_id, :x, :y, :z, :isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
       end
 
       def contact_params
