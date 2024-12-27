@@ -302,7 +302,7 @@ module ClientApi
         filters[:from] = valid_params[:from].to_i / 1000
         filters[:to] = valid_params[:to].to_i / 1000
         filters[:min_price] = valid_params[:min_price].to_i
-        filters[:max_price] = valid_params[:maxed_out] == 'true' ? "'/'Infinity/'::float8'" : valid_params[:max_price].to_i
+        filters[:max_price] = valid_params[:maxed_out] == 'true' ? 1000000.0 : valid_params[:max_price].to_f
         filters[:include_no_cost] = valid_params[:include_no_cost] == 'true'
         filters[:view_by] = valid_params[:view_by]
         filters[:view_by_filters] = view_by_filters_to_values(valid_params[:view_by], valid_params[:view_by_filters])
