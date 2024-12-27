@@ -73,7 +73,9 @@ export const FiltersContextProvider = ({children}) => {
   const setFrom = from => setFilters(prevState => ({...prevState, from}));
   const setTo = to => setFilters(prevState => ({...prevState, to}));
   const setMinPrice = minPrice => setFilters(prevState => ({...prevState, minPrice}));
-  const setMaxPrice = maxPrice => setFilters(prevState => ({...prevState, maxPrice}));
+  const setMaxPrice = maxPrice => {
+    setFilters(prevState => ({...prevState, maxPrice, maxedOut: false}));
+  }
   const setMaxedOut = maxedOut => setFilters(prevState => ({...prevState, maxedOut}));
   const setIncludeNoCost = includeNoCost => setFilters(prevState => ({...prevState, includeNoCost}));
   const setRangeLabel = rangeLabel => setFilters(prevState => ({...prevState, rangeLabel}));
