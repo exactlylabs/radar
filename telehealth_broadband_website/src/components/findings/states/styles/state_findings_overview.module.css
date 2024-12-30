@@ -39,6 +39,21 @@
   flex-basis: 450px;
 }
 
+.stateImage[data-variant="michigan"] {
+  --aspect-ratio: 459 / 359;
+  max-width: 459px;
+}
+
+.stateImage[data-variant="texas"] {
+  --aspect-ratio: 440 / 418;
+  max-width: 440px;
+}
+
+.stateImage[data-variant="west virginia"] {
+  --aspect-ratio: 520 / 355;
+  max-width: 520px;
+}
+
 @media (max-width: 768px) {
   .stateImage {
     width: 100%;

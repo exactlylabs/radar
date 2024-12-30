@@ -9,7 +9,7 @@ const { state, head, title, subtitle, reportUrl } = Astro.props;
 <section class={styles.section}>
   <div class={styles.gradient}></div>
   <div class={styles.heroContainer}>
-    <HeroWithText head={head} title={title} content={subtitle} />
+    <HeroWithText head={head} title={title} content={subtitle} mainHero />
   </div>
   <div class={styles.downloadButtonContainer}>
     <TransparentSecondaryButton href={reportUrl} download>

@@ -27,9 +27,8 @@
 
 @media (max-width: 768px) {
   .button {
-    --aspect-ratio: 1;
+    --aspect-ratio: 345 / 312;
     width: 100%;
-    max-width: 345px;
     margin: 0 auto;
   }
 }
