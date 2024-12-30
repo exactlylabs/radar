@@ -10,8 +10,8 @@ const { head, title, content, link, backgroundImage } = Astro.props;
   <div class={styles.gradient}></div>
   <a href={link} class={styles.cardLink}>
     <div class={styles.heroContainer}>
-      <HeroWithText head={head} title={title} content={content} small/>
+      <HeroWithText head={head} title={title} content={content} variant="state-findings"/>
     </div>
-    <ContainedReadMore text={`Explore ${head}`} />
+    <ContainedReadMore text={`Learn more`} />
   </a>
 </li>
