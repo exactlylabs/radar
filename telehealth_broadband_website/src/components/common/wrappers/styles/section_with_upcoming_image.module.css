@@ -19,6 +19,7 @@
   width: 100%;
   scroll-margin-top: 20vh;
   max-width: 36.25rem;
+  transition: opacity 500ms;
 }
 
 @media (max-width: 768px) {
@@ -38,10 +39,17 @@
   gap: 5rem;
 }
 
+@media (max-width: 1100px) {
+  .sectionWithImage {
+    max-width: unset;
+    padding-inline: var(--side-padding);
+  }
+}
+
 .sectionWithImage > img {
   position: -webkit-sticky;
   position: sticky;
-  top: 6rem;
+  top: 25%;
   right: 0;
   height: auto;
   animation: fade-in 200ms;
@@ -58,15 +66,28 @@
 }
 
 .incomingImage {
+  opacity: 0;
   display: none;
-}
-
-.incomingImage[data-visible="true"] {
-  display: block;
+  width: 366px;
   height: 469px;
   aspect-ratio: 366 / 469;
   border-radius: .5rem;
   object-fit: cover;
+}
+
+.incomingImage[data-visible="true"] {
+  display: block;
+  opacity: 1;
+  animation: fade-in 500ms ease-in;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .incomingImage:nth-child(2) {
@@ -133,6 +154,7 @@
 
 .bulletPointContainer {
   padding-inline: 1.5rem;
+  transition: opacity 200ms;
 }
 
 @media (max-width: 768px) {

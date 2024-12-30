@@ -30,7 +30,7 @@
   .section {
     --top-padding: 4rem;
     background-size: cover;
-    background-position: 50% -300px;
+    background-position: 150px -300px;
     padding-block: var(--top-padding) 2rem;
   }
 }

@@ -12,5 +12,5 @@ const { state, title, firstParagraph, secondParagraph, stateImageUrl, styleOverr
     { secondParagraph && <br/> }
     { secondParagraph && <p>{secondParagraph}</p> }
   </div>
-  <img src={stateImageUrl} alt={`${state} geographical image`} class={styles.stateImage} style={styleOverride ?? ''}/>
+  <img src={stateImageUrl} alt={`${state} geographical image`} class={styles.stateImage} style={styleOverride ?? ''} data-variant={state.toLowerCase()}/>
 </section>

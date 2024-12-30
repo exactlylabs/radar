@@ -43,10 +43,16 @@
     width: 100vw;
     margin-right: -2rem;
     padding-right: 3rem;
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: auto;
     padding-top: 0;
     backdrop-filter: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .staticContainer {
+    justify-content: flex-start;
   }
 }
 
@@ -75,6 +81,7 @@
   color: white;
   background-color: rgba(255, 255, 255, 0.1);
   outline: none;
+  border: none;
 }
 
 .tab[data-active="true"] > svg > path:not([stroke]) {
