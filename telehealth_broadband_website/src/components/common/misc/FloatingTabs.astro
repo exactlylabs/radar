@@ -3,18 +3,18 @@ import styles from './styles/floating_tabs.module.css';
 const { scrollToId } = Astro.props;
 ---
 <div class={styles.container}>
-  <button class={styles.tab}
-    id="top-scroller"
-    data-scroll-to-id={scrollToId}
-    data-hide-off-scroll="true"
-    hidden="hidden"
-  >
-  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
-    <path fill="#ACAFCD" transform="translate(1.25119 1.25)" d="M6.7804446 0.21978424L12.280444 5.7221556C12.573275 6.0151119 12.573173 6.4899859 12.280216 6.7828159C11.98726 7.0756459 11.512385 7.0755439 11.219556 6.7825875L7 2.562L7 13.000252C7 13.414466 6.6642137 13.750252 6.25 13.750252C5.8357863 13.750252 5.5 13.414466 5.5 13.000252L5.5 2.5599999L1.2804444 6.7825875C1.0142353 7.0489111 0.5975768 7.0732069 0.30391833 6.8554158L0.21978424 6.7828159C-0.073172107 6.4899859 -0.073274463 6.0151119 0.21955562 5.7221556L5.7195554 0.21978424C6.012475 -0.07326141 6.487525 -0.07326141 6.7804446 0.21978424Z" fill-rule="evenodd"/>
-  </svg>
-  </button>
-  <div class={styles.divider} data-hide-off-scroll="true" hidden="hidden"></div>
   <div class={styles.staticContainer}>
+	  <button class={styles.tab}
+	          id="top-scroller"
+	          data-scroll-to-id={scrollToId}
+	          data-hide-off-scroll="true"
+	          hidden="hidden"
+	  >
+		  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+			  <path fill="#ACAFCD" transform="translate(1.25119 1.25)" d="M6.7804446 0.21978424L12.280444 5.7221556C12.573275 6.0151119 12.573173 6.4899859 12.280216 6.7828159C11.98726 7.0756459 11.512385 7.0755439 11.219556 6.7825875L7 2.562L7 13.000252C7 13.414466 6.6642137 13.750252 6.25 13.750252C5.8357863 13.750252 5.5 13.414466 5.5 13.000252L5.5 2.5599999L1.2804444 6.7825875C1.0142353 7.0489111 0.5975768 7.0732069 0.30391833 6.8554158L0.21978424 6.7828159C-0.073172107 6.4899859 -0.073274463 6.0151119 0.21955562 5.7221556L5.7195554 0.21978424C6.012475 -0.07326141 6.487525 -0.07326141 6.7804446 0.21978424Z" fill-rule="evenodd"/>
+		  </svg>
+	  </button>
+    <div class={styles.divider} data-hide-off-scroll="true" hidden="hidden"></div>
     <slot/>
   </div>
 </div>
@@ -57,6 +57,14 @@ const { scrollToId } = Astro.props;
         }
       });
     }
+    
+    if(window.innerWidth <= 768) {
+      const activeElement = document.querySelector(`.${styles.tab}[data-active="true"]`);
+      if(!activeElement) return;
+      const distance = activeElement.getBoundingClientRect().left - (window.innerWidth / 2) + (activeElement.offsetWidth / 2);
+      const staticContainer = document.querySelector(`.${styles.staticContainer}`)!;
+      staticContainer.scrollBy({ left: distance, behavior: 'smooth' });
+    }
   }, { threshold: Array.from({ length: 100 }, (_, i) => i / 100) });
 
   setTimeout(() => {
@@ -82,24 +90,13 @@ const { scrollToId } = Astro.props;
   const tabsContainer = document.querySelector(`.${styles.container}`)!;
   const toShowElements = tabsContainer.querySelectorAll('[data-hide-off-scroll="true"]');
   window.addEventListener('scroll', () => {
-    const topScrollThreshold = 72;
+    const topScrollThreshold = window.innerWidth < 768 ? 72 : 0;
     if(tabsContainer) {
       toShowElements.forEach(elem => {
-        if(tabsContainer.getBoundingClientRect().top === topScrollThreshold) {
-          const staticContainer = tabsContainer.querySelector(`.${styles.staticContainer}`)! as HTMLElement;
-          if(!staticContainer.hasAttribute('shifted')) {
-            staticContainer.style.paddingLeft = '74px';
-            staticContainer.setAttribute('shifted', 'true');
-          }
-          setTimeout(() => {
-            if(staticContainer.hasAttribute('shifted')) staticContainer.style.paddingLeft = '0';
-            elem.removeAttribute('hidden');
-          }, 500);
+        if(tabsContainer.getBoundingClientRect().top <= topScrollThreshold) {
+          elem.removeAttribute('hidden');
         } else {
           elem.setAttribute('hidden', 'hidden');
-          const staticContainer = tabsContainer.querySelector(`.${styles.staticContainer}`)! as HTMLElement;
-          staticContainer.style.paddingLeft = '0';
-          staticContainer.removeAttribute('shifted');
         }
       });
     }
@@ -108,7 +105,7 @@ const { scrollToId } = Astro.props;
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       e.preventDefault();
-      
+      window.history.pushState({}, '', anchor.getAttribute('href')!);
       document.querySelector(anchor.getAttribute('href')!)!.scrollIntoView({
         behavior: 'smooth',
         block: 'start'

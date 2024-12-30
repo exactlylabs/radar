@@ -65,8 +65,8 @@ import uams from '../../assets/logos/uams.webp';
     const currentWidth = window.innerWidth;
     const scrollerInner = document.querySelector(`.${styles.scrollerInner}`)!;
     const items = Array.from(scrollerInner.children);
-    if(currentWidth < 1024) {
-      if(items.length > 5) return;
+    if(currentWidth < 1080) {
+      if(items.length > 6) return;
       items.forEach((item) => {
         const clone = item.cloneNode(true) as HTMLElement;
         clone.setAttribute('aria-hidden', 'true');

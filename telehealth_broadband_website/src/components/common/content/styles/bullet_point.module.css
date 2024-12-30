@@ -60,6 +60,9 @@
   aspect-ratio: 1;
   border-radius: 50%;
   outline: solid 2px #4B7BE5;
+  color: var(--blue-500);
+  font-variation-settings: 'wgth' 700;
+  font-size: 1.0625rem;
 }
 
 @media (max-width: 768px) {
@@ -67,6 +70,7 @@
     width: 2.5rem;
     min-width: 2.5rem;
     height: 2.5rem;
+    font-size: 0.8125rem;
   }
 }
 
@@ -90,6 +94,10 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: .5rem;
+}
+
+.textContainer > a {
+  margin-top: 1.5rem;
 }
 
 @media (max-width: 768px) {
