@@ -10,6 +10,7 @@ import ApproachExpansibleCards from '../components/overview/ApproachExpansibleCa
 import ApproachDataCollectionCard from "../components/overview/ApproachDataCollectionCard.astro";
 import ProjectLeadershipGrid from "../components/overview/ProjectLeadershipGrid.astro";
 import ApproachPartnersGrid from "../components/overview/ApproachPartnersGrid.astro";
+import { Image } from 'astro:assets';
 
 import pilotHeroImage from '../assets/images/pilot-program-hero.webp';
 import broadbandMonitoringPodsImage from '../assets/images/approach-broadband-monitoring-pods.webp';
@@ -27,6 +28,8 @@ import greenBlueZigZagSmallLight from '../assets/images/green-blue-zigzag-small-
 import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizontal-blured-light.webp';
 import pinkYellowHorizontalLight from '../assets/images/pink-yellow-horizontal-blured-light.webp';
 import dotsGrid from '../assets/images/dots-grid.webp';
+import usMap from '../assets/images/us-map.webp';
+import StateStudyGridItem from "../components/overview/StateStudyGridItem.astro";
 ---
 <BaseLayout
   title="Our Approach to Understand and Improve Rural Broadband"
@@ -58,7 +61,25 @@ import dotsGrid from '../assets/images/dots-grid.webp';
     />
   </section>
   
-  <section class={`${commonStyles.paddedSection} ${styles.dataCollectionSection}`}>
+  <section class={styles.theStudySection}>
+    <div class={styles.stateStudyTopContent}>
+      <div class={styles.stateStudyTopContentContainer}>
+        <HeroWithText head="The Study"
+          title="Connecting Communities Across Four States"
+          content="The program focused on twenty-five counties in four states. Community partners from Alaska, Michigan, Texas and West Virginia engaged local residents and organizations to more fully understand broadband."
+        />
+        <Image src={usMap} alt="US map"/>
+      </div>
+    </div>
+    <div class={styles.stateStudyGrid}>
+      <StateStudyGridItem abbreviation="AK" title="Alaska" content="In partnership with the Alaska Native Tribal Health Consortium, the study focused on the Aleutians West Census Area, Bristol Bay Borough, Dillingham Census Area, Nome Census Area, North Slope Borough, and the Northwest Arctic Borough."/>
+	    <StateStudyGridItem abbreviation="MI" title="Michigan" content="Partnering with Central Michigan University Rural Health Equity Institute, the study engaged individuals and organizations in Gladwin, Manistee, Missaukee, Montmorency, Osceola, and Oscoda counties."/>
+	    <StateStudyGridItem abbreviation="TX" title="Texas" content="Texas Tech University Health Sciences Center connected with communities in Crosby, Fischer, Haskell, Jones, Lamb, and Mitchell counties to explore broadband and telehealth needs."/>
+	    <StateStudyGridItem abbreviation="WV" title="West Virginia" content="Collaborating with the West Virginia Primary Care Association, the study worked with residents and organizations in Calhoun, Clay, Jackson, Kanawha, Nicholas, Ritchie, and Roane counties."/>
+    </div>
+  </section>
+  
+  <section class={commonStyles.paddedSection}>
     <div class={styles.dataCollectionHeroContainer}>
       <img src={yellowPinkZigZagLight.src} alt="yellow pink zigzag light" class={styles.yellowPinkZigZagLight} />
       <img src={greenBlueZigZagSmallLight.src} alt="green and blue zigzag light" class={styles.greenBlueZigZagSmallLight} />

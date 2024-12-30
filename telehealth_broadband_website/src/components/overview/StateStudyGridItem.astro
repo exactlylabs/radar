@@ -1,0 +1,11 @@
+---
+import BulletPoint from "../common/content/BulletPoint.astro";
+
+const { abbreviation, title, content } = Astro.props;
+---
+
+<div>
+  <BulletPoint borderless bigCircle title={title} content={content}>
+    {abbreviation}
+  </BulletPoint>
+</div>

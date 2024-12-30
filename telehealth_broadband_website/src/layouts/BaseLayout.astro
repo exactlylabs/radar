@@ -25,10 +25,25 @@ const { title, description, heroVariant, heroBgStyle } = Astro.props;
   <Footer/>
   
   
-  <script>
+  <script defer async>
     window.addEventListener('mousemove', (event) => {
       document.body.setAttribute('data-mouse-position', JSON.stringify({ x: event.clientX, y: event.clientY }));
     });
+    
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const hasIdInUrl = window.location.hash.length > 1;
+        
+        if(!hasIdInUrl) return;
+        const id = window.location.hash.slice(1);
+        const element = document.getElementById(id);
+        if(element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+    
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
   </script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 :root {
-  --logos-gap: 3.5rem;
+  --logos-gap: 2.5rem;
 }
 
 .scroller {
-  max-width: 1024px;
+  max-width: 1090px;
   overflow: hidden;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
   .scroller {
     overflow: hidden;
     -webkit-mask: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);

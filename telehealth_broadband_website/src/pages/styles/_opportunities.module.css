@@ -13,6 +13,12 @@
   margin: 6rem auto 5rem;
 }
 
+@media (max-width: 768px) {
+  .sectionsContainer {
+    padding-inline: var(--side-padding);
+  }
+}
+
 .introductionSection {
   display: flex;
   flex-direction: column;

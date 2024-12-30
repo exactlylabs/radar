@@ -15,5 +15,6 @@ const { title, content, direction, borderless, bigCircle, variant } = Astro.prop
   <div class={styles.textContainer}>
     <h5 class={styles.title}>{title}</h5>
     <p class={styles.content}>{content}</p>
+    <slot name="extra"/>
   </div>
 </div>
