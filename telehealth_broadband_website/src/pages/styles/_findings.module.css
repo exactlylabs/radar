@@ -5,9 +5,21 @@
   padding-top: 8.75rem;
 }
 
+@media (max-width: 768px) {
+  .firstSection {
+    padding-top: 2.5rem;
+  }
+}
+
 .downloadButtonContainer {
   width: fit-content;
   margin: 2.5rem auto 0;
+}
+
+@media (max-width: 768px) {
+  .downloadButtonContainer {
+    margin: 1.5rem auto 0;
+  }
 }
 
 .evaluationResultsSection {
@@ -20,14 +32,28 @@
   justify-content: flex-start;
 }
 
+@media (max-width: 768px) {
+  .evaluationResultsSection {
+    gap: 0;
+    padding-bottom: 5rem;
+  }
+}
+
 .evaluationResultsTop {
   width: 100%;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   gap: 3.75rem;
   flex-wrap: wrap;
   padding-bottom: 5rem;
+}
+
+@media (max-width: 768px) {
+  .evaluationResultsTop {
+    gap: 3rem;
+    padding-bottom: 3rem;
+  }
 }
 
 .evaluationResultsHeroContainer {
@@ -51,6 +77,8 @@
 
 .sidePicturesContainer {
   width: calc(50% - 2rem);
+  max-width: 552px;
+  aspect-ratio: 552 / 396;
   flex-basis: 400px;
   flex-shrink: 1;
   flex-grow: 1;
@@ -63,8 +91,8 @@
 
 .evaluationGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
   gap: 0;
   border-block: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -72,16 +100,29 @@
 @media (max-width: 768px) {
   .evaluationGrid {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat(5, auto);
   }
 }
 
 .evaluationGrid > div {
-  padding: 3rem 2rem 4.5rem 1.5rem;
+  padding: 3rem 2.5rem 3rem 1.5rem;
+}
+
+.evaluationGrid > div:nth-child(2),
+.evaluationGrid > div:nth-child(5) {
+  padding: 3rem 2.5rem 3rem 2.5rem;
+}
+
+.evaluationGrid > div:nth-child(3) {
+  padding: 3rem 1.5rem 3rem 2.5rem;
 }
 
 @media (max-width: 768px) {
-  .evaluationGrid > div {
+  .evaluationGrid > div,
+  .evaluationGrid > div:nth-child(2),
+  .evaluationGrid > div:nth-child(3),
+  .evaluationGrid > div:nth-child(4),
+  .evaluationGrid > div:nth-child(5) {
     padding: 2rem 0;
   }
 }
@@ -116,21 +157,40 @@
   padding-bottom: 7.5rem;
 }
 
+@media (max-width: 768px) {
+  .stateFindingsSection {
+    padding-bottom: 5rem;
+  }
+}
+
 .stateFindingsHeroContainer {
   max-width: 608px;
   margin: 0 auto;
   text-align: center;
   padding-bottom: 4rem;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .stateFindingsHeroContainer {
+    padding-inline: var(--side-padding);
+  }
 }
 
 .carrouselRef {
   width: calc(100vw - 3rem);
   margin: 0 auto;
-  max-width: 1068px;
+  max-width: var(--max-width);
 }
 
 .implementationFindingsSection {
   padding-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+  .implementationFindingsSection {
+    padding-bottom: 5rem;
+  }
 }
 
 .implementationFindingsImageContainer {
@@ -170,8 +230,8 @@
 
 .implementationGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, auto);
+  grid-template-rows: repeat(2, auto);
   gap: 0;
   border-block: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -179,12 +239,18 @@
 @media (max-width: 768px) {
   .implementationGrid {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
   }
 }
 
-.implementationGrid > div {
-  padding: 3rem 2rem 4.5rem 1.5rem;
+.implementationGrid > div,
+.implementationGrid > div:nth-child(3) {
+  padding: 3.5rem 3rem 3.5rem 1.5rem;
+}
+
+.implementationGrid > div:nth-child(2),
+.implementationGrid > div:nth-child(4) {
+  padding: 3.5rem 2rem 3.5rem 2.5rem;
 }
 
 .implementationGrid > div:nth-child(1),
@@ -195,10 +261,6 @@
 .implementationGrid > div:nth-child(1),
 .implementationGrid > div:nth-child(2) {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.implementationGrid > div:nth-child(2) > div > div > svg {
-  scale: calc(4/3);
 }
 
 @media (max-width: 768px) {
@@ -216,10 +278,45 @@
   }
 
   .implementationGrid > div > div > svg {
-    scale: calc(20/32);
+    width: 20px;
+    height: 20px;
   }
 
-  .implementationGrid > div:nth-child(2) > div > svg {
-    scale: calc(20/24);
+  .implementationGrid > div:nth-child(1),
+  .implementationGrid > div:nth-child(2),
+  .implementationGrid > div:nth-child(3),
+  .implementationGrid > div:nth-child(4) {
+    padding: 2rem 0;
+  }
+}
+
+.leftLight {
+  position: absolute;
+  z-index: -1;
+  width: 1450px;
+  height: auto;
+  aspect-ratio: 966 / 446;
+  top: -100%;
+  left: -150%;
+}
+
+.rightLight {
+  position: absolute;
+  z-index: -1;
+  width: 1080px;
+  height: auto;
+  aspect-ratio: 677 / 171;
+  top: 0;
+  right: -125%;
+}
+
+@media (max-width: 768px) {
+  .leftLight {
+    top: -90%;
+    left: -250%;
+  }
+
+  .rightLight {
+    display: none;
   }
 }

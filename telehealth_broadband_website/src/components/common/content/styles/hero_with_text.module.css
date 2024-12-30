@@ -10,7 +10,8 @@
 
 .heroContainer[data-in-card="true"],
 .heroContainer[data-variant="story-card-primary"],
-.heroContainer[data-variant="story-card-default"] {
+.heroContainer[data-variant="story-card-default"],
+.heroContainer[data-variant="state-findings"] {
   gap: 0.75rem;
 }
 
@@ -31,7 +32,8 @@
 }
 
 .heroContainer[data-variant="story-card-default"] > .head,
-.heroContainer[data-variant="story-card-primary"] > .head {
+.heroContainer[data-variant="story-card-primary"] > .head,
+.heroContainer[data-variant="state-findings"] > .head {
   font-size: 0.875rem;
   letter-spacing: 0.88px;
   color: var(--text-300);
@@ -60,7 +62,8 @@
   letter-spacing: -0.48px;
 }
 
-.heroContainer[data-in-card="true"] > .title {
+.heroContainer[data-in-card="true"] > .title,
+.heroContainer[data-variant="state-findings"] > .title {
   font-size: 1.75rem;
   letter-spacing: -0.56px;
 }
@@ -110,7 +113,8 @@
   line-height: 1.5;
 }
 
-.heroContainer[data-in-card="true"] > .content {
+.heroContainer[data-in-card="true"] > .content,
+.heroContainer[data-variant="state-findings"] > .content {
   font-size: 1.125rem;
   line-height: 1.556;
   color: var(--text-300);
@@ -155,5 +159,15 @@
     font-size: 1.125rem;
     letter-spacing: -0.36px;
     line-height: 1.333;
+  }
+
+  .heroContainer[data-variant="state-findings"] > .title {
+    font-size: 1.375rem;
+    letter-spacing: -0.44px;
+  }
+
+  .heroContainer[data-variant="state-findings"] > .content {
+    font-size: 1rem;
+    line-height: 1.625;
   }
 }

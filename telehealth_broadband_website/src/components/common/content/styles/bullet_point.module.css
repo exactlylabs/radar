@@ -202,11 +202,13 @@
 }
 
 .container[data-variant="findings-nutshell-small"] > .textContainer,
-.container[data-variant="findings-nutshell"] > .textContainer {
+.container[data-variant="findings-nutshell"] > .textContainer,
+.container[data-variant="findings-hero"] > .textContainer {
   gap: 0.75rem;
 }
 
-.container[data-variant="findings-nutshell-small"] > .textContainer > .title {
+.container[data-variant="findings-nutshell-small"] > .textContainer > .title,
+.container[data-variant="findings-hero"] > .textContainer > .title {
   font-size: 1.25rem;
   letter-spacing: -0.4px;
 }
@@ -217,15 +219,22 @@
 }
 
 .container[data-variant="findings-nutshell"] > .textContainer > .content,
-.container[data-variant="findings-nutshell-small"] > .textContainer > .content {
+.container[data-variant="findings-nutshell-small"] > .textContainer > .content,
+.container[data-variant="findings-hero"] > .textContainer > .content {
   font-size: 1.0625rem;
   line-height: 1.529;
 }
 
+.container[data-variant="findings-hero"] {
+  gap: 1rem;
+}
+
+
 @media (max-width: 768px) {
   .container[data-variant="findings-nutshell"] > .iconCircle > svg,
   .container[data-variant="findings-nutshell-small"] > .iconCircle > svg,
-  .container[data-variant="guidance-and-recommendations"] > .iconCircle > svg {
+  .container[data-variant="guidance-and-recommendations"] > .iconCircle > svg,
+  .container[data-variant="findings-hero"] > .iconCircle > svg {
     width: 20px;
     height: 20px;
   }
@@ -235,18 +244,21 @@
   }
 
   .container[data-variant="findings-nutshell"] > .textContainer,
-  .container[data-variant="findings-nutshell-small"] > .textContainer {
+  .container[data-variant="findings-nutshell-small"] > .textContainer,
+  .container[data-variant="findings-hero"] > .textContainer {
     gap: 0.5rem;
   }
 
   .container[data-variant="findings-nutshell"] > .textContainer > .title,
-  .container[data-variant="findings-nutshell-small"] > .textContainer > .title {
+  .container[data-variant="findings-nutshell-small"] > .textContainer > .title,
+  .container[data-variant="findings-hero"] > .textContainer > .title {
     font-size: 1.125rem;
     letter-spacing: -0.36px;
   }
 
   .container[data-variant="findings-nutshell"] > .textContainer > .content,
-  .container[data-variant="findings-nutshell-small"] > .textContainer > .content {
+  .container[data-variant="findings-nutshell-small"] > .textContainer > .content,
+  .container[data-variant="findings-hero"] > .textContainer > .content {
     font-size: 1rem;
     line-height: 1.625;
   }
