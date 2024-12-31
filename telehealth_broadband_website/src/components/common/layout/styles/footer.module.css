@@ -295,3 +295,25 @@
   background-color: rgba(255, 255, 255, 0.1);
   margin: 2.5rem auto 1.5rem;
 }
+
+.signatureContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.verticalDivider {
+  width: 1px;
+  height: 17.5px;
+  background-color: var(--text-400);
+}
+
+.poweredByContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
