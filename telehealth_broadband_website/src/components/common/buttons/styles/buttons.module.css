@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 9px;
+  gap: .5rem;
   background-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   cursor: pointer;
@@ -72,6 +72,7 @@
   font-size: 1rem;
   border: none;
   outline: none;
+  max-width: 100%;
 }
 
 .readMore > * {
@@ -96,9 +97,22 @@
 }
 
 .readMore[data-transparent='true'] {
+  color: var(--text-200);
   background-color: transparent;
   backdrop-filter: none;
   padding: 0;
+  display: inline-block;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+
+  svg {
+    display: inline-block;
+    vertical-align: text-bottom;
+  }
+}
+
+.readMore[data-transparent='true']:hover {
+  color: white;
 }
 
 .readMore[data-inactive='true']:hover {

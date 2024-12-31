@@ -1,8 +1,6 @@
-import {useState} from "react";
+import {type ReactElement, useState} from "react";
 import styles from './styles/expansible_rows.module.css';
 import type {CardContent} from "../types.ts";
-import plusIcon from "../../../assets/icons/plus.svg";
-import minusIcon from "../../../assets/icons/minus.svg";
 
 interface ExpansibleRowsProps {
   variant?: 'default' | 'overview-project-metrics';
@@ -15,6 +13,42 @@ interface ExpansibleRowProps {
   isOpen: boolean;
   index: number;
   toggleOpen: (index: number) => void;
+}
+
+interface GenericExpansibleRowProps {
+  title: string;
+  content: ReactElement;
+  isOpen: boolean;
+  index: number;
+  toggleOpen: (index: number) => void;
+}
+
+export function GenericExpansibleRow({title, content, isOpen, index, toggleOpen}: GenericExpansibleRowProps) {
+  return (
+    <div className={styles.row} data-open={isOpen.toString()}>
+      <div className={styles.topRow} onClick={() => toggleOpen(index)}>
+        <h4 className={styles.title}>{title}</h4>
+        <button className={styles.button}>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="16" height="16" data-type="plus">
+            <path fill="white" transform="translate(1 7.25)"
+                  d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
+                  fillRule="evenodd"/>
+            <path fill="white" transform="matrix(-4.37114e-08 1 -1 -4.37114e-08 8.75013 0.999874)"
+                  d="M0.75 0L13.250252 0C13.664466 -7.6089797e-17 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 2.5363265e-17 1.1642135 0 0.75C-5.072653e-17 0.33578643 0.33578643 5.072653e-17 0.75 0Z"
+                  fillRule="evenodd"/>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="16" height="16" data-type="minus">
+            <path fill="white" transform="translate(1 7.25)"
+                  d="M0.75 0L13.250252 0C13.664466 0 14.000252 0.33578643 14.000252 0.75C14.000252 1.1642135 13.664466 1.5 13.250252 1.5L0.75 1.5C0.33578643 1.5 0 1.1642135 0 0.75C0 0.33578643 0.33578643 0 0.75 0Z"
+                  fillRule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div className={styles.contentContainer} data-open={isOpen.toString()} data-variant={'generic'}>
+        {content}
+      </div>
+    </div>
+  )
 }
 
 // TODO: make the text fade in a bit with opacity so the height growth doesn't feel choppy

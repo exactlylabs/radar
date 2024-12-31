@@ -1,0 +1,185 @@
+---
+import styles from './styles/resources_related_links.module.css';
+import HeroWithText from "../common/content/HeroWithText.astro";
+import GoToLink from "../common/buttons/GoToLink.astro";
+import ResourcesExpansibleResponsiveRows from './ResourcesExpansibleResponsiveRows';
+---
+
+<div class={styles.topLevelContainer}>
+  <div class={styles.heroContainer}>
+    <HeroWithText head="Related Links" title="Discover Other Broadband Tools and Resources"/>
+  </div>
+  <div class={styles.fullContainer}>
+    <ul class={styles.linksContainer}>
+      <li class={styles.linkItem} data-active="true"><a data-type="resource-link" href="#fcc">Federal Communications Commission (FCC)</a></li>
+      <li class={styles.linkItem} data-active="false"><a data-type="resource-link" href="#ntia">National Telecommunications and Information Administration (NTIA)</a></li>
+      <li class={styles.linkItem} data-active="false"><a data-type="resource-link" href="#hhs">Department of Health and Human Services (HHS)</a></li>
+      <li class={styles.linkItem} data-active="false"><a data-type="resource-link" href="#usda">U.S. Department of Agriculture (USDA)</a></li>
+      <li class={styles.linkItem} data-active="false"><a data-type="resource-link" href="#non-federal-resources">Non-Federal Resources</a></li>
+    </ul>
+    <div class={styles.boxesContainer}>
+      <div id="fcc" class={styles.box}>
+        <h4>Federal Communications Commission (FCC)</h4>
+        <div class={styles.linksGrid}>
+          <div class={styles.linkBox}>
+            <GoToLink href="https://broadbandmap.fcc.gov/home" text="FCC National Broadband Map"/>
+            <p>A comprehensive national broadband serviceable location (BSL) "fabric" map showing speeds, vendors, and broadband technology available at each BSL location.</p>
+          </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/reports-research/reports/measuring-broadband-america/measuring-fixed-broadband-thirteenth-report" text="FCC 13th (2024) Fixed Broadband Report"/>
+		        <p>Annual report on broadband speed testing conducted by the Federal Communications Commission.</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/reports-research/reports/measuring-broadband-america/measuring-broadband-america-mobile-data" text="Measuring Broadband America Mobile Data"/>
+		        <p>FCC report and downloadable apps for measuring mobile broadband.</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/broadbandlabels" text="Broadband Consumer Labels"/>
+		        <p>The Federal Communications Commission released Broadband Labels that show clear and understandable information about the cost and performance of internet services.</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://docs.fcc.gov/public/attachments/DOC-401205A1.pdf" text="Broadband Speed Benchmark"/>
+		        <p>In March 2024, the FCC updated high-speed broadband benchmarks, increasing them from 25/3 Megabits per second (or Mbps) to 100/20 Mbps for download and upload speeds</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/consumers/guides/broadband-speed-guide" text="Broadband Speed Guide"/>
+		        <p>Compare common online activities with the minimum download speed (Megabits per second, or Mbps) needed for adequate performance. Speeds assume one activity at a time.</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/general/rural-health-care-program" text="FCC Rural Health Care Program"/>
+		        <p>A program to support telecommunications and broadband service for healthcare facilities to bring medical care to rural areas through increased connectivity.</p>
+	        </div>
+	        <div class={styles.linkBox}>
+		        <GoToLink href="https://www.fcc.gov/general/lifeline-program-low-income-consumers" text="FCC Lifeline"/>
+		        <p>A program to discount the cost of phone or broadband service for qualifying low-income consumers.</p>
+	        </div>
+        </div>
+      </div>
+	    <div id="ntia" class={styles.box}>
+		    <h4>National Telecommunications and Information Administration (NTIA)</h4>
+		    <div class={styles.linksGrid}>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://www.internetforall.gov/" text="Internet for All"/>
+				    <p>Information on broadband funding programs (including the Broadband Equity Access and Deployment (BEAD) Program, with links, contacts, and progress for each state.</p>
+			    </div>
+        </div>
+      </div>
+	    <div id="hhs" class={styles.box}>
+		    <h4>Department of Health and Human Services (HHS)</h4>
+		    <div class={styles.linksGrid}>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://telehealth.hhs.gov/providers/best-practice-guides/telehealth-for-rural-areas/access-to-internet-and-other-telehealth-resources" text="Telehealth.HHS.gov"/>
+				    <p>Discover more about increasing access to internet, expanding telehealth for rural areas, and other telehealth resources.</p>
+			    </div>
+		    </div>
+      </div>
+	    <div id="usda" class={styles.box}>
+		    <h4>U.S. Department of Agriculture (USDA)</h4>
+		    <div class={styles.linksGrid}>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://www.usda.gov/broadband" text="https://www.usda.gov/broadband"/>
+				    <p>Learn about the work that USDA is investing in rural broadband.</p>
+			    </div>
+		    </div>
+      </div>
+	    <div id="non-federal-resources" class={styles.box}>
+		    <h4>Non-Federal Resources</h4>
+		    <div class={styles.linksGrid}>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://extension.psu.edu/penn-state-national-broadband-navigator" text="National Broadband Navigator and Webinars"/>
+				    <p>An interactive map and webinar series created by Penn State Extension with funding from The Rockefeller Foundation. The navigator gives detailed information on health care resources, broadband availability, and community demographics useful to state and community planners, service providers and others wanting to understand broadband resources to plan for upcoming broadband deployment programs.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://info.americantelemed.org/disparities-advisory-group-toolkit" text="Digital Infrastructure Disparities Map and Economic and Social Value-Added (ESVA) Calculator"/>
+				    <p>American Telemedicine Association (ATA) online interactive map to show digital infrastructure by zip code or county, highlighting where connectivity hinders health resource access, including a composite community digital infrastructure score. The ESVA Calculator estimates value of a broadband intervention for payers, providers, government, and business.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://www.speedtest.net/" text="Ookla"/>
+				    <p>Popular speed test for accurate internet metrics.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://speed.cloudflare.com/" text="Cloudflare"/>
+				    <p>Speed test with privacy-focused tools.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://fast.com/" text="Fast.com"/>
+				    <p>Quick speed test by Netflix.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://openspeedtest.com/" text="Open Speed Test"/>
+				    <p>Simple, browser-based speed testing.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://speedsmart.net/" text="Speed Smart"/>
+				    <p>Advanced speed test with detailed stats.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://testmy.net/" text="TestMy.net"/>
+				    <p>Unique tests for real-world internet performance.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://speed.measurementlab.net/#/" text="M-Lab Speed Test"/>
+				    <p>Open-source test backed by data transparency.</p>
+			    </div>
+			    <div class={styles.linkBox}>
+				    <GoToLink href="https://speedof.me/" text="Speedof.me"/>
+				    <p>HTML5 speed test optimized for mobile devices.</p>
+			    </div>
+		    </div>
+      </div>
+    </div>
+  </div>
+  <div class={styles.responsiveFullContainer}>
+    <ResourcesExpansibleResponsiveRows client:only="react"/>
+  </div>
+</div>
+
+<script>
+  let forced = false;
+  const links = document.querySelectorAll('a[data-type="resource-link"]') as NodeListOf<HTMLAnchorElement>;
+  links.forEach((link: HTMLAnchorElement) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      forced = true;
+      const target: HTMLAnchorElement = e.target as HTMLAnchorElement;
+      const li = target.parentElement as HTMLLIElement;
+      links.forEach((link) => {
+        link.parentElement!.dataset.active = 'false';
+      });
+      li.dataset.active = 'true';
+      window.history.pushState({}, '', target.getAttribute('href'));
+      const id = target.getAttribute('href')!.replace('#', '');
+      const targetElement = document.getElementById(id)!;
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  
+  function changeActiveItemIfIntersecting() {
+    if(forced) return;
+    const links = document.querySelectorAll('a[data-type="resource-link"]') as NodeListOf<HTMLAnchorElement>;
+    let firstFullyInViewSectionId: string | null = null;
+    links.forEach((link: HTMLAnchorElement) => {
+      const id = link.getAttribute('href')!.replace('#', '');
+      const targetElement = document.getElementById(id)!;
+      const rect = targetElement.getBoundingClientRect();
+      if(rect.top >= 0 && rect.top <= window.innerHeight &&!firstFullyInViewSectionId) {
+        firstFullyInViewSectionId = id;
+      }
+    });
+    links.forEach((link) => {
+      link.parentElement!.dataset.active = 'false';
+    });
+    if(firstFullyInViewSectionId) {
+      const link = document.querySelector(`a[href="#${firstFullyInViewSectionId}"]`) as HTMLAnchorElement;
+      link.parentElement!.dataset.active = 'true';
+      window.history.pushState({}, '', link.getAttribute('href'));
+    } else {
+      window.history.pushState({}, '', window.location.pathname.split('#')[0]);
+    }
+  }
+  
+  
+  window.addEventListener('scroll', changeActiveItemIfIntersecting);
+  window.addEventListener('scrollend', () => { forced = false; });
+  
+</script>
