@@ -24,6 +24,7 @@ import thumbnail2 from '../assets/images/resources-card-thumbnail-2.webp';
 import thumbnail3 from '../assets/images/resources-card-thumbnail-3.webp';
 import thumbnail4 from '../assets/images/resources-card-thumbnail-4.webp';
 import RadarToolkitIntroduction from "../components/resources/RadarToolkitIntroduction.astro";
+import ResourcesRelatedLinks from "../components/resources/ResourcesRelatedLinks.astro";
 ---
 <BaseLayout
   title="Tools and Resources for Rural Connectivity"
@@ -98,6 +99,10 @@ import RadarToolkitIntroduction from "../components/resources/RadarToolkitIntrod
       poster={videoThumbnail.src}
       controls
     ></video>
+  </section>
+
+  <section class={styles.relatedLinksSection}>
+    <ResourcesRelatedLinks/>
   </section>
 
   <Modal id={'broadband-modal'} isOpen={false}>

@@ -92,17 +92,22 @@
 }
 
 .contentContainer {
-  display: grid;
   grid-template-rows: 0fr;
   transition: all 500ms ease;
   opacity: 0;
+  display: none;
 }
 
 .contentContainer[data-open="true"] {
+  display: grid;
   grid-template-rows: 1fr;
   padding-top: .5rem;
   animation: fade-in 500ms ease forwards;
   animation-delay: 200ms;
+}
+
+.contentContainer[data-variant="generic"] {
+  padding-top: 2rem;
 }
 
 @keyframes fade-in {

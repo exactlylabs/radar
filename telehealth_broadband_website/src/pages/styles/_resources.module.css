@@ -148,3 +148,21 @@
   }
 
 }
+
+.relatedLinksSection {
+  width: 100vw;
+  background: linear-gradient(
+    180deg,
+    rgba(75, 123, 229, 0.1) 0%,
+    rgba(75, 123, 229, 0) 100%
+  );
+  padding-top: 6rem;
+  padding-bottom: 7.5rem;
+}
+
+@media (max-width: 768px) {
+  .relatedLinksSection {
+    padding-top: 3.5rem;
+    padding-bottom: 5rem;
+  }
+}
