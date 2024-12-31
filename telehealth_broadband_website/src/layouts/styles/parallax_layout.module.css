@@ -6,8 +6,6 @@
 
 .parallaxBackgroundImage {
   width: auto;
-  min-width: 100vw;
-  max-width: 1680px;
   height: 100dvh;
   height: 100vh;
   aspect-ratio: var(--parallax-aspect-ratio);

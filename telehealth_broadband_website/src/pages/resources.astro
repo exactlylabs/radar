@@ -23,6 +23,7 @@ import thumbnail1 from '../assets/images/resources-card-thumbnail-1.webp';
 import thumbnail2 from '../assets/images/resources-card-thumbnail-2.webp';
 import thumbnail3 from '../assets/images/resources-card-thumbnail-3.webp';
 import thumbnail4 from '../assets/images/resources-card-thumbnail-4.webp';
+import RadarToolkitIntroduction from "../components/resources/RadarToolkitIntroduction.astro";
 ---
 <BaseLayout
   title="Tools and Resources for Rural Connectivity"
@@ -49,9 +50,8 @@ import thumbnail4 from '../assets/images/resources-card-thumbnail-4.webp';
   </section>
   
   <section class={styles.exploreToolsSection}>
-    <div class={commonStyles.paddedSection} id="carrousel-alignment-ref">
-      <h3 class={styles.exploreToolsTitle}>Explore the Tools</h3>
-    </div>
+    <RadarToolkitIntroduction/>
+    <div class={commonStyles.paddedSection} id="carrousel-alignment-ref"></div>
     <Carrousel client:only="react" alignmentRefId={'carrousel-alignment-ref'} elementCount={4}>
       <ResourceCard head="Broadband Mapping"
                     title="Explore Broadband Nationwide"
