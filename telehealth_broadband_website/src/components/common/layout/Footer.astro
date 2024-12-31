@@ -1,10 +1,11 @@
 ---
 import styles from './styles/footer.module.css';
 import {Image} from 'astro:assets';
+import FooterMobileLinks from "./FooterMobileLinks.astro";
 
 import footerLogo from '../../../assets/logos/footer-logo.webp';
 import footerLights from '../../../assets/images/footer-lights.webp';
-import FooterMobileLinks from "./FooterMobileLinks.astro";
+import exactlyLabsLogo from '../../../assets/logos/exactly-labs.webp';
 ---
 
 <footer class={styles.footer}>
@@ -60,7 +61,22 @@ import FooterMobileLinks from "./FooterMobileLinks.astro";
         <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
         <li><a href="mailto:info@telehealthbroadband.com">Contact Us</a></li>
       </ul>
-      <p class={styles.footerText}>© 2024 Telehealth Broadband Project</p>
+      <div class={styles.signatureContainer}>
+        <p class={styles.footerText}>© 2024 Telehealth Broadband Project</p>
+        <div class={styles.verticalDivider}></div>
+        <div class={styles.poweredByContainer}>
+          <p class={styles.footerText}>Powered by</p>
+          <a href="https://exactlylabs.com" target="_blank">
+            <Image src={exactlyLabsLogo}
+                   alt="Exactly Labs logo"
+                   height={24}
+                   loading={'eager'}
+                   densities={[1,2,3]}
+                   quality={'max'}
+            />
+          </a>
+        </div>
+      </div>
     </div>
     
     <div class={styles.responsiveContainer}>
