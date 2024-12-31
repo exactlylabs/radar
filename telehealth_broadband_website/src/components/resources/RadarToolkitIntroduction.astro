@@ -1,0 +1,15 @@
+---
+import styles from './styles/radar_toolkit_introduction.module.css';
+import background from '../../assets/images/radar-toolkit-introduction-bg.webp';
+import HeroWithText from "../common/content/HeroWithText.astro";
+---
+
+<div class={styles.introductionContainer} style={{backgroundImage: `url(${background.src})`}}>
+  <div class={styles.heroContainer}>
+    <HeroWithText
+      head="Our Tools"
+      title="Introducing Radar Toolkit"
+      content="Throughout the project, the Telehealth Broadband Pilot Program developed the Radar Toolkit, a suite of tools now available to monitor internet connectivity in real time and perform speed tests in both fixed and mobile environments."
+    />
+  </div>
+</div>

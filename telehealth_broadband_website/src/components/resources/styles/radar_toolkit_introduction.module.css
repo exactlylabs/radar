@@ -1,0 +1,28 @@
+.introductionContainer {
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 6rem;
+  padding-bottom: 5.375rem;
+  border-top: solid 1px #D8D8D8;
+}
+
+.heroContainer {
+  max-width: 608px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .introductionContainer {
+    padding-bottom: 4rem;
+    border-top: none;
+    background-position: 80% -150px;
+  }
+
+  .heroContainer {
+    max-width: 100%;
+    padding-inline: var(--side-padding);
+  }
+}
