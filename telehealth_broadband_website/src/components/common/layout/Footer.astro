@@ -103,6 +103,18 @@ import exactlyLabsLogo from '../../../assets/logos/exactly-labs.webp';
         <li><a href="mailto:info@telehealthbroadband.com">Contact Us</a></li>
       </ul>
       <p class={styles.footerText}>© 2024 Telehealth Broadband Project</p>
+	    <div class={styles.poweredByContainer}>
+		    <p class={styles.footerText}>Powered by</p>
+		    <a href="https://exactlylabs.com" target="_blank">
+			    <Image src={exactlyLabsLogo}
+			           alt="Exactly Labs logo"
+			           height={24}
+			           loading={'eager'}
+			           densities={[1,2,3]}
+			           quality={'max'}
+			    />
+		    </a>
+	    </div>
     </div>
     <Image src={footerLights}
        alt="Footer lights"

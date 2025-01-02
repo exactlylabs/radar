@@ -61,7 +61,7 @@ const { scrollToId } = Astro.props;
     if(window.innerWidth <= 768) {
       const activeElement = document.querySelector(`.${styles.tab}[data-active="true"]`);
       if(!activeElement) return;
-      const distance = activeElement.getBoundingClientRect().left - (window.innerWidth / 2) + (activeElement.offsetWidth / 2);
+      const distance = activeElement.getBoundingClientRect().left - (window.innerWidth / 2) + ((activeElement as HTMLButtonElement).offsetWidth / 2);
       const staticContainer = document.querySelector(`.${styles.staticContainer}`)!;
       staticContainer.scrollBy({ left: distance, behavior: 'smooth' });
     }
