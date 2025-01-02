@@ -20,8 +20,17 @@ export const getCalendarFilterValue = (filter: Filter): string => {
     case CalendarFilters.ALL_TIME:
       return '';
     case CalendarFilters.LAST_WEEK:
-      const lastWeekNumber = getWeekNumber() - 2;
-      return `week=${lastWeekNumber}&year=${today.getFullYear()}`;
+      let lastWeekNumber = getWeekNumber();
+      let year;
+      if(lastWeekNumber === 1) {
+        // get last week of last year
+        lastWeekNumber = 52;
+        year = new Date().getFullYear() - 1;
+      } else {
+        year = new Date().getFullYear();
+        lastWeekNumber -= 2; // minus 2 (1 for backend 0 indexing and 1 for one less week)
+      }
+      return `week=${lastWeekNumber}&year=${year}`;
     case CalendarFilters.LAST_MONTH:
       let thisMonth = today.getMonth();
       let thisYear = today.getFullYear();

@@ -161,8 +161,16 @@ export const getDateQueryStringFromCalendarType = (calendarType: string): string
   let thisYear = today.getFullYear();
   switch (calendarType) {
     case CalendarFilters.LAST_WEEK:
-      const thisWeekNumber = getWeekNumber();
-      queryString = `&year=${new Date().getFullYear()}&week=${thisWeekNumber - 1 - 1}`; // minus 2 (1 for backend 0 indexing and 1 for one less week)
+      let thisWeekNumber = getWeekNumber();
+      if(thisWeekNumber === 1) {
+        // get last week of last year
+        thisWeekNumber = 52;
+        thisYear = new Date().getFullYear() - 1;
+      } else {
+        thisYear = new Date().getFullYear();
+        thisWeekNumber -= 2; // minus 2 (1 for backend 0 indexing and 1 for one less week)
+      }
+      queryString = `&year=${thisYear}&week=${thisWeekNumber}`;
       break;
     case CalendarFilters.LAST_MONTH:
       // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
@@ -174,7 +182,6 @@ export const getDateQueryStringFromCalendarType = (calendarType: string): string
       queryString = `&year=${thisYear}&month=${thisMonth}`;
       break;
     case CalendarFilters.THIS_YEAR:
-
       queryString = `&year=${thisYear}`;
       break;
     case CalendarFilters.ALL_TIME:
@@ -214,15 +221,23 @@ const decodeCustomDate = (customDate: string): string => {
     //Oct 11 - Oct 17 || Oct 11 - Oct 17 (2020)
     const split: Array<string> = customDate.split('-');
     let endMonthDay = split[1];
-    let year: Optional<string> = null;
+    let year: Optional<string | number> = null;
     if(endMonthDay.includes('(')) {
       const endDaySplit = endMonthDay.split('(');
       year = endDaySplit[1].split(')')[0];
       endMonthDay = endDaySplit[0];
     }
     const endDay = getDateFromString(endMonthDay.trim(), year);
-    const weekNumber = getWeekNumber(endDay);
-    queryString += `&week=${weekNumber - 1}`;
+    let weekNumber = getWeekNumber(endDay);
+    if(weekNumber === 1) {
+      // get last week of last year
+      weekNumber = 52;
+      year = new Date().getFullYear() - 1;
+    } else {
+      year = new Date().getFullYear();
+      weekNumber -= 1;
+    }
+    queryString += `&week=${weekNumber}`;
     if(year) queryString += `&year=${year}`;
     else queryString += `&year=2025`;
   } else if(isSpecificMonth(customDate)) {
