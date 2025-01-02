@@ -35,6 +35,7 @@ export const getConfigFromParams = () => {
         config[name] = value;
       }
     });
+    console.log(config);
   } else {
     config.frameStyle = {
       width: '100vw',

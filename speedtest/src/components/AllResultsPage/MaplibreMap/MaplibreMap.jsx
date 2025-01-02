@@ -43,7 +43,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!isMediumSizeScreen && !isSmallSizeScreen);
+  const [filtersPanelOpen, setFiltersPanelOpen] = useState(!config.webviewMode && !config.widgetMode && !isMediumSizeScreen && !isSmallSizeScreen);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
   const [layersPopupOpen, setLayersPopupOpen] = useState(false);
   const [resultsTabSelected, setResultsTabSelected] = useState(TABS.ALL_RESULTS);
