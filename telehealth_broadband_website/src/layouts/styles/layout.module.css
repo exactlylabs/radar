@@ -4,9 +4,9 @@
   --side-padding: calc((100vw - var(--max-width)) / 2);
 }
 
-@media (max-width: 1250px) {
+@media (max-width: 865px) {
   :root {
-    --side-padding: 40px;
+    --side-padding: 32px;
   }
 }
 

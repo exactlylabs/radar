@@ -15,6 +15,12 @@
   margin: 0 auto;
 }
 
+@media (max-width: 865px) {
+  .paragraph {
+    max-width: 100%;
+  }
+}
+
 .topPaddedText {
   padding-top: 3.5rem;
 }
