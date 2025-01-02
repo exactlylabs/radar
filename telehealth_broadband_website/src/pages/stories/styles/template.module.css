@@ -92,7 +92,7 @@
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 865px) {
   .textContainer {
     max-width: unset;
     width: calc(100% - calc(2 * var(--side-padding)));
@@ -123,7 +123,7 @@
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 865px) {
   .verticallyAnimatedImagesContainer {
     width: 100%;
     max-width: unset;
@@ -148,7 +148,7 @@
   margin-bottom: -40px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 865px) {
   .verticalAnimated {
     width: 100%;
     flex-basis: unset;
@@ -171,7 +171,7 @@
   margin: 0 auto 5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 865px) {
   .paddedText {
     font-size: 1rem;
     line-height: 1.625;
