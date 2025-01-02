@@ -25,7 +25,7 @@ interface GenericExpansibleRowProps {
 
 export function GenericExpansibleRow({title, content, isOpen, index, toggleOpen}: GenericExpansibleRowProps) {
   return (
-    <div className={styles.row} data-open={isOpen.toString()}>
+    <div className={styles.row} data-open={isOpen.toString()} data-variant={'generic'}>
       <div className={styles.topRow} onClick={() => toggleOpen(index)}>
         <h4 className={styles.title}>{title}</h4>
         <button className={styles.button}>
