@@ -11,6 +11,7 @@
   min-width: 320px;
   animation: fadeIn 500ms;
   opacity: 1;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -26,6 +27,11 @@
 }
 
 @media (max-width: 550px) {
+  .modal {
+    max-width: calc(100vw - 2rem);
+    padding: 3rem 1.5rem;
+  }
+
   .modal[data-responsive="true"] {
     width: 100vw;
     top: unset;
@@ -33,7 +39,6 @@
     transform: translateX(-50%);
     max-width: unset;
     animation: slideIn 500ms;
-    box-sizing: border-box;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     padding: 3rem 1.5rem 1.5rem;

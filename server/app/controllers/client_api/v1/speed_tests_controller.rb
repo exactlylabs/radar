@@ -74,7 +74,6 @@ module ClientApi
             max_price: filters[:max_price],
             connection_type: filters[:connection_type]
           }
-
           sql = %{
           WITH tile_bounds AS (
             -- Get the tile envelope for a given zoom level ({{z}}), column ({{x}}), and row ({{y}})
@@ -240,7 +239,7 @@ module ClientApi
       end
 
       def max_cost
-        render json: { max_cost: ClientSpeedTest.where("network_cost != 'Nan' AND network_cost IS NOT NULL AND network_cost <= 2000").maximum(:network_cost) }
+        render json: { max_cost: ClientSpeedTest.where("network_cost IS NOT NULL AND network_cost <= 2000").maximum(:network_cost) }
       end
 
       private
@@ -256,7 +255,6 @@ module ClientApi
         else
           sql += ' AND ("client_speed_tests"."network_cost" != 0 AND "client_speed_tests"."network_cost" IS NOT NULL AND ("client_speed_tests"."network_cost" >= :min_price AND "client_speed_tests"."network_cost" <= :max_price))'
         end
-        sql += " AND network_cost != 'NaN' " # Filter out NaN values that may have slipped
         sql
       end
 

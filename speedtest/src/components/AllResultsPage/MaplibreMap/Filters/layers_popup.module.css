@@ -216,8 +216,15 @@
     cursor: pointer;
   }
 
-  .applyButton:hover {
-    opacity: 0.8;
+  @media (pointer: fine) {
+    .applyButton:hover {
+      opacity: 0.8;
+    }
   }
 
+  @media (pointer: coarse) {
+    .applyButton:active {
+      scale: 0.95;
+    }
+  }
 }

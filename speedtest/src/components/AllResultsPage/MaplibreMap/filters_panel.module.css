@@ -75,8 +75,10 @@
   left: calc(var(--filters-panel-width) + 1.5rem);
 }
 
-.filtersButton:hover {
-  opacity: 0.8;
+@media (pointer: fine) {
+  .filtersButton:hover {
+    opacity: 0.8;
+  }
 }
 
 @media (max-width: 750px) {
@@ -150,8 +152,16 @@
   cursor: pointer;
 }
 
-.applyButton:hover {
-  opacity: 0.8;
+@media (pointer: coarse) {
+  .applyButton:active {
+    scale: 0.95;
+  }
+}
+
+@media (pointer: fine) {
+  .applyButton:hover {
+    opacity: 0.8;
+  }
 }
 
 .filtersSection > section {

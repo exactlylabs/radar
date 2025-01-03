@@ -49,7 +49,7 @@ export default function LayersPopup({isOpen, toggleLayersPopup, onHelpClick}) {
         <button onClick={onHelpClick} className={styles.helpButton}>How classification works</button>
       </div>
       <div className={styles.applyContainer}>
-        <button className={styles.applyButton}>Apply</button>
+        <button className={styles.applyButton} onClick={toggleLayersPopup}>Apply</button>
       </div>
     </div>
   );

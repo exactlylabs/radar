@@ -179,6 +179,9 @@ export default function CalendarModal({closeModal}) {
       return;
     }
     setError('');
+    if(startDate.getTime() === endDate.getTime()) {
+      endDate.setHours(23, 59, 59, 999);
+    }
     setDates(startDate, endDate);
     closeModal();
   }
