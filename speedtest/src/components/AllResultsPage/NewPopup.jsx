@@ -124,7 +124,8 @@ export default function NewPopup({test}) {
   const getConnectionQuality = () => {
     if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNSERVED) return 'Unserved';
     else if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNDERSERVED) return 'Underserved';
-    else return 'Served';
+    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.SERVED) return 'Served';
+    else return 'No Internet';
   }
 
   const getNetworkLocationIcon = () => {

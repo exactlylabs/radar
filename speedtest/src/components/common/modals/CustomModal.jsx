@@ -1,13 +1,8 @@
 import styles from './custom_modal.module.css';
-import {useContext, useEffect} from "react";
-import ConfigContext from "../../../context/ConfigContext";
-import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {useEffect} from "react";
 import closeModalIcon from '../../../assets/close-icon.png';
 
 const CustomModal = ({isOpen, closeModal, responsive, children}) => {
-
-  const {isExtraSmallSizeScreen, isSmallSizeScreen} = useViewportSizes();
-  const config = useContext(ConfigContext);
 
   useEffect(() => {
     if(isOpen) window.addEventListener('keydown', handleCloseModalWithEscapeKey);

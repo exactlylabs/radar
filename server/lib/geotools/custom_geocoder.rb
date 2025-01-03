@@ -25,6 +25,8 @@ module GeoTools
           begin
             json = JSON.parse(response.body)
             result = Geocoder::Result::Base.new(json)
+            return nil unless result.data['location']
+            return nil unless result.data['location']['latitude'] && result.data['location']['longitude']
             coordinates = [result.data['location']['latitude'], result.data['location']['longitude']]
           rescue Exception => e
             Sentry.capture_exception(e)

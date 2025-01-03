@@ -4,6 +4,8 @@ import DateRangeFilter from "./Filters/DateRangeFilter";
 import InternetProviderFilter from "./Filters/InternetProviderFilter";
 import CostFilter from "./Filters/CostFilter/CostFilter";
 import CloseModalButton from './Filters/common/CloseModalButton';
+import FiltersContext from "../../../context/FiltersContext";
+import {useContext} from "react";
 
 function filtersIcon() {
   return (
@@ -22,13 +24,21 @@ function filtersIcon() {
 }
 
 export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, applyFilters}) {
+
+  const {clearFilters} = useContext(FiltersContext);
+
+  const handleClearFilters = () => {
+    clearFilters();
+    applyFilters();
+  }
+
   return (
     <>
       <div className={styles.filtersPanel} data-open={isOpen.toString()}>
         <div className={styles.filtersSection}>
           <section className={styles.header}>
             <h3 className={styles.headerTitle}>Filters</h3>
-            <button className={styles.resetFiltersButton}>Reset filters</button>
+            <button className={styles.resetFiltersButton} onClick={handleClearFilters}>Reset filters</button>
             <CloseModalButton onClick={togglePanel}/>
           </section>
           <section className={styles.filterSection}>

@@ -14,8 +14,16 @@
   cursor: pointer;
 }
 
-.autoDetectButton:hover:not([disabled]) {
-  background-color: rgba(236, 236, 236, 1);
+@media (pointer: fine) {
+  .autoDetectButton:hover:not([disabled]) {
+    background-color: rgba(236, 236, 236, 1);
+  }
+}
+
+@media (pointer: coarse) {
+  .autoDetectButton:active:not([disabled]) {
+    background-color: rgba(236, 236, 236, 1);
+  }
 }
 
 .autoDetectButton[disabled] {

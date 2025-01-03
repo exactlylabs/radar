@@ -46,7 +46,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(false);
+  const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
   const [firstTimeModalOpen, setFirstTimeModalOpen] = useState(false);
   const [hasRecentered, setHasRecentered] = useState(false);
@@ -262,7 +262,10 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
       <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
       {!loading && mapProvider === 'leaflet-new' && <LeafletMap maxHeight={maxHeight}/>}
-      {!loading && !centerCoordinatesLoading &&  mapProvider === 'maplibre' && <MaplibreMap maxHeight={maxHeight} coordinates={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}/>}
+      {
+        !loading && !centerCoordinatesLoading &&  mapProvider === 'maplibre' &&
+        <MaplibreMap maxHeight={maxHeight} centerCoordinates={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}/>
+      }
       {!loading && !centerCoordinatesLoading && !mapProvider &&
         <div style={getMapWrapperStyle()}>
           <MapContainer

@@ -54,7 +54,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     if(map.current || !mapContainer.current) return;
     map.current = new maplibregl.Map({
       container: mapContainer.current,
-      center: centerCoordinates,
+      center: [centerCoordinates[1], centerCoordinates[0]], // [lng, lat]
       minZoom: 3,
       maxZoom: 14,
       style: {
@@ -263,7 +263,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   }
 
   const handleApplyFilters = (e) => {
-    e.preventDefault();
+    if(e) e.preventDefault();
     setUpdateFiltersDate(new Date());
   }
 
