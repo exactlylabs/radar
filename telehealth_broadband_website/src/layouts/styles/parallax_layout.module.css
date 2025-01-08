@@ -8,6 +8,7 @@
   width: auto;
   height: 100dvh;
   height: 100vh;
+  min-width: 100vw;
   aspect-ratio: var(--parallax-aspect-ratio);
   position: fixed;
   top: 0;

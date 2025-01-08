@@ -27,6 +27,11 @@
   gap: var(--logos-gap);
   padding-block: 1px;
   flex-wrap: nowrap;
+  height: 2.5rem;
+}
+
+.scrollerInner > li {
+  height: 100%;
 }
 
 @media (max-width: 1024px) {

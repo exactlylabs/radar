@@ -183,6 +183,10 @@ li > button {
   cursor: pointer;
 }
 
+.responsiveLinks > li > button > svg {
+  pointer-events: none;
+}
+
 .responsiveLinks > li > a[data-hidden="true"],
 .responsiveLinks > li > button[data-hidden="true"] {
   margin-left: -100px;
