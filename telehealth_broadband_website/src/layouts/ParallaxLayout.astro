@@ -171,9 +171,11 @@ const { bgImageSrc, title, description } = Astro.props;
           parallaxImageContainer.style.height = `${newHeight}px`;
           const newTop = -1 * SIX_REM + incomingTextTop - (currentImageHeight - newHeight) - newHeight;
           parallaxImageContainer.style.top = `${newTop}px`;
+          parallaxImageContainer.style.minWidth = 'unset';
         } else {
           parallaxImageContainer.style.height = `${initialParallaxImageHeight}px`;
           parallaxImageContainer.style.top = `0`;
+          parallaxImageContainer.style.minWidth = '100vw';
         }
         
         const { top: parallaxImageContainerTop } = parallaxImageContainer.getBoundingClientRect();

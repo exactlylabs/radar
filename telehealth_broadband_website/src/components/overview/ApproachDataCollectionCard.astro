@@ -1,5 +1,6 @@
 ---
 import styles from './styles/approach_data_collection_card.module.css';
+import ReadMoreButton from "../common/buttons/ReadMoreButton.astro";
 const { title, content, image } = Astro.props;
 ---
 
@@ -10,4 +11,5 @@ const { title, content, image } = Astro.props;
   />
   <h4 class={styles.title}>{title}</h4>
   <p class={styles.content}>{content}</p>
+  <ReadMoreButton href="/resources" text="Learn More" />
 </li>

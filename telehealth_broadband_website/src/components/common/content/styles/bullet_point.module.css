@@ -60,9 +60,13 @@
   aspect-ratio: 1;
   border-radius: 50%;
   outline: solid 2px #4B7BE5;
+}
+
+.iconCircle > span {
   color: var(--blue-500);
-  font-variation-settings: 'wgth' 700;
   font-size: 1.0625rem;
+  font-variation-settings: 'wgth' 700;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {

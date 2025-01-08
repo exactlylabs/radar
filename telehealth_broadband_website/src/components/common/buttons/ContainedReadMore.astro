@@ -1,12 +1,13 @@
 ---
 import styles from './styles/buttons.module.css';
 import arrow from '../../../assets/icons/arrow.svg';
-const { text } = Astro.props;
+const { text, withUnderline } = Astro.props;
 ---
 
 <button class={styles.readMore}
    data-transparent='true'
    data-inactive='true'
+   data-with-underline={withUnderline ?? 'false'}
 >
   { text ?? 'Read more' }
   <img src={arrow.src} width="16" height="16" alt="right arrow"/>

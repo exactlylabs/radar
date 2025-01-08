@@ -45,7 +45,7 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
       <li>
 	      <button data-target-responsive-menu-id="findings-responsive-menu">
 	        Findings
-		      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+		      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" style="rotate: 180deg">
 			      <path fill="white" transform="translate(1.75119 4.49881)" d="M12.280216 6.7828159C12.573173 6.4899859 12.573275 6.0151119 12.280444 5.7221556L6.7804446 0.21978424C6.487525 -0.07326141 6.012475 -0.07326141 5.7195554 0.21978424L0.21955562 5.7221556C-0.073274463 6.0151119 -0.073172107 6.4899859 0.21978424 6.7828159C0.51274061 7.0756459 0.98761433 7.0755439 1.2804444 6.7825875L6.2509999 1.8113716L11.219556 6.7825875C11.485765 7.0489111 11.902423 7.0732069 12.196082 6.8554158L12.280216 6.7828159Z"/>
 		      </svg>
         </button>
@@ -54,7 +54,7 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
       <li>
         <button data-target-responsive-menu-id="stories-responsive-menu">
           Stories
-	        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16">
+	        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" style="rotate: 180deg">
 		        <path fill="white" transform="translate(1.75119 4.49881)" d="M12.280216 6.7828159C12.573173 6.4899859 12.573275 6.0151119 12.280444 5.7221556L6.7804446 0.21978424C6.487525 -0.07326141 6.012475 -0.07326141 5.7195554 0.21978424L0.21955562 5.7221556C-0.073274463 6.0151119 -0.073172107 6.4899859 0.21978424 6.7828159C0.51274061 7.0756459 0.98761433 7.0755439 1.2804444 6.7825875L6.2509999 1.8113716L11.219556 6.7825875C11.485765 7.0489111 11.902423 7.0732069 12.196082 6.8554158L12.280216 6.7828159Z"/>
 	        </svg>
         </button>
@@ -204,7 +204,7 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
             setTimeout(() => {
               obj.dropdown.removeAttribute('data-closing');
               obj.dropdown.setAttribute('data-open', 'false');
-              obj.button.querySelector('svg').style.rotate = '0deg';
+              obj.button.querySelector('svg').style.rotate = '180deg';
             }, 140);
           });
         
@@ -216,11 +216,11 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
           setTimeout(() => {
             dropdown.removeAttribute('data-closing');
             dropdown.setAttribute('data-open', 'false');
-            chevron.style.rotate = '0deg';
+            chevron.style.rotate = '180deg';
           }, 140);
         } else {
           dropdown.setAttribute('data-open', 'true');
-          chevron.style.rotate = '180deg';
+          chevron.style.rotate = '0deg';
         }
       });
     });

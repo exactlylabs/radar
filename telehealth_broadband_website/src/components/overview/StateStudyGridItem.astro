@@ -6,6 +6,6 @@ const { abbreviation, title, content } = Astro.props;
 
 <div>
   <BulletPoint borderless bigCircle title={title} content={content}>
-    {abbreviation}
+    <span>{abbreviation}</span>
   </BulletPoint>
 </div>

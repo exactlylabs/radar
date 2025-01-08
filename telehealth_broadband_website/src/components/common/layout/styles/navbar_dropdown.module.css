@@ -61,9 +61,11 @@
   margin-left: -.5rem;
 }
 
-.link:hover {
-  cursor: pointer;
-  background-color: rgba(91, 89, 122, 0.5);
+@media (pointer: fine) {
+  .link:hover {
+    cursor: pointer;
+    background-color: rgba(216, 216, 216, 0.1);
+  }
 }
 
 .link > svg:first-of-type {
