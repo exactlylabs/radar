@@ -134,7 +134,9 @@
 }
 
 .verticalAnimated {
+  aspect-ratio: 608 / 344;
   width: calc(50% - 1rem);
+  height: auto;
   flex-basis: 345px;
   flex-grow: 1;
   border-radius: 6px;
