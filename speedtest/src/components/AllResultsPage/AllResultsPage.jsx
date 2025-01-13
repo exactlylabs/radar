@@ -60,7 +60,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
   const [map, setMap] = useState(null);
 
-  const [mapProvider, setMapProvider] = useState(getCookie('map-provider'));
+  const [mapProvider, setMapProvider] = useState('maplibre');
 
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
