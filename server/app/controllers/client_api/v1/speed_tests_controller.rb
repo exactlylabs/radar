@@ -130,7 +130,7 @@ module ClientApi
             )
           }
 
-          sql += " AND tested_by = #{@widget_client.id}" unless is_global
+          sql += " AND tested_by = #{@widget_client.id} " unless is_global
 
           sql += %{
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
@@ -308,6 +308,7 @@ module ClientApi
         filters[:include_no_cost] = valid_params[:include_no_cost] == 'true'
         filters[:view_by] = valid_params[:view_by]
         filters[:view_by_filters] = view_by_filters_to_values(valid_params[:view_by], valid_params[:view_by_filters])
+        filters[:client_id] = valid_params[:client_id]
         filters
       end
 

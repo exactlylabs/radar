@@ -12,29 +12,41 @@ const localeStringOptions = {
 export const prettyPrintDate = dateString => new Date(dateString).toLocaleString('en-us', localeStringOptions);
 
 export const setMidnight = date => {
+  date.setHours(23, 59, 59, 999);
+  return date;
+}
+
+export const setStartOfDay = date => {
   date.setHours(0, 0, 0, 0);
   return date;
 }
 
-export const getToday = () => setMidnight(new Date());
+export const getToday = (side = 'end') => {
+  if(side === 'start') return setStartOfDay(new Date());
+  return setMidnight(new Date());
+}
 
-export const sixMonthsFromToday = () => {
+export const sixMonthsFromToday = (side = 'end') => {
   const today = getToday();
+  if(side === 'start') return setStartOfDay(new Date(today.setMonth(today.getMonth() - 6)));
   return setMidnight(new Date(today.setMonth(today.getMonth() - 6)));
 }
 
-export const firstDayOfCurrentYear = () => {
+export const firstDayOfCurrentYear = (side = 'end') => {
   const today = getToday();
+  if(side === 'start') return setStartOfDay(new Date(today.getFullYear(), 0, 1));
   return setMidnight(new Date(today.getFullYear(), 0, 1));
 }
 
-export const firstDayOfLastYear = () => {
+export const firstDayOfLastYear = (side = 'end') => {
   const today = getToday();
+  if(side === 'start') return setStartOfDay(new Date(today.getFullYear() - 1, 0, 1));
   return setMidnight(new Date(today.getFullYear() - 1, 0, 1));
 }
 
-export const lastDayOfLastYear = () => {
+export const lastDayOfLastYear = (side = 'end') => {
   const today = getToday();
+  if(side === 'start') return setStartOfDay(new Date(today.getFullYear() - 1, 11, 31));
   return setMidnight(new Date(today.getFullYear(), 0, 0));
 }
 

@@ -48,8 +48,8 @@ export const ALL_PROVIDERS_OPTION = {
 const defaultFilters = {
   connectionTypes: [],
   isp: ALL_PROVIDERS_OPTION,
-  from: sixMonthsFromToday(),
-  to: getToday(),
+  from: sixMonthsFromToday('start'),
+  to: getToday('end'),
   rangeLabel: DATE_RANGE_LABELS.LAST_6_MONTHS,
   minPrice: 0,
   maxPrice: 500,
@@ -92,14 +92,14 @@ export const FiltersContextProvider = ({children}) => {
 
   const setDateLabel = label => {
     if(label === DATE_RANGE_LABELS.LAST_6_MONTHS) {
-      setFrom(sixMonthsFromToday());
-      setTo(new Date());
+      setFrom(sixMonthsFromToday('start'));
+      setTo(getToday('end'));
     } else if (label === DATE_RANGE_LABELS.THIS_YEAR) {
-      setFrom(firstDayOfCurrentYear());
-      setTo(new Date());
+      setFrom(firstDayOfCurrentYear('start'));
+      setTo(getToday('end'));
     } else if (label === DATE_RANGE_LABELS.LAST_YEAR) {
-      setFrom(firstDayOfLastYear());
-      setTo(lastDayOfLastYear());
+      setFrom(firstDayOfLastYear('start'));
+      setTo(lastDayOfLastYear('end'));
     }
     setRangeLabel(label);
   }

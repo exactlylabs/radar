@@ -20,10 +20,6 @@
     transition: right 0.5s ease-in-out;
   }
 
-  .classificationAndLayersPanel[data-open='true'] {
-    right: calc(var(--layers-panel-width));
-  }
-
   .classificationAndLayersPanel[data-open='false'] {
     right: 0;
   }

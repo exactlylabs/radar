@@ -4,7 +4,7 @@ import leftArrow from '../../../../assets/icons-simple-left-arrow.png';
 import rightArrow from '../../../../assets/icons-simple-right-arrow.png';
 import filtersPanelStyles from '../filters_panel.module.css';
 import FiltersContext from "../../../../context/FiltersContext";
-import {setMidnight} from "../../../../utils/dates";
+import {setMidnight, setStartOfDay} from "../../../../utils/dates";
 
 function CalendarModalInput({error, label, date, setDate}) {
 
@@ -53,6 +53,27 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
     const daysFromNextMonth = Array
       .from({length: daysFromLastDayUntilNextSunday},
       (_) => setMidnight(new Date(lastDate.setDate(lastDate.getDate() + 1))));
+
+    const areDatesEqual = (date1, date2) => {
+      // need to check based on the day, month, and year, not time
+      if (date1 === '' || date2 === '' || !date1 || !date2) return false;
+      return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+    }
+
+    const isStartDate = (day) => {
+      return startDate !== '' && areDatesEqual(startDate, day);
+    }
+
+    const isEndDate = (day) => {
+      return endDate !== '' && areDatesEqual(endDate, day);
+    }
+
+    const isInBetween = (day) => {
+      if (startDate === '' || endDate === '') return false;
+      return !isStartDate(day) && !isEndDate(day) &&
+        startDate.getTime() < day.getTime() && endDate.getTime() > day.getTime();
+    }
+
     return (
       <div className={styles.monthContainer}>
         <div className={styles.dayTitles}>
@@ -65,9 +86,9 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
             <div key={day}
               className={styles.day}
               data-day={day}
-              data-start-date={startDate !== '' && startDate.getTime() === day.getTime()}
-              data-end-date={endDate !== '' && endDate.getTime() === day.getTime()}
-              data-in-between={startDate !== '' && endDate !== '' && startDate.getTime() < day.getTime() && endDate.getTime() > day.getTime()}
+              data-start-date={isStartDate(day)}
+              data-end-date={isEndDate(day)}
+              data-in-between={isInBetween(day)}
               data-outside-month={true}
               onClick={handleClickDay}
             >{day.getDate()}</div>
@@ -76,9 +97,9 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
             <div key={day}
               className={styles.day}
               data-day={day}
-              data-start-date={startDate !== '' && startDate.getTime() === day.getTime()}
-              data-end-date={endDate !== '' && endDate.getTime() === day.getTime()}
-              data-in-between={startDate !== '' && endDate !== '' && startDate.getTime() < day.getTime() && endDate.getTime() > day.getTime()}
+              data-start-date={isStartDate(day)}
+              data-end-date={isEndDate(day)}
+              data-in-between={isInBetween(day)}
               onClick={handleClickDay}
             >{day.getDate()}</div>
           ))}
@@ -86,9 +107,9 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
             <div key={day}
               className={styles.day}
               data-day={day}
-              data-start-date={startDate !== '' && startDate.getTime() === day.getTime()}
-              data-end-date={endDate !== '' && endDate.getTime() === day.getTime()}
-              data-in-between={startDate !== '' && endDate !== '' &&  startDate.getTime() < day.getTime() && endDate.getTime() > day.getTime()}
+              data-start-date={isStartDate(day)}
+              data-end-date={isEndDate(day)}
+              data-in-between={isInBetween(day)}
               data-outside-month={true}
               onClick={handleClickDay}
             >{day.getDate()}</div>
@@ -146,7 +167,7 @@ export default function CalendarModal({closeModal}) {
 
   const handleInputDateChange = (e) => {
     const value = e.target.value; // yyyy-mm-dd
-    setDate(new Date(value + 'T00:00:00'));
+    setDate(new Date(value + 'T23:59:59'));
   }
 
   const setDate = date => {
@@ -154,10 +175,10 @@ export default function CalendarModal({closeModal}) {
       (startDate !== '' && endDate !== '') ||
       (endDate === '' && date.getTime() < startDate.getTime())
     ) {
-      setStartDate(date);
+      setStartDate(setStartOfDay(date));
       setEndDate('');
     } else if(startDate !== '' && endDate === '') {
-      setEndDate(date);
+      setEndDate(setMidnight(date));
     }
   }
 
@@ -180,6 +201,7 @@ export default function CalendarModal({closeModal}) {
     }
     setError('');
     if(startDate.getTime() === endDate.getTime()) {
+      startDate.setHours(0, 0, 0, 0);
       endDate.setHours(23, 59, 59, 999);
     }
     setDates(startDate, endDate);
