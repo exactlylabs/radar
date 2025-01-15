@@ -50,6 +50,12 @@ export const lastDayOfLastYear = (side = 'end') => {
   return setMidnight(new Date(today.getFullYear(), 0, 0));
 }
 
+export const getInitialTime = (side = 'start') => {
+  const firstDate = new Date(2022, 0, 1);
+  if(side === 'start') return setStartOfDay(firstDate);
+  return setMidnight(firstDate);
+}
+
 // string in format mm/dd/YYYY - mm/dd/YYYY with 2-digit padding
 export const getRangeLabel = (from, to) => {
   const fromString = `${from.getMonth() + 1}/${from.getDate()}/${from.getFullYear()}`;

@@ -1,7 +1,7 @@
 import {createContext, useState} from "react";
 import {
   firstDayOfCurrentYear,
-  firstDayOfLastYear, getRangeLabel,
+  firstDayOfLastYear, getInitialTime, getRangeLabel,
   getToday,
   lastDayOfLastYear,
   sixMonthsFromToday
@@ -37,6 +37,7 @@ export const DATE_RANGE_LABELS = {
   LAST_6_MONTHS: 'Last 6 months',
   THIS_YEAR: 'This year',
   LAST_YEAR: 'Last year',
+  ALL_TIME: 'All time',
 }
 
 export const ALL_PROVIDERS_OPTION = {
@@ -48,9 +49,9 @@ export const ALL_PROVIDERS_OPTION = {
 const defaultFilters = {
   connectionTypes: [],
   isp: ALL_PROVIDERS_OPTION,
-  from: sixMonthsFromToday('start'),
+  from: getInitialTime('start'),
   to: getToday('end'),
-  rangeLabel: DATE_RANGE_LABELS.LAST_6_MONTHS,
+  rangeLabel: DATE_RANGE_LABELS.ALL_TIME,
   minPrice: 0,
   maxPrice: 500,
   includeNoCost: true, // based on default design
@@ -100,6 +101,9 @@ export const FiltersContextProvider = ({children}) => {
     } else if (label === DATE_RANGE_LABELS.LAST_YEAR) {
       setFrom(firstDayOfLastYear('start'));
       setTo(lastDayOfLastYear('end'));
+    } else if (label === DATE_RANGE_LABELS.ALL_TIME) {
+      setFrom(getInitialTime('start'));
+      setTo(getToday('end'));
     }
     setRangeLabel(label);
   }
