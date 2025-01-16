@@ -21,7 +21,7 @@ const { scrollToId } = Astro.props;
 
 <script>
   import styles from './styles/floating_tabs.module.css';
-  const staticContainer = document.querySelector(`.${styles.staticContainer}`)!;
+  const staticContainer = document.querySelector(`.${styles.staticContainer}`)! as HTMLDivElement;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       const id = entry.target.id;
@@ -86,7 +86,7 @@ const { scrollToId } = Astro.props;
   const topScroller = document.querySelector('#top-scroller')!;
   topScroller.addEventListener('click', scrollToTop);
   
-  const tabsContainer = document.querySelector(`.${styles.container}`)!;
+  const tabsContainer = document.querySelector(`.${styles.container}`)! as HTMLDivElement;
   const toShowElements = tabsContainer.querySelectorAll('[data-hide-off-scroll="true"]');
   window.addEventListener('scroll', () => {
     const topScrollThreshold = window.innerWidth < 768 ? 72 : 0;
