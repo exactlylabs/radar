@@ -21,7 +21,7 @@ const { scrollToId } = Astro.props;
 
 <script>
   import styles from './styles/floating_tabs.module.css';
-  
+  const staticContainer = document.querySelector(`.${styles.staticContainer}`)!;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       const id = entry.target.id;
@@ -61,8 +61,7 @@ const { scrollToId } = Astro.props;
     if(window.innerWidth <= 768) {
       const activeElement = document.querySelector(`.${styles.tab}[data-active="true"]`);
       if(!activeElement) return;
-      const distance = activeElement.getBoundingClientRect().left - (window.innerWidth / 2) + ((activeElement as HTMLButtonElement).offsetWidth / 2);
-      const staticContainer = document.querySelector(`.${styles.staticContainer}`)!;
+      const distance = activeElement.getBoundingClientRect().left - (window.innerWidth / 2) + ((activeElement as HTMLButtonElement).offsetWidth / 2) - 16;
       staticContainer.scrollBy({ left: distance, behavior: 'smooth' });
     }
   }, { threshold: Array.from({ length: 100 }, (_, i) => i / 100) });
@@ -92,8 +91,10 @@ const { scrollToId } = Astro.props;
   window.addEventListener('scroll', () => {
     const topScrollThreshold = window.innerWidth < 768 ? 72 : 0;
     if(tabsContainer) {
+      const pastThreshold = tabsContainer.getBoundingClientRect().top <= topScrollThreshold;
+      tabsContainer.setAttribute('data-past-threshold', pastThreshold.toString());
       toShowElements.forEach(elem => {
-        if(tabsContainer.getBoundingClientRect().top <= topScrollThreshold) {
+        if(pastThreshold) {
           elem.removeAttribute('hidden');
         } else {
           elem.setAttribute('hidden', 'hidden');
@@ -112,4 +113,30 @@ const { scrollToId } = Astro.props;
       });
     });
   });
+  
+  function centerContainer(container: HTMLDivElement) {
+    const { left, width } = container.getBoundingClientRect();
+    container.style.transform = `translateX(${(window.innerWidth - width) / 2 - left}px)`;
+  }
+  
+  if(tabsContainer) {
+    tabsContainer.addEventListener('resize', () => centerContainer(tabsContainer));
+    centerContainer(tabsContainer);
+  }
+  
+  if(staticContainer) {
+    staticContainer.addEventListener('scroll', hideTabsNotInView);
+  }
+  
+  function hideTabsNotInView() {
+    const tabs = document.querySelectorAll(`.${styles.tab}:not(#top-scroller)`);
+    tabs.forEach(t => {
+      if(t.getAttribute('data-active') === 'true') {
+        t.setAttribute('data-out-of-view', 'false');
+        return;
+      }
+      const { x } = t.getBoundingClientRect();
+      t.setAttribute('data-out-of-view', (x < 0).toString());
+    })
+  }
 </script>
