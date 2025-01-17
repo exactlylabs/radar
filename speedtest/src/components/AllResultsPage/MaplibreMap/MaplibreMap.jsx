@@ -35,10 +35,9 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const popupRef = useRef(new maplibregl.Popup(popupOptions));
-
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const {lastManualMapUpdate, setVisibleIspList, getFiltersAsSearchParams, setMaxPrice, setMaxCost, costDistributionList, setCostDistributionList} = useContext(FiltersContext);
+  const {lastManualMapUpdate, setVisibleIspList, getFiltersAsSearchParams, setCostDistributionList} = useContext(FiltersContext);
 
   const [ftueModalOpen, setFtueModalOpen] = useState(false);
   const [classificationsModalOpen, setClassificationsModalOpen] = useState(false);
@@ -50,20 +49,36 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
   const [updateFiltersDate, setUpdateFiltersDate] = useState(new Date());
   const [initialLoadFinished, setInitialLoadFinished] = useState(false);
 
+  const mapProperties = {
+    TILE_SIZE: 512,
+    BUFFER: 0,
+    CLIP: false,
+    MIN_ZOOM: 3,
+    MAX_ZOOM: 14,
+  };
+
   useEffect(() => {
     if(map.current || !mapContainer.current) return;
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       center: [centerCoordinates[1], centerCoordinates[0]], // [lng, lat]
-      minZoom: 3,
-      maxZoom: 14,
+      minZoom: mapProperties.MIN_ZOOM,
+      maxZoom: mapProperties.MAX_ZOOM,
       style: {
         version: 8,
         sources: {
           'raster-tiles': {
             type: 'raster',
-            tiles: [`https://api.mapbox.com/styles/v1/exactlylabs/cl7iwvbaz000l15mmms6da3kx/tiles/512/{z}/{x}/{y}?access_token=${MAPBOX_ACCESS_TOKEN}`],
-            tileSize: 512
+            tiles: [`https://api.mapbox.com/styles/v1/exactlylabs/cl7iwvbaz000l15mmms6da3kx/tiles/${mapProperties.TILE_SIZE}/{z}/{x}/{y}?access_token=${MAPBOX_ACCESS_TOKEN}`],
+            tileSize: mapProperties.TILE_SIZE,
+          },
+          'custom-tiles': {
+            type: 'vector',
+            tiles: [vectorTilesUrl()],
+            minzoom: mapProperties.MIN_ZOOM,
+            maxzoom: mapProperties.MAX_ZOOM,
+            tileSize: 512, //only works with 512 tile sizes (read the code)
+            isTileClipped: true,
           }
         },
         layers: [
@@ -71,21 +86,49 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
             id: 'base-tiles',
             type: 'raster',
             source: 'raster-tiles',
+            tileSize: mapProperties.TILE_SIZE,
+          },
+          {
+            id: 'circle-layer',
+            type: 'circle',
+            source: 'custom-tiles',
+            'source-layer': 'tests',
+            tileSize: mapProperties.TILE_SIZE,
+            paint: {
+              'circle-radius': [
+                'interpolate',
+                ['linear'],  // This specifies a linear interpolation
+                ['zoom'],    // Using the current zoom level for interpolation
+                mapProperties.MIN_ZOOM, 5,
+                mapProperties.MAX_ZOOM, 8
+              ],
+              'circle-color': [
+                'case',
+                ['>=', ['get', 'connection_quality'], 2],
+                NEW_SPEED_HIGH, // Color for served
+                ['>=', ['get', 'connection_quality'], 1],
+                NEW_SPEED_MEDIUM, // Color for underserved
+                ['>=', ['get', 'connection_quality'], 0],
+                NEW_SPEED_LOW, // Color for unserved
+                // Default color for all other cases
+                DEFAULT_DOWNLOAD_FILTER_NONE
+              ],
+              'circle-stroke-width': 0,
+            },
           }
         ]
       },
       zoom: 7
     });
 
+    if(REACT_APP_ENV === 'development') {
+      map.current.showTileBoundaries = true; // Check if tile boundaries align
+    }
+
     map.current.addControl(new maplibregl.NavigationControl({showCompass: false}), 'top-right');
 
-    map.current.on('load', () => {
-      loadLayers('initial');
-      setInitialLoadFinished(true);
-    });
-
     map.current.on('click', (e) => {
-      const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
+      const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer'], validate: false});
       if(!features.length) {
         if(popupRef.current) popupRef.current.remove();
         return;
@@ -129,8 +172,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
     });
 
     map.current.on('sourcedata', (e) => {
-      if (e.isSourceLoaded) {
-        //check if circle-layer exists in the current map
+      if (e.sourceId === 'custom-tiles') {
         let ispMap = new Map();
         let distributions = [];
         const desiredBarCount = 10;
@@ -140,7 +182,7 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
           distributions.push({count: 0, value: i, visible: true});
         }
         if (map.current.getLayer('circle-layer')) {
-          const features = map.current.queryRenderedFeatures(e.point, {layers: ['circle-layer']});
+          const features = map.current.querySourceFeatures('custom-tiles', {sourceLayer: 'tests', validate: false});
           features.forEach(feature => {
             if(!!feature.properties.autonomous_system_org_name && feature.properties.autonomous_system_org_name !== '') {
               const { autonomous_system_org_name, autonomous_system_org_id } = feature.properties;
@@ -161,6 +203,10 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
       }
     });
 
+    map.current.once('load', async () => {
+      setInitialLoadFinished(true);
+    });
+
     return () => {
       map.current.remove();
     }
@@ -168,64 +214,23 @@ const MaplibreMap = ({maxHeight, centerCoordinates}) => {
 
   useEffect(() => {
     if(map.current && initialLoadFinished) {
-      loadLayers('update');
+      //close popup if it's open
+      if(popupRef.current) popupRef.current.remove();
+      setVisibleIspList(new Map());
+
+      map.current.getSource('custom-tiles').setTiles([vectorTilesUrl()]);
     }
   }, [updateFiltersDate, lastManualMapUpdate]);
-
-  const loadLayers = (source) => {
-    if(source !== 'initial' && !initialLoadFinished) return;
-    if(map.current.getLayer('circle-layer')) {
-      map.current.removeLayer('circle-layer');
-      map.current.removeSource('custom-tiles');
-    }
-
-    //close popup if it's open
-    if(popupRef.current) popupRef.current.remove();
-    setVisibleIspList(new Map());
-
-    // Add vector tile source and layer here
-    map.current.addSource('custom-tiles', {
-      type: 'vector',
-      tiles: [vectorTilesUrl()],
-      minzoom: 3,
-      maxzoom: 14,
-    });
-
-    map.current.addLayer({
-      id: 'circle-layer',
-      type: 'circle',
-      source: 'custom-tiles',
-      'source-layer': 'tests',
-      paint: {
-        'circle-radius': [
-          'interpolate',
-          ['linear'],  // This specifies a linear interpolation
-          ['zoom'],    // Using the current zoom level for interpolation
-          3, 5,
-          14, 8
-        ],
-        'circle-color': [
-          'case',
-          ['>=', ['get', 'connection_quality'], 2],
-          NEW_SPEED_HIGH, // Color for served
-          ['>=', ['get', 'connection_quality'], 1],
-          NEW_SPEED_MEDIUM, // Color for underserved
-          ['>=', ['get', 'connection_quality'], 0],
-          NEW_SPEED_LOW, // Color for unserved
-          // Default color for all other cases
-          DEFAULT_DOWNLOAD_FILTER_NONE
-        ],
-        'circle-stroke-width': 0,
-      },
-    });
-  }
 
   // Need to append as strings instead of using a native URL object
   // otherwise Maplibre doesn't render the tiles correctly
   const vectorTilesUrl = () => {
     return VECTOR_TILES_URL +
-      '?client_id=' + config.clientId + '&' +
-      getFiltersAsSearchParams().toString();
+      '?client_id=' + config.clientId +
+      '&' + getFiltersAsSearchParams().toString() +
+      '&tile_size=' + mapProperties.TILE_SIZE +
+      '&buffer=' + mapProperties.BUFFER +
+      '&clip=' + mapProperties.CLIP;
   }
 
   const getMapContainerHeight = () => {

@@ -72,7 +72,10 @@ module ClientApi
             to: filters[:to],
             min_price: filters[:min_price],
             max_price: filters[:max_price],
-            connection_type: filters[:connection_type]
+            connection_type: filters[:connection_type],
+            tile_size: params[:tile_size] || 4096,
+            buffer: params[:buffer] || 0,
+            clip: params[:clip] || false
           }
           sql = %{
           WITH tile_bounds AS (
@@ -99,9 +102,9 @@ module ClientApi
               ST_AsMVTGeom(
                 ST_Transform(lonlat::geometry, 3857), -- Convert lon/lat to Web Mercator
                 ST_TileEnvelope(:z, :x, :y), -- Tile boundary in Web Mercator
-                4096, -- Tile size (in pixels)
-                0, -- Buffer around the tile in pixels
-                false -- Do not clip geometries
+                :tile_size::integer, -- Tile size (in pixels)
+                :buffer::integer, -- Buffer around the tile in pixels
+                :clip::boolean -- Do not clip geometries
               ) AS lonlat,
               CASE
                 WHEN download_avg > 100 THEN 2
@@ -140,7 +143,7 @@ module ClientApi
 
           sql += %{
           SELECT
-            ST_AsMVT(tile_data.*, 'tests', 4096, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
+            ST_AsMVT(tile_data.*, 'tests', :tile_size::integer, 'lonlat') AS mvt -- Return as Mapbox Vector Tile (MVT)
           FROM (
             SELECT
               id, -- Speed test ID
@@ -370,7 +373,7 @@ module ClientApi
       end
 
       def vector_tile_params
-        params.permit(:client_id, :x, :y, :z, :isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
+        params.permit(:simplified, :tile_size, :buffer, :clip, :client_id, :x, :y, :z, :isp, :from, :to, :min_price, :max_price, :include_no_cost, :maxed_out, :view_by, view_by_filters: [], connection_type: [])
       end
 
       def contact_params
