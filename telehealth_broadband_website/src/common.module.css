@@ -1,3 +1,7 @@
+@view-transition {
+  navigation: auto;
+}
+
 .paddedSection {
   width: 100%;
   max-width: var(--max-width);
