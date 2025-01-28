@@ -12,21 +12,139 @@ import affordabilityScrollImage from '../../../assets/images/affordability-scrol
 import AvailableResourcesCard from "../../common/wrappers/AvailableResourcesCard.astro";
 import type {Resource, RelatedLink} from "./types";
 
-const affordabilityResources: Resource[] = [{
-  title: 'RTEC Telehealth Report',
-  link: '#',
-  fileType: 'PDF',
+const adoptionAndConnectivityResources: Resource[] = [
+  {
+    title: 'An examination of the implementation and effectiveness of a broadband pilot program targeting rural communities in the United States',
+    link: '/files/findings/evaluation-results/2025-01-17 Implementation Study White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2025-01-17 Implementation Study White Paper.pdf'
+  },
+  {
+    title: 'Consumer perceptions of broadband and telehealth across Telehealth Broadband Pilot Program counties',
+    link: '/files/findings/evaluation-results/2024-12-31 Consumer Interview White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Consumer Interview White Paper.pdf'
+  },
+  {
+    title: 'Perceptions of how broadband and other influences impede or facilitate telehealth utilization among healthcare stakeholders in TBP sites',
+    link: '/files/findings/evaluation-results/2024-12-31 Healthcare Stakeholders White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Healthcare Stakeholders White Paper.pdf'
+  }
+];
+
+const adoptionAndConnectivityLinks: RelatedLink[] = [
+  {
+    title: 'Association between broadband capacity and telehealth utilization',
+    link: 'https://journals.sagepub.com/doi/full/10.1177/1357633X231166026'
+  }
+];
+
+const perspectivesResources: Resource[] = [
+  {
+    title: 'An examination of the implementation and effectiveness of a broadband pilot program targeting rural communities in the United States',
+    link: '/files/findings/evaluation-results/2025-01-17 Implementation Study White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2025-01-17 Implementation Study White Paper.pdf'
+  },
+  {
+    title: 'Consumer perceptions of broadband and telehealth across Telehealth Broadband Pilot Program counties',
+    link: '/files/findings/evaluation-results/2024-12-31 Consumer Interview White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Consumer Interview White Paper.pdf'
+  },
+];
+
+const perspectiveLinks: RelatedLink[] = [
+  {
+    title: 'Association between broadband capacity and telehealth utilization',
+    link: 'https://journals.sagepub.com/doi/full/10.1177/1357633X231166026'
+  }
+];
+
+const urbanVsRuralResources: Resource[] = [
+  {
+    title: 'An examination of the implementation and effectiveness of a broadband pilot program targeting rural communities in the United States',
+    link: '/files/findings/evaluation-results/2025-01-17 Implementation Study White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2025-01-17 Implementation Study White Paper.pdf'
+  },
+  {
+    title: 'Cost and policy implications for broadband expansion in Alaska, Michigan, Texas, and West Virginia',
+    link: '/files/findings/evaluation-results/2024-12-31 BEAD Spending Summary.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 BEAD Spending Summary.pdf'
+  },
+  {
+    title: 'Poor Representation of Rural Counties of the United States in Some Measures of Consumer Broadband - Brief',
+    link: '/files/findings/evaluation-results/2024-12-31 Number of Speed Tests Brief.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Number of Speed Tests Brief.pdf'
+  },
+  {
+    title: 'A comparison of promised and received broadband capacity for rural communities: Results from a broadband pilot program',
+    link: '/files/findings/evaluation-results/2024-12-31 Pod Data White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Pod Data White Paper.pdf'
+  }
+];
+
+const urbanVsRuralLinks: RelatedLink[] = [{
+  title: 'Poor Representation of Rural Counties of the United States in Some Measures of Consumer Broadband',
+  link: 'https://www.liebertpub.com/doi/full/10.1089/tmr.2024.0048',
 }];
-const affordabilityRelatedLinks: RelatedLink[] = [{
-  title: 'Name of Website',
-  link: '#',
+
+
+const accessResources: Resource[] = [
+  {
+    title: 'An examination of the implementation and effectiveness of a broadband pilot program targeting rural communities in the United States',
+    link: '/files/findings/evaluation-results/2025-01-17 Implementation Study White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2025-01-17 Implementation Study White Paper.pdf'
+  },
+  {
+    title: 'Poor Representation of Rural Counties of the United States in Some Measures of Consumer Broadband - Brief',
+    link: '/files/findings/evaluation-results/2024-12-31 Number of Speed Tests Brief.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Number of Speed Tests Brief.pdf'
+  },
+  {
+    title: 'A comparison of promised and received broadband capacity for rural communities: Results from a broadband pilot program',
+    link: '/files/findings/evaluation-results/2024-12-31 Pod Data White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2024-12-31 Pod Data White Paper.pdf'
+  }
+];
+
+const accessLinks: RelatedLink[] = [{
+  title: 'Poor Representation of Rural Counties of the United States in Some Measures of Consumer Broadband',
+  link: 'https://www.liebertpub.com/doi/full/10.1089/tmr.2024.0048',
 }, {
-  title: 'Another Related Website Link',
-  link: '#',
+  title: 'Willingness to pay for internet speed and quality',
+  link: 'https://www.sciencedirect.com/science/article/pii/S0736585324000777',
 }, {
-  title: 'Yet Another Related Website Link',
-  link: '#',
+  title: 'Telehealth and Willingness-to-Pay for Internet Services',
+  link: 'https://www.liebertpub.com/doi/full/10.1089/tmj.2023.0692',
 }];
+
+const affordabilityResources: Resource[] = [
+  {
+    title: 'An examination of the implementation and effectiveness of a broadband pilot program targeting rural communities in the United States',
+    link: '/files/findings/evaluation-results/2025-01-17 Implementation Study White Paper.pdf',
+    fileType: 'PDF',
+    filename: '2025-01-17 Implementation Study White Paper.pdf'
+  }
+];
+
+const affordabilityLinks: RelatedLink[] = [
+  {
+    title: 'Willingness to pay for internet speed and quality',
+    link: 'https://www.sciencedirect.com/science/article/pii/S0736585324000777',
+  }, {
+    title: 'Telehealth and Willingness-to-Pay for Internet Services',
+    link: 'https://www.liebertpub.com/doi/full/10.1089/tmj.2023.0692',
+  }
+];
 ---
 
 <div class={incomingImageStyles.mainWrapper}>
@@ -74,7 +192,7 @@ const affordabilityRelatedLinks: RelatedLink[] = [{
       </div>
     </div>
     <div class={styles.resourcesContainer}>
-      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityRelatedLinks} />
+      <AvailableResourcesCard resources={adoptionAndConnectivityResources} links={adoptionAndConnectivityLinks} />
     </div>
   </div>
   <div id="community-opinions" class={incomingImageStyles.rowContainer}>
@@ -120,7 +238,7 @@ const affordabilityRelatedLinks: RelatedLink[] = [{
       </div>
     </div>
     <div class={styles.resourcesContainer}>
-      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityRelatedLinks} />
+      <AvailableResourcesCard resources={perspectivesResources} links={perspectiveLinks} />
     </div>
   </div>
   <div id="urban-vs-rural" class={incomingImageStyles.rowContainer}>
@@ -166,7 +284,7 @@ const affordabilityRelatedLinks: RelatedLink[] = [{
       </div>
     </div>
     <div class={styles.resourcesContainer}>
-      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityRelatedLinks} />
+      <AvailableResourcesCard resources={urbanVsRuralResources} links={urbanVsRuralLinks} />
     </div>
   </div>
   <div id="barriers" class={incomingImageStyles.rowContainer}>
@@ -215,7 +333,7 @@ const affordabilityRelatedLinks: RelatedLink[] = [{
       </div>
     </div>
     <div class={styles.resourcesContainer}>
-      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityRelatedLinks} />
+      <AvailableResourcesCard resources={accessResources} links={accessLinks} />
     </div>
   </div>
   <div id="affordability" class={incomingImageStyles.rowContainer}>
@@ -261,7 +379,7 @@ const affordabilityRelatedLinks: RelatedLink[] = [{
       </div>
     </div>
     <div class={styles.resourcesContainer}>
-      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityRelatedLinks} />
+      <AvailableResourcesCard resources={affordabilityResources} links={affordabilityLinks} />
     </div>
   </div>
 </div>

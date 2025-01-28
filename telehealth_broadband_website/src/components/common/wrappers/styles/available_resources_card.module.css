@@ -50,9 +50,13 @@
 .listItem {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   gap: 0;
+}
+
+.listItem > span {
+  margin-top: .25rem;
 }
 
 .listItem > a {
@@ -63,6 +67,14 @@
   align-items: center;
   justify-content: flex-start;
   gap: 0.25rem;
+}
+
+.listItem > a[target="_blank"] {
+  display: inline-block;
+
+  svg {
+    padding-top: 2px;
+  }
 }
 
 .listItem > a:hover {

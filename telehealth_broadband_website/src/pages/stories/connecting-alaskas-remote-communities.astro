@@ -19,6 +19,7 @@ import threeImage3 from '../../assets/images/alaska-story-image-3.jpg';
 import verticalImage1 from '../../assets/images/alaska-story-vertical-image-1.jpg';
 import verticalImage2 from '../../assets/images/alaska-story-vertical-image-2.jpg';
 import bigImage from '../../assets/images/alaska-story-big-image.jpg';
+import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
 ---
 
 <ParallaxLayout
@@ -52,6 +53,16 @@ import bigImage from '../../assets/images/alaska-story-big-image.jpg';
                     content="In Alaska’s remote villages, where roads often give way to boardwalks and access requires planes or snow machines, connectivity isn’t just about convenience—it’s a lifeline. Yet, broadband infrastructure in the state lags far behind national benchmarks, with most areas failing to meet even outdated speed standards. For rural Alaskans relying on telehealth, this digital divide poses critical challenges."
       />
     </div>
+	  
+	  <div class={commonStyles.videoSection} style="margin-top: 5rem;">
+		  <VimeoVideoPlayer
+				  src="https://player.vimeo.com/video/1050607958?h=88780712a1"
+				  title="broadband_access_video_-alaska (1080p)"
+		  />
+		  <div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
+			  <Epigraph text="Garret Spargo, Director of Enterprise Architecture at the Alaska Native Tribal Health Consortium, shares stories from Alaska's remote communities and the impact of broadband challenges on telehealth."/>
+		  </div>
+	  </div>
 
     <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
       <Quote

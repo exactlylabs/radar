@@ -14,3 +14,31 @@
     max-width: calc(100vw - calc(2 * var(--side-padding)));
   }
 }
+
+.videoSection {
+  width: 100%;
+  max-width: 823px;
+  height: auto;
+  aspect-ratio: 823 / 462;
+  margin: 0 auto;
+}
+
+.videoContainer {
+  padding: 0;
+  border-radius: 6px;
+  position: relative;
+  height: 100%;
+
+  iframe {
+    border-radius: inherit;
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .videoContainer {
+    margin-top: 1.5rem;
+  }
+}

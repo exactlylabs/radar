@@ -184,11 +184,6 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
       
       timeoutIds.set(button.dataset.popoverTargetId, id);
     });
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.location.href = e.target.dataset.href;
-    });
   }
   
   function associateButtonsToMobileDropdowns() {
@@ -226,6 +221,19 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
     });
   }
   
+  function associateDropdownLinks(e) {
+    const mediaQuery = window.matchMedia('(pointer: fine)');
+    if(!mediaQuery.matches) return;
+    const triggersWithLink = document.querySelectorAll('button[data-href]');
+    if(triggersWithLink.length > 0) {
+      triggersWithLink.forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+          window.location.href = trigger.dataset.href;
+        });
+      });
+    }
+  }
+  
   menuButton.addEventListener('click', toggleMenu);
   const possibleParalaxLayout = document.getElementById("parallax-scrollable-container");
   if(possibleParalaxLayout)  {
@@ -233,6 +241,8 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
   } else {
     window.addEventListener('scroll', () => checkScrollForNavbarBg());
   }
+  window.addEventListener('resize', associateDropdownLinks)
   associateLinksToDropdowns();
   associateButtonsToMobileDropdowns();
+  associateDropdownLinks();
 </script>

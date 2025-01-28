@@ -12,7 +12,7 @@ const { resources, links } = Astro.props;
       {resources.map((resource: Resource) => (
         <li class={styles.listItem}>
           <span class={styles.fileTypeBadge}>{resource.fileType}</span>
-          <a href={resource.link} download={resource.download}>{resource.title}</a>
+          <a href={resource.link} download={resource.filename}>{resource.title}</a>
         </li>
       ))}
     </ul>

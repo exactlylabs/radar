@@ -22,6 +22,7 @@ import verticalImage2 from '../../assets/images/texas-story-vertical-image-2.jpg
 import verticalImage3 from '../../assets/images/texas-story-vertical-image-3.jpg';
 import verticalImage4 from '../../assets/images/texas-story-vertical-image-4.jpg';
 import bigImage from '../../assets/images/texas-story-big-image.jpg';
+import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
 ---
 
 <ParallaxLayout
@@ -50,16 +51,26 @@ import bigImage from '../../assets/images/texas-story-big-image.jpg';
     />
 
     <section class={commonStyles.paddedSection} id="parallax-reference-container">
-        <div class={templateStyles.textContainer} data-variant="contained">
-            <HeroWithText head="Texas"
-                          title="Texas Tackles Rural Connectivity Challenges"
-                          content="In the sprawling rural counties of Texas, where towns are dotted with cattle ranches and agriculture reigns supreme, residents face a daily struggle with internet connectivity. From slow speeds to persistent outages, unreliable broadband has become a defining challenge for families, businesses, and local institutions."
-            />
-            <br/>
-            <p class={styles.paragraph}>The Telehealth Broadband Pilot (TBP) Program in Texas has been led by Michael Mangel and Rance Standridge, both program managers with Texas Tech University Health Sciences Center (TTUHSC). With extensive experience working in rural communities, Mangel and Standridge have spent years traveling across the state, gathering data and hearing firsthand about the impact of poor internet connectivity.</p>
-            <br/>
-            <p class={styles.paragraph}>"Most of the areas we visited were very rural," explained Michael Mangel, a program manager who traveled extensively across Texas communities. "These were places where schools often served as the focal point of the community, but for local residents, internet was slow, expensive, and often unreliable."</p>
+      <div class={templateStyles.textContainer} data-variant="contained">
+        <HeroWithText head="Texas"
+                      title="Texas Tackles Rural Connectivity Challenges"
+                      content="In the sprawling rural counties of Texas, where towns are dotted with cattle ranches and agriculture reigns supreme, residents face a daily struggle with internet connectivity. From slow speeds to persistent outages, unreliable broadband has become a defining challenge for families, businesses, and local institutions."
+        />
+        <br/>
+        <p class={styles.paragraph}>The Telehealth Broadband Pilot (TBP) Program in Texas has been led by Michael Mangel and Rance Standridge, both program managers with Texas Tech University Health Sciences Center (TTUHSC). With extensive experience working in rural communities, Mangel and Standridge have spent years traveling across the state, gathering data and hearing firsthand about the impact of poor internet connectivity.</p>
+      </div>
+      
+      <div class={commonStyles.videoSection} style="margin-top: 5rem; margin-bottom: 5rem;">
+        <VimeoVideoPlayer
+            src="https://player.vimeo.com/video/1050607991?h=2c82debbb1"
+            title="broadband_access_video_-texas (1080p)"
+        />
+        <div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
+          <Epigraph text="Michael Mangel and Rance Standridge from TTUHSC share insights on rural Texas broadband challenges and the need for improved connectivity."/>
         </div>
+      </div>
+      
+      <p class={styles.paragraph}>"Most of the areas we visited were very rural," explained Michael Mangel, a program manager who traveled extensively across Texas communities. "These were places where schools often served as the focal point of the community, but for local residents, internet was slow, expensive, and often unreliable."</p>
     </section>
 
     <section class={templateStyles.verticallyAnimatedImagesContainer}>

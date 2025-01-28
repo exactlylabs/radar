@@ -19,6 +19,7 @@ import threeImage3 from '../../assets/images/wv-story-image-3.webp';
 import verticalImage1 from '../../assets/images/wv-story-vertical-image-1.webp';
 import verticalImage2 from '../../assets/images/wv-story-vertical-image-2.webp';
 import bigImage from '../../assets/images/wv-story-big-image.webp';
+import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
 ---
 
 <ParallaxLayout
@@ -53,6 +54,16 @@ import bigImage from '../../assets/images/wv-story-big-image.webp';
                     content="The Jefferson Day Report Center (JDRC), a treatment facility primarily serving community corrections referrals, faces significant challenges with broadband connectivity. These challenges affect their ability to provide critical virtual treatment services for individuals across rural areas, underscoring the stark disparities in internet access throughout West Virginia."
       />
     </div>
+	  
+	  <div class={commonStyles.videoSection} style="margin-top: 5rem;">
+		  <VimeoVideoPlayer
+				  src="https://player.vimeo.com/video/1050607971?h=0e7da25398"
+				  title="broadband_access_video_-west-virginia (1080p)"
+		  />
+		  <div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
+			  <Epigraph text="Corey Walton, Case Management Coordinator at JDRC, explains how unreliable internet disrupted critical virtual treatment services for rural communities."/>
+		  </div>
+	  </div>
 
     <div class={`${templateStyles.quoteWrapper} ${styles.quotePadder}`}>
       <Quote
