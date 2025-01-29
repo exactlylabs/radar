@@ -1,7 +1,9 @@
 ---
 import commonStyles from '../../../common.module.css';
+import templateStyles from '../../../pages/stories/styles/template.module.css';
+import Epigraph from "../../stories/Epigraph.astro";
 
-const { title, src } = Astro.props;
+const { title, src, epigraphText } = Astro.props;
 ---
 
 
@@ -10,6 +12,9 @@ const { title, src } = Astro.props;
 	        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
 	        title={title}>
   </iframe>
+	<div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
+		<Epigraph text={epigraphText}/>
+	</div>
 </div>
 
 
