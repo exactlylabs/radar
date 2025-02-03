@@ -5,11 +5,11 @@ class TailscaleAuthKey < ApplicationRecord
   scope :where_consumed, -> { where.not(consumed_at: nil) }
 
   before_create do
-    self.client.tailscale_auth_keys.where_active.any? && raise('Client already has an active auth key')
+    client.tailscale_auth_keys.where_active.any? && raise('Client already has an active auth key')
     tailscale_key = TailscaleClient.device_auth_key
-    self.key_id = tailscale_key["id"]
-    self.expires_at = tailscale_key["expires"]
-    self.raw_key = tailscale_key["key"]
+    self.key_id = tailscale_key['id']
+    self.expires_at = tailscale_key['expires']
+    self.raw_key = tailscale_key['key']
   end
 
   def self.revoke_expired_keys!
@@ -18,7 +18,11 @@ class TailscaleAuthKey < ApplicationRecord
   end
 
   def revoke!
-    TailscaleClient.revoke_key(key_id)
+    begin
+      TailscaleClient.revoke_key(key_id)
+    rescue OAuth2::Error => e
+      Sentry.capture_exception(e)
+    end
     update(revoked_at: Time.now) unless revoked_at.present?
   end
 
@@ -29,5 +33,4 @@ class TailscaleAuthKey < ApplicationRecord
   def consumed!
     update(consumed_at: Time.now, raw_key: nil)
   end
-
 end
