@@ -12,9 +12,11 @@ const { title, src, epigraphText } = Astro.props;
 	        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
 	        title={title}>
   </iframe>
-	<div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
-		<Epigraph text={epigraphText}/>
-	</div>
+  { epigraphText &&
+    <div class={templateStyles.epigraphContainer} style="padding-bottom: 0">
+      <Epigraph text={epigraphText}/>
+    </div>
+  }
 </div>
 
 

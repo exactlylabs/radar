@@ -94,14 +94,18 @@
 
 .learnMoreVideo {
   width: 50%;
-  aspect-ratio: 609 / 343;
+  aspect-ratio: 625/263;
   border-radius: .5rem;
+
+  div {
+    aspect-ratio: inherit;
+  }
 }
 
 @media (max-width: 1080px) {
   .learnMoreVideo {
     width: 100%;
-    max-width: 600px;
+    max-width: unset;
     margin: 0 auto;
   }
 }
