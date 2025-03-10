@@ -20,12 +20,17 @@ import verticalImage1 from '../../assets/images/wv-story-vertical-image-1.webp';
 import verticalImage2 from '../../assets/images/wv-story-vertical-image-2.webp';
 import bigImage from '../../assets/images/wv-story-big-image.webp';
 import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
+
+import ogMedia from '../../assets/og/stories-west-virginia.jpg';
 ---
 
 <ParallaxLayout
         bgImageSrc={hero}
-        title="Breaking Barriers to Treatment in Rural West Virginia"
-        description="How improved broadband transformed critical virtual services at the Jefferson Day Report Center."
+        title="Connectivity Barriers in Rural West Virginia"
+        description="Explore real stories from West Virginia, where unreliable broadband affects healthcare, education, and daily life. See how communities push for change."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - West Virginia Landscape Image"
+        ogType="article"
 >
 
   <section class={templateStyles.header}>

@@ -1,6 +1,25 @@
 ---
-const { title, description } = Astro.props;
+const { title, description, socialPreviewUrl, socialPreviewAlt, ogType } = Astro.props;
 ---
-
-<meta name="description" content={description}>
 <title>{title}</title>
+
+<meta name="description" content={description}/>
+
+<meta name="og:title" content={title}/>
+<meta name="og:description" content={description}/>
+<meta name="og:url" content={Astro.url.toString()}/>
+<meta name="og:image" content={`${Astro.url.origin}${socialPreviewUrl}`}/>
+<meta name="og:image:alt" content={socialPreviewAlt}/>
+<meta name="og:type" content={ogType}/>
+<meta name="og:locale" content="en_US"/>
+<meta name="og:site_name" content="Telehealth Broadband Project"/>
+
+<meta name="image" property="og:image" content={`${Astro.url.origin}${socialPreviewUrl}`}/>
+<meta name="title" property="og:title" content={title}/>
+<meta name="description" property="og:description" content={description}/>
+
+<meta name="twitter:title" content={title}/>
+<meta name="twitter:description" content={description}/>
+<meta name="twitter:url" content={Astro.url.toString()}/>
+<meta name="twitter:image" content={`${Astro.url.origin}${socialPreviewUrl}`}/>
+

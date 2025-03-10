@@ -10,11 +10,15 @@ import AlaskaStoryCard from "../components/stories/AlaskaStoryCard.astro";
 import TexasStoryCard from "../components/stories/TexasStoryCard.astro";
 
 import storiesHero from '../assets/images/stories-hero.webp';
+
+import ogMedia from '../assets/og/homepage.jpg';
 ---
 
 <BaseLayout
   title="Stories from the Field: Real Rural Connectivity Challenges"
   description="Read firsthand accounts of how connectivity issues impact rural communities. Stories of resilience, innovation, and lessons learned from real experiences."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
   heroBgStyle={`background-image: url(${storiesHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={styles.heroSection}>

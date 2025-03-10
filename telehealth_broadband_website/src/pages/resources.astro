@@ -25,10 +25,14 @@ import thumbnail2 from '../assets/images/resources-card-thumbnail-2.jpg';
 import thumbnail3 from '../assets/images/resources-card-thumbnail-3.jpg';
 import thumbnail4 from '../assets/images/resources-card-thumbnail-4.jpg';
 import VimeoVideoPlayer from "../components/common/content/VimeoVideoPlayer.astro";
+
+import ogMedia from '../assets/og/homepage.jpg';
 ---
 <BaseLayout
   title="Tools and Resources for Rural Connectivity"
   description="Access tools, maps, and resources developed to help communities measure broadband performance, identify gaps, and advocate for improved connectivity."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
 >
 
   <section class={commonStyles.paddedSection}>

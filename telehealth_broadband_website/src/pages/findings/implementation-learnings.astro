@@ -20,12 +20,16 @@ import deploymentMethods from '../../assets/images/implementation-learnings-depl
 import motivatingParticipation from '../../assets/images/implementation-learnings-motivating-participation.jpg';
 import StateFindingsInANutshell from "../../components/findings/FindingsBottomSection.astro";
 import BulletPoint from "../../components/common/content/BulletPoint.astro";
+
+import ogMedia from '../../assets/og/homepage.jpg';
 ---
 
 <BaseLayout
-        title="Implementation Learnings"
-        description="Implementation Learnings"
-        heroBgStyle={{backgroundImage: `url(${heroBgImage.src})`, height: '536px'}}
+  title="Strategies for Rural Broadband & Telehealth"
+  description="Explore key strategies, lessons learned, and innovative approaches to improve broadband access and telehealth adoption in rural communities."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
+  heroBgStyle={{backgroundImage: `url(${heroBgImage.src})`, height: '536px'}}
 >
     <section class={commonStyles.paddedSection}>
         <div class={styles.heroContainer}>

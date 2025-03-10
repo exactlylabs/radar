@@ -26,11 +26,16 @@ import outreachStrategies from '../../assets/images/wv-vertical-incoming-1.jpg';
 import lessonsLearned from '../../assets/images/wv-vertical-incoming-2.jpg';
 import mainStateImage from '../../assets/images/wv-main-findings-image.jpg';
 import CarrouselModal from "../../components/common/wrappers/CarrouselModal.astro";
+
+import ogMedia from '../../assets/og/findings-west-virginia.jpg';
 ---
 
 <BaseLayout
-        title="Findings in West Virginia"
-        description="Findings in West Virginia"
+        title="West Virginia's Connectivity Landscape"
+        description="Discover rural West Virginia's broadband challenges and their impact on telehealth. Explore key connectivity gaps, infrastructure issues, and solutions."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - West Virginia Landscape Image"
+        ogType="article"
         heroBgStyle={{ backgroundImage: `url(${findingsHero.src})`, height: '536px' }}
 >
   <StateFindingsHero

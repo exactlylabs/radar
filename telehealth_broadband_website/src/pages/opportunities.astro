@@ -5,10 +5,14 @@ import commonStyles from '../common.module.css';
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ExploreOpportunities from '../components/opportunities/ExploreOpportunities.astro';
 import OpportunitiesIntroduction from '../components/opportunities/OpportunitiesIntroduction.astro';
+
+import ogMedia from '../assets/og/homepage.jpg';
 ---
 <BaseLayout
   title="Opportunities to Improve Rural Broadband Access"
   description="Discover strategies to enhance broadband quality, empower communities, and support data-driven advocacy for better rural connectivity."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
 >
   <section  class=`${commonStyles.paddedSection} ${styles.section}`>
     <OpportunitiesIntroduction/>

@@ -21,12 +21,17 @@ import road from '../../assets/images/road-michigan.jpg';
 import openField from '../../assets/images/open-field-michigan.jpg';
 import manCouch from '../../assets/images/man-couch-michigan.jpg';
 import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
+
+import ogMedia from '../../assets/og/stories-michigan.jpg';
 ---
 
 <ParallaxLayout
   bgImageSrc={hero}
-  title="Connectivity Issues in Rural Michigan Healthcare"
-  description="Unreliable internet disrupts patient care and staff efficiency in Michigan clinics."
+  title="Connectivity Struggles and Telehealth Barriers in Rural Michigan"
+  description="Explore stories from rural Michigan, where unreliable internet disrupts healthcare and telehealth. See how small interventions made a big impact."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Michigan Landscape Image"
+  ogType="article"
 >
 
   <section class={templateStyles.header}>

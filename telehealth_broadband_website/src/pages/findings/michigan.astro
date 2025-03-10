@@ -26,11 +26,16 @@ import outreachStrategies from '../../assets/images/michigan-vertical-incoming-1
 import lessonsLearned from '../../assets/images/michigan-vertical-incoming-2.jpg';
 import mainStateImage from '../../assets/images/michigan-main-findings-image.jpg';
 import CarrouselModal from "../../components/common/wrappers/CarrouselModal.astro";
+
+import ogMedia from '../../assets/og/findings-michigan.jpg';
 ---
 
 <BaseLayout
-        title="Findings in Michigan"
-        description="Findings in Michigan"
+        title="Connectivity Barriers in Rural Michigan"
+        description="Discover how broadband disparities impact telehealth in rural Michigan, highlighting connectivity challenges, infrastructure gaps, and solutions."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - Michigan Landscape Image"
+        ogType="article"
         heroBgStyle={{ backgroundImage: `url(${findingsHero.src})`, height: '536px' }}
 >
   <StateFindingsHero

@@ -23,12 +23,17 @@ import verticalImage3 from '../../assets/images/texas-story-vertical-image-3.jpg
 import verticalImage4 from '../../assets/images/texas-story-vertical-image-4.jpg';
 import bigImage from '../../assets/images/texas-story-big-image.jpg';
 import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
+
+import ogMedia from '../../assets/og/stories-texas.jpg';
 ---
 
 <ParallaxLayout
         bgImageSrc={hero}
-        title="Texas Tackles Rural Connectivity Challenges"
-        description="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+        title="Rural Texas and the Challenge of Unreliable Internet"
+        description="Discover how poor broadband access affects rural Texas communities. Real stories reveal daily struggles and the urgent need for improvements."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - Texas Landscape Image"
+        ogType="article"
 >
 
     <section class={templateStyles.header}>

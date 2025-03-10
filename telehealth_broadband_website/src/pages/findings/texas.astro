@@ -28,11 +28,16 @@ import mainStateImage from '../../assets/images/texas-main-findings-image.jpg';
 import TexasGuidanceAndRecommendationsContent
   from "../../components/findings/states/texas/TexasGuidanceAndRecommendationsContent.astro";
 import CarrouselModal from "../../components/common/wrappers/CarrouselModal.astro";
+
+import ogMedia from '../../assets/og/findings-texas.jpg';
 ---
 
 <BaseLayout
-        title="Findings in Texas"
-        description="Findings in Texas"
+        title="A Look into the Rural Texas Communities"
+        description="Explore rural Texas broadband challenges, their impact on telehealth, and opportunities for connectivity improvements."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - Texas Landscape Image"
+        ogType="article"
         heroBgStyle={{ backgroundImage: `url(${findingsHero.src})`, height: '536px' }}
 >
   <StateFindingsHero

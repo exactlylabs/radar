@@ -26,11 +26,16 @@ import findingThumbnail3 from '../../assets/images/alaska-findings-thumbnail-3.j
 import outreachStrategies from '../../assets/images/alaska-vertical-incoming-1.jpg';
 import lessonsLearned from '../../assets/images/alaska-vertical-incoming-2.jpg';
 import mainStateImage from '../../assets/images/alaska-main-findings-image.jpg';
+
+import ogMedia from '../../assets/og/findings-alaska.jpg';
 ---
 
 <BaseLayout
-  title="Findings in Alaska"
-  description="Findings in Alaska"
+  title="Broadband Challenges in Remote Alaska"
+  description="Explore broadband and telehealth challenges in Alaska, where geography and infrastructure gaps limit healthcare access and digital equity."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Alaska Landscape Image"
+  ogType="article"
   heroBgStyle={{ backgroundImage: `url(${findingsHero.src})`, height: '536px' }}
 >
   <StateFindingsHero

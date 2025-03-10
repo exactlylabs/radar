@@ -30,10 +30,14 @@ import blueGradientHorizontalLight from '../assets/images/blue-gradient-horizont
 import pinkYellowHorizontalLight from '../assets/images/pink-yellow-horizontal-blured-light.webp';
 import dotsGrid from '../assets/images/dots-grid.webp';
 import usMap from '../assets/images/us-map.webp';
+
+import ogMedia from '../assets/og/homepage.jpg';
 ---
 <BaseLayout
   title="Our Approach to Understand and Improve Rural Broadband"
   desctiption="Learn about our data-driven methods, community partnerships, and innovative tools used to understand rural broadband access and its impact on telehealth in underserved areas."
+  socialPreviewUrl={ogMedia.src}
+  socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
   heroBgStyle={`background-image: url(${approachHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={styles.heroSection}>

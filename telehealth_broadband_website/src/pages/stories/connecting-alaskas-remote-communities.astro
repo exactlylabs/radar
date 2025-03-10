@@ -20,12 +20,17 @@ import verticalImage1 from '../../assets/images/alaska-story-vertical-image-1.jp
 import verticalImage2 from '../../assets/images/alaska-story-vertical-image-2.jpg';
 import bigImage from '../../assets/images/alaska-story-big-image.jpg';
 import VimeoVideoPlayer from "../../components/common/content/VimeoVideoPlayer.astro";
+
+import ogMedia from '../../assets/og/stories-alaska.jpg';
 ---
 
 <ParallaxLayout
         bgImageSrc={hero}
-        title="Connecting Alaska's Remote Communities"
-        description="How Simple Solutions and Targeted Support Are Bridging the Digital Divide in Rural Healthcare"
+        title="Overcoming Connectivity Challenges in Rural Alaska"
+        description="Discover real stories from remote Alaskan communities where unreliable internet disrupts healthcare and daily life. See how small fixes drive change."
+        socialPreviewUrl={ogMedia.src}
+        socialPreviewAlt="Telehealt Broadband Project - Alaska Landscape Image"
+        ogType="article"
 >
   <section class={templateStyles.header}>
     <div class={templateStyles.overlay} id="parallax-overlay"></div>

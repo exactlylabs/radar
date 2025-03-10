@@ -20,12 +20,16 @@ import implementationFindingsImage from '../assets/images/implementation-finding
 import findingsHero from '../assets/images/findings-hero.webp';
 import leftLight from '../assets/images/state-findings-left-light.webp';
 import rightLight from '../assets/images/state-findings-right-light.webp';
+
+import ogMedia from '../assets/og/homepage.jpg';
 ---
 
 <BaseLayout
-  title="Findings"
-  description=""
-  heroBgStyle={`background-image: url(${findingsHero.src}); background-position-y: 50%; height: 536px;`}
+		title="Key Findings on Rural Broadband and Telehealth"
+		description="Learn how connectivity gaps impact healthcare, education, and daily life in underserved communities."
+		socialPreviewUrl={ogMedia.src}
+		socialPreviewAlt="Telehealt Broadband Project - Antenna Image"
+		heroBgStyle={`background-image: url(${findingsHero.src}); background-position-y: 50%; height: 536px;`}
 >
   <section class={commonStyles.paddedSection}>
     <div class={styles.firstSection}>
