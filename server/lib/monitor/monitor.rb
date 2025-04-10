@@ -12,13 +12,21 @@ module HealthMonitor
   TRANSIENT_DURATION = 60.seconds
 
   def healthy?
-    reachable? && !missed_heartbeat?
+    is_reachable = reachable?
+    Rails.logger.error "Application isn't Reachable. Setting it to an unhealthy state." unless is_reachable
+
+    is_missed_heartbeat = missed_heartbeat?
+    Rails.logger.error "Application is missing internal Heartbeats. Setting it to an unhealthy state." if is_missed_heartbeat
+
+    is_reachable && !is_missed_heartbeat
   end
 
   def transient?
     # Transient mode is when the system is already responding heartbeats, but is set in a state where it's still considered offline
     # to give time to all other tasks to go back to normal
-    REDIS.get(redis_key + "_transient") == "true"
+    is_transient = REDIS.get(redis_key + "_transient") == "true"
+    Rails.logger.error "Application is in Transient Mode" if is_transient
+    is_transient
   end
 
   def heartbeat!
