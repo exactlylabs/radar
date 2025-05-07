@@ -184,6 +184,11 @@ import MobileFindingsNavbarDropdown from "./MobileFindingsNavbarDropdown.astro";
       
       timeoutIds.set(button.dataset.popoverTargetId, id);
     });
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = e.target.dataset.href;
+    });
   }
   
   function associateButtonsToMobileDropdowns() {
