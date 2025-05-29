@@ -72,9 +72,11 @@ class ClientDataUsageAndSchedulingController < ApplicationController
       amount = 1
     end
 
-    if @client.update(custom_scheduling: custom_scheduling, scheduling_periodicity: periodicity, scheduling_amount_per_period: amount)
+    begin
+      @client.update(custom_scheduling: custom_scheduling, scheduling_periodicity: periodicity, scheduling_amount_per_period: amount)
       notice = "Pod's Custom Scheduling was successfully saved."
-    else
+    rescue Exception => e
+      Sentry.capture_exception(e, extra: { client_id: @client.id, params: params })
       notice = "Error saving pod's custom scheduling."
     end
 
@@ -109,6 +111,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_client
     @client = policy_scope(Client).find_by_unix_user(params[:client_id])
@@ -118,9 +121,9 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   end
 
   def get_value_in_bytes(value, unit)
-    tb_multiplier = (1024**4)
-    gb_multiplier = (1024**3)
-    mb_multiplier = (1024**2)
+    tb_multiplier = (1024 ** 4)
+    gb_multiplier = (1024 ** 3)
+    mb_multiplier = (1024 ** 2)
     if (unit.present? && unit == "TB")
       value * tb_multiplier
     elsif (unit.present? && unit == "GB")
