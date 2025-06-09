@@ -16,6 +16,7 @@ var geoNamespaceMap = map[string]namespaces.Namespace{
 	"US_STATES":        namespaces.US_STATE,
 	"US_COUNTIES":      namespaces.US_COUNTY,
 	"US_TRIBAL_TRACTS": namespaces.US_TTRACT,
+	"US_AIANNH":        namespaces.US_TTRACT,
 }
 
 // Cache some variables that are going to be called a lot by the iterator but will never change during the ingestion
