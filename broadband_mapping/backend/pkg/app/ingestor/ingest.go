@@ -18,30 +18,6 @@ type geodata struct {
 	geoId     string
 }
 
-func processDate(readers []io.ReadCloser, startTime time.Time, s storages.IngestorAppStorages) error {
-	measReader, revReader := readers[0], readers[1]
-	measDecoder, err := ocf.NewDecoder(measReader)
-	if err != nil {
-		return err
-	}
-	// Load the whole file
-	revDecoder, err := ocf.NewDecoder(revReader)
-	if err != nil {
-		return err
-	}
-	index, err := indexGeospaces(revDecoder)
-	if err != nil {
-		return err
-	}
-	revReader.Close()
-	if err := s.MeasurementStorage.Insert(
-		newMeasurementReader(measDecoder, index, &startTime, s.GeospaceStorage, s.ASNOrgStorage),
-	); err != nil {
-		return err
-	}
-	return nil
-}
-
 func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage, start, end time.Time, summarize bool) error {
 	it, err := Fetch(storage, []string{"ipgeocode", "reversegeocode"}, start, end)
 	if err != nil {
@@ -71,7 +47,7 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 	return nil
 }
 
-func ingestFetchedData(ctx context.Context, startTime time.Time, s storages.IngestorAppStorages, it *ItemIterator) error {
+func ingestFetchedData(ctx context.Context, startTime time.Time, s storages.IngestorAppStorages, it *itemIterator) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -90,6 +66,30 @@ func ingestFetchedData(ctx context.Context, startTime time.Time, s storages.Inge
 			}
 		}
 	}
+}
+
+func processDate(readers []io.ReadCloser, startTime time.Time, s storages.IngestorAppStorages) error {
+	measReader, revReader := readers[0], readers[1]
+	measDecoder, err := ocf.NewDecoder(measReader)
+	if err != nil {
+		return err
+	}
+	// Load the whole file
+	revDecoder, err := ocf.NewDecoder(revReader)
+	if err != nil {
+		return err
+	}
+	index, err := indexGeospaces(revDecoder)
+	if err != nil {
+		return err
+	}
+	revReader.Close()
+	if err := s.MeasurementStorage.Insert(
+		newMeasurementReader(measDecoder, index, &startTime, s.GeospaceStorage, s.ASNOrgStorage),
+	); err != nil {
+		return err
+	}
+	return nil
 }
 
 func indexGeospaces(dec *ocf.Decoder) (map[string][]geodata, error) {

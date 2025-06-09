@@ -56,7 +56,7 @@ func newMeasurementReader(
 }
 
 func (mr *measurementReader) startDecodeWorker() {
-	mr.ch = make(chan *decodeResult)
+	mr.ch = make(chan *decodeResult, 10)
 	go func() {
 		for mr.decoder.HasNext() {
 			m := &models.IPGeocodeResult{}
@@ -170,6 +170,9 @@ func clearCache() {
 	asnOrgCache = &sync.Map{}
 }
 
+// Caches geospaces and ASNs to avoid repeated queries. Cached values point to their DB ID
+// Geospaces are cached by namespace + geoID
+// ASNs are cached by organization name
 func loadCache(geoStorage storages.GeospaceStorage, asnStorage storages.ASNOrgStorage) error {
 	clearCache()
 	geoIterator, err := geoStorage.All(nil, nil)
