@@ -205,7 +205,9 @@ export default class extends Controller {
     monthsColumn.scrollTop = selectedMonth.offsetTop - 16;
     const yearsColumn = this.monthYearPickerTarget.querySelector('.dashboard--month-year-picker-column[data-type="years"]');
     const selectedYear = yearsColumn.querySelector('[data-selected="true"]');
-    yearsColumn.scrollTop = selectedYear.offsetTop - 16;
+    if(selectedYear !== null) {
+      yearsColumn.scrollTop = selectedYear.offsetTop - 16;
+    }
   }
   
   selectMonth(e) {
