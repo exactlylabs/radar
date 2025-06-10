@@ -13,6 +13,7 @@ func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline [
 	defer ClearDataStores(dsProvider, dateRange)
 	files := make(map[string][]datastore.DataStore)
 	ctx := NewContext(context.Background())
+	log.Printf("Running %v for dates %v\n", pipeline, dateRange)
 	for _, date := range dateRange {
 		for _, stepName := range pipeline {
 			log.Printf("Running %v for date %v\n", stepName, date)
