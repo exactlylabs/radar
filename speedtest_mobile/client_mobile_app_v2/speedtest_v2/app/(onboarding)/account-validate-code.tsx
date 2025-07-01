@@ -3,7 +3,6 @@ import Title from "@/components/Title";
 
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { AntDesign } from "@expo/vector-icons";
 
 import EmailIcon from '@/assets/images/icons/emailicon.png'
 import { useRouter } from "expo-router";
@@ -19,6 +18,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
+
+import ArrowBackIcon from '@/assets/images/icons/arrowbackicon.png'
+import CheckIcon from '@/assets/images/icons/checkicon.png'
 
 const CELL_COUNT = 6;
 
@@ -56,7 +58,7 @@ export default function AccountValidateCode() {
     const showNotification = () => {
         opacity.value = withSequence(
             withTiming(1, { duration: 300 }),
-            withTiming(0, { duration: 5000 }, () => {})
+            withTiming(0, { duration: 5000 }, () => { })
         );
     };
 
@@ -80,7 +82,7 @@ export default function AccountValidateCode() {
         <View style={styles.container}>
             <View style={styles.content}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <AntDesign name="arrowleft" size={24} color={colors.gray400} />
+                    <Image source={ArrowBackIcon} width={30} height={30} />
                 </TouchableOpacity>
 
                 <Image source={EmailIcon} style={styles.emailIcon} />
@@ -136,7 +138,7 @@ export default function AccountValidateCode() {
 
                 <Animated.View style={[styles.notificationContainer, animatedStyle]}>
                     <View style={styles.notificationContent}>
-                        <AntDesign name="check" size={15} color={colors.white} />
+                        <Image source={CheckIcon} />
                         <Text style={styles.notificationText}>A new code has been sent.</Text>
                     </View>
                 </Animated.View>
