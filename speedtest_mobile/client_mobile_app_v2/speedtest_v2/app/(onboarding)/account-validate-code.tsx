@@ -1,4 +1,4 @@
-import { Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Title from "@/components/Title";
 
 import Button from "@/components/Button";
@@ -6,7 +6,7 @@ import ButtonContainer from "@/components/ButtonContainer";
 import { AntDesign } from "@expo/vector-icons";
 
 import EmailIcon from '@/assets/images/icons/emailicon.png'
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState, useEffect, useRef } from "react";
 import { colors, fonts } from "@/styles/shared";
 import TextComponent from "@/components/TextComponent";
@@ -19,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { TIMER_DURATIONS } from "@/constants/Timer";
+import { sendCode, getToken } from "@/app/http/authentication";
 
 const CELL_COUNT = 6;
 
@@ -36,6 +37,7 @@ export default function AccountValidateCode() {
     const [canResend, setCanResend] = useState(false);
     const opacity = useSharedValue(0);
     const timerRef = useRef<NodeJS.Timeout>();
+    const { email } = useLocalSearchParams();
 
     useEffect(() => {
         if (countdown > 0) {
@@ -56,7 +58,7 @@ export default function AccountValidateCode() {
     const showNotification = () => {
         opacity.value = withSequence(
             withTiming(1, { duration: 300 }),
-            withTiming(0, { duration: 5000 }, () => {})
+            withTiming(0, { duration: 5000 }, () => { })
         );
     };
 
@@ -64,16 +66,30 @@ export default function AccountValidateCode() {
         opacity: opacity.value,
     }));
 
-    const handleResendCode = () => {
+    const handleResendCode = async () => {
         if (canResend) {
-            setCountdown(TIMER_DURATIONS.SEND_NEW_CODE);
-            setCanResend(false);
-            showNotification();
+            try {
+                await sendCode(email as string)
+
+                setCountdown(TIMER_DURATIONS.SEND_NEW_CODE);
+                setCanResend(false);
+                showNotification();
+            } catch (error) {
+                console.log(error)
+                Alert.alert('something went wrong, try again later')
+            }
         }
     };
 
-    const handleContinue = () => {
-        setIsError(true)
+    const handleContinue = async () => {
+        try {
+            const response = await getToken(value)
+
+            router.push('/permissions_1_phone_access')
+        } catch (error) {
+            console.log(error)
+            setIsError(true)
+        }
     };
 
     return (
@@ -90,7 +106,7 @@ export default function AccountValidateCode() {
                 </View>
 
                 <View style={styles.textContainer}>
-                    <TextComponent text="Enter the 6-digit code we’ve sent to diogo@exactlylabs.com" />
+                    <TextComponent text={`Enter the 6-digit code we’ve sent to ${email}`} />
                 </View>
 
                 <CodeField
