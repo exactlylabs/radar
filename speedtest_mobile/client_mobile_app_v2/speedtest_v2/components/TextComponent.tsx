@@ -1,8 +1,13 @@
 import { sharedStyles } from "@/styles/shared";
 import { StyleSheet, Text } from "react-native";
 
-export default function TextComponent({ text }: { text: string }) {
-    return <Text style={styles.text}>{text}</Text>;
+type TextComponentProps = {
+    text: string;
+    centered?: boolean;
+}
+
+export default function TextComponent({ text, centered = false }: TextComponentProps) {
+    return <Text style={[styles.text, centered && styles.centered]}>{text}</Text>;
 }
 
 const styles = StyleSheet.create({
@@ -13,4 +18,7 @@ const styles = StyleSheet.create({
         maxWidth: '100%',
         textAlign: 'justify'
     },
+    centered: {
+        textAlign: 'center'
+    }
 });

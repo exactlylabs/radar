@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ImageStyle } from 'react-native';
 
 export const colors = {
     white: '#FFFFFF',
@@ -8,16 +8,31 @@ export const colors = {
     gray600: '#58586c',
     blue200: '#4B7BE5',
     blueBackground: '#15152E',
-    bgGradientPrimary: '#1B1860',
-    bgGradientSecondary: '#0B0B1A',
+    bgGradientPrimary: '#1A1B2E',
+    bgGradientSecondary: '#12132A',
     red400: '#E54B4B',
     bgPrimary: '#15152E',
+    backgroundGradientStart: '#110E4C',
+    backgroundGradientEnd: '#0B0B20',
+    bgLightBlueButtomPrimary: '#4B7BF5',
+    inactiveRadarGray: '#6B6B78',
+    tabBarBackground: '#1B1B3A',
+    success: '#34C759',
+    radarIconBg: '#3F3C70',
 }
 
 export const fonts = {
-    MulishBold: 'MulishBold',
-    MulishRegular: 'MulishRegular',
-}
+  MulishBold: "MulishBold",
+  MulishRegular: "MulishRegular",
+  tabBarTextSize: 12,
+};
+
+export const iconStyles = StyleSheet.create({
+    icon24: {
+        width: 24,
+        height: 24,
+    } as ImageStyle,
+});
 
 export const sharedStyles = StyleSheet.create({
     colors: {
