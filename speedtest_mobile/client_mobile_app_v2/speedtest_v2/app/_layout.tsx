@@ -37,6 +37,10 @@ export default function RootLayout() {
           name="(onboarding)"
           options={{ headerShown: false }}
         />
+           <Stack.Screen
+          name="(wifidetails)"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </ThemeProvider>
   );
