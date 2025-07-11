@@ -6,12 +6,15 @@ class MeasurementPolicy < ApplicationPolicy
     def resolve
       if @auth_holder.present?
         if @auth_holder.user.super_user? && !@auth_holder.is_super_user_disabled?
+          puts "ALL"
           scope.all
         elsif @auth_holder.is_all_accounts?
           user = @auth_holder.user
           accounts = [*user.accounts.not_deleted, *user.shared_accounts]
+          puts "ACCOUNTS TO CONSIDER: #{accounts.map(&:id).join(', ')}"
           scope.where(account: accounts).where.not(download: nil)
         else
+          puts "ACCOUNTS TO CONSIDER: #{@auth_holder.account.id}"
           scope.where(account_id: @auth_holder.account.id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
         end
       else

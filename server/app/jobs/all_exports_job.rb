@@ -13,8 +13,8 @@ class AllExportsJob < ApplicationJob
       ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 12.5})
       @clients = Client.all.to_csv_file
       ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25})
-      @all_measurements = Measurement.all.to_csv_file
-      @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
+      @all_measurements = Measurement.to_csv_file(Measurement.all)
+      @all_ndt7_measurements = Measurement.to_ndt7_csv_file(Measurement.where(style: "NDT7"))
       ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 50})
       # Main zip for download
       Zip::File.open(filename, create: true) do |zip|
