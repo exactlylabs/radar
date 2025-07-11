@@ -3,7 +3,6 @@ import Title from "@/components/Title";
 
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { AntDesign } from "@expo/vector-icons";
 
 import UserIcon from '@/assets/images/icons/usericon.png'
 import Input from "@/components/Input";
@@ -12,6 +11,8 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { isValidEmail } from "@/src/utils/validateEmail";
 import { colors, fonts } from "@/styles/shared";
+
+import ArrowBackIcon from '@/assets/images/icons/arrowbackicon.png'
 
 export default function AccountEmail() {
     const router = useRouter()
@@ -30,7 +31,7 @@ export default function AccountEmail() {
         <View style={styles.container}>
             <View style={styles.content}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <AntDesign name="arrowleft" size={24} color="#A09FB7" />
+                    <Image source={ArrowBackIcon} width={30} height={30}/>
                 </TouchableOpacity>
 
                 <Image source={UserIcon} style={styles.userIcon} />
