@@ -78,10 +78,10 @@ final theme = ThemeData(
   ),
   fontFamily: 'Mulish',
   textTheme: const TextTheme(
-    headline1: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
-    headline2: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
-    subtitle1: TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal, color: AppColors.darkLavender),
-    bodyText1: TextStyle(fontSize: 15.0, fontWeight: FontWeight.normal, color: AppColors.darkGrey),
-    bodyText2: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.deepBlue),
+    headlineLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
+    headlineMedium: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
+    titleMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal, color: AppColors.darkLavender),
+    bodyLarge: TextStyle(fontSize: 15.0, fontWeight: FontWeight.normal, color: AppColors.darkGrey),
+    bodyMedium: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.deepBlue),
   ),
 );
