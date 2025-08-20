@@ -29,12 +29,40 @@ class MapWebViewPage extends StatefulWidget {
 }
 
 class _MapWebViewPageState extends State<MapWebViewPage> {
-  final CookieManager _cookieManager = CookieManager();
-  final Completer<WebViewController> _controller = Completer<WebViewController>();
+  late final WebViewController _controller;
   final LocalStorage _localStorage = GetIt.I<LocalStorage>();
 
   late String initialUrl;
   late String _cookieDomain;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) {
+            final validRequestUrl = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
+            if (validRequestUrl == null || !request.url.contains(validRequestUrl)) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+          onPageStarted: (String url) {
+            final cookieManager = WebViewCookieManager();
+            cookieManager.setCookie(
+              WebViewCookie(
+                name: MapWebViewPage._cookieName,
+                value: MapWebViewPage._cookieValue,
+                domain: _cookieDomain,
+                path: MapWebViewPage._cookiePath,
+              ),
+            );
+          },
+        ),
+      );
+  }
 
   @override
   void didChangeDependencies() {
@@ -45,6 +73,7 @@ class _MapWebViewPageState extends State<MapWebViewPage> {
     }
     _cookieDomain = AppConfig.of(context)?.stringResource.WEB_ENDPOINT_COOKIE_DOMAIN ?? '';
     initialUrl = _getWebViewUrl(context, widget.latitude, widget.longitude);
+    _controller.loadRequest(Uri.parse(initialUrl));
     if (widget.latitude == null && widget.longitude == null) {
       getCurrentLocation();
     }
@@ -56,33 +85,8 @@ class _MapWebViewPageState extends State<MapWebViewPage> {
       child: Column(
         children: [
           Expanded(
-            child: WebView(
-              key: ValueKey(initialUrl),
-              initialUrl: initialUrl,
-              javascriptMode: JavascriptMode.unrestricted,
-              onWebViewCreated: (WebViewController webViewController) {
-                if (!_controller.isCompleted) {
-                  _controller.complete(webViewController);
-                  _cookieManager.clearCookies();
-                }
-              },
-              onPageStarted: (String url) {
-                _cookieManager.setCookie(
-                  WebViewCookie(
-                    name: MapWebViewPage._cookieName,
-                    value: MapWebViewPage._cookieValue,
-                    domain: _cookieDomain,
-                    path: MapWebViewPage._cookiePath,
-                  ),
-                );
-              },
-              navigationDelegate: (NavigationRequest request) {
-                final validRequestUrl = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
-                if (validRequestUrl == null || !request.url.contains(validRequestUrl)) {
-                  return NavigationDecision.prevent;
-                }
-                return NavigationDecision.navigate;
-              },
+            child: WebViewWidget(
+              controller: _controller,
             ),
           ),
         ],
@@ -122,15 +126,17 @@ class _MapWebViewPageState extends State<MapWebViewPage> {
         final permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
-          setState(() => initialUrl = webEndpoint!);
+          final newUrl = webEndpoint!;
+          _controller.loadRequest(Uri.parse(newUrl));
           return;
         }
       }
       final position = await Geolocator.getCurrentPosition();
-      setState(() => initialUrl =
-          '$webEndpoint&userLat=${position.latitude}&userLng=${position.longitude}&zoom=17');
+      final newUrl = '$webEndpoint&userLat=${position.latitude}&userLng=${position.longitude}&zoom=17';
+      _controller.loadRequest(Uri.parse(newUrl));
     } catch (failure) {
-      setState(() => initialUrl = '$webEndpoint&zoom=17');
+      final newUrl = '$webEndpoint&zoom=17';
+      _controller.loadRequest(Uri.parse(newUrl));
     }
   }
 }

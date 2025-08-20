@@ -52,7 +52,7 @@ dependencies:
   dio: ^5.4.3+1
   http: ^1.2.1
   path_provider: ^2.0.11
-  webview_flutter: ^3.0.4
+  webview_flutter: ^4.13.0
   intl: ^0.17.0
   flutter_map: ^6.1.0
   async: ^2.9.0
@@ -63,7 +63,7 @@ dependencies:
   connectivity_plus: ^5.0.2
   permission_handler: ^10.2.0
   app_settings: ^5.1.1
-  flutter_local_notifications: ^13.0.0
+  flutter_local_notifications: ^19.4.0
   web_socket_channel: ^2.4.5
 
 
