@@ -19,14 +19,17 @@ class NavigationCubit extends Cubit<NavigationState> {
   }
 
   Future<void> _getConnectionStatuses() async {
-    final status = await _connectivity.checkConnectivity();
-    _parseConnectionStatuses(status);
+    final statuses = await _connectivity.checkConnectivity();
+    _parseConnectionStatuses(statuses);
   }
 
-  void _parseConnectionStatuses(ConnectivityResult status) {
-    if (status == ConnectivityResult.wifi ||
+  void _parseConnectionStatuses(List<ConnectivityResult> statuses) {
+    final hasConnection = statuses.any((status) =>
+        status == ConnectivityResult.wifi ||
         status == ConnectivityResult.mobile ||
-        status == ConnectivityResult.ethernet) {
+        status == ConnectivityResult.ethernet);
+    
+    if (hasConnection) {
       emit(state.copyWith(canNavigate: true));
     } else {
       emit(state.copyWith(canNavigate: false));
@@ -34,8 +37,8 @@ class NavigationCubit extends Cubit<NavigationState> {
   }
 
   void _listenToConnectivityChanges() {
-    _connectivity.onConnectivityChanged.listen((status) {
-      _parseConnectionStatuses(status);
+    _connectivity.onConnectivityChanged.listen((statuses) {
+      _parseConnectionStatuses(statuses);
     });
   }
 
