@@ -66,24 +66,42 @@ android {
 
     signingConfigs {
         create("dev") {
-            keyAlias = devKeystoreProperties.getProperty("keyAlias")
-            keyPassword = devKeystoreProperties.getProperty("keyPassword")
-            storeFile = devKeystoreProperties.getProperty("storeFile")?.let { path -> file(path) }
-            storePassword = devKeystoreProperties.getProperty("storePassword")
+            val devStoreFile = devKeystoreProperties.getProperty("storeFile")
+            if (devStoreFile != null && file(devStoreFile).exists()) {
+                keyAlias = devKeystoreProperties.getProperty("keyAlias")
+                keyPassword = devKeystoreProperties.getProperty("keyPassword")
+                storeFile = file(devStoreFile)
+                storePassword = devKeystoreProperties.getProperty("storePassword")
+            } else {
+                // Use debug signing when keystore is not available
+                println("Warning: Dev keystore not found, using debug signing")
+            }
         }
 
         create("staging") {
-            keyAlias = stagingKeystoreProperties.getProperty("keyAlias")
-            keyPassword = stagingKeystoreProperties.getProperty("keyPassword")
-            storeFile = stagingKeystoreProperties.getProperty("storeFile")?.let { path -> file(path) }
-            storePassword = stagingKeystoreProperties.getProperty("storePassword")
+            val stagingStoreFile = stagingKeystoreProperties.getProperty("storeFile")
+            if (stagingStoreFile != null && file(stagingStoreFile).exists()) {
+                keyAlias = stagingKeystoreProperties.getProperty("keyAlias")
+                keyPassword = stagingKeystoreProperties.getProperty("keyPassword")
+                storeFile = file(stagingStoreFile)
+                storePassword = stagingKeystoreProperties.getProperty("storePassword")
+            } else {
+                // Use debug signing when keystore is not available
+                println("Warning: Staging keystore not found, using debug signing")
+            }
         }
 
         create("prod") {
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = keystoreProperties.getProperty("storeFile")?.let { path -> file(path) }
-            storePassword = keystoreProperties.getProperty("storePassword")
+            val prodStoreFile = keystoreProperties.getProperty("storeFile")
+            if (prodStoreFile != null && file(prodStoreFile).exists()) {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = file(prodStoreFile)
+                storePassword = keystoreProperties.getProperty("storePassword")
+            } else {
+                // Use debug signing when keystore is not available
+                println("Warning: Production keystore not found, using debug signing")
+            }
         }
     }
 
@@ -97,7 +115,13 @@ android {
             dimension = "app"
             applicationId = "org.anthc.radar"
             namespace = "org.anthc.radar"
-            signingConfig = signingConfigs.getByName("prod")
+            // Use debug signing if prod keystore is not available
+            val prodStoreFile = keystoreProperties.getProperty("storeFile")
+            signingConfig = if (prodStoreFile != null && file(prodStoreFile).exists()) {
+                signingConfigs.getByName("prod")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             manifestPlaceholders["app_name"] = "Radar"
             manifestPlaceholders["icon"] = "@mipmap/ic_launcher"
         }
@@ -106,7 +130,13 @@ android {
             applicationId = "com.exactlylabs.radar"
             namespace = "com.exactlylabs.radar"
             applicationIdSuffix = ".dev"
-            signingConfig = signingConfigs.getByName("dev")
+            // Use debug signing if dev keystore is not available
+            val devStoreFile = devKeystoreProperties.getProperty("storeFile")
+            signingConfig = if (devStoreFile != null && file(devStoreFile).exists()) {
+                signingConfigs.getByName("dev")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             manifestPlaceholders["app_name"] = "Radar Dev"
             manifestPlaceholders["icon"] = "@mipmap/ic_launcher"
         }
@@ -115,7 +145,13 @@ android {
             applicationId = "com.exactlylabs.radar"
             namespace = "com.exactlylabs.radar"
             applicationIdSuffix = ".staging"
-            signingConfig = signingConfigs.getByName("staging")
+            // Use debug signing if staging keystore is not available
+            val stagingStoreFile = stagingKeystoreProperties.getProperty("storeFile")
+            signingConfig = if (stagingStoreFile != null && file(stagingStoreFile).exists()) {
+                signingConfigs.getByName("staging")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             manifestPlaceholders["app_name"] = "Radar Staging"
             manifestPlaceholders["icon"] = "@mipmap/ic_launcher"
         }
@@ -140,6 +176,42 @@ android {
 
 flutter {
     source = "../.."
+}
+
+// Fix APK output path for Flutter compatibility
+tasks.register("copyApksToFlutterLocation") {
+    doLast {
+        val androidBuildDir = File(project.buildDir, "outputs/apk")
+        val flutterApkDir = File(project.rootDir.parent, "build/app/outputs/flutter-apk")
+        flutterApkDir.mkdirs()
+        
+        if (androidBuildDir.exists()) {
+            androidBuildDir.walkTopDown().forEach { file ->
+                if (file.name.endsWith(".apk")) {
+                    val targetFile = File(flutterApkDir, file.name)
+                    file.copyTo(targetFile, overwrite = true)
+                    println("Copied APK to Flutter location: ${targetFile.absolutePath}")
+                }
+            }
+        }
+        
+        // Also copy from flutter-apk directory if it exists
+        val flutterApkSourceDir = File(project.buildDir, "outputs/flutter-apk")
+        if (flutterApkSourceDir.exists()) {
+            flutterApkSourceDir.walkTopDown().forEach { file ->
+                if (file.name.endsWith(".apk")) {
+                    val targetFile = File(flutterApkDir, file.name)
+                    file.copyTo(targetFile, overwrite = true)
+                    println("Copied APK to Flutter location: ${targetFile.absolutePath}")
+                }
+            }
+        }
+    }
+}
+
+// Run the copy task after any assemble task
+tasks.matching { it.name.startsWith("assemble") }.configureEach {
+    finalizedBy("copyApksToFlutterLocation")
 }
 
 dependencies {

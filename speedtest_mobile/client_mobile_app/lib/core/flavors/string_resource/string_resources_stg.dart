@@ -19,10 +19,10 @@ class StringResourceStg implements IStringResource {
 
   @override
   String WEB_ENDPOINT =
-      'https://speedtest-staging.exactlylabs.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
+      'https://speedtest.staging.exactlylabs.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
-  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speedtest-staging.exactlylabs.com';
+  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speedtest.staging.exactlylabs.com';
 
   @override
   String ENVIRONMENT = 'staging';
