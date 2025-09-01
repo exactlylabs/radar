@@ -9,6 +9,9 @@ import {LARGE_SCREEN_BREAKPOINT} from "../utils/breakpoints";
  * @returns {boolean}
  */
 export const useIsXLScreen = () => {
-  const {width} = useContext(ViewportContext);
+  const {width, isClient} = useContext(ViewportContext);
+  if (!isClient) {
+    return false;
+  }
   return width >= LARGE_SCREEN_BREAKPOINT;
 }

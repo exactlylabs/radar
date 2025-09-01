@@ -9,6 +9,9 @@ import {MID_SCREEN_BREAKPOINT, SMALL_SCREEN_BREAKPOINT} from "../utils/breakpoin
  * @returns {boolean}
  */
 export const useIsMidScreen = () => {
-  const {width} = useContext(ViewportContext);
+  const {width, isClient} = useContext(ViewportContext);
+  if (!isClient) {
+    return false;
+  }
   return width >= SMALL_SCREEN_BREAKPOINT && width < MID_SCREEN_BREAKPOINT;
 }

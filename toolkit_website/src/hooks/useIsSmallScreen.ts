@@ -9,6 +9,11 @@ import {SMALL_SCREEN_BREAKPOINT} from "../utils/breakpoints";
  * @returns {boolean}
  */
 export const useIsSmallScreen = () => {
-  const {width} = useContext(ViewportContext);
+  const {width, isClient} = useContext(ViewportContext);
+
+  if (!isClient) {
+    return false;
+  }
+
   return width < SMALL_SCREEN_BREAKPOINT;
 }

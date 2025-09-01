@@ -18,6 +18,7 @@ build:
 	@echo "Building $(ENVIRONMENT) environment"
 
 	docker buildx build \
+		--no-cache \
 		--platform linux/arm64,linux/amd64 \
 		-t toolkit-website:$(VERSION) \
 		--build-arg "ENVIRONMENT=$(ENVIRONMENT)" \

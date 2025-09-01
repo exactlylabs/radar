@@ -1,7 +1,12 @@
-import {useRef} from "react";
+import {useEffect, useState} from "react";
 import { isTouchDevice } from "../utils/screen";
 
-
 export const useIsTouchDevice = () => {
-  return useRef(isTouchDevice());
-}
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(isTouchDevice());
+  }, []);
+
+  return isTouch;
+};

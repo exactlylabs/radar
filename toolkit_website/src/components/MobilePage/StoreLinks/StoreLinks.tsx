@@ -3,7 +3,6 @@ import { styles } from "./styles/StoreLinks.style";
 import { useViewportSizes } from "../../../hooks/useViewportSizes";
 
 const GooglePlayIcon = '/assets/images/google-play-icon.png';
-const AppStoreIcon = '/assets/images/appstore-icon.png';
 
 const StoreLinks = (): ReactElement => {
   
