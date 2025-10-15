@@ -5,6 +5,7 @@ import UploadIconDisabled from '../../../../assets/small-upload-icon-disabled.pn
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import {useContext} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
+import { useTranslation } from 'react-i18next';
 
 const gaugeInteriorStyle = {
   width: 150,
@@ -129,7 +130,7 @@ const SpeedGaugeInterior = ({
   currentValue,
   isDownloading,
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
 
   return (
@@ -157,7 +158,7 @@ const SpeedGaugeInterior = ({
         />
       </div>
       <div style={currentValueStyle}>{currentValue}</div>
-      <div style={mbpsStyle}>Mbps</div>
+      <div style={mbpsStyle}>{t('common.labels.mbps')}</div>
     </div>
   )
 }

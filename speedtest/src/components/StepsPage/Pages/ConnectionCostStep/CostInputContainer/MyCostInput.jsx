@@ -7,6 +7,7 @@ import {TextField} from "@mui/material";
 import {DEFAULT_FONT_FAMILY} from "../../../../../utils/fonts";
 import './MyCostInput.css';
 import {useState} from "react";
+import { useTranslation } from 'react-i18next';
 
 const costInputWrapperStyle = {
   borderRadius: 16,
@@ -54,7 +55,7 @@ const MyCostInput = ({
   value,
   handleChange,
 }) => {
-
+  const { t } = useTranslation();
   const [focus, setFocus] = useState(false);
 
   const handleFocus = () => {
@@ -92,7 +93,7 @@ const MyCostInput = ({
                  onBlur={handleBlur}
                  className={'speedtest--custom-input-reset'}
       />
-      <div id={'speedtest--my-cost-input-currency'} style={currencyStyle}>US $</div>
+      <div id={'speedtest--my-cost-input-currency'} style={currencyStyle}>{t('connectionCost.currency')}</div>
     </div>
   )
 }

@@ -33,15 +33,17 @@ export const CONNECTION_TYPES = {
   CELLULAR: 'cellular',
 }
 
+// Use translation keys instead of hardcoded text
 export const DATE_RANGE_LABELS = {
-  LAST_6_MONTHS: 'Last 6 months',
-  THIS_YEAR: 'This year',
-  LAST_YEAR: 'Last year',
-  ALL_TIME: 'All time',
+  LAST_6_MONTHS: 'map.filters.dateRanges.last6Months',
+  THIS_YEAR: 'map.filters.dateRanges.thisYear',
+  LAST_YEAR: 'map.filters.dateRanges.lastYear',
+  ALL_TIME: 'map.filters.dateRanges.allTime',
 }
 
+// Use translation key for the label
 export const ALL_PROVIDERS_OPTION = {
-  label: 'All providers',
+  label: 'map.filters.panel.allProviders',
   value: 'all_providers',
   default: true
 }

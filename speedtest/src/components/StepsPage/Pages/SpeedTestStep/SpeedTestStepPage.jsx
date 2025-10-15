@@ -35,7 +35,7 @@ const SpeedTestStepPage = ({
         <StartTestPrompt startTest={runNdt7Test} goBack={goBack}/> :
         <>
           <SpeedGauge/>
-          <div style={footerStyle} dangerouslySetInnerHTML={{ __html: t('speedTest.running.status', { runningTestType }) }} />
+          <div style={footerStyle} dangerouslySetInnerHTML={{ __html: t('speedTest.running.status', { runningTestType: t(`expectedSpeeds.input.${runningTestType}`) }) }} />
         </>
       }
       { !config.widgetMode && <TestStatsTableContent/> }

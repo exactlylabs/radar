@@ -123,6 +123,7 @@ connectionPlacement:
 connectionCost:
   title: "What's your estimated monthly bill cost?"
   subtitle: "This helps us understand the average internet cost in your area."
+  currency: "US $"
 
 # Expected Speeds Step
 expectedSpeeds:
@@ -130,8 +131,10 @@ expectedSpeeds:
   subtitle: "Tell us your expected {{type}} speed if you're aware of it."
   button: "I don't know my expected speed"
   input:
-    download: "Download speed"
-    upload: "Upload speed"
+    download: "download"
+    upload: "upload"
+    downloadLabel: "Download speed"
+    uploadLabel: "Upload speed"
     placeholder: "E.g. 20"
 
 # Speed Test Step
@@ -250,6 +253,55 @@ map:
     unserved: "Unserved"
     underserved: "Underserved"
     other: "Other"
+    panel:
+      title: "Filters"
+      reset: "Reset filters"
+      apply: "Apply"
+      connection: "Connection"
+      internetProvider: "Internet Provider"
+      dateRange: "Date range"
+      costRange: "Cost range"
+      includeNoCost: "Include results with no cost information."
+      allProviders: "All providers"
+      noProvidersFound: "No providers found."
+      minimum: "Minimum"
+      maximum: "Maximum"
+      customDates: "Custom dates"
+    connectionTypes:
+      wired: "Wired"
+      wifi: "WiFi"
+      cellular: "Cellular"
+    dateRanges:
+      allTime: "All time"
+      thisYear: "This year"
+      lastYear: "Last year"
+      thisMonth: "This month"
+      lastMonth: "Last month"
+      last6Months: "Last 6 months"
+    layers:
+      viewBy: "View by:"
+      include: "Include:"
+      classification: "Classification"
+      downloadSpeed: "Download speed"
+      uploadSpeed: "Upload speed"
+      helpButton: "How classification works"
+      apply: "Apply"
+    classifications:
+      noInternet: "No Internet"
+      unserved: "Unserved"
+      underserved: "Underserved"
+      served: "Served"
+    speeds:
+      download:
+        noInternet: "No Internet"
+        low: "0-25 Mbps"
+        mid: "25-100 Mbps"
+        high: "100+ Mbps"
+      upload:
+        noInternet: "No Internet"
+        low: "0-3 Mbps"
+        mid: "3-20 Mbps"
+        high: "20+ Mbps"
   calendar:
     startDate: "Start date"
     endDate: "End date"
@@ -276,6 +328,17 @@ map:
       underserved: "Underserved: 25-100 Mbps download, 3-20 Mbps upload"
       served: "Served: 100+ Mbps download, 20+ Mbps upload"
       noInternet: "No Internet: no service available"
+    modal:
+      title: "Understanding classification"
+      subtitle: "Test results are classified based on the lower value of either the download or upload speeds."
+      unserved: "Unserved: "
+      unservedRange: "0-25 Mbps download, 0-3 Mbps upload"
+      underserved: "Underserved: "
+      underservedRange: "25-100 Mbps download, 3-20 Mbps upload"
+      served: "Served: "
+      servedRange: "100+ Mbps download, 20+ Mbps upload"
+      noInternet: "No Internet: "
+      noInternetDesc: "no service available"
   ftue:
     step1:
       title: "Explore speed test results"
@@ -283,6 +346,26 @@ map:
     step2:
       title: "Filter by Classifications and Speeds"
       subtitle: "Test results are classified by the lower download or upload speed. Use map views to switch between classifications or view speeds independently."
+  popup:
+    download: "Download"
+    upload: "Upload"
+    latency: "Latency"
+    loss: "Loss"
+    mbps: "Mbps"
+    ms: "ms"
+    percent: "%"
+    na: "N/A"
+    perMonth: "/month"
+    unserved: "Unserved"
+    underserved: "Underserved"
+    served: "Served"
+    noInternet: "No Internet"
+    home: "Home"
+    work: "Work"
+    other: "Other"
+    wifi: "WiFi"
+    wired: "Wired"
+    cellular: "Cellular"
 
 # Banners
 banners:
