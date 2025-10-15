@@ -5,18 +5,17 @@ import { useTranslation } from 'react-i18next'
 const exactlyLabsHeaderStyle = {
   width: '100%',
   height: '40px',
+  boxSizing: 'border-box',
+  paddingInline: '20px',
   backgroundColor: 'black',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   position: 'relative'
 }
 
 const languageSelectorContainerStyle = {
-  position: 'absolute',
-  right: '20px',
-  top: '50%',
-  transform: 'translateY(-50%)'
+  position: 'relative',
 }
 
 const ExactlyLabsHeader = () => {
