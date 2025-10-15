@@ -16,6 +16,7 @@ import ProviderIcon from '../../assets/provider-icon.png';
 import MyPopupGridItem from "./MyPopupGridItem";
 import {getNetworkPlacementIcon, placementOptions} from "../../utils/placements";
 import {getNetworkTypeIcon, types} from "../../utils/networkTypes";
+import { useTranslation } from 'react-i18next';
 
 const popupOptions = {
   keepInView: false,
@@ -194,6 +195,7 @@ const providerNameStyle = {
 // we will introduce an entire new UI for the results map, so it's not really worth
 // spending too much time and effort in getting this component clean now.
 const MyPopup = ({measurement, provider = null}) => {
+  const { t } = useTranslation();
 
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
@@ -212,7 +214,7 @@ const MyPopup = ({measurement, provider = null}) => {
   }
 
   const getCityStateText = () => {
-    if(!measurement.city && !measurement.state) return 'Not available';
+    if(!measurement.city && !measurement.state) return t('common.status.notAvailable');
     else if(!measurement.city) return measurement.state;
     else if(!measurement.state) return measurement.city;
     else return `${measurement.city}, ${measurement.state}`;
@@ -272,42 +274,42 @@ const MyPopup = ({measurement, provider = null}) => {
               {
                 measurement.network_location &&
                 <img src={getNetworkPlacementIcon(measurement.network_location, 'iconPopupSrc')} height={28} width={28}
-                     alt={'popup-icon-location'} style={measurement.network_type ? leftIconStyle : null}/>
+                     alt={t('alt.icons.popupLocation')} style={measurement.network_type ? leftIconStyle : null}/>
               }
               {
                 measurement.network_type &&
                 <img src={getNetworkTypeIcon(measurement.network_type, 'iconPopupSrc')} height={28} width={28}
-                     alt={'popup-icon-location'}/>
+                     alt={t('alt.icons.popupLocation')}/>
               }
             </div>
           }
         </div>
         <div style={getPopupContentContainerStyle()}>
           <MyPopupGridItem icon={DownloadIcon}
-                           title={'Download'}
+                           title={t('testResults.metrics.download')}
                            value={measurement.download_avg ? measurement.download_avg.toFixed(2) : '-'}
-                           unit={'Mbps'}
+                           unit={t('common.labels.mbps')}
           />
           <MyPopupGridItem icon={UploadIcon}
-                           title={'Upload'}
+                           title={t('testResults.metrics.upload')}
                            value={measurement.upload_avg ? measurement.upload_avg.toFixed(2) : '-'}
-                           unit={'Mbps'}
+                           unit={t('common.labels.mbps')}
           />
           <MyPopupGridItem icon={LossIcon}
-                           title={'Loss'}
+                           title={t('testResults.metrics.loss')}
                            value={measurement.loss !== null ? measurement.loss.toFixed(2) : '-'}
-                           unit={'%'}
+                           unit={t('common.labels.percent')}
           />
           <MyPopupGridItem icon={LatencyIcon}
-                           title={'Latency'}
+                           title={t('testResults.metrics.latency')}
                            value={measurement.latency !== null ? measurement.latency.toFixed(0) : '-'}
-                           unit={'ms'}
+                           unit={t('common.labels.ms')}
           />
         </div>
       </div>
       {(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org) &&
         <div style={popupFooterStyle}>
-          <img src={ProviderIcon} height={20} width={20} alt={'provider-icon'}/>
+          <img src={ProviderIcon} height={20} width={20} alt={t('alt.icons.provider')}/>
           <div className={'speedtest--bold'} style={providerNameStyle}>{measurement.autonomous_system.autonomous_system_org.name}</div>
         </div>
       }

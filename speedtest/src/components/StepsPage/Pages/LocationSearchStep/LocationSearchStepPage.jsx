@@ -9,6 +9,7 @@ import {MyBackButton} from "../../../common/MyBackButton";
 import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import {emptyAddress} from "../../../../context/UserData";
+import { useTranslation } from 'react-i18next';
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -49,7 +50,7 @@ const LocationSearchStepPage = ({
   goToNextPage,
   goBack
 }) => {
-
+  const { t } = useTranslation();
   const [isGenericLocationModalOpen, setIsGenericLocationModalOpen] = useState(false);
   const [isSuggestionsModalOpen, setIsSuggestionsModalOpen] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
@@ -86,8 +87,8 @@ const LocationSearchStepPage = ({
 
   return (
     <div style={locationSearchStepStyle}>
-      <MyTitle text={'What is your location?'}/>
-      <div style={subtitleStyle}>Your location is used to compare your results to others in your region.</div>
+      <MyTitle text={t('location.title')}/>
+      <div style={subtitleStyle}>{t('location.subtitle')}</div>
       <MyAddressInput handleContinue={handleContinue}
                       setGeolocationError={setGeolocationError}
                       openGenericLocationModal={openGenericLocationModal}
@@ -121,7 +122,7 @@ const LocationSearchStepPage = ({
                         closeModal={closeSuggestionsModal}
       />
       <div style={isSmall ? smallBackButtonContainer : backButtonContainer}>
-        <MyBackButton onClick={goBack} icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/> } text={'Go back'} iconFirst />
+        <MyBackButton onClick={goBack} icon={<img src={iconLeftArrow} alt={t('alt.icons.goBackArrow')} style={arrowIconStyle}/> } text={t('common.buttons.goBack')} iconFirst />
       </div>
     </div>
   )

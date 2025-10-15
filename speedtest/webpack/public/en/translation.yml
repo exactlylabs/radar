@@ -141,7 +141,7 @@ speedTest:
     subtitle: "For more accurate results, please make sure you are not currently making heavy use of your internet connection."
     button: "Start Speed Test"
   running:
-    status: "Testing <strong>{{runningTestType}}</strong> speed..."
+    status: "Testing **{{runningTestType}}** speed..."
   connection:
     location: "You are connected at {{networkLocation}}."
     type: "You are connected via {{networkType}}."
@@ -356,6 +356,7 @@ alt:
     info: "info-icon"
     search: "search icon"
     leftArrow: "left arrow"
+    rightArrow: "right arrow"
   map:
     mapPhoto: "Map showing speed test results"
     tooltipPhoto: "Tooltip showing test details"

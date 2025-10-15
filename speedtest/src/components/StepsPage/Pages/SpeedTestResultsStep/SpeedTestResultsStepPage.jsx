@@ -14,6 +14,7 @@ import {persistContactData} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import {CircularProgress} from "@mui/material";
 import {getLastStoredValue} from "../../../../utils/storage";
+import { useTranslation } from 'react-i18next';
 
 const speedTestResultsContainerStyle = {
   paddingTop: '4rem',
@@ -50,7 +51,7 @@ const SpeedTestResultsStepPage = ({
   goToAreaMap,
   goToTestAgain
 }) => {
-
+  const { t } = useTranslation();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const config = useContext(ConfigContext);
   const {isMediumSizeScreen} = useViewportSizes();
@@ -100,11 +101,11 @@ const SpeedTestResultsStepPage = ({
               {hasSubmittedInfo === SUBMISSION_STATES.JUST_SUBMITTED ? <SubmittedInfoBanner/> : <JoinUsBanner openModal={openContactInfoModal}/>}
             </AnimatedBanner>
           }
-          <MyTitle text={'Your test results'}/>
+          <MyTitle text={t('testResults.title')}/>
           <TestStatsTableContent extended/>
           <div style={isMediumSizeScreen ? mobileButtonFooterStyle : buttonFooterStyle}>
-            <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
-            <MyForwardButton text={'Explore the map'} onClick={goToAreaMap}/>
+            <MyBackButton text={t('testResults.buttons.testAgain')} onClick={goToTestAgain}/>
+            <MyForwardButton text={t('testResults.buttons.exploreMap')} onClick={goToAreaMap}/>
           </div>
           <ContactInfoModal isOpen={isContactModalOpen}
                             closeModal={handleCloseModal}

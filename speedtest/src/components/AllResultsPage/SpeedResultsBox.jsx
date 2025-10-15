@@ -8,6 +8,7 @@ import MyFiltersList from "./MyFiltersList";
 import FloatingExploreButton from "./FloatingExploreButton";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const speedFiltersBoxStyle = {
   width: 255,
@@ -72,7 +73,7 @@ const SpeedResultsBox = ({
   isBoxOpen,
   setIsBoxOpen
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
@@ -105,8 +106,8 @@ const SpeedResultsBox = ({
 
   const getDesktopVersion = () => (
     <div style={getSpeedFiltersDesktopStyle()}>
-      <MyFiltersTitle text={'Explore the Map'}/>
-      <MyFiltersSubtitle text={'Filter tests by speed results.'}/>
+      <MyFiltersTitle text={t('map.filters.title')}/>
+      <MyFiltersSubtitle text={t('map.filters.subtitle')}/>
       <MyFiltersTypeSwitcher currentType={currentFilterType}
                              setCurrentType={handleChangeTab}
       />

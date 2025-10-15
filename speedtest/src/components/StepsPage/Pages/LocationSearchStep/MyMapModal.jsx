@@ -27,6 +27,7 @@ import UserDataContext from "../../../../context/UserData";
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 import './MyMapModal.css';
 import AlertsContext, {SNACKBAR_TYPES} from "../../../../context/AlertsContext";
+import { useTranslation } from 'react-i18next';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -145,7 +146,7 @@ const MyMapModal = ({
   isGeneric,
   goToNextPage
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {userData, setUserData} = useContext(UserDataContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
@@ -166,12 +167,12 @@ const MyMapModal = ({
         if (suggestions.length > 0) {
           setAddressCoordinates(suggestions[0].coordinates);
         } else {
-          setError('There has been an error finding suggestions for given marker position. Please try again later.');
+          setError(t('location.modal.errors.findingSuggestions'));
         }
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
-        setError('There has been an unexpected error. Please try again later.');
+        setError(t('common.errors.unexpected'));
       }
     }
     const fetchUserCoordinates = async () => {
@@ -183,7 +184,7 @@ const MyMapModal = ({
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
-        setError('There has been an error finding position for given marker position. Please try again later.');
+        setError(t('location.modal.errors.findingPosition'));
       }
     }
     if (userData.address?.coordinates) {
@@ -256,7 +257,7 @@ const MyMapModal = ({
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
       notifyError(e);
-      showSnackbarMessage('There has been an error fetching coordinates!', SNACKBAR_TYPES.ERROR);
+      showSnackbarMessage(t('location.modal.errors.fetchingCoordinates'), SNACKBAR_TYPES.ERROR);
     }
   }
 
@@ -293,8 +294,8 @@ const MyMapModal = ({
     >
       <Box sx={config.widgetMode ? widgetBoxStyle : boxStyle}>
         <div style={{paddingLeft: '.5rem', paddingRight: '.5rem'}}>
-          <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
-          <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.'}</div>
+          <MyModalTitle text={isGeneric ? t('location.modal.title.tellLocation') : t('location.modal.title.confirmLocation')}/>
+          <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? t('location.modal.subtitle.tellLocation') : t('location.modal.subtitle.confirmLocation')}</div>
         </div>
         <div className={'speedtest--modal-map-container'} data-is-widget={config.widgetMode}>
           {
@@ -323,11 +324,11 @@ const MyMapModal = ({
           }
         </div>
         <div style={getFooterStyle()}>
-          <MyBackButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? 'Change' : 'Change address'}
+          <MyBackButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? t('location.modal.buttons.change') : t('location.modal.buttons.changeAddress')}
                         onClick={handleChangeAddress}
           />
-          <MyForwardButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? 'Confirm' : 'Confirm location'}
-                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
+          <MyForwardButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? t('location.modal.buttons.confirm') : t('location.modal.buttons.confirmLocation')}
+                           icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>}
                            onClick={handleContinue}
           />
         </div>

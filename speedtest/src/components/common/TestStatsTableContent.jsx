@@ -10,6 +10,7 @@ import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
 import SpeedTestContext from "../../context/SpeedTestContext";
 import ProviderIcon from "../../assets/provider-icon.png";
+import { useTranslation } from 'react-i18next';
 
 const tableContentStyle = {
   display: 'flex',
@@ -158,7 +159,7 @@ const asnNameStyle = {
 }
 
 const TestStatsTableContent = ({extended}) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {speedTestData} = useContext(SpeedTestContext);
   const {downloadValue, uploadValue, loss, latency, autonomous_system} = speedTestData;
@@ -179,38 +180,38 @@ const TestStatsTableContent = ({extended}) => {
     <div style={tableContentStyle}>
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Download</div>
+          <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={t('alt.icons.download')}/>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.download')}</div>
         </div>
         <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{downloadValue ? downloadValue.toFixed(2) : '-'}</div>
-        <div style={unitStyle}>Mbps</div>
+        <div style={unitStyle}>{t('common.labels.mbps')}</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Upload</div>
+          <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={t('alt.icons.upload')}/>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.upload')}</div>
         </div>
         <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{uploadValue ? uploadValue.toFixed(2) : '-'}</div>
-        <div style={unitStyle}>Mbps</div>
+        <div style={unitStyle}>{t('common.labels.mbps')}</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
-          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Loss</div>
+          <img style={iconStyle} src={LossIcon} width={16} height={16} alt={t('alt.icons.loss')}/>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.loss')}</div>
         </div>
         <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{loss ? loss.toFixed(0) : '-'}</div>
-        <div style={unitStyle}>%</div>
+        <div style={unitStyle}>{t('common.labels.percent')}</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Latency</div>
+          <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={t('alt.icons.latency')}/>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.latency')}</div>
         </div>
         <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{latency ? latency.toFixed(0) : '-'}</div>
-        <div style={unitStyle}>ms</div>
+        <div style={unitStyle}>{t('common.labels.ms')}</div>
       </div>
     </div>
   )
@@ -220,46 +221,46 @@ const TestStatsTableContent = ({extended}) => {
       <div style={halfColumnStyle}>
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
-            <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Download</div>
+            <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={t('alt.icons.download')}/>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.download')}</div>
           </div>
           <div style={mobileValuesStyle}>
             <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{downloadValue ? downloadValue.toFixed(2) : '-'}</div>
-            <div style={mobileUnitStyle}>Mbps</div>
+            <div style={mobileUnitStyle}>{t('common.labels.mbps')}</div>
           </div>
         </div>
         <MyStatsTableHorizontalDivider/>
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
-            <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
-            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Loss</div>
+            <img style={iconStyle} src={LossIcon} width={16} height={16} alt={t('alt.icons.loss')}/>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.loss')}</div>
           </div>
           <div style={mobileValuesStyle}>
             <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{loss ? loss.toFixed(0) : '-'}</div>
-            <div style={mobileUnitStyle}>%</div>
+            <div style={mobileUnitStyle}>{t('common.labels.percent')}</div>
           </div>
         </div>
       </div>
       <div style={halfColumnStyle}>
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
-            <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Upload</div>
+            <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={t('alt.icons.upload')}/>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.upload')}</div>
           </div>
           <div style={mobileValuesStyle}>
             <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{uploadValue ? uploadValue.toFixed(2) : '-'}</div>
-            <div style={mobileUnitStyle}>Mbps</div>
+            <div style={mobileUnitStyle}>{t('common.labels.mbps')}</div>
           </div>
         </div>
         <MyStatsTableHorizontalDivider/>
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
-            <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Latency</div>
+            <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={t('alt.icons.latency')}/>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('testResults.metrics.latency')}</div>
           </div>
           <div style={mobileValuesStyle}>
             <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{latency ? latency.toFixed(2) : '-'}</div>
-            <div style={mobileUnitStyle}>ms</div>
+            <div style={mobileUnitStyle}>{t('common.labels.ms')}</div>
           </div>
         </div>
       </div>
@@ -277,7 +278,7 @@ const TestStatsTableContent = ({extended}) => {
       {
         (autonomous_system && autonomous_system.autonomous_system_org) &&
         <div style={asnStyle}>
-          <img src={ProviderIcon} height={14} width={14} alt={'provider-icon'}/>
+          <img src={ProviderIcon} height={14} width={14} alt={t('alt.icons.provider')}/>
           <p style={asnNameStyle}>{autonomous_system.autonomous_system_org.name}</p>
         </div>
       }

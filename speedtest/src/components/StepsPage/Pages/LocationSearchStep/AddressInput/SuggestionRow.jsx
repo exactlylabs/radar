@@ -3,6 +3,7 @@ import {useEffect} from "react";
 import {DEFAULT_TEXT_COLOR} from "../../../../../utils/colors";
 import LocationIcon from '../../../../../assets/location-icon.png';
 import BlueArrow from '../../../../../assets/icons-arrow-right-blue.png';
+import { useTranslation } from 'react-i18next';
 
 const suggestionRowStyle = {
   width: '100%',
@@ -55,6 +56,7 @@ const SuggestionRow = ({
   autofillInput,
   setOpen
 }) => {
+  const { t } = useTranslation();
 
   useEffect(() => {
     if(suggestion) {
@@ -100,9 +102,9 @@ const SuggestionRow = ({
          onMouseLeave={unsetHovered}
          onClick={autofillInputAndCloseSuggestions}
     >
-      <img src={LocationIcon} width={11} height={15} alt={'Location-icon'} style={locationIconStyle}/>
+      <img src={LocationIcon} width={11} height={15} alt={t('alt.icons.location')} style={locationIconStyle}/>
       <div style={suggestionTextStyle} id={`speedtest--row-${index}-text`}>{suggestion.address}</div>
-      <img src={BlueArrow} alt={'right arrow'} style={rightArrowStyle}/>
+      <img src={BlueArrow} alt={t('alt.icons.rightArrow')} style={rightArrowStyle}/>
     </div>
   );
 }

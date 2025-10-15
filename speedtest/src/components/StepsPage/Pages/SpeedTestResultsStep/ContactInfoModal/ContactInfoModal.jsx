@@ -10,6 +10,7 @@ import iconLeftArrow from "../../../../../assets/icons-left-arrow.png";
 import {persistContactData} from "../../../../../utils/apiRequests";
 import {notifyError} from "../../../../../utils/errors";
 import {setSessionValue} from "../../../../../utils/session";
+import { useTranslation } from 'react-i18next';
 
 const CONTACT_STEPS = {
   INITIAL: 0,
@@ -17,7 +18,7 @@ const CONTACT_STEPS = {
 }
 
 const ContactInfoModal = ({isOpen, closeModal, speedTestId}) => {
-
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(CONTACT_STEPS.INITIAL);
   const [formData, setFormData] = useState({
     email: '',
@@ -55,14 +56,14 @@ const ContactInfoModal = ({isOpen, closeModal, speedTestId}) => {
         <div className={styles.dash} data-current={true}></div>
         <div className={styles.dash} data-current={currentStep === CONTACT_STEPS.FINAL}></div>
       </div>
-      <h4 className={styles.title}>Join our effort today</h4>
-      <p className={styles.subtitle}>Help us study broadband in your region.</p>
+      <h4 className={styles.title}>{t('testResults.contactInfo.title')}</h4>
+      <p className={styles.subtitle}>{t('testResults.contactInfo.subtitle')}</p>
       { currentStep === CONTACT_STEPS.INITIAL ? <InitialContactInfo handleInputChange={handleInputsChange}/> : <SecondaryContactInfo handleInputChange={handleInputsChange}/> }
       <div className={styles.buttonsContainer}>
-        { currentStep === CONTACT_STEPS.FINAL && <MyBackButton iconFirst icon={<img src={iconLeftArrow} alt={'go back arrow icon'} width={14} height={14}/>} text={'Go back'} onClick={() => setCurrentStep(CONTACT_STEPS.INITIAL)}/> }
+        { currentStep === CONTACT_STEPS.FINAL && <MyBackButton iconFirst icon={<img src={iconLeftArrow} alt={t('alt.icons.goBackArrow')} width={14} height={14}/>} text={t('common.buttons.goBack')} onClick={() => setCurrentStep(CONTACT_STEPS.INITIAL)}/> }
         <MyForwardButton onClick={handleSubmit}
-                         text={currentStep === CONTACT_STEPS.INITIAL ? 'Continue' : 'Submit details'}
-                         icon={currentStep === CONTACT_STEPS.INITIAL ? <img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/> : null}
+                         text={currentStep === CONTACT_STEPS.INITIAL ? t('common.buttons.continue') : t('testResults.contactInfo.button')}
+                         icon={currentStep === CONTACT_STEPS.INITIAL ? <img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/> : null}
         />
       </div>
     </CustomModal>

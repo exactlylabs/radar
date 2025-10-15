@@ -23,6 +23,7 @@ export const placementOptions = [
     iconLightSrc: HomeIconLight,
     iconPopupSrc: HomeIconPopup,
     text: 'Home',
+    textKey: 'connectionPlacement.options.home',
   },
   {
     id: 1,
@@ -31,6 +32,7 @@ export const placementOptions = [
     iconLightSrc: WorkIconLight,
     iconPopupSrc: WorkIconPopup,
     text: 'Work',
+    textKey: 'connectionPlacement.options.work',
   },
   {
     id: 2,
@@ -39,6 +41,7 @@ export const placementOptions = [
     iconLightSrc: OtherIconLight,
     iconPopupSrc: OtherIconPopup,
     text: 'Other',
+    textKey: 'connectionPlacement.options.other',
   },
   {
     id: 3,
@@ -47,6 +50,7 @@ export const placementOptions = [
     iconLightSrc: NoneIconLight,
     iconPopupSrc: NoneIconPopup,
     text: "I don't have",
+    textKey: 'connectionPlacement.options.none',
   },
 ];
 

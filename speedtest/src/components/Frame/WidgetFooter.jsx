@@ -1,6 +1,7 @@
 import {DEFAULT_FILTERS_SUBTITLE_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from "../../utils/colors";
 import RadarLogoGray from '../../assets/radar-logo-gray.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 const widgetFooterStyle = {
   width: '100%',
   height: 55,
@@ -54,14 +55,16 @@ const privacyStyle = {
 }
 
 const WidgetFooter = () => {
+  const { t } = useTranslation();
+
   return (
     <div style={widgetFooterStyle}>
       <div style={widgetFooterContentStyle}>
         <div style={leftSideContainer}>
-          <img src={RadarLogoGray} height={17} width={70} alt={'radar-logo'}/>
+          <img src={RadarLogoGray} height={17} width={70} alt={t('alt.logos.radar')}/>
         </div>
         <div style={rightSideContainer}>
-          <a style={privacyStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>
+          <a style={privacyStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>{t('footer.privacyPolicy')}</a>
         </div>
       </div>
     </div>

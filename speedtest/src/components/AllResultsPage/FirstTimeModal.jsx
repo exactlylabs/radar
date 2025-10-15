@@ -10,6 +10,7 @@ import {widgetModalFraming} from "../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
 import rightArrowWhite from "../../assets/right-arrow-white.png";
+import { useTranslation } from 'react-i18next';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -146,7 +147,7 @@ const FirstTimeModal = ({
   isOpen,
   setIsOpen
 }) => {
-
+  const { t } = useTranslation();
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
 
@@ -176,16 +177,15 @@ const FirstTimeModal = ({
         <div style={isExtraSmallSizeScreen ? xsCloseButtonStyle : closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
-        <MyModalTitle text={'Explore Map'}/>
-        <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Our map shows all speed tests taken across the country.
-          You can click a test to view more details or filter tests by speed results.</div>
+        <MyModalTitle text={t('map.firstTime.title')}/>
+        <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{t('map.firstTime.subtitle')}</div>
         <div style={getImageContainerStyle()}>
-          <img src={MapPhoto} style={mapPhotoStyle} alt={'map-photo'}/>
-          <img src={TooltipPhoto} style={tooltipPhotoStyle} alt={'tooltip-photo'}/>
+          <img src={MapPhoto} style={mapPhotoStyle} alt={t('alt.map.mapPhoto')}/>
+          <img src={TooltipPhoto} style={tooltipPhotoStyle} alt={t('alt.map.tooltipPhoto')}/>
         </div>
         <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
-          <MyButton text={'Go to map'}
-                    icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
+          <MyButton text={t('map.firstTime.button')}
+                    icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>}
                     onClick={closeModal}
                     fullWidth
           />

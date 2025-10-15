@@ -6,6 +6,7 @@ import TestStatsTableContent from "./TestStatsTable";
 import {DEFAULT_FOOTER_FONT_COLOR} from "../../../../utils/colors";
 import ConfigContext from "../../../../context/ConfigContext";
 import SpeedTestContext from "../../../../context/SpeedTestContext";
+import { useTranslation } from 'react-i18next';
 
 const footerStyle = {
   fontSize: 14,
@@ -16,6 +17,7 @@ const SpeedTestStepPage = ({
   goForward,
   goBack
 }) => {
+  const { t } = useTranslation();
   const {speedTestData, runNdt7Test} = useContext(SpeedTestContext);
   const {isRunning, runningTestType, startTimestamp, disabled} = speedTestData;
   const config = useContext(ConfigContext);
@@ -33,7 +35,7 @@ const SpeedTestStepPage = ({
         <StartTestPrompt startTest={runNdt7Test} goBack={goBack}/> :
         <>
           <SpeedGauge/>
-          <div style={footerStyle}>Testing <b>{runningTestType}</b> speed...</div>
+          <div style={footerStyle} dangerouslySetInnerHTML={{ __html: t('speedTest.running.status', { runningTestType }) }} />
         </>
       }
       { !config.widgetMode && <TestStatsTableContent/> }

@@ -1,10 +1,12 @@
 import MyFilterTabs from "./MyFilterTabs";
 import MyFilterTab from "./MyFilterTab";
+import { useTranslation } from 'react-i18next';
 
 const MyFiltersTypeSwitcher = ({
   currentType,
   setCurrentType,
 }) => {
+  const { t } = useTranslation();
 
   const setCurrentTypeOnZero = () => setCurrentType(0);
 
@@ -12,8 +14,8 @@ const MyFiltersTypeSwitcher = ({
 
   return (
     <MyFilterTabs currentIndex={currentType}>
-      <MyFilterTab label={'Download'} selected={currentType === 0} onClick={setCurrentTypeOnZero}/>
-      <MyFilterTab label={'Upload'} selected={currentType === 1} onClick={setCurrentTypeOnOne}/>
+      <MyFilterTab label={t('testResults.metrics.download')} selected={currentType === 0} onClick={setCurrentTypeOnZero}/>
+      <MyFilterTab label={t('testResults.metrics.upload')} selected={currentType === 1} onClick={setCurrentTypeOnOne}/>
     </MyFilterTabs>
   )
 }

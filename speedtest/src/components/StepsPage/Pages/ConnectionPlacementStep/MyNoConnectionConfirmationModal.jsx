@@ -14,6 +14,7 @@ import {widgetModalFraming} from "../../../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
+import { useTranslation } from 'react-i18next';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -113,7 +114,7 @@ const MyNoConnectionConfirmationModal = ({
   close,
   goToLastFlowStep
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
@@ -136,15 +137,15 @@ const MyNoConnectionConfirmationModal = ({
         <div style={closeButtonStyle} onClick={close} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
-        <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
-        <MySecondaryModalTitle text={'Confirm you don\'t have internet'}/>
-        <p style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don’t have an Internet connection at your current location?</p>
+        <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={t('alt.icons.noInternet')} width={42} height={42}/>
+        <MySecondaryModalTitle text={t('connectionPlacement.noInternet.title')}/>
+        <p style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{t('connectionPlacement.noInternet.subtitle')}</p>
         <div style={getFooterStyle()}>
-          <MyBackButton text={'Cancel'}
+          <MyBackButton text={t('common.buttons.cancel')}
                         onClick={close}
           />
-          <MyForwardButton text={isExtraSmallSizeScreen ? 'Confirm' : 'I don\'t have internet'}
-                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
+          <MyForwardButton text={isExtraSmallSizeScreen ? t('common.buttons.confirm') : t('connectionPlacement.noInternet.button')}
+                           icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>}
                            onClick={goToLastFlowStep}
           />
         </div>
