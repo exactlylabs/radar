@@ -1,0 +1,124 @@
+.languageSelector {
+  position: relative;
+  margin-left: 20px;
+}
+
+.languageButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Mulish', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #FFFFFF;
+  outline: none;
+}
+
+.languageButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.languageShortName {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+  color: #FFFFFF;
+}
+
+.chevronUp {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #E3E3E8;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  padding: 4px;
+  z-index: 1000;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Mulish', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3F3C70;
+  transition: background-color 0.15s ease;
+  text-align: left;
+  outline: none;
+}
+
+.dropdownItem:hover {
+  background-color: #F5F5F7;
+}
+
+.dropdownItem.active {
+  background-color: rgba(75, 123, 229, 0.08);
+  color: #4B7BE5;
+  font-weight: 600;
+}
+
+.languageName {
+  flex: 1;
+}
+
+.checkIcon {
+  margin-left: 8px;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .languageSelector {
+    margin-left: 10px;
+  }
+
+  .languageButton {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .dropdown {
+    min-width: 120px;
+  }
+
+  .dropdownItem {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+}
