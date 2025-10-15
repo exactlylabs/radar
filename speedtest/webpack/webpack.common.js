@@ -54,7 +54,7 @@ module.exports = (env) => {
     },
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
-      static: { directory: path.join(__dirname, '/public') },
+      static: { directory: path.join(__dirname, '../public') },
       hot: true,
       compress: true,
       port: 9999,
@@ -74,7 +74,8 @@ module.exports = (env) => {
       new CopyPlugin({
         patterns: [
           {from: path.resolve(__dirname, `../src/widget/widget.${env}.js`), to: './widget.js'},
-          {from: path.resolve(__dirname, '../public/site.webmanifest'), to: './'}
+          {from: path.resolve(__dirname, '../public/site.webmanifest'), to: './'},
+          {from: path.resolve(__dirname, '../public/locales'), to: './locales'}
         ]
       })
     ],
