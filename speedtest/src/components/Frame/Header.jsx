@@ -9,6 +9,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import MyNavLink from "../common/MyNavLink";
 import {CustomNarrowButton} from "../common/CustomNarrowButton";
 import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../common/LanguageSelector';
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -47,6 +48,7 @@ const rightSideContainerStyle = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-end',
+  alignItems: 'center'
 };
 
 const radarLogoStyle = {
@@ -55,7 +57,8 @@ const radarLogoStyle = {
 }
 
 const menuCloseButtonStyle = {
-  cursor: 'pointer'
+  cursor: 'pointer',
+  marginLeft: '15px'
 }
 
 const collapsableContentStyle = {
@@ -127,14 +130,20 @@ const Header = ({ setStep, isOverviewPage }) => {
         <div style={rightSideContainerStyle}>
           {
             (isSmallSizeScreen || isMediumSizeScreen) ?
-              <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
-                   width={22}
-                   height={22}
-                   alt={t('alt.icons.menuClose')}
-                   style={menuCloseButtonStyle}
-                   onClick={toggleMenu}
-              /> :
-              <CustomNarrowButton text={t('navigation.header.testSpeed')} onClick={goToTestSpeed}/>
+              <>
+                <LanguageSelector />
+                <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
+                     width={22}
+                     height={22}
+                     alt={t('alt.icons.menuClose')}
+                     style={menuCloseButtonStyle}
+                     onClick={toggleMenu}
+                />
+              </> :
+              <>
+                <CustomNarrowButton text={t('navigation.header.testSpeed')} onClick={goToTestSpeed}/>
+                <LanguageSelector />
+              </>
           }
         </div>
       </div>

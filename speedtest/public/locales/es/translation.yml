@@ -389,6 +389,7 @@ alt:
     anthc: "Logo de ANTHC"
     exactlyLabs: "Logo de Exactly Labs"
     xlab: "Logo de XLab"
+    poweredBy: "Desarrollado por Exactly Labs"
   icons:
     initialHero: "Icono principal de la pantalla inicial"
     shadow: "sombra"
