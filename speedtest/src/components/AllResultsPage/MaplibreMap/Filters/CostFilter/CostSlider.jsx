@@ -1,6 +1,7 @@
 import {useContext, useEffect, useRef} from "react";
 import styles from './cost_slider.module.css';
 import FiltersContext from "../../../../../context/FiltersContext";
+import { useTranslation } from 'react-i18next';
 
 /**
  * CostSlider Component
@@ -8,7 +9,7 @@ import FiltersContext from "../../../../../context/FiltersContext";
  * real data coming from our backend.
  */
 export default function CostSlider() {
-
+  const { t } = useTranslation();
   const { filters, setMinPrice, setMaxPrice } = useContext(FiltersContext);
   const { minPrice, maxPrice } = filters;
 
@@ -184,7 +185,7 @@ export default function CostSlider() {
       </div>
       <div className={styles.inputsContainer}>
         <div className={styles.inputContainer}>
-          <label className={styles.label}>Minimum</label>
+          <label className={styles.label}>{t('map.filters.panel.minimum')}</label>
           <div className={styles.inputAndSignContainer}>
             <span className={styles.dollarSign}>$</span>
             <input type={'number'}
@@ -199,7 +200,7 @@ export default function CostSlider() {
         </div>
         <span className={styles.inputDivider}>-</span>
         <div className={styles.inputContainer}>
-          <label className={styles.label}>Maximum</label>
+          <label className={styles.label}>{t('map.filters.panel.maximum')}</label>
           <div className={styles.inputAndSignContainer}>
             <span className={styles.dollarSign}>$</span>
             <input type={'number'}

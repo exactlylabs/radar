@@ -44,6 +44,7 @@ const initPromise = i18n
     fallbackLng: 'en',
     lng: 'en', // Default language
     debug: false, // Set to true for development debugging
+    supportedLngs: ['en', 'es'], // Supported languages
 
     ns: ['translation'], // Namespace
     defaultNS: 'translation',

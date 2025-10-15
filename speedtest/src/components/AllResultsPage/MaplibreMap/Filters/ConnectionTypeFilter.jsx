@@ -2,6 +2,7 @@ import styles from './connection_type_filter.module.css';
 import {useContext} from "react";
 import FiltersContext, {CONNECTION_TYPES} from "../../../../context/FiltersContext";
 import {capitalize} from "../../../../utils/messages";
+import { useTranslation } from 'react-i18next';
 
 function wiredIcon(active) {
   return (
@@ -73,7 +74,7 @@ function connectionTypeIcon(key, active) {
 }
 
 export default function ConnectionTypeFilter() {
-
+  const { t } = useTranslation();
   const { filters, setConnectionTypes } = useContext(FiltersContext);
   const { connectionTypes } = filters;
 
@@ -85,6 +86,10 @@ export default function ConnectionTypeFilter() {
     }
   }
 
+  const getConnectionTypeLabel = (key) => {
+    return t(`map.filters.connectionTypes.${key}`);
+  };
+
   return (
     <div className={styles.container}>
       {[CONNECTION_TYPES.WIRED, CONNECTION_TYPES.WIFI, CONNECTION_TYPES.CELLULAR].map(key => (
@@ -94,7 +99,7 @@ export default function ConnectionTypeFilter() {
                 key={key}
         >
           {connectionTypeIcon(key, connectionTypes.includes(key))}
-          {capitalize(key)}
+          {getConnectionTypeLabel(key)}
         </button>
       ))}
     </div>

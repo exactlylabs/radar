@@ -6,9 +6,10 @@ import LayersOption from './LayersOption';
 import CloseModalButton from './common/CloseModalButton';
 import {useContext} from "react";
 import FiltersContext, {VIEW_BY} from "../../../../context/FiltersContext";
+import { useTranslation } from 'react-i18next';
 
 export default function LayersPopup({isOpen, toggleLayersPopup, onHelpClick}) {
-
+  const { t } = useTranslation();
   const { filters, setViewBy } = useContext(FiltersContext);
   const { viewBy } = filters;
 
@@ -24,32 +25,32 @@ export default function LayersPopup({isOpen, toggleLayersPopup, onHelpClick}) {
         <CloseModalButton onClick={toggleLayersPopup} />
       </div>
       <div className={styles.layersContainer}>
-        <div className={styles.title}>View by:</div>
+        <div className={styles.title}>{t('map.filters.layers.viewBy')}</div>
         <div className={styles.optionsContainer}>
-          <LayersOption name="Classification"
+          <LayersOption name={t('map.filters.layers.classification')}
             handleSelectOption={() => selectOption(VIEW_BY.CLASSIFICATION)}
             isActive={viewBy === VIEW_BY.CLASSIFICATION}
           />
-          <LayersOption name="Download speed"
+          <LayersOption name={t('map.filters.layers.downloadSpeed')}
             handleSelectOption={() => selectOption(VIEW_BY.DOWNLOAD)}
             isActive={viewBy === VIEW_BY.DOWNLOAD}
           />
-          <LayersOption name="Upload speed"
+          <LayersOption name={t('map.filters.layers.uploadSpeed')}
             handleSelectOption={() => selectOption(VIEW_BY.UPLOAD)}
             isActive={viewBy === VIEW_BY.UPLOAD}
           />
         </div>
       </div>
       <div className={styles.classificationContainer}>
-        <div className={styles.title}>Include:</div>
+        <div className={styles.title}>{t('map.filters.layers.include')}</div>
         <ClassificationFilter />
       </div>
       <div className={styles.helpContainer}>
         <img src={helpIcon} alt="help" width={16} height={16} />
-        <button onClick={onHelpClick} className={styles.helpButton}>How classification works</button>
+        <button onClick={onHelpClick} className={styles.helpButton}>{t('map.filters.layers.helpButton')}</button>
       </div>
       <div className={styles.applyContainer}>
-        <button className={styles.applyButton} onClick={toggleLayersPopup}>Apply</button>
+        <button className={styles.applyButton} onClick={toggleLayersPopup}>{t('map.filters.layers.apply')}</button>
       </div>
     </div>
   );

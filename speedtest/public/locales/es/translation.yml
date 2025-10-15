@@ -1,0 +1,444 @@
+# Spanish translations for Speedtest application
+
+# Common UI elements
+common:
+  buttons:
+    continue: "Continuar"
+    cancel: "Cancelar"
+    submit: "Enviar"
+    goBack: "Volver"
+    confirm: "Confirmar"
+    next: "Siguiente"
+    getStarted: "Comenzar"
+    skip: "Omitir esta pregunta"
+  labels:
+    optional: "(opcional)"
+    mbps: "Mbps"
+    ms: "ms"
+    percent: "%"
+  status:
+    notAvailable: "No disponible"
+    unavailable: "No disponible"
+    na: "N/D"
+  errors:
+    unexpected: "Ha ocurrido un error inesperado. Por favor, inténtelo más tarde."
+
+# Navigation
+navigation:
+  tabs:
+    speedTest: "Test de Velocidad"
+    test: "Test"
+    results: "Tus Resultados"
+    history: "Resultados"
+    map: "Explorar el Mapa"
+    explore: "Mapa"
+  header:
+    home: "Inicio"
+    overview: "Visión general"
+    explore: "Explorar"
+    testSpeed: "Prueba tu velocidad"
+
+# Initial/Landing Page
+initial:
+  title: "Prueba tu velocidad de Internet"
+  subtitle: "Te haremos algunas preguntas para comprender mejor dónde y cómo estás conectado, así podremos conocer más sobre tu servicio actual."
+  agreement:
+    text: "Acepto la"
+    privacyPolicy: "Política de Privacidad"
+  button: "Realizar el test"
+  features:
+    test:
+      title: "Prueba tu conectividad"
+      description: "Obtén información detallada sobre tu conexión a Internet."
+    track:
+      title: "Realiza un seguimiento de tus resultados"
+      description: "Revisa tu historial para ver cómo evoluciona tu conectividad con el tiempo."
+    compare:
+      title: "Compara tus resultados"
+      description: "Explora el mapa para ver cómo varía la banda ancha en tu región."
+
+# Location Step
+location:
+  title: "¿Cuál es tu ubicación?"
+  subtitle: "Tu ubicación se utiliza para comparar tus resultados con otros en tu región."
+  input:
+    placeholder: "Introduce tu dirección o código postal"
+    useCurrentLocation: "Usar mi ubicación actual"
+  modal:
+    title:
+      tellLocation: "Indícanos tu ubicación"
+      confirmLocation: "Confirma tu ubicación"
+    subtitle:
+      tellLocation: "Amplía el mapa y arrastra el marcador para indicarnos tu ubicación actual."
+      confirmLocation: "Por favor, confirma tu ubicación moviendo el marcador al lugar correcto. Puedes ampliar el mapa y arrastrar el marcador."
+    buttons:
+      change: "Cambiar"
+      changeAddress: "Cambiar dirección"
+      confirm: "Confirmar"
+      confirmLocation: "Confirmar ubicación"
+    errors:
+      findingSuggestions: "Ha ocurrido un error al buscar sugerencias para la posición del marcador. Por favor, inténtelo más tarde."
+      findingPosition: "Ha ocurrido un error al buscar la posición para el marcador. Por favor, inténtelo más tarde."
+      fetchingCoordinates: "¡Ha ocurrido un error al obtener las coordenadas!"
+    suggestions:
+      title: "Confirma tu ubicación"
+      subtitle: "Por favor, selecciona tu ubicación de la lista siguiente."
+      notListed: "Mi dirección no está en la lista"
+  buttons:
+    changeAddress: "Cambiar dirección"
+    change: "Cambiar"
+    confirmLocation: "Confirmar ubicación"
+  errors:
+    suggestions: "Ha ocurrido un error al buscar sugerencias para la posición del marcador. Por favor, inténtelo más tarde."
+    position: "Ha ocurrido un error al buscar la posición para el marcador. Por favor, inténtelo más tarde."
+    coordinates: "¡Ha ocurrido un error al obtener las coordenadas!"
+    fillAddress: "Por favor, rellena el campo de dirección para continuar."
+    detectLocation: "No pudimos detectar tu ubicación actual. Asegúrate de habilitar el acceso a la ubicación en tu navegador e inténtalo de nuevo."
+    saveAddress: "¡Ha ocurrido un error al guardar tu dirección! Por favor, inténtelo más tarde."
+
+# Connection Type Step
+connectionType:
+  title: "¿Cómo estás conectado?"
+  subtitle: "Elige cómo estás conectado a Internet."
+  options:
+    wired: "Cable"
+    wifi: "WiFi"
+    cellular: "Móvil"
+
+# Connection Placement Step
+connectionPlacement:
+  title: "¿Dónde tienes Internet?"
+  subtitle: "Elige la opción que mejor se aplique."
+  options:
+    home: "Casa"
+    work: "Trabajo"
+    other: "Otro"
+    none: "No tengo"
+  noInternet:
+    title: "Confirma que no tienes Internet"
+    subtitle: "¿Estás seguro de que no tienes conexión a Internet en tu ubicación actual?"
+    button: "No tengo Internet"
+
+# Connection Cost Step
+connectionCost:
+  title: "¿Cuál es el coste mensual estimado de tu factura?"
+  subtitle: "Esto nos ayuda a entender el coste promedio de Internet en tu área."
+  currency: "US $"
+
+# Expected Speeds Step
+expectedSpeeds:
+  title: "¿Conoces tu velocidad de {{type}} esperada?"
+  subtitle: "Dinos tu velocidad de {{type}} esperada si la conoces."
+  button: "No conozco mi velocidad esperada"
+  input:
+    download: "descarga"
+    upload: "subida"
+    downloadLabel: "Velocidad de descarga"
+    uploadLabel: "Velocidad de subida"
+    placeholder: "Ej. 20"
+
+# Speed Test Step
+speedTest:
+  ready:
+    title: "Estás listo para comenzar."
+    subtitle: "Para obtener resultados más precisos, asegúrate de no estar haciendo un uso intensivo de tu conexión a Internet en este momento."
+    button: "Iniciar Test de Velocidad"
+  running:
+    status: "Probando velocidad de <strong>{{runningTestType}}</strong>..."
+  connection:
+    location: "Estás conectado en {{networkLocation}}."
+    type: "Estás conectado mediante {{networkType}}."
+  warning: "Ten en cuenta que el test de velocidad se contabilizará en tu plan de datos actual, que puede tener un límite de datos."
+
+# Test Results Step
+testResults:
+  title: "Tus resultados del test"
+  buttons:
+    testAgain: "Probar de nuevo"
+    exploreMap: "Explorar el mapa"
+  metrics:
+    download: "Descarga"
+    upload: "Subida"
+    loss: "Pérdida"
+    latency: "Latencia"
+  contactInfo:
+    title: "Únete a nuestro esfuerzo hoy"
+    subtitle: "Ayúdanos a estudiar la banda ancha en tu región."
+    button: "Enviar detalles"
+    email:
+      label: "Tu dirección de correo electrónico"
+      placeholder: "tu@correo.com"
+    phone:
+      label: "Tu número de teléfono"
+      placeholder: "+34 (000) 000-000"
+    firstName:
+      label: "Tu nombre"
+      placeholder: "Introduce tu nombre"
+    lastName:
+      label: "Tu apellido"
+      placeholder: "Introduce tu apellido"
+
+# No Internet Step
+noInternet:
+  title: "Gracias por informarnos."
+  message:
+    line1: "Aunque no podemos realizar un test de velocidad en tu ubicación porque no tienes Internet, apreciamos tu información que nos ayuda a conocer más sobre qué áreas no tienen servicio actualmente."
+    line2: "Puedes explorar el mapa para ver cómo se comparan otros contigo."
+  button: "Explorar el mapa"
+  modal:
+    title: "Sin conexión a Internet"
+    subtitle: "Por favor, asegúrate de que tu dispositivo esté conectado a Internet antes de continuar."
+    button: "Continuar de todos modos"
+
+# Overview Page
+overview:
+  hero:
+    title: "Prueba y compara tu velocidad de Internet con otros en tu área."
+    subtitle: "Radar te permite realizar tests de velocidad en tu ordenador o teléfono móvil y comparar tus resultados con otros en tu comunidad o en el país."
+    buttons:
+      test: "Prueba tu velocidad"
+      explore: "Explorar el mapa"
+  data:
+    title: "Recopilamos miles de resultados de tests de velocidad para entender cómo varía la banda ancha en todo el país."
+    features:
+      explore:
+        title: "Explora datos reales"
+        description: "Utilizamos datos reales de tests de velocidad para proporcionar información sobre el rendimiento de la banda ancha en todo el país."
+      map:
+        title: "Ver resultados en el mapa"
+        description: "Explora tu área en el mapa y observa cómo varía la banda ancha en diferentes regiones."
+      identify:
+        title: "Identificar necesidades de banda ancha"
+        description: "Nuestro enfoque basado en datos ayuda a las comunidades a identificar dónde se necesita más banda ancha."
+  mobile:
+    intro: "Radar para Móviles"
+    title: "Prueba tus conexiones wifi y móvil con nuestra aplicación móvil."
+    description: "Radar te permite realizar tests de velocidad en exteriores e interiores, comparar resultados a lo largo del tiempo, y comparar tus resultados con tu vecindario para tener una mejor idea de cómo es la banda ancha a tu alrededor."
+
+# History Page
+history:
+  title: "Todos tus resultados"
+  buttons:
+    goToLast: "Ir al último test"
+    exploreMap: "Explorar el mapa"
+  empty:
+    title: "Aún no has realizado un test de velocidad."
+    subtitle: "Los resultados de tus tests de velocidad aparecerán listados aquí."
+    button: "Realizar un test de velocidad"
+  table:
+    headers:
+      dateTime: "Fecha/Hora"
+      download: "Descarga"
+      upload: "Subida"
+      latency: "Latencia"
+      loss: "Pérdida"
+      location: "Ubicación"
+  modal:
+    testDetails: "Detalles del test"
+
+# Map/All Results Page
+map:
+  firstTime:
+    title: "Explorar Mapa"
+    subtitle: "Nuestro mapa muestra todos los tests de velocidad realizados en todo el país. Puedes hacer clic en un test para ver más detalles o filtrar tests por resultados de velocidad."
+    button: "Ir al mapa"
+  noResults: "No hay resultados de tests en esta área. Intenta ajustar tu área de búsqueda o los filtros de velocidad."
+  errors:
+    fetchSpeedTests: "Error al obtener los tests de velocidad. Por favor, inténtelo más tarde."
+    loadingResults: "Ha ocurrido un error al cargar los resultados. Por favor, inténtelo más tarde."
+  filters:
+    title: "Explorar el Mapa"
+    subtitle: "Filtrar tests por resultados de velocidad."
+    noInternet: "Sin Internet"
+    unserved: "Sin servicio"
+    underserved: "Servicio insuficiente"
+    other: "Otro"
+    panel:
+      title: "Filtros"
+      reset: "Restablecer filtros"
+      apply: "Aplicar"
+      connection: "Conexión"
+      internetProvider: "Proveedor de Internet"
+      dateRange: "Rango de fechas"
+      costRange: "Rango de costes"
+      includeNoCost: "Incluir resultados sin información de coste."
+      allProviders: "Todos los proveedores"
+      noProvidersFound: "No se encontraron proveedores."
+      minimum: "Mínimo"
+      maximum: "Máximo"
+      customDates: "Fechas personalizadas"
+    connectionTypes:
+      wired: "Cable"
+      wifi: "WiFi"
+      cellular: "Móvil"
+    dateRanges:
+      allTime: "Todo el tiempo"
+      thisYear: "Este año"
+      lastYear: "Año pasado"
+      thisMonth: "Este mes"
+      lastMonth: "Mes pasado"
+      last6Months: "Últimos 6 meses"
+    layers:
+      viewBy: "Ver por:"
+      include: "Incluir:"
+      classification: "Clasificación"
+      downloadSpeed: "Velocidad de descarga"
+      uploadSpeed: "Velocidad de subida"
+      helpButton: "Cómo funciona la clasificación"
+      apply: "Aplicar"
+    classifications:
+      noInternet: "Sin Internet"
+      unserved: "Sin servicio"
+      underserved: "Servicio insuficiente"
+      served: "Con servicio"
+    speeds:
+      download:
+        noInternet: "Sin Internet"
+        low: "0-25 Mbps"
+        mid: "25-100 Mbps"
+        high: "100+ Mbps"
+      upload:
+        noInternet: "Sin Internet"
+        low: "0-3 Mbps"
+        mid: "3-20 Mbps"
+        high: "20+ Mbps"
+  calendar:
+    startDate: "Fecha de inicio"
+    endDate: "Fecha de fin"
+    apply: "Aplicar"
+    weekDays:
+      mon: "Lun"
+      tue: "Mar"
+      wed: "Mié"
+      thu: "Jue"
+      fri: "Vie"
+      sat: "Sáb"
+      sun: "Dom"
+    errors:
+      required: "Las fechas de inicio y fin son obligatorias"
+      startBeforeEnd: "La fecha de inicio debe ser anterior a la fecha de fin"
+  autoDetect:
+    title: "No se pudo detectar tu ubicación."
+    subtitle: "Asegúrate de que la ubicación de tu navegador esté habilitada."
+  classifications:
+    title: "Entendiendo la clasificación"
+    subtitle: "Los resultados de los tests se clasifican según el valor más bajo de las velocidades de descarga o subida."
+    categories:
+      unserved: "Sin servicio: 0-25 Mbps descarga, 0-3 Mbps subida"
+      underserved: "Servicio insuficiente: 25-100 Mbps descarga, 3-20 Mbps subida"
+      served: "Con servicio: 100+ Mbps descarga, 20+ Mbps subida"
+      noInternet: "Sin Internet: sin servicio disponible"
+    modal:
+      title: "Entendiendo la clasificación"
+      subtitle: "Los resultados de los tests se clasifican según el valor más bajo de las velocidades de descarga o subida."
+      unserved: "Sin servicio: "
+      unservedRange: "0-25 Mbps descarga, 0-3 Mbps subida"
+      underserved: "Servicio insuficiente: "
+      underservedRange: "25-100 Mbps descarga, 3-20 Mbps subida"
+      served: "Con servicio: "
+      servedRange: "100+ Mbps descarga, 20+ Mbps subida"
+      noInternet: "Sin Internet: "
+      noInternetDesc: "sin servicio disponible"
+  ftue:
+    step1:
+      title: "Explora los resultados de tests de velocidad"
+      subtitle: "Haz clic en los puntos del mapa para ver los detalles de los resultados de tests de velocidad, y ajusta los filtros de la izquierda para explorar más resultados."
+    step2:
+      title: "Filtrar por Clasificaciones y Velocidades"
+      subtitle: "Los resultados de los tests se clasifican por la menor velocidad de descarga o subida. Usa las vistas del mapa para cambiar entre clasificaciones o ver las velocidades independientemente."
+  popup:
+    download: "Descarga"
+    upload: "Subida"
+    latency: "Latencia"
+    loss: "Pérdida"
+    mbps: "Mbps"
+    ms: "ms"
+    percent: "%"
+    na: "N/D"
+    perMonth: "/mes"
+    unserved: "Sin servicio"
+    underserved: "Servicio insuficiente"
+    served: "Con servicio"
+    noInternet: "Sin Internet"
+    home: "Casa"
+    work: "Trabajo"
+    other: "Otro"
+    wifi: "WiFi"
+    wired: "Cable"
+    cellular: "Móvil"
+
+# Banners
+banners:
+  joinUs:
+    text: "Ayúdanos a entender la banda ancha en tu región."
+    link: "Únete"
+  submitted:
+    text: "¡Gracias por unirte! Nos pondremos en contacto pronto."
+
+# Footer
+footer:
+  privacyPolicy: "Política de Privacidad"
+  copyright: "Copyright © {{year}} Radar. Todos los derechos reservados"
+  disclaimer: "Este proyecto fue desarrollado como parte del Programa Piloto de Banda Ancha para Telesalud. El Programa Piloto de Banda Ancha para Telesalud es posible gracias a la subvención #GA540183 de la Oficina para el Avance de la Telesalud, Administración de Recursos y Servicios de Salud, DHHS."
+
+# Alt text for accessibility
+alt:
+  logos:
+    radar: "Logo de Radar Speedtest"
+    radarDark: "Logo de Radar oscuro"
+    anthc: "Logo de ANTHC"
+    exactlyLabs: "Logo de Exactly Labs"
+    xlab: "Logo de XLab"
+  icons:
+    initialHero: "Icono principal de la pantalla inicial"
+    shadow: "sombra"
+    test: "icono de test"
+    performance: "icono de rendimiento"
+    map: "icono de mapa"
+    location: "icono del botón de ubicación"
+    locationSmall: "icono pequeño del botón de ubicación"
+    goBackArrow: "icono de flecha volver"
+    address: "icono de dirección"
+    connection: "icono de conexión"
+    smallRightArrow: "flecha pequeña derecha"
+    rightArrow: "flecha derecha"
+    noInternet: "icono sin internet"
+    forwardArrow: "flecha adelante"
+    moveForward: "icono avanzar"
+    download: "icono de descarga"
+    upload: "icono de subida"
+    latency: "icono de latencia"
+    loss: "icono de pérdida"
+    provider: "icono de proveedor"
+    popupLocation: "icono de ubicación emergente"
+    check: "icono de verificación"
+    greenCheck: "verificación verde"
+    close: "cerrar"
+    autoDetectLocation: "detectar ubicación automáticamente"
+    classificationsModal: "Imagen del Modal de Clasificaciones"
+    ftueMap: "Imagen del Modal del Mapa FTUE"
+    blueArrowRight: "flecha azul derecha"
+    arrowRightBlue: "flecha derecha azul"
+    arrowRightWhite: "flecha derecha blanca"
+    overviewHeroSpeed: "velocidad principal de la vista general"
+    overviewHeroMap: "mapa principal de la vista general"
+    phonesImage: "imagen de teléfonos"
+    appStore: "icono de App Store"
+    googlePlay: "icono de Google Play"
+    mapPhoto: "foto del mapa"
+    tooltipPhoto: "foto del tooltip"
+    menuClose: "botón cerrar menú"
+    speedActive: "velocidad activa"
+    speedInactive: "velocidad inactiva"
+    historyActive: "historial activo"
+    historyInactive: "historial inactivo"
+    exploreActive: "explorar activo"
+    exploreInactive: "explorar inactivo"
+    networkType: "icono de tipo de red"
+    placement: "icono de ubicación"
+    info: "icono de información"
+    search: "icono de búsqueda"
+    leftArrow: "flecha izquierda"
+  map:
+    mapPhoto: "Mapa mostrando resultados de tests de velocidad"
+    tooltipPhoto: "Tooltip mostrando detalles del test"

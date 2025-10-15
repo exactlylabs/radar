@@ -8,6 +8,7 @@ import xlabLogo from '../../assets/xlab-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 
 const footerStyle = {
   height: '239px`',
@@ -145,18 +146,45 @@ const footerLogoStyle = {
   marginRight: '60px'
 }
 
+const languageSelectorStyle = {
+  marginLeft: '20px',
+  padding: '5px 10px',
+  fontSize: '14px',
+  color: DEFAULT_FOOTER_FONT_COLOR,
+  backgroundColor: 'transparent',
+  border: `1px solid ${DEFAULT_FOOTER_FONT_COLOR}`,
+  borderRadius: '4px',
+  cursor: 'pointer',
+  outline: 'none'
+}
+
 const Footer = () => {
   const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
+  const handleLanguageChange = (e) => {
+    i18n.changeLanguage(e.target.value);
+    localStorage.setItem('i18nextLng', e.target.value);
+  };
+
   return isMediumSizeScreen || isSmallSizeScreen ?
     <div style={mobileFooterStyle} id={'speedtest--footer--wrapper'}>
       <img src={radarLogoDark} alt={t('alt.logos.radarDark')} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
-      <a className={'speedtest--bold speedtest--regular-link--hoverable'}
-         style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
-         href={'https://radartoolkit.com/privacy-policy'}
-         target={'_blank'}
-      >{t('footer.privacyPolicy')}</a>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+        <a className={'speedtest--bold speedtest--regular-link--hoverable'}
+           style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
+           href={'https://radartoolkit.com/privacy-policy'}
+           target={'_blank'}
+        >{t('footer.privacyPolicy')}</a>
+        <select
+          style={languageSelectorStyle}
+          onChange={handleLanguageChange}
+          value={i18n.language}
+        >
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
       <FooterHorizontalDivider />
       <a style={linkWithBottomMargin} href={'https://anthc.org'} target={'_blank'}>
         <img src={anthcLogo} alt={t('alt.logos.anthc')} width={110} height={30} style={{marginTop: 15, marginBottom: 20}}/>
@@ -183,6 +211,14 @@ const Footer = () => {
                 href={'https://radartoolkit.com/privacy-policy'}
                 target={'_blank'}
               >{t('footer.privacyPolicy')}</a>
+              <select
+                style={languageSelectorStyle}
+                onChange={handleLanguageChange}
+                value={i18n.language}
+              >
+                <option value="en">English</option>
+                <option value="es">Español</option>
+              </select>
             </div>
             <div style={leftSideBottomRowStyle}>
               <div>{t('footer.copyright', { year: new Date().getFullYear() })}</div>
