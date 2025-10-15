@@ -16,6 +16,7 @@ import ConfigContext from "../../../../context/ConfigContext";
 import SuggestionModalList from "./SuggestionModalList";
 import SmallRightArrow from '../../../../assets/small-right-arrow.png';
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
+import { useTranslation } from 'react-i18next';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -118,7 +119,7 @@ const SuggestionsModal = ({
   goToGenericModal,
   goToRegularMapModal
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
@@ -152,8 +153,8 @@ const SuggestionsModal = ({
     >
       <Box sx={boxStyle}>
         <div style={headerStyle}>
-          <MyModalTitle text={'Confirm your location'}/>
-          <div style={subtitleStyle}>{'Please select your location from the list below.'}</div>
+          <MyModalTitle text={t('location.modal.suggestions.title')}/>
+          <div style={subtitleStyle}>{t('location.modal.suggestions.subtitle')}</div>
         </div>
         <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileListContainerStyle : listContainerStyle}>
           <SuggestionModalList suggestions={suggestions}
@@ -164,16 +165,16 @@ const SuggestionsModal = ({
                className={'speedtest--opaque-hoverable'}
                onClick={goToGenericModal}
           >
-            <p className={'speedtest--p speedtest--bold'} style={notListedTextStyle}>My address is not listed</p>
-            <img src={SmallRightArrow} alt={'small right arrow'} style={smallRightArrowStyle}/>
+            <p className={'speedtest--p speedtest--bold'} style={notListedTextStyle}>{t('location.modal.suggestions.notListed')}</p>
+            <img src={SmallRightArrow} alt={t('alt.icons.smallRightArrow')} style={smallRightArrowStyle}/>
           </div>
         </div>
         <div style={getFooterStyle()}>
-          <MyBackButton text={'Cancel'}
+          <MyBackButton text={t('common.buttons.cancel')}
                         onClick={handleCloseModal}
           />
-          <MyForwardButton text={'Continue'}
-                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
+          <MyForwardButton text={t('common.buttons.continue')}
+                           icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>}
                            onClick={continueWithSelectedSuggestion}
           />
         </div>

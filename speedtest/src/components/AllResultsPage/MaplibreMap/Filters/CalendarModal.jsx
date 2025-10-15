@@ -5,6 +5,7 @@ import rightArrow from '../../../../assets/icons-simple-right-arrow.png';
 import filtersPanelStyles from '../filters_panel.module.css';
 import FiltersContext from "../../../../context/FiltersContext";
 import {setMidnight, setStartOfDay} from "../../../../utils/dates";
+import { useTranslation } from 'react-i18next';
 
 function CalendarModalInput({error, label, date, setDate}) {
 
@@ -35,6 +36,7 @@ function CalendarModalInput({error, label, date, setDate}) {
 }
 
 function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}) {
+  const { t } = useTranslation();
 
   const generateMonthlyCalendar = () => {
     const daysInMonth = new Date(yearInView, monthInView + 1, 0).getDate();
@@ -74,10 +76,20 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
         startDate.getTime() < day.getTime() && endDate.getTime() > day.getTime();
     }
 
+    const weekDays = [
+      t('map.calendar.weekDays.mon'),
+      t('map.calendar.weekDays.tue'),
+      t('map.calendar.weekDays.wed'),
+      t('map.calendar.weekDays.thu'),
+      t('map.calendar.weekDays.fri'),
+      t('map.calendar.weekDays.sat'),
+      t('map.calendar.weekDays.sun')
+    ];
+
     return (
       <div className={styles.monthContainer}>
         <div className={styles.dayTitles}>
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+          {weekDays.map(day => (
             <div key={day} className={styles.dayOfWeek}>{day}</div>
           ))}
         </div>
@@ -127,7 +139,7 @@ function MonthView({handleClickDay, startDate, endDate, monthInView, yearInView}
 }
 
 export default function CalendarModal({closeModal}) {
-
+  const { t } = useTranslation();
   const { filters, setDates } = useContext(FiltersContext);
   const { from, to } = filters;
 
@@ -184,7 +196,7 @@ export default function CalendarModal({closeModal}) {
 
   const showMissingFields = (startDateMissing, endDateMissing) => {
     setErroredInputs([startDateMissing, endDateMissing]);
-    setError('Start and end dates are required');
+    setError(t('map.calendar.errors.required'));
   }
 
   const handleApply = (e) => {
@@ -196,7 +208,7 @@ export default function CalendarModal({closeModal}) {
     }
     setErroredInputs(missingFields);
     if(startDate.getTime() > endDate.getTime()) {
-      setError('Start date must be before end date');
+      setError(t('map.calendar.errors.startBeforeEnd'));
       return;
     }
     setError('');
@@ -211,23 +223,23 @@ export default function CalendarModal({closeModal}) {
   return (
     <div className={styles.modalContainer}>
       <div className={styles.inputsContainer}>
-        <CalendarModalInput error={erroredInputs[0]} label={'Start date'} date={startDate} setDate={handleInputDateChange}/>
-        <CalendarModalInput error={erroredInputs[1]} label={'End date'} date={endDate} setDate={handleInputDateChange}/>
+        <CalendarModalInput error={erroredInputs[0]} label={t('map.calendar.startDate')} date={startDate} setDate={handleInputDateChange}/>
+        <CalendarModalInput error={erroredInputs[1]} label={t('map.calendar.endDate')} date={endDate} setDate={handleInputDateChange}/>
       </div>
       <div className={styles.monthPicker}>
         <button className={styles.arrow} onClick={goToPreviousMonth}>
-          <img src={rightArrow} alt={'left arrow'} width={16} height={16}/>
+          <img src={rightArrow} alt={t('alt.icons.leftArrow')} width={16} height={16}/>
         </button>
         <span>{new Date(yearInView, monthInView).toLocaleString('default', {month: 'long', year: 'numeric'})}</span>
         <button className={styles.arrow} onClick={goToNextMonth}>
-          <img src={leftArrow} alt={'right arrow'} width={16} height={16}/>
+          <img src={leftArrow} alt={t('alt.icons.rightArrow')} width={16} height={16}/>
         </button>
       </div>
       <MonthView startDate={startDate} endDate={endDate} monthInView={monthInView} yearInView={yearInView} handleClickDay={handleClickDay}/>
       { error !== '' && <p className={styles.errorMessage}>{error}</p> }
       <div className={styles.responsiveDivider}></div>
       <div>
-        <button className={filtersPanelStyles.applyButton} onClick={handleApply}>Apply</button>
+        <button className={filtersPanelStyles.applyButton} onClick={handleApply}>{t('map.calendar.apply')}</button>
       </div>
     </div>
   )

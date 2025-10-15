@@ -3,6 +3,7 @@ import './styles/MyOption.css';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import {DEFAULT_TEXT_COLOR} from "../../utils/colors";
 import ConfigContext from "../../context/ConfigContext";
+import { useTranslation } from 'react-i18next';
 
 const optionStyle = {
   width: 134,
@@ -51,7 +52,7 @@ const optionTextStyle = {
  * @returns {JSX.Element}
  */
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
@@ -94,7 +95,7 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
            height={!config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen) ? 28 : 32}
            alt={`${option.text}-icon`}
       />
-      <p style={optionTextStyle}>{option.text}</p>
+      <p style={optionTextStyle}>{option.textKey ? t(option.textKey) : option.text}</p>
     </div>
   )
 

@@ -10,6 +10,7 @@ import {useContext, useState} from "react";
 import MyNoConnectionConfirmationModal from "./MyNoConnectionConfirmationModal";
 import userData from "../../../../context/UserData";
 import UserDataContext from "../../../../context/UserData";
+import { useTranslation } from 'react-i18next';
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -21,7 +22,7 @@ const ConnectionPlacementStepPage = ({
   warning,
   goToLastFlowStep
 }) => {
-
+  const { t } = useTranslation();
   const [shouldExecuteAlt, setShouldExecuteAlt] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const {userData, setNetworkLocation} = useContext(UserDataContext);
@@ -41,8 +42,8 @@ const ConnectionPlacementStepPage = ({
 
   return (
     <div>
-      <MyTitle text={'Where do you have Internet?'}/>
-      <div style={subtitleStyle}>Choose the option that best applies.</div>
+      <MyTitle text={t('connectionPlacement.title')}/>
+      <div style={subtitleStyle}>{t('connectionPlacement.subtitle')}</div>
       <MyOptionPicker options={placementOptions}
                       needsDivider
                       dividerIndex={3}

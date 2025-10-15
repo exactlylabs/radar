@@ -9,6 +9,7 @@ import MyMeasurementInfoModalTable from "./MyMeasurementInfoModalTable";
 import ConfigContext from "../../context/ConfigContext";
 import {widgetModalFraming} from "../../utils/modals";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const mobileModalStyle = {
   width: '90%',
@@ -50,7 +51,7 @@ const MyMeasurementInfoModal = ({
   setIsOpen,
   measurement
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
@@ -67,7 +68,7 @@ const MyMeasurementInfoModal = ({
         <div style={closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
-        <MyModalTitle text={'Test details'}/>
+        <MyModalTitle text={t('history.modal.testDetails')}/>
         <div style={dateStyle}>{prettyPrintDate(measurement.timestamp)}</div>
         <MyMeasurementInfoModalTable address={measurement.address} networkType={measurement.networkType} networkLocation={measurement.networkLocation}/>
         <TestStatsTableContent downloadValue={measurement.download.toFixed(2)}

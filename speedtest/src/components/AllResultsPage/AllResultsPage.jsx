@@ -27,6 +27,7 @@ import {isArray} from "leaflet/src/core/Util";
 import AlertsContext, {SNACKBAR_TYPES} from "../../context/AlertsContext";
 import LeafletMap from "./LeafletMap/LeafletMap";
 import MaplibreMap from "./MaplibreMap/MaplibreMap";
+import { useTranslation } from 'react-i18next';
 
 const mapWrapperStyle = {
   width: '100%',
@@ -41,6 +42,7 @@ const searchIconStyle = {
 }
 
 const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
+  const { t } = useTranslation();
   const [requestArea, setRequestArea] = useState(givenLocation ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [results, setResults] = useState([]);
@@ -133,7 +135,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);
         notifyError(err);
-        setError('Failed to fetch speed tests. Please try again later.');
+        setError(t('map.errors.fetchSpeedTests'));
       })
       .finally(() => setLoading(false));
   }, [requestArea, map]);
@@ -227,7 +229,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);
         notifyError(err);
-        showSnackbarMessage('An error has occurred while loading the results. Please try again later.', SNACKBAR_TYPES.ERROR);
+        showSnackbarMessage(t('map.errors.loadingResults'), SNACKBAR_TYPES.ERROR);
       })
       .finally(() => setFetchingResults(false));
   }
@@ -309,8 +311,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
             />
           }
           { (!isExtraSmallSizeScreen && !isSmallSizeScreen) && floatingBoxVisible && bottomFiltersVisible &&
-            <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
-                                text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
+            <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={t('alt.icons.search')}/>}
+                                text={fetchingResults ? null : t('map.noResults')}
                                 isBoxOpen={isBoxOpen}
             />
           }

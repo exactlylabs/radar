@@ -6,9 +6,15 @@ import yaml from 'js-yaml';
 // Function to load YAML files
 const loadYamlResource = async (lng, ns) => {
   try {
-    const response = await fetch(`/locales/${lng}/${ns}.yml`);
+    const url = `/locales/${lng}/${ns}.yml`;
+    console.log(`Loading translation from: ${url}`);
+    const response = await fetch(url);
+    console.log(`Response status: ${response.status}`);
     const text = await response.text();
-    return yaml.load(text);
+    console.log(`Response text (first 100 chars): ${text.substring(0, 100)}`);
+    const data = yaml.load(text);
+    console.log(`Parsed YAML data:`, data);
+    return data;
   } catch (error) {
     console.error(`Failed to load translation for ${lng}/${ns}:`, error);
     return {};
@@ -26,7 +32,7 @@ const yamlBackend = {
   }
 };
 
-i18n
+const initPromise = i18n
   // Use custom YAML backend
   .use(yamlBackend)
   // Detect user language
@@ -54,8 +60,14 @@ i18n
     },
 
     react: {
-      useSuspense: true // Set to false if you don't want to use Suspense
+      useSuspense: false, // Set to false to avoid needing Suspense boundary
+      bindI18n: 'languageChanged loaded',
+      bindI18nStore: 'added removed',
+      transEmptyNodeValue: '',
+      transSupportBasicHtmlNodes: true,
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
     }
   });
 
+export { initPromise };
 export default i18n;

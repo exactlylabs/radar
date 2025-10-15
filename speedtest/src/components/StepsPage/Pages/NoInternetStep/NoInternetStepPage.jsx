@@ -11,6 +11,7 @@ import ContactInfoModal from "../SpeedTestResultsStep/ContactInfoModal/ContactIn
 import AnimatedBanner from "../../../common/AnimatedBanner";
 import SubmittedInfoBanner from "../../../common/banners/SubmittedInfo/SubmittedInfoBanner";
 import JoinUsBanner from "../../../common/banners/JoinUs/JoinUsBanner";
+import { useTranslation } from 'react-i18next';
 
 const noInternetStepPageStyle = {
   width: '45%',
@@ -57,7 +58,7 @@ const NoInternetStepPage = ({
   goToMapPage,
   lastTest
 }) => {
-
+  const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [hasSubmittedInfo, setHasSubmittedInfo] = useState(isKeyInSession('contactInfo') ? SUBMISSION_STATES.ALREADY_SUBMITTED : SUBMISSION_STATES.MISSING);
@@ -104,12 +105,12 @@ const NoInternetStepPage = ({
           {hasSubmittedInfo === SUBMISSION_STATES.JUST_SUBMITTED ? <SubmittedInfoBanner/> : <JoinUsBanner openModal={openContactInfoModal}/>}
         </AnimatedBanner>
       }
-      <img style={checkIconStyle} src={CheckIcon} width={42} height={42} alt={'check-icon'}/>
-      <MyTitle text={'Thanks for letting us know.'}/>
-      <div style={firstLineStyle}>While we cannot run a speed test at your location as you don't have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.</div>
-      <div style={secondLineStyle}>You can explore the map to see how others compare to you.</div>
+      <img style={checkIconStyle} src={CheckIcon} width={42} height={42} alt={t('alt.icons.check')}/>
+      <MyTitle text={t('noInternet.title')}/>
+      <div style={firstLineStyle}>{t('noInternet.message.line1')}</div>
+      <div style={secondLineStyle}>{t('noInternet.message.line2')}</div>
       <div style={buttonWrapperStyle}>
-        <MyForwardButton text={'Explore the map'}
+        <MyForwardButton text={t('noInternet.button')}
                          onClick={goToMapPage}
         />
       </div>

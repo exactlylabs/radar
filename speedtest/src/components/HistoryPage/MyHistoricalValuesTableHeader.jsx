@@ -4,6 +4,7 @@ import LossIcon from '../../assets/loss-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import {DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR} from "../../utils/colors";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const historicalValuesTableHeaderStyle = {
   width: '100%',
@@ -80,7 +81,7 @@ const textStyle = {
 const MyHistoricalValuesTableHeader = ({
 
 }) => {
-
+  const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getNetworkTypeColumnStyle = () => ({...commonHeaderStyle, height: '100%', width: '7%'});
@@ -104,31 +105,31 @@ const MyHistoricalValuesTableHeader = ({
   return (
     <div className={'speedtest--bold'} style={historicalValuesTableHeaderStyle}>
       <div style={getNetworkTypeColumnStyle()}></div>
-      <div style={getDateTimeColumnStyle()}>Date/Time</div>
+      <div style={getDateTimeColumnStyle()}>{t('history.table.headers.dateTime')}</div>
       <div style={getDownUpColumnStyle()}>
-        <img src={DownloadIcon} height={16} width={16} alt={'download-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? 'Mbps' : 'Download'}</div>
+        <img src={DownloadIcon} height={16} width={16} alt={t('alt.icons.download')} style={iconStyle}/>
+        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? t('common.labels.mbps') : t('history.table.headers.download')}</div>
       </div>
       <div style={getDownUpColumnStyle()}>
-        <img src={UploadIcon} height={16} width={16} alt={'upload-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? 'Mbps' : 'Upload'}</div>
+        <img src={UploadIcon} height={16} width={16} alt={t('alt.icons.upload')} style={iconStyle}/>
+        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? t('common.labels.mbps') : t('history.table.headers.upload')}</div>
       </div>
       {
         !isSmallSizeScreen &&
         <div style={getLatencyLossColumnStyle()}>
-          <img src={LatencyIcon} height={16} width={16} alt={'latency-icon'} style={iconStyle}/>
-          <div style={textStyle}>{ isMediumSizeScreen ? 'ms' : 'Latency' }</div>
+          <img src={LatencyIcon} height={16} width={16} alt={t('alt.icons.latency')} style={iconStyle}/>
+          <div style={textStyle}>{ isMediumSizeScreen ? t('common.labels.ms') : t('history.table.headers.latency') }</div>
         </div>
       }
       {
         !isSmallSizeScreen &&
         <div style={getLatencyLossColumnStyle()}>
-          <img src={LossIcon} height={16} width={16} alt={'loss-icon'} style={iconStyle}/>
-          <div style={textStyle}>{isMediumSizeScreen ? '%' : 'Loss'}</div>
+          <img src={LossIcon} height={16} width={16} alt={t('alt.icons.loss')} style={iconStyle}/>
+          <div style={textStyle}>{isMediumSizeScreen ? t('common.labels.percent') : t('history.table.headers.loss')}</div>
         </div>
       }
       { !isSmallSizeScreen && !isMediumSizeScreen && <div style={{width: '4%'}}></div> }
-      { !isSmallSizeScreen && !isMediumSizeScreen && <div style={locationColumnStyle}>Location</div> }
+      { !isSmallSizeScreen && !isMediumSizeScreen && <div style={locationColumnStyle}>{t('history.table.headers.location')}</div> }
       { (isSmallSizeScreen || isMediumSizeScreen) && <div style={{width: '11%'}}></div> }
     </div>
   )

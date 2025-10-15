@@ -11,6 +11,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import iconLeftArrow from "../../assets/icons-left-arrow.png";
 import ConfigContext from "../../context/ConfigContext";
 import HistoryEmptyState from "./HistoryEmptyState/HistoryEmptyState";
+import { useTranslation } from 'react-i18next';
 
 const historyPageStyle = {
   width: '100%',
@@ -76,7 +77,7 @@ const HistoryPage = ({
   goToLastTest,
   hasRecentTest,
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const historicalValues = getStoredValues();
@@ -106,7 +107,7 @@ const HistoryPage = ({
       {
         !!historicalValues &&
         <>
-          <MyTitle text={'All your results'}/>
+          <MyTitle text={t('history.title')}/>
           <MyHistoricalValuesTable values={historicalValues} openMeasurementInfoModal={openMeasurementInfoModal}/>
         </>
       }
@@ -115,13 +116,13 @@ const HistoryPage = ({
         <div style={getButtonsStyle()}>
           {
             hasRecentTest &&
-            <MyBackButton text={'Go to last test'}
-                          icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>}
+            <MyBackButton text={t('history.buttons.goToLast')}
+                          icon={<img src={iconLeftArrow} alt={t('alt.icons.goBackArrow')} style={arrowIconStyle}/>}
                           iconFirst
                           onClick={goToLastTest}
             />
           }
-          { historicalValues && <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} /> }
+          { historicalValues && <MyForwardButton text={t('history.buttons.exploreMap')} onClick={goToMapPageWithNoCoordinates} /> }
         </div>
       }
       {
