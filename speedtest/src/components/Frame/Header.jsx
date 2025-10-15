@@ -8,6 +8,7 @@ import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import MyNavLink from "../common/MyNavLink";
 import {CustomNarrowButton} from "../common/CustomNarrowButton";
+import { useTranslation } from 'react-i18next';
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -83,7 +84,7 @@ const horizontalDividerStyle = {
 }
 
 const Header = ({ setStep, isOverviewPage }) => {
-
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
@@ -113,15 +114,15 @@ const Header = ({ setStep, isOverviewPage }) => {
         <div style={leftSideContainerStyle}>
           <img
             src={radarLogoLight}
-            alt={'Radar Speedtest logo'}
+            alt={t('alt.logos.radar')}
             width={170}
             height={26}
             onClick={goToHome}
             style={!(isSmallSizeScreen || isMediumSizeScreen) ? radarLogoStyle : null}
           />
-          {!(isSmallSizeScreen || isMediumSizeScreen) && !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome}/>}
-          { !(isSmallSizeScreen || isMediumSizeScreen) && <MyNavLink text={'Overview'} onClick={goToOverview}/> }
-          { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore}/> }
+          {!(isSmallSizeScreen || isMediumSizeScreen) && !isOverviewPage && <MyNavLink text={t('navigation.header.home')} onClick={goToHome}/>}
+          { !(isSmallSizeScreen || isMediumSizeScreen) && <MyNavLink text={t('navigation.header.overview')} onClick={goToOverview}/> }
+          { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={t('navigation.header.explore')} onClick={goToExplore}/> }
         </div>
         <div style={rightSideContainerStyle}>
           {
@@ -129,22 +130,22 @@ const Header = ({ setStep, isOverviewPage }) => {
               <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
                    width={22}
                    height={22}
-                   alt={'menu-close-button'}
+                   alt={t('alt.icons.menuClose')}
                    style={menuCloseButtonStyle}
                    onClick={toggleMenu}
               /> :
-              <CustomNarrowButton text={'Test your speed'} onClick={goToTestSpeed}/>
+              <CustomNarrowButton text={t('navigation.header.testSpeed')} onClick={goToTestSpeed}/>
           }
         </div>
       </div>
       {
         (isMediumSizeScreen || isSmallSizeScreen) && isMenuOpen &&
         <div style={collapsableContentStyle}>
-          { !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome} isCollapsed/> }
-          <MyNavLink text={'Overview'} onClick={goToOverview} isCollapsed/>
-          { isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore} isCollapsed/> }
+          { !isOverviewPage && <MyNavLink text={t('navigation.header.home')} onClick={goToHome} isCollapsed/> }
+          <MyNavLink text={t('navigation.header.overview')} onClick={goToOverview} isCollapsed/>
+          { isOverviewPage && <MyNavLink text={t('navigation.header.explore')} onClick={goToExplore} isCollapsed/> }
           <div style={horizontalDividerStyle}></div>
-          <CustomNarrowButton text={'Test your speed'} onClick={goToTestSpeed}/>
+          <CustomNarrowButton text={t('navigation.header.testSpeed')} onClick={goToTestSpeed}/>
         </div>
       }
     </div>

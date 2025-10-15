@@ -7,6 +7,7 @@ import exactlyLogo from '../../assets/exactly-logo.png';
 import xlabLogo from '../../assets/xlab-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const footerStyle = {
   height: '239px`',
@@ -145,29 +146,30 @@ const footerLogoStyle = {
 }
 
 const Footer = () => {
+  const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return isMediumSizeScreen || isSmallSizeScreen ?
     <div style={mobileFooterStyle} id={'speedtest--footer--wrapper'}>
-      <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
+      <img src={radarLogoDark} alt={t('alt.logos.radarDark')} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
       <a className={'speedtest--bold speedtest--regular-link--hoverable'}
          style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
          href={'https://radartoolkit.com/privacy-policy'}
          target={'_blank'}
-      >Privacy Policy</a>
+      >{t('footer.privacyPolicy')}</a>
       <FooterHorizontalDivider />
       <a style={linkWithBottomMargin} href={'https://anthc.org'} target={'_blank'}>
-        <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} style={{marginTop: 15, marginBottom: 20}}/>
+        <img src={anthcLogo} alt={t('alt.logos.anthc')} width={110} height={30} style={{marginTop: 15, marginBottom: 20}}/>
       </a>
       <a style={linkWithBottomMargin} href={'https://exactlylabs.com'} target={'_blank'}>
-        <img src={exactlyLogo} alt={'exactly labs logo'} width={110} height={24}/>
+        <img src={exactlyLogo} alt={t('alt.logos.exactlyLabs')} width={110} height={24}/>
       </a>
       <a style={linkWithBottomMargin} href={'https://anthc.org'} target={'_blank'}>
-        <img src={xlabLogo} alt={'XLab logo'} width={32} height={38}/>
+        <img src={xlabLogo} alt={t('alt.logos.xlab')} width={32} height={38}/>
       </a>
       <FooterHorizontalDivider />
-      <div style={copyrightStyle}>{`Copyright © ${new Date().getFullYear()} Radar. All Rights Reserved`}</div>
-      <div style={mobileBottomParagraphStyle}>This project was developed as part of the Telehealth Broadband Pilot Program.<br/>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</div>
+      <div style={copyrightStyle}>{t('footer.copyright', { year: new Date().getFullYear() })}</div>
+      <div style={mobileBottomParagraphStyle}>{t('footer.disclaimer')}</div>
     </div>
     :
     <div style={footerStyle}>
@@ -175,30 +177,30 @@ const Footer = () => {
         <div style={topContainerWrapperStyle}>
           <div style={leftSideContainerStyle}>
             <div className={'speedtest--bold'} style={leftSideTopRowStyle}>
-              <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={footerLogoStyle} />
+              <img src={radarLogoDark} alt={t('alt.logos.radarDark')} width={100} height={24} style={footerLogoStyle} />
               <a className={'speedtest--bold speedtest--regular-link--hoverable'}
                 style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
                 href={'https://radartoolkit.com/privacy-policy'}
                 target={'_blank'}
-              >Privacy Policy</a>
+              >{t('footer.privacyPolicy')}</a>
             </div>
             <div style={leftSideBottomRowStyle}>
-              <div>{`Copyright © ${new Date().getFullYear()} Radar. All Rights Reserved`}</div>
+              <div>{t('footer.copyright', { year: new Date().getFullYear() })}</div>
             </div>
           </div>
           <div style={rightSideContainerStyle}>
             <a style={linkWithRightMargin} href={'https://anthc.org'} target={'_blank'}>
-              <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} />
+              <img src={anthcLogo} alt={t('alt.logos.anthc')} width={110} height={30} />
             </a>
             <a style={linkWithRightMargin} href={'https://exactlylabs.com'} target={'_blank'}>
-              <img src={exactlyLogo} alt={'exactly labs logo'} width={110} height={24}/>
+              <img src={exactlyLogo} alt={t('alt.logos.exactlyLabs')} width={110} height={24}/>
             </a>
             <a style={stylessLink} href={'https://anthc.org'} target={'_blank'}>
-              <img src={xlabLogo} alt={'XLab logo'} width={32} height={38}/>
+              <img src={xlabLogo} alt={t('alt.logos.xlab')} width={32} height={38}/>
             </a>
           </div>
         </div>
-        <p style={bottomParagraphStyle}>This project was developed as part of the Telehealth Broadband Pilot Program.<br/>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
+        <p style={bottomParagraphStyle}>{t('footer.disclaimer')}</p>
       </div>
     </div>
 };

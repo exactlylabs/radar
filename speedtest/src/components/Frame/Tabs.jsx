@@ -13,6 +13,7 @@ import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -102,6 +103,7 @@ const selectedTabUnderlineStyle = {
 };
 
 const Tabs = ({ step, setStep }) => {
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
   const {isSmallSizeScreen, isMediumSizeScreen, isExtraSmallSizeScreen} = useViewportSizes();
 
@@ -144,9 +146,9 @@ const Tabs = ({ step, setStep }) => {
               width={18}
               height={18}
               style={tabIconStyle}
-              alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
+              alt={selectedTab === TABS.SPEED_TEST ? t('alt.icons.speedActive') : t('alt.icons.speedInactive')}
             />
-            <p className={'speedtest--p speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'Test' : 'Speed Test'}</p>
+            <p className={'speedtest--p speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? t('navigation.tabs.test') : t('navigation.tabs.speedTest')}</p>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -158,9 +160,9 @@ const Tabs = ({ step, setStep }) => {
               width={18}
               height={18}
               style={tabIconStyle}
-              alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
+              alt={selectedTab === TABS.HISTORY ? t('alt.icons.historyActive') : t('alt.icons.historyInactive')}
             />
-            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'Results' : 'Your Results'}</div>
+            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? t('navigation.tabs.history') : t('navigation.tabs.results')}</div>
           </div>
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -172,9 +174,9 @@ const Tabs = ({ step, setStep }) => {
               width={18}
               height={18}
               style={tabIconStyle}
-              alt={selectedTab === TABS.ALL_RESULTS ? 'explore-active' : 'explore-inactive'}
+              alt={selectedTab === TABS.ALL_RESULTS ? t('alt.icons.exploreActive') : t('alt.icons.exploreInactive')}
             />
-            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.ALL_RESULTS ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
+            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.ALL_RESULTS ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? t('navigation.tabs.explore') : t('navigation.tabs.map')}</div>
           </div>
           <div style={selectedTab === TABS.ALL_RESULTS ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
