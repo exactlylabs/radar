@@ -35,7 +35,7 @@
   ansible.builtin.cron:
     name: "Full Backup"
     weekday: "0"
-    hour: "24"
+    hour: "0"
     minute: "0"
     user: postgres
     job: "pgbackrest --type=full --stanza=radar backup"
@@ -45,7 +45,7 @@
   ansible.builtin.cron:
     name: "Diff Backup"
     weekday: "1-6"
-    hour: "24"
+    hour: "0"
     minute: "0"
     user: postgres
     job: "pgbackrest --type=diff --stanza=radar backup"

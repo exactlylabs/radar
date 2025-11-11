@@ -6,7 +6,7 @@ services:
     networks:
       - traefik_public
     volumes:
-      - shapefiles:/app/geos
+      - /mnt/nfs/mapping-api/geos:/app/geos
       - tailscale-state:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
@@ -28,9 +28,6 @@ services:
       - TS_AUTHKEY
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.labels.network == aws
       resources:
         limits:
           memory: 2024M
@@ -78,20 +75,6 @@ services:
 networks:
   traefik_public:
     external: true
-
-volumes:
-  shapefiles:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
-      device: ":/mnt/nfs/mapping-api/geos"
-  tailscale-state:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
-      device: ":/mnt/nfs/tailscale-state"
 
 secrets:
   CLICKHOUSE_PASSWORD:
