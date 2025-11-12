@@ -33,7 +33,7 @@ find_swarm_container_name() {
 if [ "$3" == "staging" ]; then
     export DOCKER_HOST=ssh://admin@manager-01.staging.radartoolkit.com
 elif [ "$3" == "production" ]; then
-    export DOCKER_HOST=ssh://admin@manager-01.radartoolkit.com
+    export DOCKER_HOST=ssh://radar-swarm-01
 fi
 
 echo "====== Connecting to ${ENVIRONMENT} environment ======"
