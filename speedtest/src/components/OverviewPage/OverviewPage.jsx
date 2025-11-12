@@ -6,6 +6,7 @@ import {useHistory} from "react-router-dom";
 import {overviewStyles} from './styles/OverviewPage.style';
 import DataColumn from "./DataColumn";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 import arrowRightWhite from '../../assets/right-arrow-white.png';
 import arrowRightBlue from '../../assets/right-arrow-blue.png';
@@ -19,7 +20,7 @@ import appStore from '../../assets/appstore.png';
 import googlePlay from '../../assets/googleplay.png';
 
 const OverviewPage = ({goToExplore, goToTest}) => {
-
+  const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen, isLargeSizeScreen, isXLSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
@@ -31,26 +32,26 @@ const OverviewPage = ({goToExplore, goToTest}) => {
       >
         <div style={isSmall ? overviewStyles.smallHeroSectionContentStyle : overviewStyles.heroSectionContentStyle}>
           <div style={isSmall ? overviewStyles.smallHeroTextContainerStyle : overviewStyles.heroTextContainerStyle}>
-            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallHeroTitleStyle : overviewStyles.heroTitleStyle}>Test and compare your internet speed to others in your area.</p>
-            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallHeroSubtitleStyle : overviewStyles.heroSubtitleStyle}>Radar lets you run speed tests on your computer or mobile phone and compare your results to others in your community or in the country.</p>
+            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallHeroTitleStyle : overviewStyles.heroTitleStyle}>{t('overview.hero.title')}</p>
+            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallHeroSubtitleStyle : overviewStyles.heroSubtitleStyle}>{t('overview.hero.subtitle')}</p>
             <div style={isSmall ? overviewStyles.smallHeroButtonsContainer : overviewStyles.heroButtonsContainer}>
               <div style={{width: 'max-content', marginTop: '15px'}}>
-                <MyButton text={'Test your speed'} icon={<img src={arrowRightWhite} style={overviewStyles.arrowStyle} alt={'arrow right blue'}/>} onClick={goToTest}/>
+                <MyButton text={t('overview.hero.buttons.test')} icon={<img src={arrowRightWhite} style={overviewStyles.arrowStyle} alt={t('alt.icons.arrowRightBlue')}/>} onClick={goToTest}/>
               </div>
               <div style={{width: 'max-content', marginTop: '15px'}}>
-                <CustomSecondaryButton text={'Explore the map'} icon={<img src={arrowRightBlue} style={overviewStyles.arrowStyle} alt={'arrow right white'}/>} onClick={() => goToExplore()}/>
+                <CustomSecondaryButton text={t('overview.hero.buttons.explore')} icon={<img src={arrowRightBlue} style={overviewStyles.arrowStyle} alt={t('alt.icons.arrowRightWhite')}/>} onClick={() => goToExplore()}/>
               </div>
             </div>
           </div>
           <img src={overviewHeroSpeed}
-               alt={'overview hero speed'}
+               alt={t('alt.icons.overviewHeroSpeed')}
                style={isSmall ? overviewStyles.smallHeroSpeedStyle :
                       isLargeSizeScreen ? overviewStyles.midHeroSpeedStyle :
                       overviewStyles.heroSpeedStyle}
           />
         </div>
         <img src={overviewHeroMap}
-             alt={'overview hero map'}
+             alt={t('alt.icons.overviewHeroMap')}
              style={isSmall ? overviewStyles.smallHeroMapStyle :
                     isLargeSizeScreen ? overviewStyles.midHeroMapStyle :
                     isXLSizeScreen ? overviewStyles.largeHeroMapStyle :
@@ -59,21 +60,21 @@ const OverviewPage = ({goToExplore, goToTest}) => {
       </div>
       <div style={isSmall ? overviewStyles.smallDataSectionStyle : overviewStyles.dataSectionStyle}>
         <div style={isSmall ? overviewStyles.smallDataSectionContentStyle : overviewStyles.dataSectionContentStyle}>
-          <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallDataTitle : overviewStyles.dataTitle}>We collect thousands of speed test results to understand how broadband varies across the country.</p>
+          <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallDataTitle : overviewStyles.dataTitle}>{t('overview.data.title')}</p>
           <div style={isSmall ? overviewStyles.smallDataSectionColumnsWrapperStyle : overviewStyles.dataSectionColumnsWrapperStyle}>
             <DataColumn iconSrc={communitiesIcon}
-                        title={'Explore real data'}
-                        text={'We use real data from speed tests to provide insight into broadband performance nationwide.'}
+                        title={t('overview.data.features.explore.title')}
+                        text={t('overview.data.features.explore.description')}
                         isStacked={isSmall}
             />
             <DataColumn iconSrc={speedtestsIcon}
-                        title={'See results on the map'}
-                        text={'Explore your area on the map and see how broadband varies across different regions.'}
+                        title={t('overview.data.features.map.title')}
+                        text={t('overview.data.features.map.description')}
                         isStacked={isSmall}
             />
             <DataColumn iconSrc={mapIcon}
-                        title={'Identify broadband needs'}
-                        text={'Our data-driven approach helps communities pinpoint where broadband is most needed.'}
+                        title={t('overview.data.features.identify.title')}
+                        text={t('overview.data.features.identify.description')}
                         isStacked={isSmall}
                         isLast
             />
@@ -85,20 +86,20 @@ const OverviewPage = ({goToExplore, goToTest}) => {
                   overviewStyles.mobileSectionStyle}
       >
         <div style={isSmall ? overviewStyles.smallMobileSectionContentStyle : overviewStyles.mobileSectionContentStyle}>
-          { !isSmall && <img src={mobilePhones} style={isLargeSizeScreen ? overviewStyles.largeMobileImageStyle : overviewStyles.mobileImageStyle} alt={'phones image'}/> }
+          { !isSmall && <img src={mobilePhones} style={isLargeSizeScreen ? overviewStyles.largeMobileImageStyle : overviewStyles.mobileImageStyle} alt={t('alt.icons.phonesImage')}/> }
           <div style={isSmall ? overviewStyles.smallMobileTextContainerStyle :
                       isLargeSizeScreen ? overviewStyles.largeTextContainerStyle:
                       overviewStyles.mobileTextContainerStyle}
           >
-            <p className={'speedtest--p speedtest--bold'} style={isSmall ? overviewStyles.smallMobileIntroTextStyle : overviewStyles.mobileIntroTextStyle}>Radar for Mobile</p>
-            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallMobileTitleStyle : overviewStyles.mobileTitleStyle}>Test your wifi and cellular connections with our mobile app.</p>
-            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallMobileTextStyle : overviewStyles.mobileTextStyle}>Radar lets you run speed tests outdoors and indoors, compare results over time, and compare your results with your neighborhood to get a better idea of how broadband looks like around you.</p>
+            <p className={'speedtest--p speedtest--bold'} style={isSmall ? overviewStyles.smallMobileIntroTextStyle : overviewStyles.mobileIntroTextStyle}>{t('overview.mobile.intro')}</p>
+            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallMobileTitleStyle : overviewStyles.mobileTitleStyle}>{t('overview.mobile.title')}</p>
+            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallMobileTextStyle : overviewStyles.mobileTextStyle}>{t('overview.mobile.description')}</p>
             <div style={isSmall ? overviewStyles.smallStoresContainer : overviewStyles.storesContainer}>
-              <img src={appStore} style={isSmall ? overviewStyles.smallAppStoreStyle : overviewStyles.appStoreStyle} alt={'app Store icon'}/>
-              <img src={googlePlay} style={isSmall ? overviewStyles.smallGooglePlayStyle : overviewStyles.googlePlayStyle} alt={'Google Play icon'}/>
+              <img src={appStore} style={isSmall ? overviewStyles.smallAppStoreStyle : overviewStyles.appStoreStyle} alt={t('alt.icons.appStore')}/>
+              <img src={googlePlay} style={isSmall ? overviewStyles.smallGooglePlayStyle : overviewStyles.googlePlayStyle} alt={t('alt.icons.googlePlay')}/>
             </div>
           </div>
-          { isSmall && <img src={mobilePhones} style={overviewStyles.smallMobileImageStyle} alt={'phones image'}/> }
+          { isSmall && <img src={mobilePhones} style={overviewStyles.smallMobileImageStyle} alt={t('alt.icons.phonesImage')}/> }
         </div>
       </div>
     </div>

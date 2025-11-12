@@ -9,7 +9,7 @@ import {createContext, ReactElement, useEffect, useState} from "react";
  * removing it on unmount.
  * @type {React.Context<{}>}
  */
-const ViewportContext = createContext({width: 0});
+const ViewportContext = createContext({width: 0, isClient: false});
 
 interface ViewportContextProviderProps {
   children: ReactElement
@@ -17,25 +17,30 @@ interface ViewportContextProviderProps {
 
 export const ViewportContextProvider = ({children}: ViewportContextProviderProps) => {
   const [width, setWidth] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   // eslint-disable-next-line
   useEffect(() => {
-    if(!!window) {
+    // Set isClient to true after component mounts (client-side only)
+    setIsClient(true);
+
+    if (typeof window !== 'undefined') {
       setWidth(window.innerWidth);
+      
+      const handleResize = () => {
+        setWidth(window.innerWidth);
+      };
+
       window.addEventListener('resize', handleResize);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
     }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    }
-  });
-
-  const handleResize = () => {
-    if(!!window) setWidth(window.innerWidth);
-  }
+  }, []);
 
   return (
-    <ViewportContext.Provider value={{width}}>
+    <ViewportContext.Provider value={{width, isClient}}>
       {children}
     </ViewportContext.Provider>
   );

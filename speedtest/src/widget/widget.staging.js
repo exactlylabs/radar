@@ -1,6 +1,6 @@
 const radarUtilities = (function() {
 
-  const baseUrl = 'https://speedtest-staging.exactlylabs.com/';
+  const baseUrl = 'https://speedtest.staging.exactlylabs.com/';
 
   const baseConfig = {
     clientId: 1,

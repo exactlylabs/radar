@@ -4,9 +4,10 @@ import dropdownStyles from "./common/filter_dropdown.module.css";
 import checkIcon from "../../../../assets/check-icon.svg";
 import FilterDropdownWithSearch from "./common/FilterDropdownWithSearch";
 import FiltersContext, {ALL_PROVIDERS_OPTION} from "../../../../context/FiltersContext";
+import { useTranslation } from 'react-i18next';
 
 export default function InternetProviderFilter() {
-
+  const { t } = useTranslation();
 
   const { visibleIspList, filters, setIsp } = useContext(FiltersContext);
   const { isp } = filters;
@@ -40,9 +41,12 @@ export default function InternetProviderFilter() {
     }
   }
 
+  // Translate the label if it's the ALL_PROVIDERS_OPTION
+  const displayLabel = isp.value === 'all_providers' ? t(isp.label) : isp.label;
+
   return (
     <FilterDropdownWithSearch
-      label={isp.label}
+      label={displayLabel}
       iconSrc={calendarIcon}
       options={getAllIspOptions()}
       handleOnChange={handleInputChange}
@@ -52,10 +56,13 @@ export default function InternetProviderFilter() {
         <>
           <button className={dropdownStyles.option}
                   data-selected={ALL_PROVIDERS_OPTION.value === isp.value}
-                  onClick={() => setIsp(ALL_PROVIDERS_OPTION)}
+                  onClick={() => setIsp({
+                    ...ALL_PROVIDERS_OPTION,
+                    label: ALL_PROVIDERS_OPTION.label  // Keep the translation key
+                  })}
           >
             <img src={checkIcon} width={16} height={16} alt={'check icon'}/>
-            All providers
+            {t('map.filters.panel.allProviders')}
           </button>
           <div className={dropdownStyles.divider}></div>
         </>
@@ -73,7 +80,7 @@ export default function InternetProviderFilter() {
           </div>
         </button>
       ))}
-      {filteredOptions.length === 0 && <p className={dropdownStyles.emptyText}>No providers found.</p>}
+      {filteredOptions.length === 0 && <p className={dropdownStyles.emptyText}>{t('map.filters.panel.noProvidersFound')}</p>}
     </FilterDropdownWithSearch>
   );
 }

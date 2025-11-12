@@ -1,7 +1,9 @@
 {
-  "root": "build/",
-  "clean_urls": true,
+  "root": "next/",
+  "clean_urls": false,
   "routes": {
+    "/_next/**": "$1",
+    "/api/**": "$1",
     "/**": "index.html"
   }
 }

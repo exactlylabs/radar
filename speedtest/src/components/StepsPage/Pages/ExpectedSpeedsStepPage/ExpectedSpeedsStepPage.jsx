@@ -7,6 +7,7 @@ import styles from './expected_speeds_step_page.module.css';
 import ExpectedSpeedInput from "./ExpectedSpeedInput/ExpectedSpeedInput";
 import ConfigContext from "../../../../context/ConfigContext";
 import forwardArrowBlue from '../../../../assets/right-arrow-blue.png';
+import { useTranslation } from 'react-i18next';
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -17,7 +18,7 @@ const ExpectedSpeedsStepPage = ({
   goBack,
   type
 }) => {
-
+  const { t } = useTranslation();
   const { userData, setExpectedSpeeds } = useContext(UserDataContext);
   const config = useContext(ConfigContext);
   const inputRef = useRef(null);
@@ -53,8 +54,8 @@ const ExpectedSpeedsStepPage = ({
 
   return (
     <div className={styles.screenContainer}>
-      <MyTitle text={`Do you know your expected ${type} speed?`} />
-      <div style={subtitleStyle}>Tell us your expected {type} speed if you're aware of it.</div>
+      <MyTitle text={t('expectedSpeeds.title', { type: t(`expectedSpeeds.input.${type}`) })} />
+      <div style={subtitleStyle}>{t('expectedSpeeds.subtitle', { type: t(`expectedSpeeds.input.${type}`) })}</div>
       <div className={`${styles.inputsContainer} ${config.widgetMode ? styles.widgetInputsContainer : null}`} data-is-widget={config.widgetMode}>
         <ExpectedSpeedInput type={type}
                             initialValue={type === 'download' ? userData.expectedDownloadSpeed : userData.expectedUploadSpeed}
@@ -62,8 +63,8 @@ const ExpectedSpeedsStepPage = ({
         />
       </div>
       <button onClick={handleSkip} className={styles.skipSpeedButton}>
-        I don't know my expected speed
-        <img src={forwardArrowBlue} width={10} height={10} alt={'forward arrow'}/>
+        {t('expectedSpeeds.button')}
+        <img src={forwardArrowBlue} width={10} height={10} alt={t('alt.icons.forwardArrow')}/>
       </button>
       <MyStepSwitcher goForward={handleGoForward} goBack={goBack} />
     </div>

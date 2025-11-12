@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import { initPromise } from './i18n'; // Initialize i18n
 import App from './App';
 import * as Sentry from '@sentry/react';
 import {getConfigFromParams} from "./utils/params";
@@ -16,5 +17,8 @@ if (REACT_APP_ENV === 'production') {
   Sentry.setUser({ id: config.clientId });
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App config={config} />);
+// Wait for i18n to initialize before rendering
+initPromise.then(() => {
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<App config={config} />);
+});

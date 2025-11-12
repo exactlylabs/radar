@@ -6,6 +6,7 @@ import Bullet from "./Bullet";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import {useContext, useState} from "react";
 import UserDataContext from "../../../../context/UserData";
+import { useTranslation } from 'react-i18next';
 
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 import initialHeroIcon from '../../../../assets/initial-page-hero-icon.png';
@@ -161,6 +162,7 @@ const iconStyle = {
 }
 
 const InitialStepPage = ({goToNextPage, error}) => {
+  const { t } = useTranslation();
 
   const config = useContext(ConfigContext);
   const {userData, setTerms} = useContext(UserDataContext);
@@ -175,23 +177,23 @@ const InitialStepPage = ({goToNextPage, error}) => {
     <div style={initialStepPageStyle}>
       <div style={isSmall ? smallContentWrapperStyle : contentWrapperStyle}>
         <div style={isSmall ? smallTextContainer : textContainer}>
-          <img src={initialHeroIcon} alt={'initial screen hero icon'} style={heroIcon}/>
-          <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? smallTitleStyle : titleStyle}>Test your Internet speed</p>
-          <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>We'll ask you a few questions to better understand where and how you're connected so we can learn more about your current service.</p>
+          <img src={initialHeroIcon} alt={t('alt.icons.initialHero')} style={heroIcon}/>
+          <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? smallTitleStyle : titleStyle}>{t('initial.title')}</p>
+          <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>{t('initial.subtitle')}</p>
           <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}} onClick={toggleTerms}>
             <MyCheckbox onChange={handleSetTerms} isChecked={userData.terms}/>
-            <p className={'speedtest--p'} style={termsTextStyle}>I agree to the <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
+            <p className={'speedtest--p'} style={termsTextStyle}>{t('initial.agreement.text')} <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>{t('initial.agreement.privacyPolicy')}</a>.</p>
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }
-          <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>
-          { !config.widgetMode && <img src={initialPageShadow} alt={'shadow'} style={isSmall ? smallShadowImage : shadowImage}/> }
+          <MyForwardButton text={t('initial.button')} icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>} onClick={goToNextPage}/>
+          { !config.widgetMode && <img src={initialPageShadow} alt={t('alt.icons.shadow')} style={isSmall ? smallShadowImage : shadowImage}/> }
         </div>
         {
           !config.widgetMode &&
           <div style={isSmall ? smallBulletsContainer : bulletsContainer}>
-            <Bullet icon={<img src={speedTestsIcon} style={iconStyle} alt={'test icon'} />} title={'Test your connectivity'} subtitle={'Get detailed information about your internet connection.'} />
-            <Bullet icon={<img src={performanceIcon} style={iconStyle} alt={'performance icon'} />} title={'Keep track of your results'} subtitle={'Check your history to see how your connectivity does over time.'} />
-            <Bullet icon={<img src={mapIcon} style={iconStyle} alt={'map icon'} />} title={'Compare your results'} subtitle={'Explore the map to see how broadband varies in your region.'} />
+            <Bullet icon={<img src={speedTestsIcon} style={iconStyle} alt={t('alt.icons.test')} />} title={t('initial.features.test.title')} subtitle={t('initial.features.test.description')} />
+            <Bullet icon={<img src={performanceIcon} style={iconStyle} alt={t('alt.icons.performance')} />} title={t('initial.features.track.title')} subtitle={t('initial.features.track.description')} />
+            <Bullet icon={<img src={mapIcon} style={iconStyle} alt={t('alt.icons.map')} />} title={t('initial.features.compare.title')} subtitle={t('initial.features.compare.description')} />
           </div>
         }
       </div>

@@ -7,6 +7,7 @@ import {widgetModalFraming} from "../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
 import rightArrowWhite from "../../assets/right-arrow-white.png";
+import { useTranslation } from 'react-i18next';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -137,7 +138,7 @@ const NoInternetModal = ({
   isOpen,
   closeModal,
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isMediumSizeScreen || isSmallSizeScreen;
@@ -165,11 +166,11 @@ const NoInternetModal = ({
             </g>
           </svg>
         </div>
-        <p className={'speedtest--p speedtest--extra-bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>No Internet connection</p>
-        <p className={'speedtest--p'} style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
+        <p className={'speedtest--p speedtest--extra-bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>{t('noInternet.modal.title')}</p>
+        <p className={'speedtest--p'} style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{t('noInternet.modal.subtitle')}</p>
         <div style={isSmall ? mobileFooterStyle : footerStyle}>
-          <MyButton text={'Continue anyways'}
-                    icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
+          <MyButton text={t('noInternet.modal.button')}
+                    icon={<img src={rightArrowWhite} alt={t('alt.icons.location')} width={14} height={14}/>}
                     onClick={closeModal}
                     fullWidth
           />

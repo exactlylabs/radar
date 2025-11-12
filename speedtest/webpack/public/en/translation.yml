@@ -1,0 +1,362 @@
+# English translations for Speedtest application
+
+# Common UI elements
+common:
+  buttons:
+    continue: "Continue"
+    cancel: "Cancel"
+    submit: "Submit"
+    goBack: "Go back"
+    confirm: "Confirm"
+    next: "Next"
+    getStarted: "Get started"
+    skip: "Skip this question"
+  labels:
+    optional: "(optional)"
+    mbps: "Mbps"
+    ms: "ms"
+    percent: "%"
+  status:
+    notAvailable: "Not available"
+    unavailable: "Unavailable"
+    na: "N/A"
+  errors:
+    unexpected: "There has been an unexpected error. Please try again later."
+
+# Navigation
+navigation:
+  tabs:
+    speedTest: "Speed Test"
+    test: "Test"
+    results: "Your Results"
+    history: "Results"
+    map: "Explore the Map"
+    explore: "Map"
+  header:
+    home: "Home"
+    overview: "Overview"
+    explore: "Explore"
+    testSpeed: "Test your speed"
+
+# Initial/Landing Page
+initial:
+  title: "Test your Internet speed"
+  subtitle: "We'll ask you a few questions to better understand where and how you're connected so we can learn more about your current service."
+  agreement:
+    text: "I agree to the"
+    privacyPolicy: "Privacy Policy"
+  button: "Take the test"
+  features:
+    test:
+      title: "Test your connectivity"
+      description: "Get detailed information about your internet connection."
+    track:
+      title: "Keep track of your results"
+      description: "Check your history to see how your connectivity does over time."
+    compare:
+      title: "Compare your results"
+      description: "Explore the map to see how broadband varies in your region."
+
+# Location Step
+location:
+  title: "What is your location?"
+  subtitle: "Your location is used to compare your results to others in your region."
+  input:
+    placeholder: "Enter your address or zip code"
+    useCurrentLocation: "Use my current location"
+  modal:
+    title:
+      tellLocation: "Tell us your location"
+      confirmLocation: "Confirm your location"
+    subtitle:
+      tellLocation: "Zoom the map and drag the marker to tell us your current location."
+      confirmLocation: "Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker."
+    buttons:
+      change: "Change"
+      changeAddress: "Change address"
+      confirm: "Confirm"
+      confirmLocation: "Confirm location"
+    errors:
+      findingSuggestions: "There has been an error finding suggestions for given marker position. Please try again later."
+      findingPosition: "There has been an error finding position for given marker position. Please try again later."
+      fetchingCoordinates: "There has been an error fetching coordinates!"
+    suggestions:
+      title: "Confirm your location"
+      subtitle: "Please select your location from the list below."
+      notListed: "My address is not listed"
+  buttons:
+    changeAddress: "Change address"
+    change: "Change"
+    confirmLocation: "Confirm location"
+  errors:
+    suggestions: "There has been an error finding suggestions for given marker position. Please try again later."
+    position: "There has been an error finding position for given marker position. Please try again later."
+    coordinates: "There has been an error fetching coordinates!"
+    fillAddress: "Please fill in the address input to continue."
+    detectLocation: "We could not detect your current location. Make sure you enable location access in your browser and try again."
+    saveAddress: "There was an error saving your address! Please try again later."
+
+# Connection Type Step
+connectionType:
+  title: "How are you connected?"
+  subtitle: "Choose how you are connected to the internet."
+  options:
+    wired: "Wired"
+    wifi: "WiFi"
+    cellular: "Cellular"
+
+# Connection Placement Step
+connectionPlacement:
+  title: "Where do you have Internet?"
+  subtitle: "Choose the option that best applies."
+  options:
+    home: "Home"
+    work: "Work"
+    other: "Other"
+    none: "I don't have"
+  noInternet:
+    title: "Confirm you don't have internet"
+    subtitle: "Are you sure you don't have an Internet connection at your current location?"
+    button: "I don't have internet"
+
+# Connection Cost Step
+connectionCost:
+  title: "What's your estimated monthly bill cost?"
+  subtitle: "This helps us understand the average internet cost in your area."
+
+# Expected Speeds Step
+expectedSpeeds:
+  title: "Do you know your expected {{type}} speed?"
+  subtitle: "Tell us your expected {{type}} speed if you're aware of it."
+  button: "I don't know my expected speed"
+  input:
+    download: "Download speed"
+    upload: "Upload speed"
+    placeholder: "E.g. 20"
+
+# Speed Test Step
+speedTest:
+  ready:
+    title: "You're ready to start."
+    subtitle: "For more accurate results, please make sure you are not currently making heavy use of your internet connection."
+    button: "Start Speed Test"
+  running:
+    status: "Testing **{{runningTestType}}** speed..."
+  connection:
+    location: "You are connected at {{networkLocation}}."
+    type: "You are connected via {{networkType}}."
+  warning: "Please note that the speed test will be counted against your current data plan which may have a data cap."
+
+# Test Results Step
+testResults:
+  title: "Your test results"
+  buttons:
+    testAgain: "Test again"
+    exploreMap: "Explore the map"
+  metrics:
+    download: "Download"
+    upload: "Upload"
+    loss: "Loss"
+    latency: "Latency"
+  contactInfo:
+    title: "Join our effort today"
+    subtitle: "Help us study broadband in your region."
+    button: "Submit details"
+    email:
+      label: "Your email address"
+      placeholder: "your@email.com"
+    phone:
+      label: "Your phone number"
+      placeholder: "+1 (000) 000-0000"
+    firstName:
+      label: "Your first name"
+      placeholder: "Enter your first name"
+    lastName:
+      label: "Your last name"
+      placeholder: "Enter your last name"
+
+# No Internet Step
+noInternet:
+  title: "Thanks for letting us know."
+  message:
+    line1: "While we cannot run a speed test at your location as you don't have Internet, we do appreciate your information that helps us learn more about which areas are currently not served."
+    line2: "You can explore the map to see how others compare to you."
+  button: "Explore the map"
+  modal:
+    title: "No Internet connection"
+    subtitle: "Please make sure your device is connected to the Internet before continuing."
+    button: "Continue anyways"
+
+# Overview Page
+overview:
+  hero:
+    title: "Test and compare your internet speed to others in your area."
+    subtitle: "Radar lets you run speed tests on your computer or mobile phone and compare your results to others in your community or in the country."
+    buttons:
+      test: "Test your speed"
+      explore: "Explore the map"
+  data:
+    title: "We collect thousands of speed test results to understand how broadband varies across the country."
+    features:
+      explore:
+        title: "Explore real data"
+        description: "We use real data from speed tests to provide insight into broadband performance nationwide."
+      map:
+        title: "See results on the map"
+        description: "Explore your area on the map and see how broadband varies across different regions."
+      identify:
+        title: "Identify broadband needs"
+        description: "Our data-driven approach helps communities pinpoint where broadband is most needed."
+  mobile:
+    intro: "Radar for Mobile"
+    title: "Test your wifi and cellular connections with our mobile app."
+    description: "Radar lets you run speed tests outdoors and indoors, compare results over time, and compare your results with your neighborhood to get a better idea of how broadband looks like around you."
+
+# History Page
+history:
+  title: "All your results"
+  buttons:
+    goToLast: "Go to last test"
+    exploreMap: "Explore the map"
+  empty:
+    title: "You haven't run a speed test yet."
+    subtitle: "Your speed test results will appear listed here."
+    button: "Take a speed test"
+  table:
+    headers:
+      dateTime: "Date/Time"
+      download: "Download"
+      upload: "Upload"
+      latency: "Latency"
+      loss: "Loss"
+      location: "Location"
+  modal:
+    testDetails: "Test details"
+
+# Map/All Results Page
+map:
+  firstTime:
+    title: "Explore Map"
+    subtitle: "Our map shows all speed tests taken across the country. You can click a test to view more details or filter tests by speed results."
+    button: "Go to map"
+  noResults: "No test results in this area. Try adjusting your search area or speed filters."
+  errors:
+    fetchSpeedTests: "Failed to fetch speed tests. Please try again later."
+    loadingResults: "An error has occurred while loading the results. Please try again later."
+  filters:
+    title: "Explore the Map"
+    subtitle: "Filter tests by speed results."
+    noInternet: "No Internet"
+    unserved: "Unserved"
+    underserved: "Underserved"
+    other: "Other"
+  calendar:
+    startDate: "Start date"
+    endDate: "End date"
+    apply: "Apply"
+    weekDays:
+      mon: "Mon"
+      tue: "Tue"
+      wed: "Wed"
+      thu: "Thu"
+      fri: "Fri"
+      sat: "Sat"
+      sun: "Sun"
+    errors:
+      required: "Start and end dates are required"
+      startBeforeEnd: "Start date must be before end date"
+  autoDetect:
+    title: "Your location could not be detected."
+    subtitle: "Make sure your browser location is enabled."
+  classifications:
+    title: "Understanding classification"
+    subtitle: "Test results are classified based on the lower value of either the download or upload speeds."
+    categories:
+      unserved: "Unserved: 0-25 Mbps download, 0-3 Mbps upload"
+      underserved: "Underserved: 25-100 Mbps download, 3-20 Mbps upload"
+      served: "Served: 100+ Mbps download, 20+ Mbps upload"
+      noInternet: "No Internet: no service available"
+  ftue:
+    step1:
+      title: "Explore speed test results"
+      subtitle: "Click on the dots on the map to view the details of speed test results, and adjust the filters on the left to explore more results."
+    step2:
+      title: "Filter by Classifications and Speeds"
+      subtitle: "Test results are classified by the lower download or upload speed. Use map views to switch between classifications or view speeds independently."
+
+# Banners
+banners:
+  joinUs:
+    text: "Help us understand broadband in your region."
+    link: "Join us"
+  submitted:
+    text: "Thanks for joining us! We will get in touch soon."
+
+# Footer
+footer:
+  privacyPolicy: "Privacy Policy"
+  copyright: "Copyright © {{year}} Radar. All Rights Reserved"
+  disclaimer: "This project was developed as part of the Telehealth Broadband Pilot Program. The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS."
+
+# Alt text for accessibility
+alt:
+  logos:
+    radar: "Radar Speedtest logo"
+    radarDark: "Radar-logo-dark"
+    anthc: "ANTHC-logo"
+    exactlyLabs: "exactly labs logo"
+    xlab: "XLab logo"
+  icons:
+    initialHero: "initial screen hero icon"
+    shadow: "shadow"
+    test: "test icon"
+    performance: "performance icon"
+    map: "map icon"
+    location: "location-button-icon"
+    locationSmall: "location-button-icon-small"
+    goBackArrow: "go back arrow icon"
+    address: "address-icon"
+    connection: "connection-icon"
+    smallRightArrow: "small right arrow"
+    rightArrow: "right arrow"
+    noInternet: "no-internet-icon"
+    forwardArrow: "forward arrow"
+    moveForward: "move-forward-icon"
+    download: "download-icon"
+    upload: "upload-icon"
+    latency: "latency-icon"
+    loss: "loss-icon"
+    provider: "provider-icon"
+    popupLocation: "popup-icon-location"
+    check: "check-icon"
+    greenCheck: "green check"
+    close: "close"
+    autoDetectLocation: "auto detect location"
+    classificationsModal: "Classifications Modal Image"
+    ftueMap: "FTUE Map Modal Image"
+    blueArrowRight: "blue arrow right"
+    arrowRightBlue: "arrow right blue"
+    arrowRightWhite: "arrow right white"
+    overviewHeroSpeed: "overview hero speed"
+    overviewHeroMap: "overview hero map"
+    phonesImage: "phones image"
+    appStore: "app Store icon"
+    googlePlay: "Google Play icon"
+    mapPhoto: "map-photo"
+    tooltipPhoto: "tooltip-photo"
+    menuClose: "menu-close-button"
+    speedActive: "speed-active"
+    speedInactive: "speed-inactive"
+    historyActive: "history-active"
+    historyInactive: "history-inactive"
+    exploreActive: "explore-active"
+    exploreInactive: "explore-inactive"
+    networkType: "network-type-icon"
+    placement: "placement-icon"
+    info: "info-icon"
+    search: "search icon"
+    leftArrow: "left arrow"
+    rightArrow: "right arrow"
+  map:
+    mapPhoto: "Map showing speed test results"
+    tooltipPhoto: "Tooltip showing test details"

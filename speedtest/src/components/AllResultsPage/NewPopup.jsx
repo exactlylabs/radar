@@ -10,6 +10,7 @@ import wiredIcon from '../../assets/wired-icon.svg';
 import cellularIcon from '../../assets/cellular-icon.svg';
 import priceIcon from '../../assets/price-icon.svg';
 import ispIcon from '../../assets/isp-icon.svg';
+import { useTranslation } from 'react-i18next';
 import {
   CONNECTION_QUALTY_VALUES,
   DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD,
@@ -48,7 +49,7 @@ function UploadIcon({variant}) {
   )
 }
 
-function PopupDataCell({title, value, unit, icon}) {
+function PopupDataCell({title, value, unit, icon, naText}) {
   return (
     <div className={styles.dataCell}>
       <div className={styles.dataCellFirstRow}>
@@ -56,14 +57,14 @@ function PopupDataCell({title, value, unit, icon}) {
         <p className={styles.dataCellFirstRowTitle}>{title}</p>
       </div>
       <div className={styles.dataCellSecondRow}>
-        <p className={styles.dataCellValue}>{isNaN(value) ? 'N/A' : value}</p>
+        <p className={styles.dataCellValue}>{isNaN(value) ? naText : value}</p>
         { !isNaN(value) && <span className={styles.dataCellUnit}>{unit}</span> }
       </div>
     </div>
   );
 }
 
-function ConnectionDataCell({value, icon, fullWidth, isCost}) {
+function ConnectionDataCell({value, icon, fullWidth, isCost, perMonthText}) {
 
   const prettyPrintMoney = (value) => {
     const number = Number(value);
@@ -79,12 +80,13 @@ function ConnectionDataCell({value, icon, fullWidth, isCost}) {
   return (
     <div className={styles.connectionDataCell} data-full-width={fullWidth}>
       <img src={icon} width={16} height={16} alt={`${value} icon`}/>
-      <p className={styles.connectionDataValue}>{isCost ? `$${prettyPrintMoney(value)}/month` : value}</p>
+      <p className={styles.connectionDataValue}>{isCost ? `$${prettyPrintMoney(value)}${perMonthText}` : value}</p>
     </div>
   )
 }
 
 export default function NewPopup({test}) {
+  const { t } = useTranslation();
 
   const getIconColor = (value, type) => {
     if(type === 'download') {
@@ -122,10 +124,10 @@ export default function NewPopup({test}) {
   }
 
   const getConnectionQuality = () => {
-    if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNSERVED) return 'Unserved';
-    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNDERSERVED) return 'Underserved';
-    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.SERVED) return 'Served';
-    else return 'No Internet';
+    if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNSERVED) return t('map.popup.unserved');
+    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.UNDERSERVED) return t('map.popup.underserved');
+    else if(test.connection_quality === CONNECTION_QUALTY_VALUES.SERVED) return t('map.popup.served');
+    else return t('map.popup.noInternet');
   }
 
   const getNetworkLocationIcon = () => {
@@ -157,8 +159,19 @@ export default function NewPopup({test}) {
   }
 
   const formatNetworkType = (type) => {
-    if(type.toLowerCase() === 'wifi') return 'WiFi';
+    const typeKey = type.toLowerCase();
+    if(typeKey === 'wifi') return t('map.popup.wifi');
+    if(typeKey === 'wired') return t('map.popup.wired');
+    if(typeKey === 'cellular') return t('map.popup.cellular');
     return upcaseFirstLetter(type);
+  }
+
+  const formatNetworkLocation = (location) => {
+    const locationKey = location.toLowerCase();
+    if(locationKey === 'home') return t('map.popup.home');
+    if(locationKey === 'work') return t('map.popup.work');
+    if(locationKey === 'other') return t('map.popup.other');
+    return upcaseFirstLetter(location);
   }
 
   const upcaseFirstLetter = word => word.charAt(0).toUpperCase() + word.slice(1);
@@ -171,28 +184,40 @@ export default function NewPopup({test}) {
         <div className={styles.qualityBadge} data-test-connection-quality={test.connection_quality}>{getConnectionQuality()}</div>
       </section>
       <section className={styles.dataContainer} data-has-content-below={hasContentBelow()}>
-        <PopupDataCell title={'Download'}
+        <PopupDataCell title={t('map.popup.download')}
                        value={parseFloat(Number(test.download_avg).toFixed(2))}
-                       unit={'Mbps'}
+                       unit={t('map.popup.mbps')}
                        icon={<DownloadIcon variant={getIconColor(test.download_avg, 'download')}/> }
+                       naText={t('map.popup.na')}
         />
-        <PopupDataCell title={'Upload'}
+        <PopupDataCell title={t('map.popup.upload')}
                        value={parseFloat(Number(test.upload_avg).toFixed(2))}
-                       unit={'Mbps'}
+                       unit={t('map.popup.mbps')}
                        icon={<UploadIcon variant={getIconColor(test.upload_avg, 'upload')}/>}
                        iconVariant={getIconColor(test.upload_avg, 'upload')}
+                       naText={t('map.popup.na')}
         />
-        <PopupDataCell title={'Latency'} value={parseFloat(Number(test.latency).toFixed(2))} unit={'ms'} icon={latencyIcon}/>
-        <PopupDataCell title={'Loss'} value={parseFloat(Number(test.loss).toFixed(2))} unit={'%'} icon={lossIcon}/>
+        <PopupDataCell title={t('map.popup.latency')}
+                       value={parseFloat(Number(test.latency).toFixed(2))}
+                       unit={t('map.popup.ms')}
+                       icon={latencyIcon}
+                       naText={t('map.popup.na')}
+        />
+        <PopupDataCell title={t('map.popup.loss')}
+                       value={parseFloat(Number(test.loss).toFixed(2))}
+                       unit={t('map.popup.percent')}
+                       icon={lossIcon}
+                       naText={t('map.popup.na')}
+        />
       </section>
       { hasContentBelow() &&
         <section className={styles.propertiesContainer}>
           <div className={styles.connectionDataContainer}>
-            { test.network_location && <ConnectionDataCell value={upcaseFirstLetter(test.network_location)} icon={getNetworkLocationIcon()}/>}
+            { test.network_location && <ConnectionDataCell value={formatNetworkLocation(test.network_location)} icon={getNetworkLocationIcon()}/>}
             { test.network_location && ( test.network_type || !!test.network_cost && test.network_cost > 0 ) && <div className={styles.cellDivider}></div> }
             { test.network_type && <ConnectionDataCell value={formatNetworkType(test.network_type)} icon={getNetworkTypeIcon()} /> }
             { test.network_type && !!test.network_cost && test.network_cost > 0 && <div className={styles.cellDivider}></div> }
-            { !!test.network_cost && test.network_cost > 0 && <ConnectionDataCell value={test.network_cost} icon={priceIcon} isCost/> }
+            { !!test.network_cost && test.network_cost > 0 && <ConnectionDataCell value={test.network_cost} icon={priceIcon} isCost perMonthText={t('map.popup.perMonth')}/> }
           </div>
           { test.autonomous_system_org_name && <ConnectionDataCell value={test.autonomous_system_org_name} icon={ispIcon} fullWidth={true}/> }
         </section>

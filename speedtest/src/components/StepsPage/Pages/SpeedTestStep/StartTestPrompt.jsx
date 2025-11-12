@@ -6,6 +6,7 @@ import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import {useContext} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
 import SpeedTestContext from "../../../../context/SpeedTestContext";
+import { useTranslation } from 'react-i18next';
 
 const promptStyle = {
   display: 'flex',
@@ -31,16 +32,16 @@ const StartTestPrompt = ({
   startTest,
   goBack
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
 
   return (
     <div style={config.widgetMode ? widgetPromptStyle : promptStyle}>
-      <MyTitle text={`You're ready to start.`}/>
-      <div style={textStyle}>For more accurate results, please make sure you are not currently making heavy use of your internet connection.</div>
+      <MyTitle text={t('speedTest.ready.title')}/>
+      <div style={textStyle}>{t('speedTest.ready.subtitle')}</div>
       <MyStepSwitcher goForward={startTest}
                       goBack={goBack}
-                      forwardText={'Start Speed Test'}
+                      forwardText={t('speedTest.ready.button')}
                       noForwardIcon
 
       />

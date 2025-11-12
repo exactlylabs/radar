@@ -15,7 +15,7 @@ export enum ExternalRoutes {
   MAPPING_APP_PROD = 'https://broadbandmapping.com',
   MAPPING_APP_STAGING = 'https://mapping.staging.exactlylabs.com',
   SPEEDTEST_APP_PROD = 'https://speed.radartoolkit.com',
-  SPEEDTEST_APP_STAGING = 'https://speedtest-staging.exactlylabs.com',
+  SPEEDTEST_APP_STAGING = 'https://speedtest.staging.exactlylabs.com',
 }
 
 export const goToUrl = (url: string, anotherTab = false) => {

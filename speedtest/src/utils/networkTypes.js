@@ -23,6 +23,7 @@ export const types = [
     iconLightSrc: WiredLightIcon,
     iconPopupSrc: WiredPopupIcon,
     text: 'Wired',
+    textKey: 'connectionType.options.wired',
   },
   {
     id: 1,
@@ -32,6 +33,7 @@ export const types = [
     iconLightSrc: WifiLightIcon,
     iconPopupSrc: WifiPopupIcon,
     text: 'WiFi',
+    textKey: 'connectionType.options.wifi',
   },
   {
     id: 2,
@@ -41,6 +43,7 @@ export const types = [
     iconLightSrc: CellularLightIcon,
     iconPopupSrc: CellularPopupIcon,
     text: 'Cellular',
+    textKey: 'connectionType.options.cellular',
   },
 ];
 

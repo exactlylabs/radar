@@ -4,6 +4,7 @@ import iconLeftArrow from "../../../assets/icons-left-arrow.png";
 import iconRightArrow from "../../../assets/right-arrow-white.png";
 import {useContext} from "react";
 import ConfigContext from "../../../context/ConfigContext";
+import { useTranslation } from 'react-i18next';
 
 const stepSwitcherStyle = {
   width: 300,
@@ -48,7 +49,7 @@ const MyStepSwitcher = ({
   backText,
   noForwardIcon
 }) => {
-
+  const { t } = useTranslation();
   const config = useContext(ConfigContext);
 
   const getStyle = () => {
@@ -60,12 +61,12 @@ const MyStepSwitcher = ({
     <div style={getStyle()}>
       {
         goBack &&
-        <MyBackButton text={backText ?? 'Go back'} icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>} iconFirst onClick={goBack} disabled={backDisabled}/>
+        <MyBackButton text={backText ?? t('common.buttons.goBack')} icon={<img src={iconLeftArrow} alt={t('alt.icons.goBackArrow')} style={arrowIconStyle}/>} iconFirst onClick={goBack} disabled={backDisabled}/>
       }
       {
         goForward &&
-        <MyForwardButton text={forwardText ?? 'Continue'}
-                         icon={noForwardIcon ? null : <img src={iconRightArrow} alt={'go forward arrow icon'} style={arrowIconStyle}/>}
+        <MyForwardButton text={forwardText ?? t('common.buttons.continue')}
+                         icon={noForwardIcon ? null : <img src={iconRightArrow} alt={t('alt.icons.forwardArrow')} style={arrowIconStyle}/>}
                          onClick={shouldExecuteAlt ? altForward : goForward}
                          disabled={forwardDisabled}
         />

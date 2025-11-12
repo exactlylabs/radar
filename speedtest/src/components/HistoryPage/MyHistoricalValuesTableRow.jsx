@@ -8,6 +8,7 @@ import {getNetworkTypeIcon, types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
 import InfoIcon from '../../assets/info-icon.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -100,22 +101,22 @@ const MyHistoricalValuesTableRow = ({
   isEven,
   openMeasurementInfoModal
 }) => {
-
+  const { t } = useTranslation();
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getMbpsText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} Mbps`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} ${t('common.labels.mbps')}`;
   }
 
   const getMsText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(0) : `${possibleValue.toFixed(0)} ms`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(0) : `${possibleValue.toFixed(0)} ${t('common.labels.ms')}`;
   }
 
   const getPercentageText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} %`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} ${t('common.labels.percent')}`;
   }
 
   const getDownUpStyle = () => {
@@ -142,7 +143,7 @@ const MyHistoricalValuesTableRow = ({
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
       <div style={networkTypeColumStyle}>
         {measurement.networkType ?
-          <img src={getNetworkTypeIcon(measurement.networkType, 'iconSelectedThickSrc')} width={16} height={16} alt={'network-type-icon'}/> :
+          <img src={getNetworkTypeIcon(measurement.networkType, 'iconSelectedThickSrc')} width={16} height={16} alt={t('alt.icons.networkType')}/> :
           null
         }
       </div>
@@ -177,7 +178,7 @@ const MyHistoricalValuesTableRow = ({
       {
         (isSmallSizeScreen || isMediumSizeScreen) &&
         <div style={getInfoIconStyle()}>
-          <img src={InfoIcon} width={22} height={22} alt={'info-icon'} onClick={openInfoModal}/>
+          <img src={InfoIcon} width={22} height={22} alt={t('alt.icons.info')} onClick={openInfoModal}/>
         </div>
       }
     </div>

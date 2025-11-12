@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  speedtest-client:
+  toolkit-website:
     image: registry.radartoolkit.com/toolkit-website:latest
     networks:
       - traefik_public

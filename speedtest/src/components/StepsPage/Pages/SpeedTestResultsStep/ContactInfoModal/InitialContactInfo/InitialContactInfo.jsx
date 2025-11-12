@@ -1,21 +1,23 @@
 import styles from "../contact_info_modal.module.css";
 import CustomInput from "../../../../../common/inputs/CustomInput/CustomInput";
+import { useTranslation } from 'react-i18next';
 
 const InitialContactInfo = ({handleInputChange}) => {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <div className={styles.inputGroup}>
-        <label className={`${styles.label} speedtest--semi-bold`}>Your email address</label>
+        <label className={`${styles.label} speedtest--semi-bold`}>{t('testResults.contactInfo.email.label')}</label>
         <CustomInput type={'email'}
-                     placeholder={'your@email.com'}
+                     placeholder={t('testResults.contactInfo.email.placeholder')}
                      name={'email'}
                      onChange={handleInputChange}
         />
       </div>
       <div className={styles.inputGroup}>
-        <label className={`${styles.label} speedtest--semi-bold`}>Your phone number <span>(optional)</span></label>
+        <label className={`${styles.label} speedtest--semi-bold`}>{t('testResults.contactInfo.phone.label')} <span>{t('common.labels.optional')}</span></label>
         <CustomInput type={'phone'}
-                     placeholder={'+1 (000) 000-0000'}
+                     placeholder={t('testResults.contactInfo.phone.placeholder')}
                      name={'phone'}
                      onChange={handleInputChange}
         />

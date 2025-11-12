@@ -13,7 +13,7 @@ const ToolkitFloatingMenu = ({
   setIsOpen
 }: ToolkitFloatingMenuProps): ReactElement => {
 
-  const isTouchDevice = useIsTouchDevice().current;
+  const isTouchDevice = useIsTouchDevice();
   const [selectedTab, setSelectedTab] = useState<ToolkitTab>(ToolkitTab.POLICY_MAKERS);
 
   const keepOpen = () => setIsOpen(true);

@@ -10,6 +10,7 @@ import {
   DEFAULT_DOWNLOAD_FILTER_MID
 } from "../../utils/colors";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import { useTranslation } from 'react-i18next';
 
 
 const MyFiltersList = ({
@@ -17,6 +18,7 @@ const MyFiltersList = ({
   selectedRangeIndexes,
   setSelectedRangeIndexes
 }) => {
+  const { t } = useTranslation();
 
   const toggleFilter = index => {
     if(selectedRangeIndexes.includes(index)) {
@@ -42,13 +44,13 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_NONE}
                           selected={selectedRangeIndexes.includes(0)}
                           onClick={toggleFilterWithZero}
-                          range={'No Internet'}
+                          range={t('map.filters.noInternet')}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_LOW}
                           selected={selectedRangeIndexes.includes(1)}
                           onClick={toggleFilterWithOne}
-                          state={'(Unserved)'}
+                          state={`(${t('map.filters.unserved')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
                           range={DOWNLOAD_RANGES[0]}
                           filterTextWidth={'80px'}
@@ -56,7 +58,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_MID}
                           selected={selectedRangeIndexes.includes(2)}
                           onClick={toggleFilterWithTwo}
-                          state={'(Underserved)'}
+                          state={`(${t('map.filters.underserved')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
                           range={DOWNLOAD_RANGES[1]}
                           filterTextWidth={'96px'}
@@ -64,7 +66,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_HIGH}
                           selected={selectedRangeIndexes.includes(3)}
                           onClick={toggleFilterWithThree}
-                          state={'(Other)'}
+                          state={`(${t('map.filters.other')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(3)}
                           range={DOWNLOAD_RANGES[2]}
                           filterTextWidth={'78px'}
@@ -77,13 +79,13 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_NONE}
                           selected={selectedRangeIndexes.includes(0)}
                           onClick={toggleFilterWithZero}
-                          range={'No Internet'}
+                          range={t('map.filters.noInternet')}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_LOW}
                           selected={selectedRangeIndexes.includes(1)}
                           onClick={toggleFilterWithOne}
-                          state={'(Unserved)'}
+                          state={`(${t('map.filters.unserved')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
                           range={UPLOAD_RANGES[0]}
                           filterTextWidth={'71px'}
@@ -91,7 +93,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_MID}
                           selected={selectedRangeIndexes.includes(2)}
                           onClick={toggleFilterWithTwo}
-                          state={'(Underserved)'}
+                          state={`(${t('map.filters.underserved')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
                           range={UPLOAD_RANGES[1]}
                           filterTextWidth={'80px'}
@@ -99,7 +101,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_HIGH}
                           selected={selectedRangeIndexes.includes(3)}
                           onClick={toggleFilterWithThree}
-                          state={'(Other)'}
+                          state={`(${t('map.filters.other')})`}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(3)}
                           range={UPLOAD_RANGES[2]}
                           filterTextWidth={'70px'}

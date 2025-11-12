@@ -7,6 +7,7 @@ import {types} from "../../../../utils/networkTypes";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import UserDataContext from "../../../../context/UserData";
+import { useTranslation } from 'react-i18next';
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -18,13 +19,13 @@ const ConnectionTypeStepPage = ({
   setSelectedOption,
   warning
 }) => {
-
+  const { t } = useTranslation();
   const {userData} = useContext(UserDataContext);
 
   return (
     <div>
-      <MyTitle text={'How are you connected?'}/>
-      <div style={subtitleStyle}>Choose how you are connected to the internet.</div>
+      <MyTitle text={t('connectionType.title')}/>
+      <div style={subtitleStyle}>{t('connectionType.subtitle')}</div>
       <MyOptionPicker options={types}
                       selectedOption={userData.networkType}
                       setSelectedOption={setSelectedOption}

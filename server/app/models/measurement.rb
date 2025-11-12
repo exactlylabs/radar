@@ -15,7 +15,7 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_ndt7_csv
+  def self.to_ndt7_csv(measurements)
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download avg_data_used jitter latency created_at(UTC+0)}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
@@ -23,7 +23,7 @@ class Measurement < ApplicationRecord
     CSV.generate(headers: true) do |csv|
       csv << info_attributes + attributes + extended_attributes
 
-      includes(:location, :client, :account).each do |measurement|
+      measurements.includes(:location, :client, :account).each do |measurement|
         info = [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
@@ -50,13 +50,13 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_ndt7_csv_enumerator
+  def self.to_ndt7_csv_enumerator(measurements)
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download avg_data_used jitter latency created_at(UTC+0)}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(info_attributes + attributes + extended_attributes)
-      includes(:location, :client, :account).find_each do |measurement|
+      measurements.includes(:location, :client, :account).find_each do |measurement|
         info = [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
@@ -82,21 +82,21 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_ndt7_csv_file()
+  def self.to_ndt7_csv_file(measurements)
     tmp_file = Tempfile.new("tmp_all_ndt7_measurements.csv")
     File.open(tmp_file.path, 'w') do |file|
-      to_ndt7_csv_enumerator.each_with_index do |line, index|
+      to_ndt7_csv_enumerator(measurements).each_with_index do |line, index|
         file.write(line)
       end
     end
     tmp_file
   end
 
-  def self.to_csv
+  def self.to_csv(measurements)
     CSV.generate(headers: true) do |csv|
       csv << %w{id client_id account location_name latitude longitude address style upload download avg_data_used jitter latency created_at(UTC+0)}
 
-      includes(:location, :client, :account).each do |measurement|
+      measurements.includes(:location, :client, :account).each do |measurement|
         csv << [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
@@ -117,10 +117,11 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_csv_enumerator
+  def self.to_csv_enumerator(measurements)
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(%w{id client_id account location_name latitude longitude address style upload download avg_data_used jitter latency created_at(UTC+0)})
-      includes(:location, :client, :account).find_each do |measurement|
+      measurements.includes(:location, :client, :account).find_each do |measurement|
+
         yielder << CSV.generate_line([
                                        measurement.id,
                                        measurement.client ? measurement.client.unix_user : "",
@@ -141,10 +142,10 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_csv_file()
+  def self.to_csv_file(measurements)
     tmp_file = Tempfile.new("tmp_all_measurements.csv")
     File.open(tmp_file.path, 'w') do |file|
-      to_csv_enumerator.each_with_index do |line, index|
+      to_csv_enumerator(measurements).each_with_index do |line, index|
         file.write(line)
       end
     end

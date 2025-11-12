@@ -10,7 +10,7 @@ const ChevronRight = "/assets/images/chevron-right-dark.png";
 
 const RegularNavbarContent = (): ReactElement => {
 
-  const isTouchDevice = useIsTouchDevice().current;
+  const isTouchDevice = useIsTouchDevice();
 
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   const floatingMenuOpenRef = useRef(false);

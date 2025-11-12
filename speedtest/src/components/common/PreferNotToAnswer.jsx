@@ -3,6 +3,7 @@ import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
 import ArrowRightIconHovered from '../../assets/icons-right-arrow-hovered.png';
+import { useTranslation } from 'react-i18next';
 
 const textStyle = {
   fontSize: 15,
@@ -28,7 +29,7 @@ const PreferNotToAnswer = ({
   goForward,
   text
 }) => {
-
+  const { t } = useTranslation();
   const {isMediumSizeScreen} = useViewportSizes();
   const [hovered, setHovered] = useState(false);
 
@@ -43,11 +44,11 @@ const PreferNotToAnswer = ({
          onMouseEnter={hoverOn}
          onMouseLeave={hoverOff}
     >
-      <p className={'speedtest--p speedtest--regular-link--hoverable speedtest--bold '}>{text ? text : 'Skip this question'}</p>
+      <p className={'speedtest--p speedtest--regular-link--hoverable speedtest--bold '}>{text ? text : t('common.buttons.skip')}</p>
       {
         hovered ?
-          <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/> :
-          <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
+          <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={t('alt.icons.moveForward')}/> :
+          <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={t('alt.icons.moveForward')}/>
       }
     </div>
   );

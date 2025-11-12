@@ -18,6 +18,7 @@ import './MyAddressInput.css';
 import ConfigContext from "../../../../../context/ConfigContext";
 import UserDataContext, {emptyAddress} from "../../../../../context/UserData";
 import {ADDRESS_PROVIDER} from "../../../../../utils/userMetadata";
+import { useTranslation } from 'react-i18next';
 
 const addressInputWrapperStyle = {
   display: 'flex',
@@ -109,7 +110,7 @@ const MyAddressInput = ({
   suggestions,
   setSuggestions
 }) => {
-
+  const { t } = useTranslation();
   const [error, setError] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
@@ -231,7 +232,7 @@ const MyAddressInput = ({
 
   const parseError = (err) => {
     if(typeof err === 'string') return err;
-    else return 'There has been an unexpected error. Please try again later.';
+    else return t('common.errors.unexpected');
   }
 
   const handleBlurInput = () => {
@@ -244,7 +245,7 @@ const MyAddressInput = ({
   return (
     <div id={'speedtest--address-input-wrapper'}>
       <div style={addressInputWrapperStyle} id={'speedtest--address-input-container'}>
-        <TextField placeholder={'Enter your address or zip code'}
+        <TextField placeholder={t('location.input.placeholder')}
           id={'speedtest--address-input'}
           sx={{width: '100%'}}
           InputProps={addressInputStyle}
@@ -265,7 +266,7 @@ const MyAddressInput = ({
                 <MySpinner color={WHITE}/> :
                 <img src={rightArrowWhite}
                   style={rightArrowStyle}
-                  alt={'location-button-icon'}
+                  alt={t('alt.icons.rightArrow')}
                   width={32}
                   height={32}
                 />
@@ -280,10 +281,10 @@ const MyAddressInput = ({
         <img src={LocationButtonSmall}
           width={14}
           height={14}
-          alt={'location-button-icon-small'}
+          alt={t('alt.icons.locationSmall')}
           style={smallIconStyle}
         />
-        <p className={'speedtest--p speedtest--bold'} style={useLocationStyle}>Use my current location</p>
+        <p className={'speedtest--p speedtest--bold'} style={useLocationStyle}>{t('location.input.useCurrentLocation')}</p>
       </div>
       { error && <p className={'speedtest--p'} style={errorMessageStyle}>{parseError(error)}</p> }
       <LocationSuggestionsList suggestions={suggestions}

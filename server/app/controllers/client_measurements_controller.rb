@@ -33,7 +33,7 @@ class ClientMeasurementsController < ApplicationController
 
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }
-      format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
+      format.csv { send_data Measurement.to_csv(@measurements), filename: "measurements-#{@client.unix_user}.csv" }
     end
   end
 
@@ -42,7 +42,7 @@ class ClientMeasurementsController < ApplicationController
 
   def ndt7_index
     respond_to do |format|
-      format.csv { send_data @client.measurements.where(style: "NDT7").to_ndt7_csv, filename: "measurements-extended-#{@client.unix_user}.csv" }
+      format.csv { send_data Measurement.to_ndt7_csv(@client.measurements.where(style: "NDT7")), filename: "measurements-extended-#{@client.unix_user}.csv" }
     end
   end
 

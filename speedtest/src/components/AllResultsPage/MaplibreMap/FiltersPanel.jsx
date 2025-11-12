@@ -6,6 +6,7 @@ import CostFilter from "./Filters/CostFilter/CostFilter";
 import CloseModalButton from './Filters/common/CloseModalButton';
 import FiltersContext from "../../../context/FiltersContext";
 import {useContext} from "react";
+import { useTranslation } from 'react-i18next';
 
 function filtersIcon() {
   return (
@@ -24,7 +25,7 @@ function filtersIcon() {
 }
 
 export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, applyFilters}) {
-
+  const { t } = useTranslation();
   const {clearFilters} = useContext(FiltersContext);
 
   const handleClearFilters = () => {
@@ -37,29 +38,29 @@ export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, ap
       <div className={styles.filtersPanel} data-open={isOpen.toString()}>
         <div className={styles.filtersSection}>
           <section className={styles.header}>
-            <h3 className={styles.headerTitle}>Filters</h3>
-            <button className={styles.resetFiltersButton} onClick={handleClearFilters}>Reset filters</button>
+            <h3 className={styles.headerTitle}>{t('map.filters.panel.title')}</h3>
+            <button className={styles.resetFiltersButton} onClick={handleClearFilters}>{t('map.filters.panel.reset')}</button>
             <CloseModalButton onClick={togglePanel}/>
           </section>
           <section className={styles.filterSection}>
-            <h5 className={styles.filterSectionTitle}>Connection</h5>
+            <h5 className={styles.filterSectionTitle}>{t('map.filters.panel.connection')}</h5>
             <ConnectionTypeFilter/>
           </section>
           <section className={styles.filterSection} style={{zIndex: 3}}>
-            <h5 className={styles.filterSectionTitle}>Internet Provider</h5>
+            <h5 className={styles.filterSectionTitle}>{t('map.filters.panel.internetProvider')}</h5>
             <InternetProviderFilter/>
           </section>
           <section className={styles.filterSection} style={{zIndex: 2}}>
-            <h5 className={styles.filterSectionTitle}>Date range</h5>
+            <h5 className={styles.filterSectionTitle}>{t('map.filters.panel.dateRange')}</h5>
             <DateRangeFilter openCalendarModal={openCalendarModal}/>
           </section>
           <section className={styles.filterSection} style={{zIndex: 1}}>
-            <h5 className={styles.filterSectionTitle}>Cost range</h5>
+            <h5 className={styles.filterSectionTitle}>{t('map.filters.panel.costRange')}</h5>
             <CostFilter/>
           </section>
         </div>
         <div className={styles.applySection}>
-          <button className={styles.applyButton} onClick={applyFilters}>Apply</button>
+          <button className={styles.applyButton} onClick={applyFilters}>{t('map.filters.panel.apply')}</button>
         </div>
       </div>
       <button className={styles.filtersButton}
@@ -67,7 +68,7 @@ export default function FiltersPanel({isOpen, togglePanel, openCalendarModal, ap
               data-open={isOpen.toString()}
       >
         {filtersIcon()}
-        Filters
+        {t('map.filters.panel.title')}
       </button>
     </>
   );

@@ -62,9 +62,9 @@ const overviewPageStyle = {
 const Frame = ({ config, children, step, setStep }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const shouldShowTabs = !config.webviewMode && !isOverviewPage;
   const isOverviewPage = step === TABS.OVERVIEW;
   const isAllResultsPage = step === TABS.ALL_RESULTS;
+  const shouldShowTabs = !config.webviewMode && !isOverviewPage;
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(isOverviewPage) return overviewPageStyle;

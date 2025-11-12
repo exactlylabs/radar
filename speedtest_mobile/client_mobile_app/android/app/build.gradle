@@ -49,6 +49,7 @@ android {
 
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -102,6 +103,7 @@ android {
     productFlavors {
         prod {
             applicationId "org.anthc.radar"
+            namespace "org.anthc.radar"
             signingConfig signingConfigs.prod
             manifestPlaceholders = [
                     app_name: "Radar",
@@ -110,6 +112,7 @@ android {
         }
         dev {
             applicationId "com.exactlylabs.radar"
+            namespace "com.exactlylabs.radar"
             applicationIdSuffix ".dev"
             signingConfig signingConfigs.dev
             manifestPlaceholders = [
@@ -119,6 +122,7 @@ android {
         }
         staging {
             applicationId "com.exactlylabs.radar"
+            namespace "com.exactlylabs.radar"
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.staging
             manifestPlaceholders = [
@@ -151,4 +155,5 @@ dependencies {
     def splashScreen_version = '1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.core:core-splashscreen:$splashScreen_version"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }

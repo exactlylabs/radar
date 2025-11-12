@@ -28,13 +28,13 @@ class LocationMeasurementsController < ApplicationController
     end
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }
-      format.csv { send_data @measurements.to_csv, filename: "measurements-#{@location.id}.csv" }
+      format.csv { send_data Measurement.to_csv(@measurements), filename: "measurements-#{@location.id}.csv" }
     end
   end
 
   def ndt7_index
     respond_to do |format|
-      format.csv { send_data @location.measurements.where(style: "NDT7").to_ndt7_csv, filename: "measurements-extended-#{@location.id}.csv" }
+      format.csv { send_data Measurement.to_ndt7_csv(@location.measurements.where(style: "NDT7")), filename: "measurements-extended-#{@location.id}.csv" }
     end
   end
 

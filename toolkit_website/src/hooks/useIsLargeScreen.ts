@@ -9,6 +9,9 @@ import {LARGE_SCREEN_BREAKPOINT, MID_SCREEN_BREAKPOINT} from "../utils/breakpoin
  * @returns {boolean}
  */
 export const useIsLargeScreen = () => {
-  const {width} = useContext(ViewportContext);
+  const {width, isClient} = useContext(ViewportContext);
+  if (!isClient) {
+    return false;
+  }
   return width >= MID_SCREEN_BREAKPOINT && width < LARGE_SCREEN_BREAKPOINT;
 }
