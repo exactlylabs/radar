@@ -73,9 +73,6 @@ services:
         reservations:
           cpus: '0.25'
           memory: 512M
-      placement:
-        constraints:
-          - node.labels.network == aws
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.pods-server-app.rule=Host(`pods.radartoolkit.com`) || Host(`radar.exactlylabs.com`)"
@@ -142,9 +139,6 @@ services:
           memory: 4024M
         reservations:
           memory: 512M
-      placement:
-        constraints:
-          - node.labels.network == aws
       labels: []
 
   clock:
@@ -193,9 +187,6 @@ services:
       - otel-collector_public
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.labels.network == aws
       labels: []
 
   mobile_scanner:
@@ -245,9 +236,6 @@ services:
       - otel-collector_public
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.labels.network == aws
       labels: []
 
 networks:

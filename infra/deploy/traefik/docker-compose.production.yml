@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   traefik:
-    image: "traefik:v3.0"
+    image: "traefik:latest"
     deploy:
       mode: global
       placement:
@@ -26,10 +26,10 @@ services:
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--entrypoints.web.address=:80"
       - "--entryPoints.web.transport.respondingTimeouts.readTimeout=600"
-      - "--entrypoints.web.forwardedheaders.trustedips=10.5.0.0/16"
+      - "--entrypoints.web.forwardedheaders.trustedips=10.0.0.0/16"
       - "--entrypoints.websecure.address=:443"
       - "--entryPoints.websecure.transport.respondingTimeouts.readTimeout=600"
-      - "--entrypoints.websecure.forwardedheaders.trustedips=10.5.0.0/16"
+      - "--entrypoints.websecure.forwardedheaders.trustedips=10.0.0.0/16"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.myresolver.acme.email=devops@exactlylabs.com"
@@ -48,7 +48,7 @@ services:
         mode: host
       - "8080:8080"
     volumes:
-      - "letsencrypt-data:/letsencrypt"
+      - "/mnt/data/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - public
@@ -63,14 +63,6 @@ networks:
     external: true
   otel-collector_public:
     external: true
-
-volumes:
-  letsencrypt-data:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
-      device: ":/mnt/nfs/traefik/letsencrypt"
 
 configs:
   # To update config files, we must rename the config key name, and update the service to source from this new name.

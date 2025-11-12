@@ -8,12 +8,9 @@ services:
     networks:
       - public
     volumes:
-      - shapefiles:/app/files
+      - /mnt/data/mlab-processor/files":/app/files
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.labels.network == aws
 
 
 networks:

@@ -3,7 +3,7 @@ ENVIRONMENT?=staging
 ifeq ($(ENVIRONMENT), staging)
 DOCKER_HOST?=ssh://admin@manager-01.staging.radartoolkit.com
 else
-DOCKER_HOST?=ssh://admin@manager-01.radartoolkit.com
+DOCKER_HOST?=ssh://radar-swarm-01
 endif
 
 export DOCKER_HOST

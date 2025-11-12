@@ -32,13 +32,10 @@ services:
   db:
     image: couchdb:2.3.1
     volumes:
-      - couchdb-data:/opt/couchdb/data
+      - /mnt/data/swarmpit/couch-data:/opt/couchdb/data
     networks:
       - net
     deploy:
-      placement:
-        constraints:
-          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.30'
@@ -50,13 +47,10 @@ services:
   influxdb:
     image: influxdb:1.8
     volumes:
-      - influxdb-data:/var/lib/influxdb
+      - /mnt/data/swarmpit/influx-data:/var/lib/influxdb
     networks:
       - net
     deploy:
-      placement:
-        constraints:
-          - node.labels.network == aws
       resources:
         limits:
           cpus: '0.60'
@@ -88,18 +82,3 @@ services:
 networks:
   net:
     driver: overlay
-
-volumes:
-  couchdb-data:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
-      device: ":/mnt/nfs/swarmpit/couch-data"
-
-  influxdb-data:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
-      device: ":/mnt/nfs/swarmpit/influx-data"

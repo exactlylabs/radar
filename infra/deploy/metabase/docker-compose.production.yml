@@ -1,6 +1,6 @@
 services:
   app:
-    image: registry.radartoolkit.com/metabase:latest # Using our own build to use a base image that runs in ARM
+    image: metabase/metabase:latest # Using our own build to use a base image that runs in ARM
     networks:
       - traefik_public
     environment:
@@ -13,9 +13,6 @@ services:
     secrets:
       - METABASE_DB_PASSWORD
     deploy:
-      placement:
-        constraints:
-          - node.labels.network == aws
       resources:
         limits:
           memory: 1024M

@@ -6,12 +6,7 @@ services:
     networks:
       - traefik_public
     volumes:
-      - /mnt/nfs/mapping-api/geos:/app/geos
-      - tailscale-state:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-      - sys_module
+      - /mnt/data/mapping-api/geos:/app/geos
     environment:
       - ENVIRONMENT=production
       - CORS_ALLOWED_ORIGINS=*
@@ -25,7 +20,7 @@ services:
     secrets:
       - source: CLICKHOUSE_PASSWORD
         target: DB_PASSWORD
-      - TS_AUTHKEY
+
     deploy:
       replicas: 1
       resources:
@@ -78,6 +73,4 @@ networks:
 
 secrets:
   CLICKHOUSE_PASSWORD:
-    external: true
-  TS_AUTHKEY:
     external: true
