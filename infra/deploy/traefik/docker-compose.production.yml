@@ -52,16 +52,13 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - public
-      - vector_public
-      - otel-collector_public
+      - monitoring_public
 
 networks:
   public:
     driver: overlay
     attachable: true
-  vector_public:
-    external: true
-  otel-collector_public:
+  monitoring_public:
     external: true
 
 configs:

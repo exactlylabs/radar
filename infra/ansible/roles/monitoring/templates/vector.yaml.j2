@@ -25,6 +25,23 @@ sources:
     include_matches:
       PRIORITY: [ "0", "1", "2" ] # Emergency, Alert, Critical
 
+  host_metrics:
+    type: host_metrics
+    collectors:
+      - cpu
+      - disk
+      - filesystem
+      - load
+      - host
+      - memory
+    filesystem:
+      devices:
+        excludes: ["binfmt_misc"]
+      filesystems:
+        excludes: ["binfmt_misc", "nsfs", "tmpfs", "devtmpfs"]
+      mountpoints:
+        excludes: ["*/proc/sys/fs/binfmt_misc", "*/run/docker/netns/*", "*/var/lib/docker/*", "*/snap/*"]
+
 
 # Parse Syslog logs
 # See the Vector Remap Language reference for more info: https://vrl.dev
@@ -46,16 +63,19 @@ transforms:
       .level = to_syslog_level(.severity) ?? ""
 
 
-# Print parsed logs to stdout
 sinks:
   critical_journald_sink:
-    type: "aws_cloudwatch_logs"
+    type: "loki"
     inputs: ["convert_journald"]
-    compression: "gzip"
+    endpoint: "http://radar-swarm-01:3100"
     encoding:
       codec: "json"
-    region: "us-east-2"
-    group_name: "/vector/{% raw %}{{host}}/journald-critical-events{% endraw %}"
-    stream_name: "journald-critical-events"
-    healthcheck: false
+    labels:
+      host: "{% raw %}{{ host }}{% endraw %}"
+      source: "journald"
+      severity: "{% raw %}{{ level }}{% endraw %}"
+      job: "critical-events"
+    healthcheck:
+      enabled: false
+
 

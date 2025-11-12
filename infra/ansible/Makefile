@@ -32,4 +32,8 @@ setup-postgres-users:
 	@echo "Configuring PostgreSQL Users"
 	ansible-playbook -i inventory/${ENVIRONMENT}.yml -e @${ENVIRONMENT}_vars playbooks/configure-postgresql-users.yml
 
+setup-monitoring:
+	@echo "Setting up Monitoring Stack"
+	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-monitoring.yml -e @${ENVIRONMENT}_vars
+
 setup: setup-nfs setup-swarm

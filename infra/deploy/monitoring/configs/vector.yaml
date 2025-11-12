@@ -25,32 +25,30 @@ transforms:
 
 sinks:
   docker_logs_sink:
-    type: "aws_cloudwatch_logs"
+    type: "loki"
     inputs: ["docker_logs"]
-    compression: "gzip"
+    endpoint: "http://loki:3100"
     encoding:
       codec: "json"
-    region: "us-east-2"
-    group_name: "/vector/docker-logs"
-    stream_name: {{ "\"{{ host }}\"" }}
-    auth:
-      access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-      secret_access_key: "{{ secret "AWS_SECRET_ACCESS_KEY" }}"
-    healthcheck: false
+    labels:
+      host: {{ "\"{{ host }}\"" }}
+      source: "docker"
+      job: "docker-logs"
+    healthcheck:
+      enabled: false
 
   traefik_access_sink:
-    type: "aws_cloudwatch_logs"
+    type: "loki"
     inputs: ["traefik_logs_decode"]
-    compression: "gzip"
+    endpoint: "http://loki:3100"
     encoding:
       codec: "json"
-    region: "us-east-2"
-    group_name: "/vector/traefik"
-    stream_name: {{ "\"{{ host }}\"" }}
-    auth:
-      access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
-      secret_access_key: "{{ secret "AWS_SECRET_ACCESS_KEY" }}"
-    healthcheck: false
+    labels:
+      host: {{ "\"{{ host }}\"" }}
+      source: "traefik"
+      job: "traefik-access"
+    healthcheck:
+      enabled: false
 
   # debug:
   #   type: "console"

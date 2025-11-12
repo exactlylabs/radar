@@ -1,0 +1,237 @@
+# Stack for the monitoring setup
+# - Prometheus for metrics storage and querying
+# - cAdvisor for container metrics collection
+# - Grafana for metrics visualization
+# - OpenTelemetryCollector for metrics processing and exporting
+# - Vector for log collection and forwarding
+# - PostgresExporter for exporting Postgres metrics to Prometheus
+# - Loki for log storage and querying
+
+services:
+  prometheus:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-remote-write-receiver'
+    networks:
+      - private
+      - public
+    volumes:
+      - "prometheus_data:/prometheus"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    configs:
+      - source: prometheus_config_v6
+        target: /etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    user: root # Prometheus doesn't have access to docker.sock otherwise.
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.prometheus == true
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    networks:
+      - private
+
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      mode: global
+      labels:
+        - "prometheus-job=cadvisor"
+        - "prometheus-port=8080"
+  
+  grafana:
+    image: grafana/grafana:11.3.1
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel, marcusolsson-treemap-panel, grafana-polystat-panel, grafana-x-ray-datasource, nline-plotlyjs-panel
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=db-01.radartoolkit.com
+      - GF_DATABASE_USER=grafana
+      - GF_DATABASE_NAME=grafana
+      - GF_DATABASE_PASSWORD__FILE=/var/run/secrets/GRAFANA_DB_PASSWORD
+      - GF_AUTH_GOOGLE_ENABLED=true
+      - GF_AUTH_GOOGLE_ALLOW_SIGN_UP=true
+      - GF_AUTH_GOOGLE_CLIENT_ID=634388591916-coojhqjrlfpfr15d42plpqu0fq7cghf8.apps.googleusercontent.com
+      - GF_AUTH_GOOGLE_CLIENT_SECRET__FILE=/var/run/secrets/GRAFANA_GOOGLE_SSO_SECRET
+      - GF_AUTH_GOOGLE_SCOPES=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+      - GF_AUTH_GOOGLE_AUTH_URL=https://accounts.google.com/o/oauth2/auth
+      - GF_AUTH_GOOGLE_TOKEN_URL=https://oauth2.googleapis.com/token
+      - GF_AUTH_GOOGLE_API_URL=https://www.googleapis.com/oauth2/v1/userinfo
+      - GF_AUTH_GOOGLE_ALLOWED_DOMAINS=radartoolkit.com exactlylabs.com
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=smtp.postmarkapp.com:587
+      - GF_SMTP_USER=PM-T-outbound-e06NU5Lmj16jyyKgokKHC9
+      - GF_SMTP_PASSWORD__FILE=/var/run/secrets/GRAFANA_SMTP_PASSWORD
+      - GF_SERVER_DOMAIN=grafana.apps.radartoolkit.com
+      - GF_SERVER_ROOT_URL=https://%(domain)s/
+
+    secrets:
+      - GRAFANA_DB_PASSWORD
+      - GRAFANA_GOOGLE_SSO_SECRET
+      - GRAFANA_SMTP_PASSWORD
+    networks:
+      - traefik_public
+      - private
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana-app.rule=Host(`grafana.apps.radartoolkit.com`) || Host(`grafana.apps.exactlylabs.com`)"
+        - "traefik.http.services.grafana-app.loadbalancer.server.port=3000"
+        - "traefik.http.routers.grafana-app.entrypoints=web,websecure"
+        - "traefik.http.routers.grafana-app.tls.certresolver=myresolver"
+        - "traefik.http.middlewares.forward-headers.headers.sslredirect=true"
+        - "traefik.http.middlewares.forward-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+        - "traefik.http.middlewares.ssl-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.ssl-redirect.redirectscheme.permanent=true"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.regex=^https://grafana.apps.exactlylabs.com/(.*)"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.replacement=https://grafana.apps.radartoolkit.com/$${1}"
+        - "traefik.http.middlewares.grafana-redirect.redirectregex.permanent=true"
+        - "traefik.http.routers.grafana-app.middlewares=ssl-redirect@swarm,forward-headers@swarm,grafana-redirect@swarm"
+
+  otel-collector:
+    image: registry.radartoolkit.com/otel-collector:latest
+    command: ["--config=/etc/otel-agent-config.yaml"]
+    networks:
+      - public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+    configs:
+      - source: otel_config-v13
+        target: /etc/otel-agent-config.yaml
+
+  vector-agent:
+    image: timberio/vector:latest-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - private
+    deploy:
+      mode: global
+    hostname: "{{.Node.Hostname}}"
+    configs:
+      - source: vector_config-v5
+        target: /etc/vector/vector.yaml
+  
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    command:
+      - "--collector.stat_statements"
+      - "--collector.statio_user_tables"
+      - "--collector.statio_user_indexes"
+    ports:
+      - 9187:9187
+    networks:
+      - private
+    environment:
+      - DATA_SOURCE_URI=db-01.radartoolkit.com/radar
+      - DATA_SOURCE_USER=prometheus
+      - DATA_SOURCE_PASS_FILE=/run/secrets/PMT_POSTGRESQL_EXPORTER_PASSWORD
+    secrets:
+      - PMT_POSTGRESQL_EXPORTER_PASSWORD
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+
+  loki:
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - private
+      - traefik_public
+    configs:
+      - source: loki_config_v3
+        target: /etc/loki/config.yaml
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.prometheus == true
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.loki-app.rule=Host(`loki.apps.radartoolkit.com`)"
+        - "traefik.http.services.loki-app.loadbalancer.server.port=3100"
+        - "traefik.http.routers.loki-app.entrypoints=web,websecure"
+        - "traefik.http.routers.loki-app.tls.certresolver=myresolver"
+        - "traefik.http.routers.loki-app.middlewares=ssl-redirect@swarm"
+
+
+secrets:
+  PMT_POSTGRESQL_EXPORTER_PASSWORD:
+    external: true
+  GRAFANA_DB_PASSWORD:
+    external: true
+  GRAFANA_GOOGLE_SSO_SECRET:
+    external: true
+  GRAFANA_SMTP_PASSWORD:
+    external: true  
+
+
+networks:
+  private:
+  public:
+    attachable: true
+  traefik_public:
+    external: true
+
+volumes:
+  grafana-data:
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/data/prometheus-data
+  loki_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/data/loki
+
+configs:
+  # To update config files, we must rename the config key name, and update the service to source from this new name.
+  # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
+  prometheus_config_v6:
+    template_driver: golang
+    file: ./configs/prometheus.yml
+
+  otel_config-v13:
+    template_driver: golang
+    file: ./configs/otel-agent-config.yaml
+
+  vector_config-v5:
+    template_driver: golang
+    file: ./configs/vector.yaml
+
+  loki_config_v3:
+    template_driver: golang
+    file: ./configs/loki-config.yaml
+  

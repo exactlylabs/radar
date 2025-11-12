@@ -12,11 +12,14 @@ processors:
 
 
 exporters:
-  awsemf:
+  prometheus:
+    endpoint: "0.0.0.0:9464"
+    send_timestamps: true
+    namespace: "services"
 
 service:
   pipelines:
     metrics/otlp:
       receivers: [otlp]
       processors: [batch]
-      exporters: [awsemf]
+      exporters: [prometheus]

@@ -1,2 +1,2 @@
-skip_cloudwatch: false
+skip_cloudwatch: true
 skip_vector: false
