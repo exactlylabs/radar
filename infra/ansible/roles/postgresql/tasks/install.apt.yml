@@ -1,4 +1,10 @@
 ---
+- set_fact:
+    deb_arch: >-
+      {% if ansible_architecture == 'x86_64' %}amd64
+      {% elif ansible_architecture == 'aarch64' %}arm64
+      {% else %}{{ ansible_architecture }}{% endif %}
+
 - name: "Install Requirements"
   become: yes
   apt:
@@ -22,7 +28,7 @@
         dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
     - name: add Postgres repository
       apt_repository:
-        repo: deb [arch={% if ansible_architecture == "aarch64" %}arm64{% else %}{{ansible_architecture}}{% endif %} signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main
+        repo: deb [arch={{ deb_arch }} signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main
         state: present
 
 - name: Install Postgres

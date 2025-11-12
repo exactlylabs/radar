@@ -1,10 +1,4 @@
 ---
-- include_tasks: cloudwatch.centos.yml
-  when: ansible_os_family == 'RedHat' and not skip_cloudwatch
-
-- include_tasks: cloudwatch.debian.yml
-  when: ansible_os_family == 'Debian' and not skip_cloudwatch
-
 - include_tasks: vector.yml
   when: ansible_os_family == 'Debian' and not skip_vector
 

@@ -30,12 +30,6 @@
     state: latest
     update_cache: yes
 
-- name: Add Docker GPG apt Key
-  become: yes
-  apt_key:
-    url: "{{ key_url }}"
-    state: present
-
 - name: Add Docker Repository
   become: yes
   block:
