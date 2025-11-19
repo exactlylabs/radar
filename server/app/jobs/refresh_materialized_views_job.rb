@@ -1,4 +1,4 @@
-class RefreshMaterializedViewsJob < ApplicationJob
+class RefreshMaterializedViewsJob < ProjectionJob
   queue_as :default
 
   def perform()
