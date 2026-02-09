@@ -78,4 +78,18 @@ sinks:
     healthcheck:
       enabled: false
 
+  otel_metrics:
+    type: "opentelemetry"
+    inputs: ["host_metrics"]
+    endpoint: "http://radar-swarm-01:4317"  # OTEL collector gRPC endpoint
+    protocol: "grpc"
+    compression: "gzip"
+    healthcheck:
+      enabled: true
+    resource:
+      # Add resource attributes to identify the host
+      host.name: "{{ ansible_hostname }}"
+      service.name: "vector-host-metrics"
+      service.namespace: "infrastructure"
+
 

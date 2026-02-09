@@ -1,4 +1,4 @@
-listen_addresses = 'localhost,{{ ansible_default_ipv4.address | default(ansible_all_ipv4_addresses[0]) }}'
+listen_addresses = '*'
 port = 5432
 
 # Shared Libraries
