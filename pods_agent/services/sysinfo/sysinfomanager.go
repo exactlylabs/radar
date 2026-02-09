@@ -296,6 +296,14 @@ func (si *SysInfoManager) EnsureTailscale() error {
 				for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
 					os.Remove(match[1])
 				}
+				if strings.Contains(m["stderr"].(string), "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct the problem.") {
+					cmd := exec.Command("dpkg", "--configure", "-a")
+					cmd.Env = append(os.Environ(), "DEBIAN_FRONTEND=noninteractive")
+					_, dpkgErr := si.runCommand(cmd)
+					if dpkgErr != nil {
+						err = errors.W(dpkgErr).WithMetadata(errors.Metadata{"original_stdout": m["stdout"], "original_stderr": m["stderr"]})
+					}
+				}
 				_, updateErr := si.runCommand(exec.Command("apt", "update"))
 				if updateErr != nil {
 					err = errors.W(updateErr).WithMetadata(errors.Metadata{"original_stdout": m["stdout"], "original_stderr": m["stderr"]})
