@@ -3,7 +3,7 @@ export VERSION
 
 .PHONY: build
 build:
-	docker buildx build --platform=linux/arm64  -t pods-server:$(VERSION) .
+	docker buildx build --platform=linux/amd64  -t pods-server:$(VERSION) .
 	docker tag pods-server:$(VERSION) pods-server:latest
 
 
@@ -21,11 +21,13 @@ deploy-staging: push-staging
 
 
 .PHONY: push
-push: build
-	docker tag pods-server:$(VERSION) registry.radartoolkit.com/pods-server:$(VERSION)
-	docker tag pods-server:latest registry.radartoolkit.com/pods-server:latest
-	docker push registry.radartoolkit.com/pods-server:latest
-	docker push registry.radartoolkit.com/pods-server:$(VERSION)
+push:
+	docker buildx build \
+		--platform=linux/amd64  \
+		-t registry.radartoolkit.com/pods-server:$(VERSION) \
+		-t registry.radartoolkit.com/pods-server:latest \
+		--push \
+		.
 
 
 .PHONY: deploy
