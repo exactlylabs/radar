@@ -283,33 +283,43 @@ func (si *SysInfoManager) EnsureTailscale() error {
 		// Install it
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
 
-		_, err := si.runCommand(
-			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
+		_, err := si.runCommand(exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
 		if err != nil {
 			err = errors.W(err)
-			// Leaving this validation commented out to get which pods are in a broken state.
+			// Try to recover from the error in case it's an APT issue.
 			if meta := errors.GetMetadata(err); meta != nil {
 				m := *meta
-				// In case of error related to APT files corrupted, all we need to do is to pick all reported files and delete them
-				// And run an APT update afteward
-				matcher := regexp.MustCompile(`Unable to parse package file\s(.*?)[\s\n]`)
-				for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
-					os.Remove(match[1])
-				}
+
+				// Check for broken APT installation and run dpkg --configure -a.
 				if strings.Contains(m["stderr"].(string), "dpkg was interrupted, you must manually run 'dpkg --configure -a' to correct the problem.") {
 					cmd := exec.Command("dpkg", "--configure", "-a")
 					cmd.Env = append(os.Environ(), "DEBIAN_FRONTEND=noninteractive")
 					_, dpkgErr := si.runCommand(cmd)
 					if dpkgErr != nil {
 						err = errors.W(dpkgErr).WithMetadata(errors.Metadata{"original_stdout": m["stdout"], "original_stderr": m["stderr"]})
+					} else {
+						err = nil
+					}
+
+				} else {
+					// In case of error related to APT files corrupted, all we need to do is to pick all reported files and delete them
+					// And run an APT update afteward
+					matcher := regexp.MustCompile(`Unable to parse package file\s(.*?)[\s\n]`)
+					for _, match := range matcher.FindAllStringSubmatch(m["stderr"].(string), -1) {
+						os.Remove(match[1])
 					}
 				}
+
 				_, updateErr := si.runCommand(exec.Command("apt", "update"))
 				if updateErr != nil {
 					err = errors.W(updateErr).WithMetadata(errors.Metadata{"original_stdout": m["stdout"], "original_stderr": m["stderr"]})
+				} else {
+					err = nil
 				}
 			}
-			return err
+			if err != nil {
+				return err
+			}
 		}
 
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
