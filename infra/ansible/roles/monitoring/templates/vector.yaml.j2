@@ -81,13 +81,15 @@ sinks:
   otel_metrics:
     type: "opentelemetry"
     inputs: ["host_metrics"]
-    endpoint: "http://radar-swarm-01:4317"  # OTEL collector gRPC endpoint
-    protocol: "grpc"
+    protocol:
+      type: "http"
+      uri: "http://radar-swarm-01:4318/v1/metrics"
+      encoding:
+        codec: "otlp"
     compression: "gzip"
     healthcheck:
       enabled: true
     resource:
-      # Add resource attributes to identify the host
       host.name: "{{ ansible_hostname }}"
       service.name: "vector-host-metrics"
       service.namespace: "infrastructure"

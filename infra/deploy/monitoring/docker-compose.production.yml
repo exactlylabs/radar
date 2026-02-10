@@ -23,7 +23,7 @@ services:
       - "prometheus_data:/prometheus"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     configs:
-      - source: prometheus_config_v6
+      - source: prometheus_config_v8
         target: /etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
@@ -113,12 +113,17 @@ services:
     command: ["--config=/etc/otel-agent-config.yaml"]
     networks:
       - public
+      - private
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "9465:9465"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       replicas: 1
     configs:
-      - source: otel_config-v13
+      - source: otel_config-v16
         target: /etc/otel-agent-config.yaml
 
   vector-agent:
@@ -131,7 +136,7 @@ services:
       mode: global
     hostname: "{{.Node.Hostname}}"
     configs:
-      - source: vector_config-v5
+      - source: vector_config-v13
         target: /etc/vector/vector.yaml
   
   postgres-exporter:
@@ -219,16 +224,16 @@ volumes:
 configs:
   # To update config files, we must rename the config key name, and update the service to source from this new name.
   # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
-  prometheus_config_v6:
+  prometheus_config_v8:
     template_driver: golang
     file: ./configs/prometheus.yml
 
-  otel_config-v13:
+  otel_config-v16:
     template_driver: golang
     file: ./configs/otel-agent-config.yaml
 
-  vector_config-v5:
-    template_driver: golang
+  vector_config-v13:
+    # template_driver: golang
     file: ./configs/vector.yaml
 
   loki_config_v3:

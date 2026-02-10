@@ -31,9 +31,11 @@ sinks:
     encoding:
       codec: "json"
     labels:
-      host: {{ "\"{{ host }}\"" }}
+      host: "{{ host }}"
       source: "docker"
       job: "docker-logs"
+      namespace: "{{ label.\"com.docker.stack.namespace\" }}"
+      service: "{{ label.\"com.docker.swarm.service.name\" }}"
     healthcheck:
       enabled: false
 
@@ -44,14 +46,16 @@ sinks:
     encoding:
       codec: "json"
     labels:
-      host: {{ "\"{{ host }}\"" }}
+      host: "{{ host }}"
       source: "traefik"
       job: "traefik-access"
+      namespace: "{{ label.\"com.docker.stack.namespace\" }}"
+      service: "{{ label.\"com.docker.swarm.service.name\" }}"
     healthcheck:
       enabled: false
 
   # debug:
   #   type: "console"
-  #   inputs: ["traefik_logs"]
+  #   inputs: ["docker_logs"]
   #   encoding:
   #     codec: "text"

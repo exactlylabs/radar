@@ -33,6 +33,12 @@ scrape_configs:
       # Use the prometheus-job Swarm label as Prometheus job label.
       - source_labels: [__meta_dockerswarm_service_label_prometheus_job]
         target_label: job
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: node
+
+  - job_name: 'otel-host-metrics'
+    static_configs:
+      - targets: ['otel-collector:9465']
 
   - job_name: "postgresql"
     scrape_interval: 5s

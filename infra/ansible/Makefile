@@ -1,4 +1,4 @@
-ENVIRONMENT ?= staging
+ENVIRONMENT ?= production
 
 setup-vpn-router:
 	@echo "Setting up VPN Router"
