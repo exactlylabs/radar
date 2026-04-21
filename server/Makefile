@@ -32,4 +32,4 @@ push:
 
 .PHONY: deploy
 deploy: push
-	make -C ../infra/deploy deploy STACK=pods-server ENVIRONMENT=production
+	make -C ../../radar-infra/deploy deploy STACK=pods-server ENVIRONMENT=production

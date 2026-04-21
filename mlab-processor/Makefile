@@ -33,4 +33,4 @@ push: build
 
 .PHONY: deploy
 deploy: push
-	make -C ../infra/deploy deploy STACK=mlab-processor ENVIRONMENT=production
+	make -C ../../radar-infra/deploy deploy STACK=mlab-processor ENVIRONMENT=production

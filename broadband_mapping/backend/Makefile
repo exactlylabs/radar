@@ -99,19 +99,19 @@ push-ingestor-staging: build-mlab-ingestor
 
 .PHONY: deploy-api-staging
 deploy-api-staging: push-api-staging
-	make -C ../../infra/deploy deploy STACK=mapping-api ENVIRONMENT=staging
+	make -C ../../../radar-infra/deploy deploy STACK=mapping-api ENVIRONMENT=staging
 
 .PHONY: deploy-api
 deploy-api: push-api
-	make -C ../../infra/deploy deploy STACK=mapping-api ENVIRONMENT=production
+	make -C ../../../radar-infra/deploy deploy STACK=mapping-api ENVIRONMENT=production
 
 
 
 .PHONY: deploy-ingestor
 deploy-ingestor: push-ingestor
-	make -C ../../infra/deploy deploy STACK=mlab-ingestor ENVIRONMENT=production
+	make -C ../../../radar-infra/deploy deploy STACK=mlab-ingestor ENVIRONMENT=production
 
 
 .PHONY: deploy
 deploy: push
-	make -C ../../infra/deploy deploy STACK=mapping-api ENVIRONMENT=production
+	make -C ../../../radar-infra/deploy deploy STACK=mapping-api ENVIRONMENT=production

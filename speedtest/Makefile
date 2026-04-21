@@ -19,10 +19,6 @@ push-staging: build
 	docker push registry.staging.radartoolkit.com/speedtest-client:latest
 	docker push registry.staging.radartoolkit.com/speedtest-client:$(VERSION)
 
-deploy-staging: push-staging
-	make -C ../infra/deploy deploy STACK=speedtest-client ENVIRONMENT=staging
-
-
 .PHONY: push
 push: ENVIRONMENT=prod
 push: build
@@ -32,4 +28,4 @@ push: build
 	docker push registry.radartoolkit.com/speedtest-client:$(VERSION)
 
 deploy: push
-	make -C ../infra/deploy deploy STACK=speedtest-client ENVIRONMENT=production
+	make -C ../../radar-infra/deploy deploy STACK=speedtest-client ENVIRONMENT=production

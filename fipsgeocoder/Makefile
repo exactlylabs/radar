@@ -33,10 +33,6 @@ push: build
 	docker push registry.radartoolkit.com/fipsgeocoder:latest
 	docker push registry.radartoolkit.com/fipsgeocoder:$(VERSION)
 
-.PHONY: deploy-staging
-deploy-staging: push-staging
-	make -C ../infra/deploy deploy STACK=fipsgeocoder ENVIRONMENT=staging
-
 .PHONY: deploy
 deploy: push
-	make -C ../infra/deploy deploy STACK=fipsgeocoder ENVIRONMENT=production
+	make -C ../../radar-infra/deploy deploy STACK=fipsgeocoder ENVIRONMENT=production

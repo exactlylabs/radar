@@ -31,7 +31,7 @@ push: build
 	docker push registry.radartoolkit.com/mapping-client:$(VERSION)
 
 deploy-staging: push-staging
-	make -C ../../infra/deploy deploy STACK=mapping-client ENVIRONMENT=staging
+	make -C ../../../radar-infra/deploy deploy STACK=mapping-client ENVIRONMENT=staging
 
 deploy: push
-	make -C ../../infra/deploy deploy STACK=mapping-client ENVIRONMENT=production
+	make -C ../../../radar-infra/deploy deploy STACK=mapping-client ENVIRONMENT=production
