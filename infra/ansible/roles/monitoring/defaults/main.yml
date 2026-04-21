@@ -1,4 +1,0 @@
-skip_cloudwatch: true
-skip_vector: true
-skip_otel: false
-otelcol_contrib_version: "0.145.0"

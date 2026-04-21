@@ -1,6 +1,0 @@
----
-- name: Setup VPN Rotuer
-  hosts:
-    - vpn-routers
-  roles:
-    - monitoring
