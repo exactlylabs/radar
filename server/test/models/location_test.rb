@@ -118,6 +118,17 @@ class LocationTest < ActiveSupport::TestCase
     assert_equal now.at_end_of_day, next_end
   end
 
+  test "when next_scheduling_period with timestamp years behind, expect the period holding the current time" do
+    loc = locations(:empty_location)
+    now = Time.current
+    loc.update(scheduling_periodicity: :hourly)
+
+    # Walking one hour at a time from here used to raise SystemStackError
+    next_start, next_end = loc.next_scheduling_period(now - 5.years)
+    assert_equal now.at_beginning_of_hour, next_start
+    assert_equal now.at_end_of_hour, next_end
+  end
+
   test "when location with online client and run is due, expect pod test requested" do
     loc = locations(:empty_location)
     pod = clients(:pod1)

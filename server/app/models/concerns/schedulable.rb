@@ -36,23 +36,46 @@ module Schedulable extend ActiveSupport::Concern
 
   def next_scheduling_period(current_period_end)
     current_period = current_period_end.in_time_zone(self.scheduling_time_zone)
-    next_start, next_end = if self.scheduling_hourly?
-      [(current_period + 1.hour).at_beginning_of_hour, (current_period + 1.hour).at_end_of_hour]
+    next_period = if self.scheduling_hourly?
+      current_period + 1.hour
     elsif self.scheduling_daily?
-      [current_period.next_day.at_beginning_of_day, current_period.next_day.at_end_of_day]
+      current_period.next_day
     elsif self.scheduling_weekly?
-      [current_period.next_week.at_beginning_of_week, current_period.next_week.at_end_of_week]
+      current_period.next_week
     else
-      [current_period.next_month.at_beginning_of_month, current_period.next_month.at_end_of_month]
+      current_period.next_month
     end
 
+    next_start, next_end = scheduling_period_for(next_period)
+
     # In case this is too behind in the schedule, the next period could be before now.
-    # in these cases, we move forward until reaching a valid period
+    # Periods are contiguous, aligned buckets, so the first one ending after now is
+    # simply the bucket holding the current time. We jump straight to it instead of
+    # walking one period at a time, which used to blow the stack (SystemStackError)
+    # for schedules left behind for long enough (e.g. hourly, a year out of date).
     if next_end < Time.current
-      return self.next_scheduling_period(next_end)
+      next_start, next_end = scheduling_period_for(Time.current)
     end
 
     return next_start, next_end
+  end
+
+  ##
+  #
+  # The scheduling period (start and end) that contains the given time.
+  #
+  ##
+  def scheduling_period_for(time)
+    time = time.in_time_zone(self.scheduling_time_zone)
+    if self.scheduling_hourly?
+      [time.at_beginning_of_hour, time.at_end_of_hour]
+    elsif self.scheduling_daily?
+      [time.at_beginning_of_day, time.at_end_of_day]
+    elsif self.scheduling_weekly?
+      [time.at_beginning_of_week, time.at_end_of_week]
+    else
+      [time.at_beginning_of_month, time.at_end_of_month]
+    end
   end
 
   ##
