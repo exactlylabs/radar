@@ -6,12 +6,12 @@ import TextComponent from "@/components/TextComponent";
 import BgGradient from "@/components/BgGratient";
 import Button from "@/components/Button";
 import ButtonContainer from "@/components/ButtonContainer";
-import { colors, sharedStyles } from "@/styles/shared";
+import { colors } from "@/styles/shared";
 import onboardingStyles from "@/styles/onboarding";
 import { useRouter } from "expo-router";
 
 export default function Step2() {
-    const router = useRouter();
+    const router = useRouter()
 
     return (
         <BgGradient>
