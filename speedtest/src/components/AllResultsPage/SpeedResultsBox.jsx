@@ -131,6 +131,7 @@ const SpeedResultsBox = ({
   const getExtraSmallVersion = () => {
     let style = xsFilterListStyle;
     const element = document.getElementById('speedtest--main-frame');
+    if(!element) return null;
     const {y, height} = element.getBoundingClientRect();
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
@@ -152,6 +153,7 @@ const SpeedResultsBox = ({
   const getMobileVersion = () => {
     let style = mobileFilterListStyle;
     const element = document.getElementById('speedtest--main-frame');
+    if(!element) return null;
     const {y, height} = element.getBoundingClientRect();
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
