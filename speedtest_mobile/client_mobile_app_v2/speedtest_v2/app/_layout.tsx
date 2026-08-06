@@ -37,6 +37,12 @@ export default function RootLayout() {
           name="(onboarding)"
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="(my-radar)"
+          options={{ 
+            headerShown: false,
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );
