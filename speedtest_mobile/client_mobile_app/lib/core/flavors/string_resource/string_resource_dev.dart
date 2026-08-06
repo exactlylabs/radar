@@ -21,7 +21,7 @@ class StringResourceDev implements IStringResource {
       'https://speed.staging.radartoolkit.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
-  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speedtest-staging.exactlylabs.com';
+  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speedtest.staging.exactlylabs.com';
 
   @override
   String ENVIRONMENT = 'development';
