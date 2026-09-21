@@ -124,22 +124,16 @@ module StudyMetricsProjectionProcessor
         lonlat.longitude, lonlat.latitude, as_org_id, as_org_name, location_id: location_id
       )
       aggregates_to_count(aggs).each do |aggregate|
+        completed = location_meta.days_online >= completion_days_for(aggregate)
+
         self.update_projection(aggregate, as_org_id, "online_pods_count", incr)
         if asn_location_was_online && !asn_location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", -1)
-
-          # completed_and_online_locations_count should only be decreased if the location's goal isn't completed yet
-          if !location_meta.completed?
-            self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", -1)
-          end
+          self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", -1) unless completed
 
         elsif !asn_location_was_online && asn_location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", 1)
-
-          # completed_and_online_locations_count should only be increased if the location's goal isn't completed yet'
-          if !location_meta.completed?
-            self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", 1)
-          end
+          self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", 1) unless completed
         end
       end
     end

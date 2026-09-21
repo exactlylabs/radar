@@ -128,4 +128,73 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
     assert_equal 1, fresh_projections["#{rural_state_only.id}-#{@as_org.id}"]["measurements_count"]
     assert_nil fresh_projections["#{fresno_state_only.id}-#{@as_org.id}"]
   end
+
+  def online_for_days(location, days)
+    meta = @processor.get_location_metadata(location.id)
+    meta.online = true
+    meta.days_online = days
+    meta.autonomous_system_org_id = @as_org.id
+    meta
+  end
+
+  test "daily tick completes a fresno location at 7 days and a rural one at 90" do
+    fresno_loc = location_in(geospaces(:fresno_state), geospaces(:fresno_county), geospaces(:fresno_tract), point: "POINT(6 6)")
+    rural_at_7 = location_in(geospaces(:study_state), geospaces(:study_county), point: "POINT(7 7)")
+    rural_at_90 = location_in(geospaces(:study_state), geospaces(:study_county), point: "POINT(8 8)")
+    online_for_days(fresno_loc, 6)
+    online_for_days(rural_at_7, 6)
+    online_for_days(rural_at_90, 89)
+
+    @processor.handle_daily_trigger(Date.today)
+
+    fresno_county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_county))
+    fresno_tract = StudyAggregate.find_by!(study: studies(:fresno), level: 'census_tract', geospace: geospaces(:fresno_tract))
+    rural_county = study_aggregates(:study_county)
+
+    assert_equal 1, @processor.get_projection(fresno_county.id, fresno_county.parent_aggregate_id, @as_org.id)["completed_locations_count"]
+    assert_equal 1, @processor.get_projection(fresno_tract.id, fresno_tract.parent_aggregate_id, @as_org.id)["completed_locations_count"]
+    assert_equal 1, @processor.get_projection(rural_county.id, rural_county.parent_aggregate_id, @as_org.id)["completed_locations_count"]
+    assert_equal 7, @processor.get_location_metadata(fresno_loc.id).days_online
+    assert_equal 7, @processor.get_location_metadata(rural_at_7.id).days_online
+    assert_equal 90, @processor.get_location_metadata(rural_at_90.id).days_online
+  end
+
+  test "daily tick does not complete a location whose day count is not a threshold" do
+    location = location_in(geospaces(:study_state), geospaces(:study_county), point: "POINT(9 9)")
+    online_for_days(location, 40)
+
+    @processor.handle_daily_trigger(Date.today)
+
+    assert_equal 41, @processor.get_location_metadata(location.id).days_online
+    assert_empty projections
+  end
+
+  test "going offline before completion lowers completed_and_online, after completion it does not" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(10 10)")
+    client_as = autonomous_systems(:as_1)
+    meta = online_for_days(location, 0)
+    meta.online = false
+    meta.online_pods_count = 0
+
+    @processor.update_online_count_for_location(Time.now, location.id, client_as.id, 1)
+    county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_county))
+    proj = @processor.get_projection(county.id, county.parent_aggregate_id, @as_org.id)
+    assert_equal 1, proj["online_locations_count"]
+    assert_equal 1, proj["completed_and_online_locations_count"]
+
+    @processor.update_online_count_for_location(Time.now, location.id, client_as.id, -1)
+    assert_equal 0, proj["online_locations_count"]
+    assert_equal 0, proj["completed_and_online_locations_count"]
+
+    # Once completed, the location was already counted in completed_and_online by the daily tick,
+    # so coming online again must not count it a second time.
+    meta.days_online = 7
+    @processor.update_online_count_for_location(Time.now, location.id, client_as.id, 1)
+    assert_equal 1, proj["online_locations_count"]
+    assert_equal 0, proj["completed_and_online_locations_count"]
+
+    @processor.update_online_count_for_location(Time.now, location.id, client_as.id, -1)
+    assert_equal 0, proj["online_locations_count"]
+    assert_equal 0, proj["completed_and_online_locations_count"]
+  end
 end
