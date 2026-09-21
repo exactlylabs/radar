@@ -103,4 +103,29 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
     end
     assert county.reload.study_aggregate
   end
+
+  test "point in two studies counts each study's state-only row against its own study county" do
+    # Tag the same shapes into rural too, so this point now belongs to both fresno and rural.
+    studies(:rural).geospaces << [geospaces(:fresno_state), geospaces(:fresno_other_county)]
+    fresh_processor = StudyMetricsProjectionProcessor::Processor.new
+
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_other_county), point: "POINT(6 6)")
+    measure(location, 6.0, 6.0, processor: fresh_processor)
+
+    rural = studies(:rural)
+    fresno = studies(:fresno)
+
+    rural_county = StudyAggregate.find_by!(study: rural, level: 'county', geospace: geospaces(:fresno_other_county))
+    fresno_county = StudyAggregate.find_by!(study: fresno, level: 'county', geospace: geospaces(:fresno_other_county))
+    assert rural_county.study_aggregate
+    assert_not fresno_county.study_aggregate
+    assert_equal 2, StudyAggregate.where(level: 'county', geospace: geospaces(:fresno_other_county)).count
+
+    rural_state_only = StudyAggregate.find_by!(study: rural, level: 'state_with_study_only', geospace: geospaces(:fresno_state))
+    fresno_state_only = StudyAggregate.find_by!(study: fresno, level: 'state_with_study_only', geospace: geospaces(:fresno_state))
+
+    fresh_projections = fresh_processor.instance_variable_get(:@consumer_offset).state["projections"]
+    assert_equal 1, fresh_projections["#{rural_state_only.id}-#{@as_org.id}"]["measurements_count"]
+    assert_nil fresh_projections["#{fresno_state_only.id}-#{@as_org.id}"]
+  end
 end
