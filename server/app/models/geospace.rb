@@ -25,16 +25,23 @@ class Geospace < ApplicationRecord
 
   after_create :link_to_locations
 
-  def link_to_locations()
-    Location.joins("JOIN geospaces ON geospaces.geom && locations.lonlat").where("geospaces.id = ?", self.id).each do |location|
-      self.locations << location unless self.locations.include? location
-    end
+  def link_to_locations
+    Geospace.link_all_locations(Geospace.where(id: id))
   end
 
-  def self.update_all_locations_links()
-    Geospace.all.each do |geospace|
-      geospace.link_to_locations
-    end
+  def self.link_all_locations(scope = Geospace.all)
+    connection.execute(<<~SQL)
+      INSERT INTO geospaces_locations (geospace_id, location_id)
+      SELECT geospaces.id, locations.id
+      FROM geospaces
+      JOIN locations ON ST_Contains(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)
+      WHERE geospaces.id IN (#{scope.select(:id).to_sql})
+        AND NOT EXISTS (
+          SELECT 1 FROM geospaces_locations
+          WHERE geospaces_locations.geospace_id = geospaces.id
+            AND geospaces_locations.location_id = locations.id
+        )
+    SQL
   end
 
   def study_aggregate_by_level(study, level)
