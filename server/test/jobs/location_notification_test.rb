@@ -153,4 +153,35 @@ class LocationNotificationTest < ActiveJob::TestCase
     mock.verify
 
   end
+
+  test "When_county_belongs_to_a_study_with_notifications_off_Expect_no_goal_notification" do
+    locations = []
+    (1..Location::LOCATIONS_PER_COUNTY_GOAL).each do |i|
+      l = Location.create!(
+        name: "Loc #{i}", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        online: true
+      )
+      l.geospaces << [geospaces(:fresno_state), geospaces(:fresno_county)]
+      l.save!
+      locations << l
+    end
+
+    EventsNotifier.stub :notify_study_goal_reached, -> (*args) { raise "notify_study_goal_reached shouldn't be called" } do
+      LocationNotificationJobs::NotifyLocationOnline.perform_now(locations[-1], Time.now)
+    end
+  end
+
+  test "When_location_is_in_a_notifying_study_county_Expect_notifying_study_to_be_that_study" do
+    l = Location.create!(name: "Loc", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(9 9)")
+    l.geospaces << [geospaces(:study_state), geospaces(:study_county)]
+
+    assert_equal studies(:rural), l.notifying_study
+  end
+
+  test "When_location_is_in_a_silent_study_county_Expect_notifying_study_to_be_nil" do
+    l = Location.create!(name: "Loc", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(9 9)")
+    l.geospaces << [geospaces(:fresno_state), geospaces(:fresno_county)]
+
+    assert_nil l.notifying_study
+  end
 end

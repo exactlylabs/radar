@@ -83,7 +83,7 @@ class LocalNotifier < EventsNotifier::Notifier
       * Location State: #{location_info&.state&.name}
       * Location County: #{location_info&.county&.name}
       * Location Place: #{location_info&.place&.name}
-      * Location Study State?: #{location_info.location.study_state?}
+      * Location Study: #{location_info.location.notifying_study&.name}
       * Location Extras: #{location_info&.extra}
     }
   end

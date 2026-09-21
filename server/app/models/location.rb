@@ -307,12 +307,8 @@ class Location < ApplicationRecord
     end
   end
 
-  def study_state?
-    self.state_geospace&.study_geospace
-  end
-
-  def study_county?
-    self.county_geospace&.study_geospace
+  def notifying_study
+    county_geospace&.studies&.find_by(notifications_enabled: true)
   end
 
   def state_geospace

@@ -56,7 +56,7 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_new_location(location_info)
-    if !location_info.location.study_county?
+    if !location_info.location.notifying_study
       return
     end
 
@@ -78,8 +78,9 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_location_online(location_info)
-    client = location_info.location.study_county? ? @tbp_alerts_client : @client
-    fill_fn = location_info.location.study_county? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
+    in_study = location_info.location.notifying_study.present?
+    client = in_study ? @tbp_alerts_client : @client
+    fill_fn = in_study ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
 
     client.execute do |builder|
       builder.add_embed do |embed|
@@ -94,8 +95,9 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_location_offline(location_info)
-    client = location_info.location.study_county? ? @tbp_alerts_client : @client
-    fill_fn = location_info.location.study_county? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
+    in_study = location_info.location.notifying_study.present?
+    client = in_study ? @tbp_alerts_client : @client
+    fill_fn = in_study ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
 
     client.execute do |builder|
       builder.add_embed do |embed|
@@ -205,7 +207,7 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Address", value: location_info.location.address)
     fieldset.add_field(name: "Account", value: location_info.location.account.name)
     fieldset.add_field(name: "State", value: location_info.state.name) if location_info.state
-    fieldset.add_field(name: "County", value: location_info.county.name + " (#{location_info.location.study_county? ? "Inside" : "Outside"} Study Area)") if location_info.county
+    fieldset.add_field(name: "County", value: location_info.county.name + " (#{location_info.location.notifying_study ? "Inside" : "Outside"} Study Area)") if location_info.county
     fieldset.add_field(name: "Place", value: location_info.place.name) if location_info.place
   end
 

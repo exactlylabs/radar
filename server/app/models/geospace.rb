@@ -37,7 +37,7 @@ class Geospace < ApplicationRecord
     end
   end
 
-  def study_aggregate_by_level(level)
-    self.study_aggregates.where(level: level).first
+  def study_aggregate_by_level(study, level)
+    study_aggregates.find_by(study_id: study.id, level: level)
   end
 end

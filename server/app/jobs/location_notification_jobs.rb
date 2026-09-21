@@ -43,14 +43,15 @@ module LocationNotificationJobs
       EventsNotifier.notify_location_online(location_info) unless location.notified_when_online?
       location.update(notified_when_online: true)
 
-      return unless location_info&.county&.study_geospace?
+      study = location.notifying_study
+      return unless study
 
-      county_goal = location_info&.county&.study_aggregate_by_level('county')&.locations_goal || Location::LOCATIONS_PER_COUNTY_GOAL
-      place_goal = location_info&.place&.study_aggregate_by_level('census_place')&.locations_goal || Location::LOCATIONS_PER_PLACE_GOAL
+      county_goal = location_info.county.study_aggregate_by_level(study, 'county')&.locations_goal || Location::LOCATIONS_PER_COUNTY_GOAL
+      place_goal = location_info.place&.study_aggregate_by_level(study, 'census_place')&.locations_goal || Location::LOCATIONS_PER_PLACE_GOAL
 
       isp_county_goal = Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL
       if as_org.present?
-        isp_county_goal = location_info&.county.study_aggregate_by_level('isp_county')&.locations_goal || Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL
+        isp_county_goal = location_info.county.study_aggregate_by_level(study, 'isp_county')&.locations_goal || Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL
       end
 
       # Notify Goals if reached
