@@ -1,0 +1,16 @@
+rural:
+  name: rural
+  completion_days: 90
+  notifications_enabled: true
+  level_census_place: true
+  level_isp_county: true
+  geospaces: study_state, study_county, study_place
+
+fresno:
+  name: fresno
+  completion_days: 7
+  notifications_enabled: false
+  level_census_tract: true
+  level_zip: true
+  level_isp_county: true
+  geospaces: fresno_state, fresno_county, fresno_tract, fresno_zip

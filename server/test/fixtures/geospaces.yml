@@ -41,3 +41,28 @@ study_place:
   namespace: census_place
   geoid: p01s
   study_geospace: true
+
+fresno_state:
+  name: California
+  namespace: state
+  geoid: "06"
+
+fresno_county:
+  name: Fresno County
+  namespace: county
+  geoid: "06019"
+
+fresno_other_county:
+  name: Los Angeles County
+  namespace: county
+  geoid: "06037"
+
+fresno_tract:
+  name: Census Tract 1
+  namespace: census_tract
+  geoid: "06019000100"
+
+fresno_zip:
+  name: "93701"
+  namespace: zip
+  geoid: "93701"

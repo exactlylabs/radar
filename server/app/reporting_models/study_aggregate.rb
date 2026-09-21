@@ -1,5 +1,6 @@
 class StudyAggregate < ActiveRecord::Base
   belongs_to :geospace, optional: true
+  belongs_to :study, optional: true
   belongs_to :autonomous_system_org, optional: true
   belongs_to :parent_aggregate, class_name: 'StudyAggregate', optional: true
   has_many :study_aggregates, foreign_key: :parent_aggregate_id

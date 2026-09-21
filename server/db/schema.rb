@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_25_123642) do
+ActiveRecord::Schema.define(version: 2026_09_21_120000) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
   enable_extension "postgis"
 
@@ -390,6 +391,13 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.index ["location_id"], name: "index_geospaces_locations_on_location_id"
   end
 
+  create_table "geospaces_studies", id: false, force: :cascade do |t|
+    t.bigint "geospace_id", null: false
+    t.bigint "study_id", null: false
+    t.index ["geospace_id"], name: "index_geospaces_studies_on_geospace_id"
+    t.index ["study_id", "geospace_id"], name: "index_geospaces_studies_on_study_id_and_geospace_id", unique: true
+  end
+
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
     t.string "first_name", null: false
@@ -468,7 +476,6 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.boolean "wlan_enabled"
     t.bigint "wlan_selected_client_id"
     t.datetime "scheduling_next_run"
-    t.bigint "scheduling_selected_client_id"
     t.string "scheduling_time_zone", default: "UTC"
     t.integer "scheduling_max_count", default: 1
     t.integer "scheduling_current_count", default: 0
@@ -482,7 +489,6 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.index ["account_id"], name: "index_locations_on_account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
-    t.index ["scheduling_selected_client_id"], name: "index_locations_on_scheduling_selected_client_id"
     t.index ["wlan_selected_client_id"], name: "index_locations_on_wlan_selected_client_id"
   end
 
@@ -560,6 +566,7 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
+    t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
@@ -853,6 +860,19 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
+  create_table "studies", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "completion_days", null: false
+    t.boolean "notifications_enabled", default: false, null: false
+    t.boolean "level_census_place", default: false, null: false
+    t.boolean "level_census_tract", default: false, null: false
+    t.boolean "level_zip", default: false, null: false
+    t.boolean "level_isp_county", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_studies_on_name", unique: true
+  end
+
   create_table "study_aggregates", force: :cascade do |t|
     t.string "name"
     t.bigint "parent_aggregate_id"
@@ -863,9 +883,12 @@ ActiveRecord::Schema.define(version: 2024_11_25_123642) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "locations_goal"
+    t.bigint "study_id"
+    t.index "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, (0)::bigint)", name: "index_study_aggregates_on_identity", unique: true
     t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
     t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
+    t.index ["study_id"], name: "index_study_aggregates_on_study_id"
   end
 
   create_table "system_outages", force: :cascade do |t|

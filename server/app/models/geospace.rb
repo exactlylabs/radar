@@ -9,13 +9,15 @@ class Geospace < ApplicationRecord
 
   has_and_belongs_to_many :locations
   has_and_belongs_to_many :autonomous_system_orgs
+  has_and_belongs_to_many :studies
   has_many :notified_study_goals
   has_many :study_aggregates
 
   scope :states, -> { where(namespace: "state") }
   scope :counties, -> { where(namespace: "county") }
   scope :census_places, -> { where(namespace: "census_place") }
-  scope :study_geospaces, -> { where(study_geospace: true) }
+  scope :census_tracts, -> { where(namespace: "census_tract") }
+  scope :zips, -> { where(namespace: "zip") }
 
   scope :containing_lonlat, -> (lonlat) { where("ST_CONTAINS(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)::geometry)") }
   scope :containing_point, -> (longitude, latitude) { where("ST_CONTAINS(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{longitude} #{latitude})', 4326)::geometry)") }
