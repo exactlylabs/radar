@@ -15,12 +15,14 @@ class StudyAggregate < ActiveRecord::Base
 
   # The row identity is (study, level, shape, isp). Everything else is updated in place,
   # so tagging a shape into a study later flips the existing row instead of adding one.
+  # The parent is kept once set: a shape matched by two parents (e.g. a census place spanning
+  # two counties) stays under whichever parent claimed it first.
   def self.find_or_create_for!(study:, level:, geospace_id:, name:, parent:, study_shape:, autonomous_system_org_id: nil)
     aggregate = find_or_initialize_by(
       study_id: study.id, level: level, geospace_id: geospace_id, autonomous_system_org_id: autonomous_system_org_id
     )
     aggregate.name = name
-    aggregate.parent_aggregate = parent
+    aggregate.parent_aggregate = parent if aggregate.parent_aggregate_id.nil?
     aggregate.study_aggregate = study_shape
     aggregate.save! if aggregate.new_record? || aggregate.changed?
     aggregate
