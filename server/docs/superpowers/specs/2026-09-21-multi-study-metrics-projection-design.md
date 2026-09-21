@@ -82,7 +82,7 @@ Two defects in the current code affect this work and are fixed by it:
 State, state_with_study_only and county are always built. The four
 booleans toggle the optional levels.
 
-### New: `studies_geospaces`
+### New: `geospaces_studies`
 
 `study_id`, `geospace_id`, unique on the pair. Replaces
 `geospaces.study_geospace`, which is dropped.
@@ -187,8 +187,8 @@ counts it. The rural study has the same property today.
 
 ### `app/models/study.rb` (new)
 
-`has_many :studies_geospaces`, `has_many :geospaces, through`,
-`has_many :study_aggregates`. Validates name and completion_days.
+`has_and_belongs_to_many :geospaces`, `has_many :study_aggregates`.
+Validates name and completion_days.
 
 `populate_aggregates!` creates every aggregate row for the study's
 tagged shapes. Per state in the study: state and state_with_study_only
@@ -203,7 +203,7 @@ Safe to run again.
 
 ### `app/models/geospace.rb`
 
-- `has_many :studies, through: :studies_geospaces`.
+- `has_and_belongs_to_many :studies`.
 - Scope `study_geospaces` becomes "has at least one study".
 - `study_aggregate_by_level(study, level)`.
 - `link_to_locations` uses `ST_Contains`, not `&&`.
@@ -235,8 +235,8 @@ pass `study` to the three aggregate lookups.
 
 ### `app/eventhandlers/study_metrics_projection_processor/common.rb`
 
-- `load_geospaces_for_point` returns each shape with its study ids.
-  One query with a left join on `studies_geospaces`.
+- `load_geospaces_for_point` returns each shape with its study ids,
+  preloaded from `geospaces_studies`.
 - `get_aggregates_for_point` computes the point's studies and builds
   one tree per study. Returns a flat list. Cache key unchanged.
 - Each loader takes the study and calls
@@ -260,11 +260,11 @@ hard-coded 90 with the rules above.
 
 ## Migration
 
-One migration, in this order:
+Two migrations, deployed together, in this order:
 
 1. Create `studies`. Insert the rural study, named `rural`: 90 days, notifications
    on, census_place and isp_county on.
-2. Create `studies_geospaces`. Insert one row per geospace with
+2. Create `geospaces_studies`. Insert one row per geospace with
    `study_geospace = true`, for the rural study.
 3. Add `study_aggregates.study_id`. Set it to the rural study for:
    state and state_with_study_only rows whose shape is in the rural
@@ -273,11 +273,11 @@ One migration, in this order:
 4. Raise if any two rows now share
    `(study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0))`
    with a non-null study. Then add the unique index.
-5. Drop `geospaces.study_geospace` and
+5. In the second migration, drop `geospaces.study_geospace` and
    `location_metadata_projections.completed`.
 
 Fixtures: drop `study_geospace` from `geospaces.yml`; add
-`studies.yml` and `studies_geospaces.yml`; add `study` to
+`studies.yml` listing each study's shapes; add `study` to
 `study_aggregates.yml`.
 
 ## Seeds
