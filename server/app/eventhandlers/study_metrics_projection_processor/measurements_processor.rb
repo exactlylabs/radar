@@ -4,11 +4,7 @@ module StudyMetricsProjectionProcessor
 
     def handle_measurement(id, location_id, longitude, latitude, timestamp, as_org_id, as_org_name)
       aggs = self.get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, location_id: location_id)
-      study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
-      aggs.each do |aggregate|
-        if aggregate.level == 'state_with_study_only' && !study_county
-          next
-        end
+      aggregates_to_count(aggs).each do |aggregate|
         update_measurements_count(aggregate, as_org_id, timestamp)
         update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
       end
@@ -16,18 +12,13 @@ module StudyMetricsProjectionProcessor
 
     def handle_speed_test(id, longitude, latitude, timestamp, as_org_id, as_org_name)
       aggs = self.get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name)
-      study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
-      aggs.each do |aggregate|
-        if aggregate.level == 'state_with_study_only' && !study_county
-          next
-        end
+      aggregates_to_count(aggs).each do |aggregate|
         update_measurements_count(aggregate, as_org_id, timestamp)
         update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
       end
     end
 
     def update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
-      parent_id = aggregate.parent_aggregate_id
       key = "#{aggregate.id}-#{as_org_id}-#{longitude}-#{latitude}"
       @consumer_offset.state["unique-locations-with-tests"] ||= {}
 

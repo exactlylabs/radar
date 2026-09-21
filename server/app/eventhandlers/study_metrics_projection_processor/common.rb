@@ -33,34 +33,39 @@ module StudyMetricsProjectionProcessor
       return proj
     end
 
+    # One tree per study of the point. A point whose shapes belong to no study returns [].
     def get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, **opts)
       @aggregates_cache ||= {}
       return [] if longitude.nil?
 
-      aggs = @aggregates_cache["#{latitude}-#{longitude}-#{as_org_id}"].dup || []
-      if aggs.size == 0
+      key = "#{latitude}-#{longitude}-#{as_org_id}"
+      if @aggregates_cache[key].nil?
         Rails.logger.debug "Loading Geospaces for point #{latitude}, #{longitude}, #{opts}"
         t = Time.now
         geospaces = load_geospaces_for_point(longitude, latitude, **opts)
         Rails.logger.debug "Loaded Geospaces in #{Time.now - t} seconds"
-        state_agg = load_state_aggregate(geospaces)
-        aggs << state_agg if state_agg
 
-        state_with_study_only_aggregate = load_state_with_study_only_aggregate(geospaces)
-        aggs << state_with_study_only_aggregate if state_with_study_only_aggregate
-
-        county_agg = load_county_aggregate(geospaces, state_agg)
-        aggs << county_agg if county_agg
-
-        isp_county_agg = load_isp_county_aggregate(geospaces, state_agg, as_org_id, as_org_name)
-        aggs << isp_county_agg if isp_county_agg
-
-        census_place_agg = load_census_place_aggregate(geospaces, county_agg)
-        aggs << census_place_agg if census_place_agg
-
-        @aggregates_cache["#{latitude}-#{longitude}-#{as_org_id}"] = aggs
+        @aggregates_cache[key] = studies_for(geospaces).flat_map do |study|
+          build_study_tree(study, geospaces, as_org_id, as_org_name)
+        end
       end
-      return aggs
+      return @aggregates_cache[key].dup
+    end
+
+    # The study-only state aggregate counts a point only when the point sits in a study county of the same study.
+    def aggregates_to_count(aggs)
+      aggs.reject do |agg|
+        agg.level == 'state_with_study_only' &&
+          aggs.none? { |a| a.level == 'county' && a.study_aggregate && a.study_id == agg.study_id }
+      end
+    end
+
+    def completion_days_for(aggregate)
+      @studies_by_id.fetch(aggregate.study_id).completion_days
+    end
+
+    def completion_thresholds
+      @completion_thresholds ||= @studies_by_id.values.map(&:completion_days).uniq
     end
 
     def get_location_metadata(location_id)
@@ -77,84 +82,72 @@ module StudyMetricsProjectionProcessor
 
     private
 
-    def load_state_aggregate(geospaces)
-      state = geospaces.find {|g| g["ns"] == "state"}
-      if state
-        return StudyAggregate.find_or_create_by!(
-          name: state["name"], level: 'state', geospace_id: state["id"], study_aggregate: state["study_geospace"]
-        )
-      end
-      return nil
+    def studies_for(geospaces)
+      geospaces.flat_map { |g| g["study_ids"] }.uniq.map { |id| @studies_by_id.fetch(id) }
     end
 
-    def load_state_with_study_only_aggregate(geospaces)
-      # Special aggregate, that not only aggregates for study counties, but all counties in that state.
-      state = geospaces.find {|g| g["ns"] == "state"}
-      if state
-        return StudyAggregate.find_or_create_by!(
-          name: state["name"], level: 'state_with_study_only', geospace_id: state["id"], study_aggregate: state["study_geospace"]
-        )
+    def build_study_tree(study, geospaces, as_org_id, as_org_name)
+      state = geospaces.find { |g| g["ns"] == "state" }
+      return [] if state.nil?
+
+      aggs = []
+      state_agg = load_aggregate(study, 'state', state, parent: nil)
+      aggs << state_agg
+      aggs << load_aggregate(study, 'state_with_study_only', state, parent: nil)
+
+      county = geospaces.find { |g| g["ns"] == "county" }
+      return aggs if county.nil?
+
+      county_agg = load_aggregate(study, 'county', county, parent: state_agg)
+      aggs << county_agg
+
+      if study.level_isp_county && as_org_id.present?
+        aggs << load_aggregate(study, 'isp_county', county, parent: state_agg, as_org_id: as_org_id, as_org_name: as_org_name)
       end
-      return nil
+
+      if study.level_census_place
+        place = geospaces.find { |g| g["ns"] == "census_place" }
+        aggs << load_aggregate(study, 'census_place', place, parent: county_agg, study_shape: county_agg.study_aggregate) if place
+      end
+
+      if study.level_census_tract
+        tract = geospaces.find { |g| g["ns"] == "census_tract" && g["study_ids"].include?(study.id) }
+        aggs << load_aggregate(study, 'census_tract', tract, parent: county_agg) if tract
+      end
+
+      if study.level_zip
+        zip = geospaces.find { |g| g["ns"] == "zip" && g["study_ids"].include?(study.id) }
+        aggs << load_aggregate(study, 'zip', zip, parent: state_agg) if zip
+      end
+
+      aggs
     end
 
-    def load_county_aggregate(geospaces, state_agg)
-      county = geospaces.find {|g| g["ns"] == "county"}
-      if county && state_agg
-        return StudyAggregate.find_or_create_by!(
-          name: county["name"], level: 'county', parent_aggregate: state_agg, geospace_id: county["id"],
-          study_aggregate: county["study_geospace"]
-        )
-      end
-      return nil
-    end
-
-    def load_isp_county_aggregate(geospaces, state_agg, as_org_id, as_org_name)
-      if as_org_id.present?
-        county = geospaces.find {|g| g["ns"] == "county"}
-        if county && state_agg
-          return StudyAggregate.find_or_create_by!(
-            name: "#{as_org_name} -> #{county["name"]}", level: 'isp_county', autonomous_system_org_id: as_org_id,
-            parent_aggregate: state_agg, geospace_id: county["id"], study_aggregate: county["study_geospace"],
-          )
-        end
-      end
-      return nil
-    end
-
-    def load_census_place_aggregate(geospaces, county_agg)
-      census_place = geospaces.find {|g| g["ns"] == "census_place"}
-      if census_place && county_agg
-        return StudyAggregate.find_or_create_by!(
-          name: census_place["name"], level: 'census_place', parent_aggregate: county_agg, geospace_id: census_place["id"],
-          study_aggregate: county_agg["study_aggregate"]
-        )
-      end
-      return nil
+    def load_aggregate(study, level, geospace, parent:, as_org_id: nil, as_org_name: nil, study_shape: nil)
+      study_shape = geospace["study_ids"].include?(study.id) if study_shape.nil?
+      name = level == 'isp_county' ? StudyAggregate.isp_county_name(as_org_name, geospace["name"]) : geospace["name"]
+      StudyAggregate.find_or_create_for!(
+        study: study, level: level, geospace_id: geospace["id"], name: name,
+        parent: parent, study_shape: study_shape, autonomous_system_org_id: as_org_id
+      )
     end
 
     def load_geospaces_for_point(longitude, latitude, **opts)
-      geospaces = []
-      if opts[:location].present?
-        opts[:location].geospaces.each do |geospace|
-          geospaces << {
-            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
-          }
+      scope =
+        if opts[:location].present?
+          opts[:location].geospaces
+        elsif opts[:location_id].present?
+          Geospace.joins(:locations).where("locations.id = ?", opts[:location_id])
+        else
+          Geospace.containing_point(longitude, latitude)
         end
-      elsif opts[:location_id].present?
-        Geospace.joins(:locations).where("locations.id = ?", opts[:location_id]).each do |geospace|
-          geospaces << {
-            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
-          }
-        end
-      else
-        Geospace.containing_point(longitude, latitude).each do |geospace|
-          geospaces << {
-            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
-          }
-        end
+
+      scope.includes(:studies).map do |geospace|
+        {
+          "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name,
+          "study_ids" => geospace.studies.map(&:id),
+        }
       end
-      return geospaces
     end
 
     def location_lonlat(location_id)

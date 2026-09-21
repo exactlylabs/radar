@@ -23,12 +23,14 @@ module StudyMetricsProjectionProcessor
       @consumer_offset.state["locations_state"] ||= {}
 
       @lonlats ||= {}
+      @studies_by_id = Study.all.index_by(&:id)
       @location_metadatas = self.load_location_metadatas
     end
 
     def self.clear
       ActiveRecord::Base.connection.transaction do
         ActiveRecord::Base.connection.execute("TRUNCATE TABLE metrics_projections, location_metadata_projections")
+        ActiveRecord::Base.connection.execute("DELETE FROM study_aggregates WHERE study_id IS NULL")
         ConsumerOffset.find_by(consumer_id: "MetricsProjectionProcessor")&.destroy
       end
       return
@@ -73,7 +75,6 @@ module StudyMetricsProjectionProcessor
             @consumer_offset.state["sys_outage_events_offset"] = value["id"] if source == "SystemOutage"
 
           when Measurement.name
-            value["lonlat"] =
             self.handle_measurement value["id"], value["location_id"], value["longitude"], value["latitude"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["measurements_offset"] = value["id"]
 

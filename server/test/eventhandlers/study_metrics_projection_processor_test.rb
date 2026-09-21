@@ -1,0 +1,106 @@
+require 'test_helper'
+
+class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
+  setup do
+    set_up_geocoder
+    @as_org = autonomous_system_orgs(:as_org1)
+    @processor = StudyMetricsProjectionProcessor::Processor.new
+  end
+
+  # Links a new location to the given shapes by hand. The processor reads a location's shapes
+  # from geospaces_locations, so no geometry is needed. Creating a location geocodes its address
+  # and overwrites lonlat, so the point is set afterwards without callbacks.
+  def location_in(*shapes, point:)
+    location = Location.create!(name: "Loc #{point}", address: "New Address", account: accounts(:root), created_by_id: 1)
+    location.update_column(:lonlat, point)
+    location.geospaces << shapes
+    location
+  end
+
+  def projections
+    @processor.instance_variable_get(:@consumer_offset).state["projections"]
+  end
+
+  def measure(location, longitude, latitude, processor: @processor)
+    processor.handle_measurement(1, location.id, longitude, latitude, Time.now, @as_org.id, @as_org.name)
+  end
+
+  test "point in a rural study county builds the rural tree and reuses existing rows" do
+    location = location_in(geospaces(:study_state), geospaces(:study_county), geospaces(:study_place), point: "POINT(1 1)")
+
+    measure(location, 1.0, 1.0)
+
+    rural = studies(:rural)
+    shapes = [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
+    levels = StudyAggregate.where(study: rural, geospace: shapes).pluck(:level).sort
+    assert_equal %w[census_place county isp_county state state_with_study_only], levels
+    assert_equal 1, StudyAggregate.where(study: rural, level: 'county', geospace: geospaces(:study_county)).count
+    assert StudyAggregate.where(study: rural, level: %w[census_tract zip]).none?
+
+    county = study_aggregates(:study_county)
+    assert_equal 1, @processor.get_projection(county.id, county.parent_aggregate_id, @as_org.id)["measurements_count"]
+    state_only = StudyAggregate.find_by!(study: rural, level: 'state_with_study_only', geospace: geospaces(:study_state))
+    assert_equal 1, projections["#{state_only.id}-#{@as_org.id}"]["measurements_count"]
+  end
+
+  test "point in a fresno tract builds tract under county and zip under state, no place" do
+    location = location_in(
+      geospaces(:fresno_state), geospaces(:fresno_county), geospaces(:fresno_tract), geospaces(:fresno_zip), point: "POINT(2 2)"
+    )
+
+    measure(location, 2.0, 2.0)
+
+    fresno = studies(:fresno)
+    state = StudyAggregate.find_by!(study: fresno, level: 'state', geospace: geospaces(:fresno_state))
+    county = StudyAggregate.find_by!(study: fresno, level: 'county', geospace: geospaces(:fresno_county))
+    tract = StudyAggregate.find_by!(study: fresno, level: 'census_tract', geospace: geospaces(:fresno_tract))
+    zip = StudyAggregate.find_by!(study: fresno, level: 'zip', geospace: geospaces(:fresno_zip))
+    isp = StudyAggregate.find_by!(study: fresno, level: 'isp_county', geospace: geospaces(:fresno_county), autonomous_system_org_id: @as_org.id)
+
+    assert_equal county, tract.parent_aggregate
+    assert_equal state, zip.parent_aggregate
+    assert_equal state, isp.parent_aggregate
+    assert [state, county, tract, zip, isp].all?(&:study_aggregate)
+    assert StudyAggregate.where(study: fresno, level: 'census_place').none?
+    assert_equal 1, @processor.get_projection(tract.id, county.id, @as_org.id)["measurements_count"]
+    assert_equal 1, @processor.get_projection(zip.id, state.id, @as_org.id)["measurements_count"]
+  end
+
+  test "point in a non-study county of a study state builds an other row and skips the study-only state" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_other_county), point: "POINT(3 3)")
+
+    measure(location, 3.0, 3.0)
+
+    fresno = studies(:fresno)
+    county = StudyAggregate.find_by!(study: fresno, level: 'county', geospace: geospaces(:fresno_other_county))
+    assert_not county.study_aggregate
+    assert_equal 1, projections["#{county.id}-#{@as_org.id}"]["measurements_count"]
+
+    state_only = StudyAggregate.find_by!(study: fresno, level: 'state_with_study_only', geospace: geospaces(:fresno_state))
+    assert_nil projections["#{state_only.id}-#{@as_org.id}"]
+  end
+
+  test "point outside every study builds nothing" do
+    location = location_in(geospaces(:state2), geospaces(:county2), point: "POINT(4 4)")
+
+    assert_no_difference 'StudyAggregate.count' do
+      measure(location, 4.0, 4.0)
+    end
+    assert_empty projections
+  end
+
+  test "tagging a shape into a study updates the existing aggregate instead of creating a second one" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_other_county), point: "POINT(5 5)")
+    measure(location, 5.0, 5.0)
+    county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_other_county))
+    assert_not county.study_aggregate
+
+    studies(:fresno).geospaces << geospaces(:fresno_other_county)
+    fresh_processor = StudyMetricsProjectionProcessor::Processor.new
+
+    assert_no_difference 'StudyAggregate.count' do
+      measure(location, 5.0, 5.0, processor: fresh_processor)
+    end
+    assert county.reload.study_aggregate
+  end
+end
