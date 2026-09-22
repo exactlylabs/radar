@@ -34,7 +34,7 @@ class Geospace < ApplicationRecord
       INSERT INTO geospaces_locations (geospace_id, location_id)
       SELECT geospaces.id, locations.id
       FROM geospaces
-      JOIN locations ON ST_Contains(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)
+      JOIN locations ON ST_Contains(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry) AND locations.deleted_at IS NULL
       WHERE geospaces.id IN (#{scope.select(:id).to_sql})
         AND NOT EXISTS (
           SELECT 1 FROM geospaces_locations

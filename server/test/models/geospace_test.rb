@@ -36,4 +36,14 @@ class GeospaceTest < ActiveSupport::TestCase
       Geospace.link_all_locations(Geospace.zips)
     end
   end
+
+  test "creating a shape does not link soft-deleted locations" do
+    deleted = location_at("POINT(3 3)")
+    deleted.soft_delete
+
+    shape = Geospace.create!(name: "Triangle", namespace: "zip", geoid: "tri3", geom: TRIANGLE)
+
+    # Bypass the locations default scope so a link row to the deleted location isn't hidden by it.
+    assert_equal [@inside], shape.locations.with_deleted.to_a
+  end
 end
