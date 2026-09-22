@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_21_120000) do
+ActiveRecord::Schema.define(version: 2026_09_21_120100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -377,7 +377,6 @@ ActiveRecord::Schema.define(version: 2026_09_21_120000) do
     t.integer "gid"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.boolean "study_geospace", default: false
     t.boolean "hrsa_designated_rural_area", default: false
     t.boolean "expanded_study_area", default: false
     t.index "st_setsrid(geom, 4326)", name: "index_geospaces_on_st_setsrid_geom_4326", using: :gist
@@ -436,7 +435,6 @@ ActiveRecord::Schema.define(version: 2026_09_21_120000) do
     t.bigint "autonomous_system_org_id"
     t.integer "online_pods_count", default: 0
     t.integer "days_online", default: 0
-    t.boolean "completed", default: false
     t.boolean "online", default: false
     t.datetime "last_offline_event_at"
     t.datetime "last_online_event_at"

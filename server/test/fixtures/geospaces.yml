@@ -7,7 +7,6 @@ study_state:
   name: State 1
   namespace: state
   geoid: s01s
-  study_geospace: true
 
 state2:
   name: State 2
@@ -24,7 +23,6 @@ study_county:
   name: County 1
   namespace: county
   geoid: c01s
-  study_geospace: true
 
 county2:
   name: County 2
@@ -40,7 +38,6 @@ study_place:
   name: Place 1
   namespace: census_place
   geoid: p01s
-  study_geospace: true
 
 fresno_state:
   name: California
