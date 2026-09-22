@@ -7,6 +7,9 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug" 
   gem "dotenv-rails"
+
+  gem "minitest-mock", "~> 5.27"
+  gem "minitest", "~>5"
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
@@ -110,3 +113,6 @@ gem 'opentelemetry-instrumentation-rails'
 gem 'opentelemetry-instrumentation-redis'
 gem 'opentelemetry-instrumentation-sidekiq'
 gem 'opentelemetry-instrumentation-all'
+
+
+gem "drb", ">= 2.2"

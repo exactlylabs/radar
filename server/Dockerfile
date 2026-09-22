@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.2.11
+ARG RUBY_VERSION=3.4.10
 FROM  registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 ARG BUILDPLATFORM
@@ -18,7 +18,7 @@ ENV RAILS_ENV="production" \
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-  apt-get install --no-install-recommends -y curl libpq-dev libvips wkhtmltopdf=0.12.6-1 imagemagick && \
+  apt-get install --no-install-recommends -y curl libpq-dev libvips imagemagick && \
   rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 RUN apt upgrade -y
