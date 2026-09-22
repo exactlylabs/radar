@@ -15,6 +15,6 @@ UNION
 
 SELECT CONCAT('Other (', name, ')') as __text, CONCAT('other_', id) as __value
 FROM study_aggregates
-WHERE study_id = $study AND id IN ($top_level_aggregates) and '$level' != 'state'
+WHERE study_id = $study AND id IN ($top_level_aggregates) AND '$level' NOT IN ('state', 'zip', 'census_tract')
 
 ORDER BY __text ASC
