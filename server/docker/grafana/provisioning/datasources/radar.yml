@@ -1,0 +1,16 @@
+# Points Grafana at the compose database. Change `database` if the copy you are testing lives under another name.
+apiVersion: 1
+datasources:
+  - name: radar
+    uid: radar-postgres
+    type: postgres
+    url: db:5432
+    user: postgres
+    secureJsonData:
+      password: postgres
+    jsonData:
+      database: radar_development
+      sslmode: disable
+      postgresVersion: 1200
+    isDefault: true
+    editable: true

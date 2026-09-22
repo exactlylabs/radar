@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: radar_development
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    shm_size: 2g
     ports:
       - "5432:5432"
 
@@ -16,7 +17,23 @@ services:
     ports:
       - "6379:6379"
 
+  # Local Grafana for the analytics dashboards. Not started by default:
+  #   docker compose --profile grafana up -d grafana
+  # Then open http://localhost:3001 (admin / admin).
+  grafana:
+    image: grafana/grafana-oss:11.6.0
+    profiles: ["grafana"]
+    depends_on:
+      - db
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3001:3000"
 
 volumes:
   postgres-data:
-
+  grafana-data:

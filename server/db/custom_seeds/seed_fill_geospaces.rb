@@ -42,32 +42,35 @@ end
 
 # US
 
-url="https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_nation_5m.zip"
-import_from_url("cb_2023_us_nation_5m", "country", url)
+url="https://www2.census.gov/geo/tiger/GENZ2025/shp/cb_2025_us_nation_5m.zip"
+import_from_url("cb_2025_us_nation_5m", "country", url)
 
 # States
 
-url="https://www2.census.gov/geo/tiger/TIGER2023/STATE/tl_2023_us_state.zip"
-import_from_url("tl_2023_us_state", "state", url)
+url="https://www2.census.gov/geo/tiger/TIGER2025/STATE/tl_2025_us_state.zip"
+import_from_url("tl_2025_us_state", "state", url)
 
 # Counties
 
-url="https://www2.census.gov/geo/tiger/TIGER2023/COUNTY/tl_2023_us_county.zip"
-import_from_url("tl_2023_us_county", "county", url)
+url="https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip"
+import_from_url("tl_2025_us_county", "county", url)
 
 
 # Census Places
 
 (1..78).each do |fips|
   fips = fips.to_s.rjust(2, "0")
-  url="https://www2.census.gov/geo/tiger/TIGER2023/PLACE/tl_2023_#{fips}_place.zip"
-  import_from_url("tl_2023_#{fips}_place", "census_place", url)
+  url="https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_#{fips}_place.zip"
+  import_from_url("tl_2025_#{fips}_place", "census_place", url)
 end
 
 # Census Tracts
 
 (1..78).each do |fips|
   fips = fips.to_s.rjust(2, "0")
-  url="https://www2.census.gov/geo/tiger/TIGER2023/TRACT/tl_2023_#{fips}_tract.zip"
-  import_from_url("tl_2023_#{fips}_tract", "census_tract", url)
+  url="https://www2.census.gov/geo/tiger/TIGER2025/TRACT/tl_2025_#{fips}_tract.zip"
+  import_from_url("tl_2025_#{fips}_tract", "census_tract", url)
 end
+
+url = "https://www2.census.gov/geo/tiger/TIGER2025/ZCTA520/tl_2025_us_zcta520.zip"
+import_from_url("tl_2025_us_zcta520", "zip", url)

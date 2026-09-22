@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.0.6
+ARG RUBY_VERSION=3.2.11
 FROM  registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 ARG BUILDPLATFORM
@@ -12,14 +12,14 @@ WORKDIR /rails
 
 # Set production environment
 ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+  BUNDLE_DEPLOYMENT="1" \
+  BUNDLE_PATH="/usr/local/bundle" \
+  BUNDLE_WITHOUT="development"
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-apt-get install --no-install-recommends -y curl libpq-dev libvips wkhtmltopdf=0.12.6-1 imagemagick && \
-rm -rf /var/lib/apt/lists /var/cache/apt/archives
+  apt-get install --no-install-recommends -y curl libpq-dev libvips wkhtmltopdf=0.12.6-1 imagemagick && \
+  rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 RUN apt upgrade -y
 
@@ -29,7 +29,7 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+  apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
 
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -51,8 +51,8 @@ COPY Gemfile Gemfile.lock ./
 
 
 RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    bundle exec bootsnap precompile --gemfile
+  rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+  bundle exec bootsnap precompile --gemfile
 
 # Copy application code
 COPY . .
@@ -76,7 +76,7 @@ COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp public app
+  chown -R rails:rails db log storage tmp public app
 
 # wicked_pdf was throwing permission denied error when generating a PDF. This may be the cause.
 RUN chmod -R 777 /rails/tmp
@@ -89,7 +89,7 @@ COPY ./bin/docker-entrypoint ./bin/docker-entrypoint
 # Enable jemalloc, a memory allocator alternative that deals better with 
 # memory fragmentation issues, and so reducing the memory usage by allowing more memory blocks to be freed
 ENV LD_PRELOAD="libjemalloc.so.2" \
-    MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
+  MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
