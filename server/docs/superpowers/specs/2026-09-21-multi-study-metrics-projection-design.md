@@ -300,17 +300,39 @@ before this seed.
 
 ## Rollout
 
-1. Deploy code and migration. The running processor keeps working:
-   its counters are keyed by aggregate id and no ids change.
-2. Run the ZIP import, then the Fresno seed.
-3. Stop the projection job trigger. Run `Processor.clear`. Run the
-   processor once to replay everything. Restart the trigger. The
-   dashboard shows partial data while the replay runs. The replay time
-   is being measured on a production backup.
-4. Dashboard: add a `study` variable from `studies` and a
-   `study_id` filter to the four queries in
-   `analytics/study_performance`. Add `census_tract` and `zip` to the
-   level list. Fresno drill-down is state -> county -> census_tract.
+1. Before deploying, on the production backup, run this query. If it
+   returns rows, merge each duplicate pair by deleting the row whose
+   id is not in `db/custom_seeds/fill_study_goals.rb` (nothing else
+   references them; `metrics_projections` is truncated in step 5).
+   The migration raises on duplicates otherwise.
+
+   ```sql
+   SELECT level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, array_agg(id) AS ids
+   FROM study_aggregates
+   GROUP BY 1, 2, 3
+   HAVING COUNT(*) > 1;
+   ```
+
+2. Deploy. Both migrations run. The scheduled projection job keeps
+   working on the new code.
+3. Run the ZIP import in `db/custom_seeds/seed_fill_geospaces.rb`,
+   then `rails runner db/custom_seeds/seed_fresno_study.rb`. Check the
+   two counts it prints, and spot-check one Fresno location: its
+   `geospaces.pluck(:namespace)` must include `census_tract` and
+   `zip`.
+4. Confirm every aggregate id in `db/custom_seeds/fill_study_goals.rb`
+   carries a study, so the clear in the next step cannot delete a
+   goal: `StudyAggregate.where(id: ids, study_id: nil).none?` must be
+   true.
+5. Stop the projection job trigger. In a console:
+   `StudyMetricsProjectionProcessor::Processor.clear`, then
+   `StudyMetricsProjectionProcessor::Processor.new.process`. Restart
+   the trigger. The dashboard shows partial data until the replay
+   finishes.
+6. Update the Grafana dashboard from the queries in
+   `analytics/study_performance`: add a `study` variable from
+   `vars/studies.pgsql`, single-select with "All" disabled, placed
+   before `level`; add `census_tract` and `zip` to the `level` list.
 
 ## Tests
 
