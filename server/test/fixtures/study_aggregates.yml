@@ -25,6 +25,7 @@ study_county:
   study_aggregate: true
   geospace: study_county
   study: rural
+  parent_aggregate: study_state
 
 place_non_study:
   name: Place 1
@@ -39,3 +40,4 @@ study_place:
   study_aggregate: true
   geospace: study_place
   study: rural
+  parent_aggregate: study_county

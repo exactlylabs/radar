@@ -152,15 +152,15 @@ class AddStudies < ActiveRecord::Migration[6.1]
     end
 
     duplicates = execute(<<~SQL).to_a
-      SELECT study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COUNT(*) AS rows
+      SELECT study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COALESCE(parent_aggregate_id, 0) AS parent_id, COUNT(*) AS rows
       FROM study_aggregates
       WHERE study_id IS NOT NULL
-      GROUP BY 1, 2, 3, 4
+      GROUP BY 1, 2, 3, 4, 5
       HAVING COUNT(*) > 1
     SQL
     raise "Duplicate study aggregates, merge them before migrating: #{duplicates.inspect}" if duplicates.any?
 
-    add_index :study_aggregates, "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0)",
+    add_index :study_aggregates, "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0), COALESCE(parent_aggregate_id, 0)",
       unique: true, name: "index_study_aggregates_on_identity"
   end
 
@@ -416,14 +416,15 @@ In `app/reporting_models/study_aggregate.rb`, add these two class methods after 
     "#{org_name} -> #{county_name}"
   end
 
-  # The row identity is (study, level, shape, isp). Everything else is updated in place,
-  # so tagging a shape into a study later flips the existing row instead of adding one.
+  # The row identity is (study, level, shape, isp, parent). A shape spanning two parents, such as
+  # a census place across two counties, gets one row per parent. Name and the study flag are
+  # updated in place, so tagging a shape into a study later flips the existing row instead of adding one.
   def self.find_or_create_for!(study:, level:, geospace_id:, name:, parent:, study_shape:, autonomous_system_org_id: nil)
     aggregate = find_or_initialize_by(
-      study_id: study.id, level: level, geospace_id: geospace_id, autonomous_system_org_id: autonomous_system_org_id
+      study_id: study.id, level: level, geospace_id: geospace_id,
+      autonomous_system_org_id: autonomous_system_org_id, parent_aggregate_id: parent&.id
     )
     aggregate.name = name
-    aggregate.parent_aggregate = parent
     aggregate.study_aggregate = study_shape
     aggregate.save! if aggregate.new_record? || aggregate.changed?
     aggregate
@@ -448,14 +449,15 @@ class StudyAggregate < ActiveRecord::Base
     "#{org_name} -> #{county_name}"
   end
 
-  # The row identity is (study, level, shape, isp). Everything else is updated in place,
-  # so tagging a shape into a study later flips the existing row instead of adding one.
+  # The row identity is (study, level, shape, isp, parent). A shape spanning two parents, such as
+  # a census place across two counties, gets one row per parent. Name and the study flag are
+  # updated in place, so tagging a shape into a study later flips the existing row instead of adding one.
   def self.find_or_create_for!(study:, level:, geospace_id:, name:, parent:, study_shape:, autonomous_system_org_id: nil)
     aggregate = find_or_initialize_by(
-      study_id: study.id, level: level, geospace_id: geospace_id, autonomous_system_org_id: autonomous_system_org_id
+      study_id: study.id, level: level, geospace_id: geospace_id,
+      autonomous_system_org_id: autonomous_system_org_id, parent_aggregate_id: parent&.id
     )
     aggregate.name = name
-    aggregate.parent_aggregate = parent
     aggregate.study_aggregate = study_shape
     aggregate.save! if aggregate.new_record? || aggregate.changed?
     aggregate
@@ -1743,9 +1745,9 @@ git commit -m "adds study filter to the study performance dashboard queries"
 1. Before deploying, on the production backup, run this query. If it returns rows, merge each duplicate pair by deleting the row whose id is not in `db/custom_seeds/fill_study_goals.rb` (nothing else references them; `metrics_projections` is truncated in step 5). The migration raises on duplicates otherwise.
 
    ```sql
-   SELECT level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, array_agg(id) AS ids
+   SELECT level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COALESCE(parent_aggregate_id, 0) AS parent_id, array_agg(id) AS ids
    FROM study_aggregates
-   GROUP BY 1, 2, 3
+   GROUP BY 1, 2, 3, 4
    HAVING COUNT(*) > 1;
    ```
 

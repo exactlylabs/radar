@@ -882,7 +882,7 @@ ActiveRecord::Schema.define(version: 2026_09_21_120100) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "locations_goal"
     t.bigint "study_id"
-    t.index "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, (0)::bigint)", name: "index_study_aggregates_on_identity", unique: true
+    t.index "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, (0)::bigint), COALESCE(parent_aggregate_id, (0)::bigint)", name: "index_study_aggregates_on_identity", unique: true
     t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
     t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"

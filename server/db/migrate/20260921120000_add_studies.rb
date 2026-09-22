@@ -46,15 +46,15 @@ class AddStudies < ActiveRecord::Migration[6.1]
     end
 
     duplicates = execute(<<~SQL).to_a
-      SELECT study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COUNT(*) AS rows
+      SELECT study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COALESCE(parent_aggregate_id, 0) AS parent_id, COUNT(*) AS rows
       FROM study_aggregates
       WHERE study_id IS NOT NULL
-      GROUP BY 1, 2, 3, 4
+      GROUP BY 1, 2, 3, 4, 5
       HAVING COUNT(*) > 1
     SQL
     raise "Duplicate study aggregates, merge them before migrating: #{duplicates.inspect}" if duplicates.any?
 
-    add_index :study_aggregates, "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0)",
+    add_index :study_aggregates, "study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0), COALESCE(parent_aggregate_id, 0)",
       unique: true, name: "index_study_aggregates_on_identity"
   end
 

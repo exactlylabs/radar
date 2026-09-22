@@ -97,8 +97,11 @@ booleans toggle the optional levels.
   as opposed to an "other" shape inside the study's area. Both columns
   are needed by the dashboard logic; they are not redundant.
 - Add a unique index on
-  `(study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0))`.
-  This is the row's identity and the guard against defect 1.
+  `(study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0),
+  COALESCE(parent_aggregate_id, 0))`. This is the row's identity and the
+  guard against defect 1. A shape that spans two parents, such as a census
+  place across two counties, gets one row per parent, each counting the
+  points on its side. That is how the old code behaved.
 
 ### Changed: `location_metadata_projections`
 
@@ -215,7 +218,7 @@ Safe to run again.
 - `belongs_to :study, optional: true`.
 - New `StudyAggregate.find_or_create_for!(study:, level:, geospace:,
   parent:, autonomous_system_org: nil, study_shape:)`. Looks the row
-  up by its identity, then sets name, parent and `study_aggregate`.
+  up by its identity, then sets name and `study_aggregate`.
   Used by the processor loaders and by `Study#populate_aggregates!`,
   so one place owns the identity rule.
 - Remove `populate_from_geospaces!`. Its job moves to
@@ -271,8 +274,8 @@ Two migrations, deployed together, in this order:
    study; rows whose parent is one of those; rows whose parent's
    parent is one of those.
 4. Raise if any two rows now share
-   `(study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0))`
-   with a non-null study. Then add the unique index.
+   `(study_id, level, geospace_id, COALESCE(autonomous_system_org_id, 0),
+   COALESCE(parent_aggregate_id, 0))` with a non-null study. Then add the unique index.
 5. In the second migration, drop `geospaces.study_geospace` and
    `location_metadata_projections.completed`.
 
@@ -307,9 +310,9 @@ before this seed.
    The migration raises on duplicates otherwise.
 
    ```sql
-   SELECT level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, array_agg(id) AS ids
+   SELECT level, geospace_id, COALESCE(autonomous_system_org_id, 0) AS org_id, COALESCE(parent_aggregate_id, 0) AS parent_id, array_agg(id) AS ids
    FROM study_aggregates
-   GROUP BY 1, 2, 3
+   GROUP BY 1, 2, 3, 4
    HAVING COUNT(*) > 1;
    ```
 
