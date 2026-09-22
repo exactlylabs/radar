@@ -8,9 +8,10 @@ SELECT
   name as __text, id as __value
 FROM study_aggregates
 WHERE
-  level = 'state'
+  study_id = $study
+  AND level = 'state'
   AND study_aggregate = true
-  AND ('$level' = 'county' OR '$level' = 'isp_county')
+  AND ('$level' = 'county' OR '$level' = 'isp_county' OR '$level' = 'zip')
 
 UNION
 
@@ -18,8 +19,9 @@ SELECT
   name as __text, id as __value
 FROM study_aggregates
 WHERE
-  level = 'county'
+  study_id = $study
+  AND level = 'county'
   AND study_aggregate = true
-  AND '$level' = 'census_place'
+  AND ('$level' = 'census_place' OR '$level' = 'census_tract')
 
 ORDER BY __text ASC

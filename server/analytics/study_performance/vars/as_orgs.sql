@@ -17,7 +17,8 @@ WITH selected_ids AS (
     geospace_id
   FROM study_aggregates
   WHERE
-    level = '$level'
+    study_id = $study
+    AND level = '$level'
     AND (
       id IN (SELECT id FROM selected_study_aggregate_ids)
       OR (study_aggregate=false AND parent_aggregate_id IN (SELECT id FROM selected_other_ids))

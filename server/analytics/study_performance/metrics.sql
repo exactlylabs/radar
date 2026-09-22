@@ -26,7 +26,8 @@ with selected_ids AS (
   FROM study_aggregates
   LEFT JOIN study_aggregates parent ON parent.id = study_aggregates.parent_aggregate_id
   WHERE
-  study_aggregates.level = '$level'
+  study_aggregates.study_id = $study
+  AND study_aggregates.level = '$level'
   AND (
     study_aggregates.id IN (SELECT id FROM selected_study_aggregate_ids)
     OR (study_aggregates.study_aggregate=false AND study_aggregates.parent_aggregate_id IN (SELECT id FROM selected_other_parent_ids))
