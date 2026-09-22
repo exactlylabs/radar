@@ -1,5 +1,14 @@
 module StudyMetricsProjectionProcessor
   module Common
+    # The fields the processor reads from a study aggregate row. One shared instance per row.
+    Aggregate = Struct.new(:id, :parent_aggregate_id, :level, :study_id, :study_aggregate, :name, keyword_init: true)
+
+    # Prepared once per connection, so Postgres keeps the plan and only the point travels.
+    GEOSPACES_CONTAINING_POINT_SQL = <<~SQL.freeze
+      SELECT id, namespace, name FROM geospaces
+      WHERE ST_Contains(ST_SetSRID(geom, 4326), ST_SetSRID(ST_MakePoint($1, $2), 4326))
+    SQL
+
     def as_org_info(autonomous_system_id)
       if autonomous_system_id.nil?
         return nil, nil
@@ -35,21 +44,24 @@ module StudyMetricsProjectionProcessor
 
     # One tree per study of the point. A point whose shapes belong to no study returns [].
     def get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, **opts)
-      @aggregates_cache ||= {}
       return [] if longitude.nil?
 
-      key = "#{latitude}-#{longitude}-#{as_org_id}"
-      if @aggregates_cache[key].nil?
-        Rails.logger.debug "Loading Geospaces for point #{latitude}, #{longitude}, #{opts}"
-        t = Time.now
-        geospaces = load_geospaces_for_point(longitude, latitude, **opts)
-        Rails.logger.debug "Loaded Geospaces in #{Time.now - t} seconds"
+      key = [longitude, latitude, as_org_id]
+      @aggregates_cache[key] ||= begin
+        geospaces = geospaces_for_point(longitude, latitude, **opts)
+        studies_for(geospaces).flat_map { |study| build_study_tree(study, geospaces, as_org_id, as_org_name) }
+      end
+      @aggregates_cache[key].dup
+    end
 
-        @aggregates_cache[key] = studies_for(geospaces).flat_map do |study|
-          build_study_tree(study, geospaces, as_org_id, as_org_name)
+    # Shapes are cached per point, so a new ISP at a known point costs no query.
+    def geospaces_for_point(longitude, latitude, **opts)
+      @geospaces_by_point[[longitude, latitude]] ||= begin
+        Rails.logger.debug { "Loading Geospaces for point #{latitude}, #{longitude}, #{opts}" }
+        load_geospaces_for_point(longitude, latitude, **opts).map do |id, namespace, name|
+          { "id" => id, "ns" => namespace, "name" => name, "study_ids" => @study_ids_by_geospace.fetch(id, []) }
         end
       end
-      return @aggregates_cache[key].dup
     end
 
     # The study-only state aggregate counts a point only when the point sits in a study county of the same study.
@@ -78,6 +90,17 @@ module StudyMetricsProjectionProcessor
         meta["#{lm.location_id}"] = lm
       end
       meta
+    end
+
+    def load_study_ids_by_geospace
+      Study.joins(:geospaces).pluck("geospaces.id", "studies.id")
+        .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+    end
+
+    def load_aggregates_by_identity
+      StudyAggregate.all.each_with_object({}) do |row, map|
+        map[[row.study_id, row.level, row.geospace_id, row.autonomous_system_org_id, row.parent_aggregate_id]] = aggregate_from(row)
+      end
     end
 
     private
@@ -123,30 +146,41 @@ module StudyMetricsProjectionProcessor
       aggs
     end
 
+    # Rows are looked up in memory. The database is touched only for a new row, or when tagging a shape
+    # into a study later changed its name or study flag, which find_or_create_for! flips in place.
     def load_aggregate(study, level, geospace, parent:, as_org_id: nil, as_org_name: nil, study_shape: nil)
       study_shape = geospace["study_ids"].include?(study.id) if study_shape.nil?
       name = level == 'isp_county' ? StudyAggregate.isp_county_name(as_org_name, geospace["name"]) : geospace["name"]
-      StudyAggregate.find_or_create_for!(
+      key = [study.id, level, geospace["id"], as_org_id, parent&.id]
+      cached = @aggregates_by_identity[key]
+      return cached if cached && cached.name == name && cached.study_aggregate == study_shape
+
+      row = StudyAggregate.find_or_create_for!(
         study: study, level: level, geospace_id: geospace["id"], name: name,
         parent: parent, study_shape: study_shape, autonomous_system_org_id: as_org_id
       )
+      @aggregates_by_identity[key] = aggregate_from(row)
     end
 
-    def load_geospaces_for_point(longitude, latitude, **opts)
-      scope =
-        if opts[:location].present?
-          opts[:location].geospaces
-        elsif opts[:location_id].present?
-          Geospace.joins(:locations).where("locations.id = ?", opts[:location_id])
-        else
-          Geospace.containing_point(longitude, latitude)
-        end
+    def aggregate_from(row)
+      Aggregate.new(
+        id: row.id, parent_aggregate_id: row.parent_aggregate_id, level: row.level,
+        study_id: row.study_id, study_aggregate: row.study_aggregate, name: row.name
+      )
+    end
 
-      scope.includes(:studies).map do |geospace|
-        {
-          "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name,
-          "study_ids" => geospace.studies.map(&:id),
-        }
+    # Returns [id, namespace, name] rows. Polygons are never loaded.
+    def load_geospaces_for_point(longitude, latitude, **opts)
+      if opts[:location].present?
+        opts[:location].geospaces.pluck(:id, :namespace, :name)
+      elsif opts[:location_id].present?
+        Geospace.joins(:locations).where("locations.id = ?", opts[:location_id]).pluck(:id, :namespace, :name)
+      else
+        binds = [
+          ActiveRecord::Relation::QueryAttribute.new("longitude", longitude, ActiveModel::Type::Float.new),
+          ActiveRecord::Relation::QueryAttribute.new("latitude", latitude, ActiveModel::Type::Float.new),
+        ]
+        ActiveRecord::Base.connection.exec_query(GEOSPACES_CONTAINING_POINT_SQL, "Geospace containing point", binds, prepare: true).rows
       end
     end
 

@@ -197,4 +197,62 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
     assert_equal 0, proj["online_locations_count"]
     assert_equal 0, proj["completed_and_online_locations_count"]
   end
+
+  # Only this thread: background work from other tests shares the process and would be counted too.
+  def capture_sql
+    queries = []
+    test_thread = Thread.current
+    subscriber = ActiveSupport::Notifications.subscribe("sql.active_record") do |*, payload|
+      next unless Thread.current == test_thread
+      queries << payload[:sql] unless %w[SCHEMA TRANSACTION].include?(payload[:name])
+    end
+    yield
+    queries
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscriber)
+  end
+
+  test "a point whose aggregates exist costs one shapes query and no aggregate lookups" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), geospaces(:fresno_tract), point: "POINT(11 11)")
+    measure(location, 11.0, 11.0)
+    fresh_processor = StudyMetricsProjectionProcessor::Processor.new
+
+    queries = capture_sql { measure(location, 11.0, 11.0, processor: fresh_processor) }
+
+    assert_equal 1, queries.count { |sql| sql.include?("geospaces") }, queries.join("\n")
+    assert_empty queries.select { |sql| sql.include?("study_aggregates") }
+    county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_county))
+    assert_equal 1, fresh_processor.get_projection(county.id, county.parent_aggregate_id, @as_org.id)["measurements_count"]
+  end
+
+  test "a known point seen with another ISP reuses its shapes without querying them" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(12 12)")
+    measure(location, 12.0, 12.0)
+    other_org = autonomous_system_orgs(:as_org2)
+
+    queries = capture_sql { @processor.handle_measurement(2, location.id, 12.0, 12.0, Time.now, other_org.id, other_org.name) }
+
+    assert_empty queries.select { |sql| sql.include?("geospaces") }
+    isp = StudyAggregate.find_by!(study: studies(:fresno), level: 'isp_county', geospace: geospaces(:fresno_county), autonomous_system_org: other_org)
+    assert_equal 1, @processor.get_projection(isp.id, isp.parent_aggregate_id, other_org.id)["measurements_count"]
+    county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_county))
+    assert_equal 2, @processor.get_projection(county.id, county.parent_aggregate_id, @as_org.id)["measurements_count"] +
+      @processor.get_projection(county.id, county.parent_aggregate_id, other_org.id)["measurements_count"]
+  end
+
+  test "a speed test finds its shapes by geometry" do
+    geospaces(:fresno_state).update_column(:geom, "POLYGON((20 20, 22 20, 22 22, 20 22, 20 20))")
+    geospaces(:fresno_county).update_column(:geom, "POLYGON((20 20, 21 20, 21 21, 20 21, 20 20))")
+
+    @processor.handle_speed_test(1, 20.5, 20.5, Time.now, @as_org.id, @as_org.name)
+    @processor.handle_speed_test(2, 21.5, 21.5, Time.now, @as_org.id, @as_org.name)
+    @processor.handle_speed_test(3, 30.0, 30.0, Time.now, @as_org.id, @as_org.name)
+
+    fresno = studies(:fresno)
+    state = StudyAggregate.find_by!(study: fresno, level: 'state', geospace: geospaces(:fresno_state))
+    county = StudyAggregate.find_by!(study: fresno, level: 'county', geospace: geospaces(:fresno_county))
+    assert_equal 2, @processor.get_projection(state.id, nil, @as_org.id)["measurements_count"]
+    assert_equal 1, @processor.get_projection(county.id, state.id, @as_org.id)["measurements_count"]
+    assert_equal 2, @processor.get_projection(state.id, nil, @as_org.id)["points_with_tests_count"]
+  end
 end
