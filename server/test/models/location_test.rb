@@ -235,30 +235,34 @@ class LocationTest < ActiveSupport::TestCase
   end
 
   test "when in scheduling restriction, expect not scheduled" do
-    loc = locations(:empty_location)
-    pod1 = clients(:pod1)
-    pod1.update(online: true, location: loc)
-    now = Time.current
-    SchedulingRestriction.create(location: loc, time_start: (now - 1.hour).time, time_end: (now + 1.hour).time, weekdays: [now.wday])
+    travel_to Time.utc(2026, 9, 21, 12, 0, 0) do
+      loc = locations(:empty_location)
+      pod1 = clients(:pod1)
+      pod1.update(online: true, location: loc)
+      now = Time.current
+      SchedulingRestriction.create(location: loc, time_start: (now - 1.hour).time, time_end: (now + 1.hour).time, weekdays: [now.wday])
 
-    Location.request_scheduled_tests!
-    loc.reload
-    pod1.reload
+      Location.request_scheduled_tests!
+      loc.reload
+      pod1.reload
 
-    assert_not pod1.test_requested?
+      assert_not pod1.test_requested?
+    end
   end
 
   test "when has scheduling restriction, but not under it, expect scheduled" do
-    loc = locations(:empty_location)
-    pod1 = clients(:pod1)
-    pod1.update(online: true, location: loc)
-    now = Time.current
-    SchedulingRestriction.create(location: loc, time_start: (now - 2.hour).time, time_end: (now - 1.hour).time, weekdays: [now.wday])
-    Location.request_scheduled_tests!
-    loc.reload
-    pod1.reload
+    travel_to Time.utc(2026, 9, 21, 12, 0, 0) do
+      loc = locations(:empty_location)
+      pod1 = clients(:pod1)
+      pod1.update(online: true, location: loc)
+      now = Time.current
+      SchedulingRestriction.create(location: loc, time_start: (now - 2.hour).time, time_end: (now - 1.hour).time, weekdays: [now.wday])
+      Location.request_scheduled_tests!
+      loc.reload
+      pod1.reload
 
-    assert pod1.test_requested?
+      assert pod1.test_requested?
+    end
   end
 
   test "when has scheduling restriction at the current time, but not current weekday, expect scheduled" do

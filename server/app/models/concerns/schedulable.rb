@@ -4,19 +4,20 @@ module Schedulable extend ActiveSupport::Concern
     enum scheduling_periodicity: [:hourly, :daily, :weekly, :monthly], _prefix: :scheduling
 
     scope :where_outdated_data_cap, -> { where("data_cap_current_period < ?", Time.current) }
-    scope :where_pending_next_run, -> { where(%{
-      (scheduling_next_run IS NULL OR scheduling_next_run <= NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))
+    # The current time comes from Ruby, not the database, so tests can freeze it.
+    scope :where_pending_next_run, -> (now = Time.current) { where(%{
+      (scheduling_next_run IS NULL OR scheduling_next_run <= :now::timestamptz AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))
       AND (
         SELECT COUNT(1) = 0
         FROM scheduling_restrictions sr
         WHERE
           location_id = locations.id
-          AND (NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::time BETWEEN sr.time_start AND sr.time_end
-          AND ARRAY[EXTRACT(dow FROM NOW() AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::integer] <@ weekdays
+          AND (:now::timestamptz AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::time BETWEEN sr.time_start AND sr.time_end
+          AND ARRAY[EXTRACT(dow FROM :now::timestamptz AT TIME ZONE COALESCE(scheduling_time_zone, 'UTC'))::integer] <@ weekdays
       )
       AND (data_cap_max_usage IS NULL OR data_cap_current_usage < data_cap_max_usage)
       AND (SELECT COUNT(1) > 0 FROM clients WHERE online AND location_id = locations.id)
-    }) }
+    }, now: now.utc.iso8601) }
 
     klass.extend(ClassMethods)
   end
