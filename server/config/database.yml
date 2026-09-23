@@ -24,13 +24,13 @@ default: &default
   port: <%= ENV.fetch("DB_PORT") { "5432" }%>
   username: <%= ENV.fetch("DB_USER") { "postgres" }%>
   password: <%= ENV.fetch("DB_PASSWORD") { "postgres" }%>
-  # <% if ENV["DATABASE_URL"].present? %>
-  # url: <%= ENV["DATABASE_URL"].sub(/^postgres/, "postgis") %>
-  # <% end %>
+  <% if ENV["DATABASE_URL"].present? %>
+  url: <%= ENV["DATABASE_URL"].sub(/^postgres/, "postgis") %>
+  <% end %>
 
 development:
   <<: *default
-  database: radar_development
+  database: <%= ENV.fetch("DB_NAME") { "radar_development" } %>
 
 test:
   <<: *default

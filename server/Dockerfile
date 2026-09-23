@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.4.10
+ARG RUBY_VERSION=3.2.11
 FROM  registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 ARG BUILDPLATFORM
@@ -29,7 +29,7 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-  apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+  apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config libgeos-dev
 
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -68,7 +68,7 @@ RUN SECRET_KEY_BASE=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
-RUN apt-get update && apt-get install unzip libjemalloc2 -y
+RUN apt-get update && apt-get install unzip libjemalloc2 libgeos-dev -y
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
