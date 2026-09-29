@@ -184,4 +184,20 @@ class LocationNotificationTest < ActiveJob::TestCase
 
     assert_nil l.notifying_study
   end
+
+  test "When_location_belongs_to_the_notifying_study_account_Expect_notifying_study_to_be_that_study" do
+    studies(:rural).update!(account: accounts(:root))
+    l = Location.create!(name: "Loc", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(9 9)")
+    l.geospaces << [geospaces(:study_state), geospaces(:study_county)]
+
+    assert_equal studies(:rural), l.notifying_study
+  end
+
+  test "When_location_is_outside_the_notifying_study_accounts_Expect_notifying_study_to_be_nil" do
+    studies(:rural).update!(account: Account.create!(name: "Other"))
+    l = Location.create!(name: "Loc", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(9 9)")
+    l.geospaces << [geospaces(:study_state), geospaces(:study_county)]
+
+    assert_nil l.notifying_study
+  end
 end

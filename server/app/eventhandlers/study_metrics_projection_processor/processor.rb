@@ -26,6 +26,7 @@ module StudyMetricsProjectionProcessor
       @aggregates_cache = {}
       @geospaces_by_point = {}
       @studies_by_id = Study.all.index_by(&:id)
+      @location_ids_by_study = self.load_location_ids_by_study
       @study_ids_by_geospace = self.load_study_ids_by_geospace
       @aggregates_by_identity = self.load_aggregates_by_identity
       @location_metadatas = self.load_location_metadatas

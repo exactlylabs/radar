@@ -308,7 +308,7 @@ class Location < ApplicationRecord
   end
 
   def notifying_study
-    county_geospace&.studies&.find_by(notifications_enabled: true)
+    county_geospace&.studies&.where(notifications_enabled: true)&.find { |study| study.counts_account?(account_id) }
   end
 
   def state_geospace

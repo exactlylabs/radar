@@ -1,9 +1,22 @@
 class Study < ApplicationRecord
+  belongs_to :account, optional: true
   has_and_belongs_to_many :geospaces
   has_many :study_aggregates
 
   validates :name, presence: true, uniqueness: true
   validates :completion_days, numericality: { only_integer: true, greater_than: 0 }
+
+  # The accounts whose data the study counts: its own and the ones shared with it.
+  # nil when the study has no account, meaning data from every account counts.
+  def account_ids
+    return nil if account.nil?
+    [account.id] + account.shared_accounts.not_deleted.where(shared_accounts: { deleted_at: nil }).pluck(:id)
+  end
+
+  def counts_account?(account_id)
+    ids = account_ids
+    ids.nil? || ids.include?(account_id)
+  end
 
   # Creates the aggregate rows for every tagged shape, so the dashboard lists them before any pod
   # reports from there. Counties and tracts are matched to their parent by geoid prefix; places and

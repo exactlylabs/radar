@@ -10,8 +10,8 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
   # Links a new location to the given shapes by hand. The processor reads a location's shapes
   # from geospaces_locations, so no geometry is needed. Creating a location geocodes its address
   # and overwrites lonlat, so the point is set afterwards without callbacks.
-  def location_in(*shapes, point:)
-    location = Location.create!(name: "Loc #{point}", address: "New Address", account: accounts(:root), created_by_id: 1)
+  def location_in(*shapes, point:, account: accounts(:root))
+    location = Location.create!(name: "Loc #{point}", address: "New Address", account: account, created_by_id: 1)
     location.update_column(:lonlat, point)
     location.geospaces << shapes
     location
@@ -129,8 +129,8 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
     assert_nil fresh_projections["#{fresno_state_only.id}-#{@as_org.id}"]
   end
 
-  def online_for_days(location, days)
-    meta = @processor.get_location_metadata(location.id)
+  def online_for_days(location, days, processor: @processor)
+    meta = processor.get_location_metadata(location.id)
     meta.online = true
     meta.days_online = days
     meta.autonomous_system_org_id = @as_org.id
@@ -254,5 +254,89 @@ class StudyMetricsProjectionProcessorTest < ActiveSupport::TestCase
     assert_equal 2, @processor.get_projection(state.id, nil, @as_org.id)["measurements_count"]
     assert_equal 1, @processor.get_projection(county.id, state.id, @as_org.id)["measurements_count"]
     assert_equal 2, @processor.get_projection(state.id, nil, @as_org.id)["points_with_tests_count"]
+  end
+
+  # The processor reads study accounts and their locations when it starts, so it is created after both.
+  def processor_with_fresno_owned_by(account)
+    studies(:fresno).update!(account: account)
+    StudyMetricsProjectionProcessor::Processor.new
+  end
+
+  def fresno_county_projection(processor)
+    county = StudyAggregate.find_by!(study: studies(:fresno), level: 'county', geospace: geospaces(:fresno_county))
+    processor.get_projection(county.id, county.parent_aggregate_id, @as_org.id)
+  end
+
+  test "a study with an account counts its own locations and those of accounts shared with it" do
+    owned = Account.create!(name: "Owned")
+    SharedAccount.create!(original_account_id: owned.id, shared_to_account_id: accounts(:root).id, shared_at: Time.now)
+    own_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(13 13)")
+    owned_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(14 14)", account: owned)
+    processor = processor_with_fresno_owned_by(accounts(:root))
+
+    measure(own_location, 13.0, 13.0, processor: processor)
+    measure(owned_location, 14.0, 14.0, processor: processor)
+
+    assert_equal 2, fresno_county_projection(processor)["measurements_count"]
+  end
+
+  test "a study with an account builds nothing for a location of another account" do
+    location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(15 15)", account: Account.create!(name: "Other"))
+    processor = processor_with_fresno_owned_by(accounts(:root))
+
+    assert_no_difference 'StudyAggregate.count' do
+      measure(location, 15.0, 15.0, processor: processor)
+    end
+    assert_empty processor.instance_variable_get(:@consumer_offset).state["projections"]
+  end
+
+  test "two locations at the same point are each filtered by their own account" do
+    other_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(16 16)", account: Account.create!(name: "Other"))
+    own_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(16 16)")
+    processor = processor_with_fresno_owned_by(accounts(:root))
+
+    measure(other_location, 16.0, 16.0, processor: processor)
+    measure(own_location, 16.0, 16.0, processor: processor)
+
+    assert_equal 1, fresno_county_projection(processor)["measurements_count"]
+  end
+
+  test "a study with an account filters known points without querying accounts or locations" do
+    own_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(17 17)")
+    other_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(18 18)", account: Account.create!(name: "Other"))
+    measure(own_location, 17.0, 17.0)
+    processor = processor_with_fresno_owned_by(accounts(:root))
+
+    queries = capture_sql do
+      measure(own_location, 17.0, 17.0, processor: processor)
+      measure(other_location, 18.0, 18.0, processor: processor)
+    end
+
+    assert_equal 2, queries.size, queries.join("\n")
+    assert queries.all? { |sql| sql.include?("geospaces") }, queries.join("\n")
+    assert_equal 1, fresno_county_projection(processor)["measurements_count"]
+  end
+
+  test "a speed test never counts for a study with an account" do
+    geospaces(:fresno_state).update_column(:geom, "POLYGON((20 20, 22 20, 22 22, 20 22, 20 20))")
+    geospaces(:fresno_county).update_column(:geom, "POLYGON((20 20, 21 20, 21 21, 20 21, 20 20))")
+    processor = processor_with_fresno_owned_by(accounts(:root))
+
+    assert_no_difference 'StudyAggregate.count' do
+      processor.handle_speed_test(1, 20.5, 20.5, Time.now, @as_org.id, @as_org.name)
+    end
+    assert_empty processor.instance_variable_get(:@consumer_offset).state["projections"]
+  end
+
+  test "daily tick completes only locations of the study's accounts" do
+    own_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(19 19)")
+    other_location = location_in(geospaces(:fresno_state), geospaces(:fresno_county), point: "POINT(20 20)", account: Account.create!(name: "Other"))
+    processor = processor_with_fresno_owned_by(accounts(:root))
+    online_for_days(own_location, 6, processor: processor)
+    online_for_days(other_location, 6, processor: processor)
+
+    processor.handle_daily_trigger(Date.today)
+
+    assert_equal 1, fresno_county_projection(processor)["completed_locations_count"]
   end
 end

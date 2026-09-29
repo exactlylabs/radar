@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_22_120000) do
+ActiveRecord::Schema.define(version: 2026_09_29_120000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
@@ -874,6 +874,8 @@ ActiveRecord::Schema.define(version: 2026_09_22_120000) do
     t.boolean "level_isp_county", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_studies_on_account_id"
     t.index ["name"], name: "index_studies_on_name", unique: true
   end
 
@@ -1087,6 +1089,7 @@ ActiveRecord::Schema.define(version: 2026_09_22_120000) do
   add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
   add_foreign_key "snapshots", "events", on_delete: :cascade
+  add_foreign_key "studies", "accounts"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"

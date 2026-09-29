@@ -55,4 +55,34 @@ class StudyTest < ActiveSupport::TestCase
     assert [state, county, tract, isp].all?(&:study_aggregate)
     assert StudyAggregate.where(study: fresno, geospace: geospaces(:fresno_other_county)).none?
   end
+
+  def share(original, shared_to, deleted_at: nil)
+    SharedAccount.create!(original_account_id: original.id, shared_to_account_id: shared_to.id, shared_at: Time.now, deleted_at: deleted_at)
+  end
+
+  test "account_ids is nil for a study without an account" do
+    assert_nil studies(:fresno).account_ids
+  end
+
+  test "account_ids lists the study's account and the accounts shared with it" do
+    owner = accounts(:root)
+    owned = Account.create!(name: "Owned")
+    viewer = Account.create!(name: "Viewer")
+    share(owned, owner)
+    share(owner, viewer)
+    studies(:fresno).update!(account: owner)
+
+    assert_equal [owner.id, owned.id].sort, studies(:fresno).account_ids.sort
+  end
+
+  test "account_ids skips deleted share links and deleted accounts" do
+    owner = accounts(:root)
+    unshared = Account.create!(name: "Unshared")
+    deleted = Account.create!(name: "Deleted", deleted_at: Time.now)
+    share(unshared, owner, deleted_at: Time.now)
+    share(deleted, owner)
+    studies(:fresno).update!(account: owner)
+
+    assert_equal [owner.id], studies(:fresno).account_ids
+  end
 end

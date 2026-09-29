@@ -46,10 +46,10 @@ module StudyMetricsProjectionProcessor
     def get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, **opts)
       return [] if longitude.nil?
 
-      key = [longitude, latitude, as_org_id]
+      key = [longitude, latitude, as_org_id, opts[:location_id]]
       @aggregates_cache[key] ||= begin
         geospaces = geospaces_for_point(longitude, latitude, **opts)
-        studies_for(geospaces).flat_map { |study| build_study_tree(study, geospaces, as_org_id, as_org_name) }
+        studies_for(geospaces, opts[:location_id]).flat_map { |study| build_study_tree(study, geospaces, as_org_id, as_org_name) }
       end
       @aggregates_cache[key].dup
     end
@@ -97,6 +97,14 @@ module StudyMetricsProjectionProcessor
         .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
     end
 
+    # Studies without an account have no entry, as they take data from every location.
+    def load_location_ids_by_study
+      @studies_by_id.values.each_with_object({}) do |study, map|
+        account_ids = study.account_ids
+        map[study.id] = Location.with_deleted.where(account_id: account_ids).pluck(:id).to_set unless account_ids.nil?
+      end
+    end
+
     def load_aggregates_by_identity
       StudyAggregate.all.each_with_object({}) do |row, map|
         map[[row.study_id, row.level, row.geospace_id, row.autonomous_system_org_id, row.parent_aggregate_id]] = aggregate_from(row)
@@ -105,8 +113,12 @@ module StudyMetricsProjectionProcessor
 
     private
 
-    def studies_for(geospaces)
-      geospaces.flat_map { |g| g["study_ids"] }.uniq.map { |id| @studies_by_id.fetch(id) }
+    # A study with an account only takes data from its accounts' locations, so speed tests never count for it.
+    def studies_for(geospaces, location_id)
+      geospaces.flat_map { |g| g["study_ids"] }.uniq.map { |id| @studies_by_id.fetch(id) }.select do |study|
+        location_ids = @location_ids_by_study[study.id]
+        location_ids.nil? || location_ids.include?(location_id)
+      end
     end
 
     def build_study_tree(study, geospaces, as_org_id, as_org_name)
