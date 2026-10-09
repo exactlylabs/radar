@@ -623,7 +623,7 @@ class ClientsController < ApplicationController
     end
     if !@client
       @error = ErrorsHelper::PodClaimErrors::PodNotFound
-    elsif @client.user.present?
+    elsif @client.user.present? && @client.account_id != 96 # This is a wordaround to enable Exactly Staging's pods to be claimed
       if can_move_pod_to_current_account(@client)
         @error = ErrorsHelper::PodClaimErrors::PodBelongsToOneOfYourOtherAccounts
       else
