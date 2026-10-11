@@ -25,8 +25,13 @@
   `summary_geospace_<window>`, `us_asns`). The API and frontend are unchanged.
 - The numbers. Each summary is still the exact median (`quantileExact`) of the
   exact per-IP medians, with the same good/normal/bad thresholds and the same
-  bucket expressions (including the existing semester formula, which puts December
-  in semester 3).
+  bucket expressions, with one fix: the map sends semester 1 for Jan-Jun and 2 for
+  Jul-Dec, but the views computed `MONTH / 6 + 1`, which put June in semester 2
+  and December in a semester 3 the map never requested. Semester is now
+  `(MONTH - 1) / 6 + 1`.
+- The hourly ingestor only summarizes when it inserted something. It used to
+  rebuild everything every hour, because the last ingested day's files are found
+  again until the next day's appear.
 
 ## Design
 

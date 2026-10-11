@@ -17,7 +17,8 @@ import (
 )
 
 // Compares the summarizer with the original materialized view definitions (testdata/legacy_views)
-// on synthetic data. Needs a ClickHouse server: CLICKHOUSE_TEST_ADDR=localhost:9000.
+// on synthetic data. The legacy semester definitions carry one deliberate change: semester is
+// (MONTH - 1) / 6 + 1, the halves the map asks for, instead of the original MONTH / 6 + 1. Needs a ClickHouse server: CLICKHOUSE_TEST_ADDR=localhost:9000.
 
 func testConn(t *testing.T) driver.Conn {
 	addr := os.Getenv("CLICKHOUSE_TEST_ADDR")
@@ -253,7 +254,7 @@ func TestBucketsCoverWholePeriods(t *testing.T) {
 	}{
 		{"month", "2026-02-15", "2026-03-02", []string{"(2026, 2) 2026-02-01..2026-02-28", "(2026, 3) 2026-03-01..2026-03-31"}},
 		{"year", "2025-12-31", "2026-01-01", []string{"2025 2025-01-01..2025-12-31", "2026 2026-01-01..2026-12-31"}},
-		{"semester", "2026-12-01", "2026-12-01", []string{"(2026, 3) 2026-12-01..2026-12-31"}},
+		{"semester", "2026-06-30", "2026-07-01", []string{"(2026, 1) 2026-01-01..2026-06-30", "(2026, 2) 2026-07-01..2026-12-31"}},
 		// WEEK() mode 0: weeks start on Sunday and days before the first Sunday are week 0.
 		{"week", "2026-01-01", "2026-01-05", []string{"(2026, 0) 2026-01-01..2026-01-03", "(2026, 1) 2026-01-04..2026-01-10"}},
 	} {

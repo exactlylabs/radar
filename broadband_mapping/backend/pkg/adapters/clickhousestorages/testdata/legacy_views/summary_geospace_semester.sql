@@ -21,7 +21,7 @@ FROM (
         quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
         m.upload,
         YEAR(m.time) as year,
-        (MONTH(m.time) / 6)::int + 1 as semester
+        intDiv(MONTH(m.time) - 1, 6) + 1 as semester
     FROM measurements m
     GROUP BY m.geospace_id, m.upload, m.ip, year, semester
 ) m_ip 
