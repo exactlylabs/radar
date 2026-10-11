@@ -18,6 +18,11 @@ ingestor:
 	go build -o mlab-ingestor cmd/ingestor_service/main.go
 
 
+.PHONY: summarize
+summarize:
+	go build -o summarize cmd/summarize/main.go
+
+
 .PHONY: mapping-api
 mapping-api:
 	go build -o mapping-api cmd/server/main.go

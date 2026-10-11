@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	"time"
+
 	namespaces "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	storages "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	mock "github.com/stretchr/testify/mock"
@@ -67,17 +69,17 @@ func (_m *SummariesStorage) Open() error {
 	return r0
 }
 
-// Summarize provides a mock function with given fields: from
-func (_m *SummariesStorage) Summarize(from int) error {
-	ret := _m.Called(from)
+// Summarize provides a mock function with given fields: from, to
+func (_m *SummariesStorage) Summarize(from time.Time, to time.Time) error {
+	ret := _m.Called(from, to)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Summarize")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int) error); ok {
-		r0 = rf(from)
+	if rf, ok := ret.Get(0).(func(time.Time, time.Time) error); ok {
+		r0 = rf(from, to)
 	} else {
 		r0 = ret.Error(0)
 	}

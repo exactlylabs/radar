@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"os"
 	"runtime"
 	"strconv"
 	"time"
@@ -12,7 +14,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var start_index = flag.Int("start-from", 0, "View index to start summarize from")
+var (
+	full       = flag.Bool("full", false, "Rebuild every summary from all measurements into <table>_next tables, leaving the live tables untouched")
+	switchOver = flag.Bool("switch", false, "Put the <table>_next tables built by -full live (the replaced tables are kept as <table>_old) and drop the old *_tmp views")
+	from       = flag.String("from", "", "Update, in the live tables, the summaries of every period containing a day from this date (YYYY-MM-DD)")
+	to         = flag.String("to", "", "... to this date (YYYY-MM-DD), default today")
+	maxThreads = flag.Int("max-threads", clickhousestorages.DefaultSummarizerOptions.MaxThreads, "ClickHouse max_threads per query")
+	shardRows  = flag.Uint64("shard-rows", clickhousestorages.DefaultSummarizerOptions.ShardTargetRows, "Measurements per shard (bounds memory per query)")
+)
 
 func main() {
 	flag.Parse()
@@ -26,15 +35,43 @@ func main() {
 		}
 		nWorkers = n
 	}
-
 	db := clickhousestorages.DB(conf, nWorkers)
 	defer db.Close()
-	log.Println("Starting data Summarization.")
+
+	opts := clickhousestorages.DefaultSummarizerOptions
+	opts.MaxThreads = *maxThreads
+	opts.ShardTargetRows = *shardRows
+	s := clickhousestorages.NewSummarizer(db, opts)
+
 	t := time.Now()
-	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers, false)
-	err := s.Summarize(*start_index)
+	var err error
+	switch {
+	case *full:
+		log.Println("Rebuilding all summaries into *_next tables")
+		err = s.RebuildAll()
+	case *switchOver:
+		log.Println("Switching *_next tables live")
+		err = s.SwitchOver()
+	case *from != "":
+		var start, end time.Time
+		start, err = time.Parse(time.DateOnly, *from)
+		if err == nil {
+			end = time.Now().UTC()
+			if *to != "" {
+				end, err = time.Parse(time.DateOnly, *to)
+			}
+		}
+		if err == nil {
+			log.Printf("Updating summaries from %s to %s\n", start.Format(time.DateOnly), end.Format(time.DateOnly))
+			err = s.Update(start, end)
+		}
+	default:
+		fmt.Fprintln(os.Stderr, "Pass one of -full, -switch or -from")
+		flag.Usage()
+		os.Exit(2)
+	}
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Finished Summarizing data in %v", time.Since(t))
+	log.Printf("Finished in %v\n", time.Since(t))
 }

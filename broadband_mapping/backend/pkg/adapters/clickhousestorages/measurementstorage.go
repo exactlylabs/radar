@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"math"
 	"sync"
 	"time"
@@ -30,9 +29,6 @@ func (ms *measurementStorage) Close() error {
 	}
 	close(ms.jobCh)
 	ms.wg.Wait()
-	if err := ms.swapTempTableBack(); err != nil {
-		return errors.Wrap(err, "measurementStorage#Close swapTempTableBack")
-	}
 	ms.started = false
 	return nil
 }
@@ -116,10 +112,6 @@ func (ms *measurementStorage) Open() error {
 		return nil
 	}
 	ms.jobCh = make(chan storages.MeasurementIterator)
-	err := ms.swapToTempTable()
-	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#Open swapToTempTable")
-	}
 	if ms.truncate {
 		err := ms.truncateMeasurements()
 		if err != nil {
@@ -137,38 +129,18 @@ func (ms *measurementStorage) Open() error {
 	return nil
 }
 
+// Measurements are inserted straight into the live table. Inserting into a swapped-in
+// copy used to keep the summaries' materialized views from firing on every insert, but
+// a crash between the two swaps left the data in measurements_tmp, which the next run
+// dropped. Summaries are now plain tables updated after ingest, so nothing fires.
 func (ms *measurementStorage) measurementsTableName() string {
-	return "measurements_tmp"
+	return "measurements"
 }
 
 func (cs *measurementStorage) truncateMeasurements() error {
 	err := cs.conn.Exec(context.Background(), fmt.Sprintf(`TRUNCATE %s`, cs.measurementsTableName()))
 	if err != nil {
 		return errors.Wrap(err, "measurementStorage#truncateMeasurements Exec")
-	}
-	return nil
-}
-
-func (cs *measurementStorage) swapToTempTable() error {
-	err := cs.conn.Exec(context.Background(), `DROP TABLE measurements_tmp`)
-	if err != nil {
-		log.Println(errors.Wrap(err, "measurementStorage#swapToTempTable Exec"))
-	}
-	err = cs.conn.Exec(context.Background(), `CREATE TABLE measurements_tmp AS measurements`)
-	if err != nil {
-		return errors.Wrap(err, "measurementStorage#swapToTempTable Exec")
-	}
-	err = cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements AND measurements_tmp`)
-	if err != nil {
-		return errors.Wrap(err, "measurementStorage#swapToTempTable Exec")
-	}
-	return nil
-}
-
-func (cs *measurementStorage) swapTempTableBack() error {
-	err := cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements_tmp AND measurements`)
-	if err != nil {
-		return errors.Wrap(err, "measurementStorage#swapTempTableBack Exec")
 	}
 	return nil
 }
