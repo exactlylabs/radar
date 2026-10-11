@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
@@ -21,6 +22,7 @@ var (
 	to         = flag.String("to", "", "... to this date (YYYY-MM-DD), default today")
 	maxThreads = flag.Int("max-threads", clickhousestorages.DefaultSummarizerOptions.MaxThreads, "ClickHouse max_threads per query")
 	shardRows  = flag.Uint64("shard-rows", clickhousestorages.DefaultSummarizerOptions.ShardTargetRows, "Measurements per shard (bounds memory per query)")
+	windows    = flag.String("windows", "", "Comma separated windows to build (alltime,year,semester,quarter,month,week), default all")
 )
 
 func main() {
@@ -41,6 +43,9 @@ func main() {
 	opts := clickhousestorages.DefaultSummarizerOptions
 	opts.MaxThreads = *maxThreads
 	opts.ShardTargetRows = *shardRows
+	if *windows != "" {
+		opts.Windows = strings.Split(*windows, ",")
+	}
 	s := clickhousestorages.NewSummarizer(db, opts)
 
 	t := time.Now()

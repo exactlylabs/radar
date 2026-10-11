@@ -42,8 +42,9 @@ var (
 	summaryWindows = []summaryWindow{
 		{"alltime", nil},
 		{"year", []bucketColumn{yearColumn}},
-		// Puts December in semester 3; kept as is because the map's filters expect it.
-		{"semester", []bucketColumn{yearColumn, {"semester", "Int64", "(MONTH(%[1]s) / 6)::int + 1"}}},
+		// The map sends semester 1 for Jan-Jun and 2 for Jul-Dec. The original views computed
+		// (MONTH / 6) + 1, which put June in 2 and December in a semester 3 the map never asks for.
+		{"semester", []bucketColumn{yearColumn, {"semester", "Int64", "intDiv(MONTH(%[1]s) - 1, 6) + 1"}}},
 		{"quarter", []bucketColumn{yearColumn, {"quarter", "UInt8", "toQuarter(%[1]s)"}}},
 		{"month", []bucketColumn{yearColumn, {"month", "UInt8", "MONTH(%[1]s)"}}},
 		{"week", []bucketColumn{yearColumn, {"week", "UInt8", "WEEK(%[1]s)"}}},
@@ -74,6 +75,8 @@ func SummaryTables() []string {
 }
 
 type SummarizerOptions struct {
+	// Only build these windows (alltime, year, semester, quarter, month, week); nil means all.
+	Windows []string
 	// Measurements of a shard, at most. A single geospace bigger than this is still one shard.
 	ShardTargetRows uint64
 	MaxThreads      int
@@ -194,7 +197,14 @@ func (s *Summarizer) SwitchOver() error {
 
 func (s *Summarizer) build(suffix string, from, to time.Time) error {
 	start := time.Now()
+	builtAllTime := false
 	for _, w := range summaryWindows {
+		if !s.wantsWindow(w.name) {
+			continue
+		}
+		if w.buckets == nil {
+			builtAllTime = true
+		}
 		for _, v := range summaryVariants {
 			table := v.prefix + w.name + suffix
 			var err error
@@ -208,11 +218,26 @@ func (s *Summarizer) build(suffix string, from, to time.Time) error {
 			}
 		}
 	}
-	if err := s.buildUSASNs(suffix); err != nil {
-		return err
+	// us_asns is derived from summary_alltime.
+	if builtAllTime {
+		if err := s.buildUSASNs(suffix); err != nil {
+			return err
+		}
 	}
 	log.Printf("summarizer: built %s to %s in %v\n", from.Format(time.DateOnly), to.Format(time.DateOnly), time.Since(start))
 	return nil
+}
+
+func (s *Summarizer) wantsWindow(name string) bool {
+	if len(s.opts.Windows) == 0 {
+		return true
+	}
+	for _, w := range s.opts.Windows {
+		if w == name {
+			return true
+		}
+	}
+	return false
 }
 
 type bucket struct {

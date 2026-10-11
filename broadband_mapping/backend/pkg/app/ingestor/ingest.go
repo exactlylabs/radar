@@ -38,11 +38,25 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 	if err := ingestFetchedData(ctx, start, s, it); err != nil {
 		return errors.W(err)
 	}
-	// Ensure that any outstanding insertion is finished before summarizing
-	if summarize {
-		if err := s.Summarize(start, end); err != nil {
-			return errors.W(err)
-		}
+	if !summarize {
+		return nil
+	}
+	// Wait for the inserts, then summarize only what they added. The hourly run finds the
+	// last ingested day's files again until the next day's appear, and the reader skips
+	// their rows as already ingested, so there is often nothing new.
+	if err := s.MeasurementStorage.Close(); err != nil {
+		return errors.W(err)
+	}
+	last, err := s.MeasurementStorage.LastDate()
+	if err != nil {
+		return errors.W(err)
+	}
+	if last == nil || !last.After(start) {
+		log.Println("ingestor.Ingest: no new measurements, skipping summaries")
+		return nil
+	}
+	if err := s.Summarize(start, *last); err != nil {
+		return errors.W(err)
 	}
 	return nil
 }

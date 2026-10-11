@@ -64,7 +64,9 @@ func (mr *measurementReader) startDecodeWorker() {
 				mr.ch <- &decodeResult{err: nil}
 				continue
 			}
-			if mr.ignoreTimeBefore != nil && m.StartedAt < mr.ignoreTimeBefore.Unix() {
+			// ignoreTimeBefore is the newest time already in the database, so tests at exactly
+			// that second were ingested with it.
+			if mr.ignoreTimeBefore != nil && m.StartedAt <= mr.ignoreTimeBefore.Unix() {
 				continue
 			}
 			if geospaces, ok := mr.geoIndex[m.Id]; ok {
