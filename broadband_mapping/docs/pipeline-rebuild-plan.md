@@ -226,8 +226,16 @@ those days and run `summarize -from 2023-03-01` once.
 
 ### Ops
 
-- ClickHouse upgrade 24.6 → current LTS before building `tests` (apt on mapping-db;
-  restart = map summaries unavailable ~1 min; API serves cached tiles for 5 min).
+- ClickHouse upgrade 24.6 → current LTS before building `tests`: set `clickhouse_version`
+  (currently `'latest'`, i.e. whatever was current at install time) to the pinned LTS in
+  `radar-infra/ansible/roles/clickhouse/defaults/main.yml` or the playbook vars and run
+  `make -C radar-infra/ansible setup-clickhouse` (role: AlexeySetevoi/ansible-clickhouse
+  fork, apt install, `clickhouse_path_base: /mnt/clickhouse-data`, user `mapping`).
+  Restart = summaries unavailable ~1 min; the API serves cached tiles for 5 min. Check the
+  server config template in the role for memory settings before the VM downsize.
+- Processor/ingestor/summarize are deployed by hand today (binaries copied into
+  `/opt/broadbandmapping`, hand-written systemd units, env files): the new
+  `roles/mlab-pipeline` replaces that.
 - After the processor rework: VM 109 memory 32 → 16 GB (`qm set 109 --memory 16384`,
   cold restart), ClickHouse `max_server_memory_usage` accordingly, summarizer
   `MaxMemoryUsage` ≤ 10 GB.
@@ -247,6 +255,27 @@ those days and run `summarize -from 2023-03-01` once.
   PBS verify job; ask Rafael why he stopped the processor on 2026-07-30 and about
   `resical`/`tic-parser` containers and `/mnt/clickhouse-data/backups/1.zip` (216 GB,
   2024) on mapping-db.
+
+## Persistence rule (user requirement)
+
+Every operational change that is a long-term fix must be codified so it is repeatable and,
+where periodic, scheduled: Ansible in `radar-infra/ansible` (roles/playbooks, inventory
+`production.yml`, hosts `radar-swarm-01`, `clickhouse-db`, `radar-db-01`) or a versioned
+script in a repo with a systemd timer/cron. Nothing operational is done once by hand on a
+box, except diagnosis and experiments. Where each change lives:
+
+| Change | Home |
+|---|---|
+| ClickHouse version (upgrade from 24.6) and server settings (`max_server_memory_usage`, etc.) | `radar-infra/ansible/roles/clickhouse` (pinned version variable, config template), `playbooks/setup-clickhouse.yml` |
+| Processor + ingestor + summarize deployment: binaries, systemd units/timers (processor one-shot nightly, ingestor hourly, geo refresh monthly, completeness re-check), env files (0600) from Ansible vault or the existing secrets mechanism, journald cap, `/opt/broadbandmapping` layout | new `roles/mlab-pipeline` + playbook; binaries built by a Makefile target in `radar/broadband_mapping/backend` and `radar/mlab-processor` |
+| Geo data refresh (MaxMind CSVs + CAIDA, yearly TIGER) | script in `radar/mlab-processor/scripts/refresh-geodata.sh`, scheduled by the role's timer; the manual run of 2026-10-11 is the first execution of that script's logic |
+| ClickHouse schema (`tests`, summaries, `ip_medians`) and conversion/backfill | `radar/broadband_mapping/backend/migrations/*.sql` + `cmd/` tools (`summarize`, `ingest`), runbook in this doc |
+| B2 lifecycle rule, bucket policy | `radar-infra/scripts/b2/` (idempotent `b2 bucket update` script, run from the pipeline role or by hand with the same script) |
+| Map API image + stack | existing `radar-infra/deploy/mapping-api` + Makefiles (`--provenance=false` already in `radar/server/Makefile`; mirror in `broadband_mapping/backend/Makefile`) |
+| VM definitions on Proxmox (memory, `discard=on,ssd=1`, cloud-init disabled, fstab by UUID, guest agent) | `radar-infra` (new `proxmox/` playbook or scripts using `qm`), plus the VM template; today's manual `qm set` calls are to be re-expressed there |
+| PBS prune/GC/verify schedule, retention | `radar-infra` (PBS job config as code: `proxmox-backup-manager` commands in a script or playbook) |
+| Alerting (ZFS, PBS, backups, ingest freshness, processor failures), postfix relay fix on proxmox-02 | `roles/monitoring` (existing otel/vector setup) and a `proxmox` playbook |
+| DB-side fixes on radar-db-01 (swap by UUID, etc.) | `roles/postgresql` / cloud-init template |
 
 ## Workstreams (parallelizable)
 
