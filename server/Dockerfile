@@ -16,6 +16,9 @@ ENV RAILS_ENV="production" \
   BUNDLE_PATH="/usr/local/bundle" \
   BUNDLE_WITHOUT="development"
 
+# Must match BUNDLED WITH in Gemfile.lock: bin/bundle refuses to run with any other version
+RUN gem install bundler -v 4.0.22 --no-document
+
 # Install packages needed for deployment
 RUN apt-get update -qq && \
   apt-get install --no-install-recommends -y curl libpq-dev libvips imagemagick && \

@@ -24,6 +24,7 @@ deploy-staging: push-staging
 push:
 	docker buildx build \
 		--platform=linux/amd64  \
+		--provenance=false \
 		-t registry.radartoolkit.com/pods-server:$(VERSION) \
 		-t registry.radartoolkit.com/pods-server:latest \
 		--push \
