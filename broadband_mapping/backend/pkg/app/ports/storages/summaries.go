@@ -2,6 +2,7 @@ package storages
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 )
@@ -65,8 +66,9 @@ type SummariesStorage interface {
 	Open() error
 	Close() error
 	Connected() error
-	// Summarize is called when new data is ready to be summarized by this interface
-	Summarize(from int) error
+	// Summarize updates the summaries of every period that contains a day in [from, to],
+	// after measurements of those days were ingested
+	Summarize(from, to time.Time) error
 	SummaryForGeospace(geospaceId string, filter SummaryFilter) (*GeospaceSummaryResult, error)
 	SummaryForGeoAndASN(geospaceId, asnId string, filter SummaryFilter) (*GeospaceSummaryResult, error)
 	SummaryForNamespace(namespace namespaces.Namespace, filter SummaryFilter) ([]GeospaceSummaryResult, error)

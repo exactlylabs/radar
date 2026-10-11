@@ -40,7 +40,7 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 	}
 	// Ensure that any outstanding insertion is finished before summarizing
 	if summarize {
-		if err := s.Summarize(0); err != nil {
+		if err := s.Summarize(start, end); err != nil {
 			return errors.W(err)
 		}
 	}

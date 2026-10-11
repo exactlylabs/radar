@@ -1,6 +1,10 @@
 package storages
 
-import "github.com/exactlylabs/go-errors/pkg/errors"
+import (
+	"time"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
+)
 
 // IngestorAppStorage holds the storages needed by the Ingestor application
 type IngestorAppStorages struct {
@@ -42,11 +46,11 @@ func (i *IngestorAppStorages) CloseAll() error {
 	return nil
 }
 
-func (i *IngestorAppStorages) Summarize(from int) error {
+func (i *IngestorAppStorages) Summarize(from, to time.Time) error {
 	if err := i.MeasurementStorage.Close(); err != nil {
 		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Close")
 	}
-	if err := i.SummariesStorage.Summarize(from); err != nil {
+	if err := i.SummariesStorage.Summarize(from, to); err != nil {
 		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Summarize")
 	}
 	return nil

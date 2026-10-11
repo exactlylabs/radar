@@ -2,12 +2,10 @@ package clickhousestorages
 
 import (
 	"context"
-	"fmt"
-	"log"
+	"time"
 
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/exactlylabs/go-errors/pkg/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages/views"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/google/uuid"
@@ -30,30 +28,8 @@ func (ss *summariesStorage) Connected() error {
 }
 
 // Summarize implements storages.SummariesStorage
-func (ss *summariesStorage) Summarize(from int) error {
-	log.Println("summariesStorage#Summarize Starting Updating Views")
-	for _, name := range views.ViewsCreationOrder[from:] {
-		query := views.MaterializedViews[name]
-		tmpName := name + "_tmp"
-		if err := ss.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %s", tmpName)); err != nil {
-			log.Println(errors.Wrap(err, "summariesStorage#Summarize Exec Drop"))
-		}
-		if err := ss.conn.Exec(context.Background(), query); err != nil {
-			return errors.Wrap(err, "summariesStorage#Summarize Exec Create")
-		}
-		log.Println("Created View", tmpName)
-		// Exchange the names
-		if err := ss.conn.Exec(context.Background(), fmt.Sprintf("EXCHANGE TABLES %s AND %s", tmpName, name)); err != nil {
-			log.Println(errors.Wrap(err, "summariesStorage#Summarize Exec Exchange"))
-			log.Println("Trying to rename instead")
-			if err := ss.conn.Exec(context.Background(), fmt.Sprintf("RENAME TABLE %s TO %s", tmpName, name)); err != nil {
-				return errors.Wrap(err, "summariesStorage#Summarize Exec Rename")
-			}
-		}
-		log.Println("Renamed to View", name)
-	}
-	log.Println("Finished updating views")
-	return nil
+func (ss *summariesStorage) Summarize(from, to time.Time) error {
+	return NewSummarizer(ss.conn, DefaultSummarizerOptions).Update(from, to)
 }
 
 // SummaryForGeoAndASN implements storages.SummariesStorage
