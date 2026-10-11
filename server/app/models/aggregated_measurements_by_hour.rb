@@ -1,5 +1,5 @@
 class AggregatedMeasurementsByHour <  ApplicationRecord
-  # This is backed by a materialized view
+  # Maintained by RefreshAggregatedMeasurementsJob
 
   belongs_to :location
   belongs_to :acccount

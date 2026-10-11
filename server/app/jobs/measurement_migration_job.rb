@@ -3,6 +3,7 @@ class MeasurementMigrationJob < ApplicationJob
 
   def perform(location, old_account, account)
     location.measurements.where(account: old_account).update_all(account_id: account.id)
+    RefreshAggregatedMeasurementsJob.rebuild_location!(location.id)
     location.recalculate_averages!
   end
 end

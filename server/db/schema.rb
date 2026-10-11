@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_09_29_120000) do
+ActiveRecord::Schema.define(version: 2026_10_11_120000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
@@ -57,6 +57,94 @@ ActiveRecord::Schema.define(version: 2026_09_29_120000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "aggregated_measurements_by_days", id: false, force: :cascade do |t|
+    t.datetime "time"
+    t.integer "account_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.float "download_median"
+    t.float "download_min"
+    t.float "download_max"
+    t.float "upload_median"
+    t.float "upload_min"
+    t.float "upload_max"
+    t.float "latency_median"
+    t.float "latency_min"
+    t.float "latency_max"
+    t.decimal "download_total_bytes"
+    t.decimal "upload_total_bytes"
+    t.index ["account_id", "autonomous_system_org_id", "location_id", "time"], name: "index_aggregated_measurements_by_days_unique_id", unique: true
+    t.index ["account_id", "time"], name: "index_aggregated_measurements_by_days_on_account_id_and_time"
+    t.index ["location_id"], name: "index_aggregated_measurements_by_days_on_location_id"
+    t.index ["time"], name: "index_aggregated_measurements_by_days_on_time"
+  end
+
+  create_table "aggregated_measurements_by_hours", id: false, force: :cascade do |t|
+    t.datetime "time"
+    t.integer "account_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.float "download_median"
+    t.float "download_min"
+    t.float "download_max"
+    t.float "upload_median"
+    t.float "upload_min"
+    t.float "upload_max"
+    t.float "latency_median"
+    t.float "latency_min"
+    t.float "latency_max"
+    t.decimal "download_total_bytes"
+    t.decimal "upload_total_bytes"
+    t.index ["account_id", "autonomous_system_org_id", "location_id", "time"], name: "index_aggregated_measurements_by_hours_unique_id", unique: true
+    t.index ["account_id", "time"], name: "index_aggregated_measurements_by_hours_on_account_id_and_time"
+    t.index ["location_id"], name: "index_aggregated_measurements_by_hours_on_location_id"
+    t.index ["time"], name: "index_aggregated_measurements_by_hours_on_time"
+  end
+
+  create_table "aggregated_pod_measurements_by_days", id: false, force: :cascade do |t|
+    t.datetime "time"
+    t.integer "account_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "client_id"
+    t.float "download_median"
+    t.float "download_min"
+    t.float "download_max"
+    t.float "upload_median"
+    t.float "upload_min"
+    t.float "upload_max"
+    t.float "latency_median"
+    t.float "latency_min"
+    t.float "latency_max"
+    t.decimal "download_total_bytes"
+    t.decimal "upload_total_bytes"
+    t.index ["account_id", "autonomous_system_org_id", "location_id", "client_id", "time"], name: "aggregated_pod_measurements_by_days_unique_id", unique: true
+    t.index ["location_id"], name: "index_aggregated_pod_measurements_by_days_on_location_id"
+    t.index ["time"], name: "index_aggregated_pod_measurements_by_days_on_time"
+  end
+
+  create_table "aggregated_pod_measurements_by_hours", id: false, force: :cascade do |t|
+    t.datetime "time"
+    t.integer "account_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "client_id"
+    t.float "download_median"
+    t.float "download_min"
+    t.float "download_max"
+    t.float "upload_median"
+    t.float "upload_min"
+    t.float "upload_max"
+    t.float "latency_median"
+    t.float "latency_min"
+    t.float "latency_max"
+    t.decimal "download_total_bytes"
+    t.decimal "upload_total_bytes"
+    t.index ["account_id", "autonomous_system_org_id", "location_id", "client_id", "time"], name: "aggregated_pod_measurements_by_hours_unique_id", unique: true
+    t.index ["location_id"], name: "index_aggregated_pod_measurements_by_hours_on_location_id"
+    t.index ["time"], name: "index_aggregated_pod_measurements_by_hours_on_time"
   end
 
   create_table "asn_ip_lookups", primary_key: ["autonomous_system_id", "ip", "source_file_timestamp"], force: :cascade do |t|
@@ -1101,106 +1189,4 @@ ActiveRecord::Schema.define(version: 2026_09_29_120000) do
   add_foreign_key "users_accounts", "users"
   add_foreign_key "wifi_configurations", "clients"
   add_foreign_key "wifi_configurations", "locations"
-
-  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
-    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
-    ORDER BY (date_trunc('d'::text, measurements.processed_at));
-  SQL
-  add_index "aggregated_measurements_by_days", ["account_id", "autonomous_system_org_id", "location_id", "time"], name: "index_aggregated_measurements_by_days_unique_id", unique: true
-  add_index "aggregated_measurements_by_days", ["account_id", "time"], name: "index_aggregated_measurements_by_days_on_account_id_and_time"
-
-  create_view "aggregated_pod_measurements_by_days", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      measurements.client_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
-    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
-    ORDER BY (date_trunc('d'::text, measurements.processed_at));
-  SQL
-  add_index "aggregated_pod_measurements_by_days", ["account_id", "autonomous_system_org_id", "location_id", "client_id", "time"], name: "aggregated_pod_measurements_by_days_unique_id", unique: true
-
-  create_view "aggregated_measurements_by_hours", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
-    GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
-    ORDER BY (date_trunc('h'::text, measurements.processed_at));
-  SQL
-  add_index "aggregated_measurements_by_hours", ["account_id", "autonomous_system_org_id", "location_id", "time"], name: "index_aggregated_measurements_by_hours_unique_id", unique: true
-  add_index "aggregated_measurements_by_hours", ["account_id", "time"], name: "idx_agg_meas_by_hours_acc_time_index"
-  add_index "aggregated_measurements_by_hours", ["account_id", "time"], name: "index_aggregated_measurements_by_hours_on_account_id_and_time"
-
-  create_view "aggregated_pod_measurements_by_hours", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      measurements.client_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max,
-      sum(measurements.download_total_bytes) AS download_total_bytes,
-      sum(measurements.upload_total_bytes) AS upload_total_bytes
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    WHERE ((measurements.download >= (0)::double precision) AND (measurements.upload >= (0)::double precision))
-    GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id, measurements.client_id
-    ORDER BY (date_trunc('h'::text, measurements.processed_at));
-  SQL
-  add_index "aggregated_pod_measurements_by_hours", ["account_id", "autonomous_system_org_id", "location_id", "client_id", "time"], name: "aggregated_pod_measurements_by_hours_unique_id", unique: true
-
 end
