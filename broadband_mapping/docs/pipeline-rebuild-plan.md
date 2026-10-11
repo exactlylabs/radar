@@ -199,11 +199,23 @@ cheap) and then `summarize -from D -to D`. Also fix `LastDate`.
 - Drop ZCTA and tract shapes from the reverse geocoder config (`SHAPE_PATHS`,
   `TRACTS_SHAPE_DIR`); free shapes and netmaps after a run or run as a one-shot
   (systemd timer nightly) instead of a resident loop.
-- Replace `NetMap` with a MaxMind mmdb reader (GeoLite2 City/ASN mmdb files; the current
-  CSV + CAIDA inputs are in `/opt/broadbandmapping/input` and `geos`) or a radix trie.
-- Decide (user): filter non-US right after ipgeocode; replace fetch+geocode with M-Lab
-  BigQuery `unified_downloads/unified_uploads` (needs a GCP project; also gives an
-  expected-count-per-day completeness check).
+- Replace `NetMap` with a MaxMind mmdb reader or a radix trie over the same CSVs. The
+  geocoder loads the CSVs by header name (`ipgeocoder/geocode.go:52,107`), so MaxMind's
+  CSV editions are a stable input.
+- Geo data: refreshed on 2026-10-11 to GeoLite2-City-CSV_20261009, GeoLite2-ASN-CSV_20261010
+  and CAIDA 20261001 (previous Sep-2024 files kept in `input/backup-20240925/`). MaxMind
+  account id + license key are in `/opt/broadbandmapping/processor_env`
+  (`MAXMIND_ACCOUNT_ID`, `MAXMIND_LICENSE_KEY`; file is root 0600). Add a monthly refresh
+  (systemd timer) doing: download `https://download.maxmind.com/geoip/databases/<edition>/download?suffix=zip`
+  with basic auth, verify `.sha256`, unzip, copy the four `*-Blocks-IPv{4,6}.csv`, fetch the
+  newest `publicdata.caida.org/datasets/as-organizations/YYYYMMDD.as-org2info.jsonl.gz`.
+  TIGER shapes (`tl_us_*.zip`) are from Sep 2024; refresh yearly.
+- Bug: `pkg/app/config/spec.go:15` binds `AsnIpv6DBPath` to the `ASN_IPV4_DB_PATH` key.
+- Geocoding stays ours (GeoLite/CAIDA IP geocoding + TIGER reverse geocoding); M-Lab's
+  BigQuery geolocation is not used (user decision). Completeness therefore comes from our
+  own accounting: tarballs listed vs processed per date, tests written, and a 7-day
+  re-check.
+- Decide (user): keep non-US tests (see "Decisions").
 - Daily schedule: run for `today-2` and re-check the last 7 days' completeness every run.
 
 ### Repairs
@@ -219,8 +231,11 @@ those days and run `summarize -from 2023-03-01` once.
 - After the processor rework: VM 109 memory 32 → 16 GB (`qm set 109 --memory 16384`,
   cold restart), ClickHouse `max_server_memory_usage` accordingly, summarizer
   `MaxMemoryUsage` ≤ 10 GB.
-- Backups: VM 109's data disk (scsi2, 2 TB) has `backup=0`; after the reshape it's ~100 GB,
-  include it in PBS (user decision) or dump `tests` to B2 monthly.
+- Backups: VM 109's data disk (scsi2 = `ztank/vm-109-disk-0`) stays out of PBS (user
+  decision; everything in it can be rebuilt from B2). Safety net for the cutover: take a
+  ZFS snapshot on proxymox-02 before the conversion (`zfs snapshot
+  ztank/vm-109-disk-0@pre-tests-$(date +%F)`), keep it until `measurements` is dropped and
+  the new pipeline has run for a few days, then destroy it (it pins the old blocks).
 - Alerting: proxmox-02 postfix couldn't resolve its relay for days (73 sensor mails on
   hold: `postsuper -H ALL` releases); fix DNS, then alerts for ZFS state, PBS disk/backup
   failures, ingest freshness (newest `tests.time` older than 3 days), processor failures.
@@ -266,7 +281,11 @@ Rollback at any step: the old tables are untouched until step 5; the old binarie
 
 ## Decisions still needed from the user
 
-- Keep non-US tests in `tests`? (volume unknown; M-Lab is global)
-- Use M-Lab BigQuery for fetch/geocode and completeness checks? (GCP project/billing)
-- Back up the ClickHouse data disk in PBS after the reshape?
+- Keep non-US tests in `tests`? Measured on 2026-07-31's files: 6.20 M tests worldwide,
+  1.30 M (21 %) match a US state/county. US-only `tests` ≈ 4.7 B rows ≈ 90 GB; with
+  non-US ≈ 22 B rows ≈ 420 GB. Non-US tests have no geospace, so they only serve
+  test-level analysis. Option: keep non-US only from a recent date (~2 GB/month).
 - Delete `fetch/` from B2 (274 GB) too?
+
+Decided: own geocoder only, no M-Lab BigQuery; no PBS backup of the ClickHouse disk, a
+temporary ZFS snapshot before the cutover instead; Float64 metrics; exact medians.
