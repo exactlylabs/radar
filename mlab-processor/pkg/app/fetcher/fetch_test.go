@@ -409,3 +409,13 @@ func TestNdt7LeanParserMatchesLegacy(t *testing.T) {
 		}
 	}
 }
+
+func TestWeb100IDIsStable(t *testing.T) {
+	a := web100ID("ndt/web100/2010/02/01/x.tgz", "2010/02/01/a.s2c_snaplog")
+	if a != web100ID("ndt/web100/2010/02/01/x.tgz", "2010/02/01/a.s2c_snaplog") {
+		t.Fatal("not deterministic")
+	}
+	if a == web100ID("ndt/web100/2010/02/01/x.tgz", "2010/02/01/a.c2s_snaplog") || a == web100ID("ndt/web100/2010/02/01/y.tgz", "2010/02/01/a.s2c_snaplog") {
+		t.Fatal("collision")
+	}
+}

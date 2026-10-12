@@ -337,7 +337,14 @@ func processNdt5Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
 	})
 }
 
-func processWeb100Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
+// web100 snaplogs carry no test id. The id is a UUIDv5 of the archive path and the file
+// name inside it, so refetching a day yields the same ids (it used to be a random UUIDv4,
+// which made re-ingesting a web100 day impossible to deduplicate).
+func web100ID(tarballPath, filename string) string {
+	return uuid.NewV5(uuid.NamespaceURL, "gs://"+mlabBucket+"/"+tarballPath+"#"+filename).String()
+}
+
+func processWeb100Reader(emit emitFunc, tarballPath string, r io.Reader, badFiles *int64) error {
 	iterator, err := readTgz(r, ".c2s_snaplog", ".s2c_snaplog")
 	if err != nil {
 		return fmt.Errorf("fetcher.processWeb100Reader readTgz: %w", err)
@@ -348,7 +355,7 @@ func processWeb100Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
 			return fmt.Errorf("fetcher.processWeb100Reader Next: %w", err)
 		}
 		ext := filepath.Ext(filename)
-		id, _ := uuid.NewV4()
+		id := web100ID(tarballPath, filename)
 		snapConn, snapVal, err := web100.ValuesFromReader(fReader)
 		if err != nil {
 			// Log, but continue, since this might be an error for this single file
@@ -360,7 +367,7 @@ func processWeb100Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
 		if ext == ".c2s_snaplog" {
 			// Upload
 			emit(&models.FetchedResult{
-				Id:             id.String(),
+				Id:             id,
 				TestStyle:      "web100",
 				IP:             snapConn["remote_ip"].(string),
 				StartedAt:      snapVal["StartTimeStamp"].(int64),
@@ -375,7 +382,7 @@ func processWeb100Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
 			// Download
 			lossRate := float32(snapVal["OctetsRetrans"].(int64)) / float32(snapVal["HCThruOctetsAcked"].(int64))
 			emit(&models.FetchedResult{
-				Id:             id.String(),
+				Id:             id,
 				TestStyle:      "web100",
 				IP:             snapConn["remote_ip"].(string),
 				StartedAt:      snapVal["StartTimeStamp"].(int64),
@@ -391,14 +398,14 @@ func processWeb100Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
 	return nil
 }
 
-func parseTarball(tt testType, emit emitFunc, r io.Reader, badFiles *int64) error {
+func parseTarball(tt testType, path string, emit emitFunc, r io.Reader, badFiles *int64) error {
 	switch tt {
 	case NDT7TestType:
 		return processNdt7Reader(emit, r, badFiles)
 	case NDT5TestType:
 		return processNdt5Reader(emit, r, badFiles)
 	case Web100TestType:
-		return processWeb100Reader(emit, r, badFiles)
+		return processWeb100Reader(emit, path, r, badFiles)
 	}
 	return fmt.Errorf("unknown test type %q", tt)
 }
@@ -567,7 +574,7 @@ func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, da
 						return oErr
 					}
 					defer r.Close()
-					return parseTarball(item.testType, func(fr *models.FetchedResult) { rows = append(rows, fr) }, r, &badFiles)
+					return parseTarball(item.testType, item.path, func(fr *models.FetchedResult) { rows = append(rows, fr) }, r, &badFiles)
 				})
 				if err != nil {
 					if !errors.Is(err, context.Canceled) {
