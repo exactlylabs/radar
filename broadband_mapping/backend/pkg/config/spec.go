@@ -36,6 +36,9 @@ type Config struct {
 	StatesLayerName           string `config:"STATES_LAYER_NAME"`
 	CountiesLayerName         string `config:"COUNTIES_LAYER_NAME"`
 	TribalTractsLayerName     string `config:"TRIBAL_TRACTS_LAYER_NAME"`
+	// First date (YYYY-MM-DD) whose files the hourly ingestor only reads once the processor wrote
+	// completeness/<date>.json. Dates before were processed before the manifest existed.
+	IngestManifestFrom string `config:"INGEST_MANIFEST_FROM"`
 }
 
 func (c *Config) DBDSN() string {

@@ -5,13 +5,12 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 )
 
-func NewIngestorAppStorages(db driver.Conn, nWorkers int, truncate bool) storages.IngestorAppStorages {
+func NewIngestorAppStorages(db driver.Conn, nWorkers int) storages.IngestorAppStorages {
 	return storages.IngestorAppStorages{
 		GeospaceStorage: NewGeospaceStorage(db),
 		ASNOrgStorage:   NewASNOrgStorage(db),
 		MeasurementStorage: NewMeasurementStorage(db, &MeasurementStorageOpts{
 			NWorkers: nWorkers,
-			Truncate: truncate,
 		}),
 		SummariesStorage: NewSummariesStorage(db),
 	}
