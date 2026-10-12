@@ -54,6 +54,8 @@ func (i *iterator[T]) GetRow() (obj T, err error) {
 	var count uint64
 	obj, err = i.scannRow(i.rows, &count)
 	if err != nil {
+		// Callers stop at the first error; drain the rows so the connection goes back to the pool.
+		i.rows.Close()
 		return nil, errors.Wrap(err, "iterator#GetRow scanner")
 	}
 	i.count = &count

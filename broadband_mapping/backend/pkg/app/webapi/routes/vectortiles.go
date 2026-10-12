@@ -98,8 +98,21 @@ func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo
 		return
 	}
 
+	asnStr := ""
+	if args.ASNOrgId != nil {
+		asnStr = *args.ASNOrgId
+	}
+	tileKey := fmt.Sprintf("%s/%d/%d/%d/%s/%s/%t", namespace, z, x, y, args.SummaryFilter, asnStr, useGzip)
+	if conf.UseCache() {
+		if data, err := tilesCache.Get(tileKey); err == nil {
+			writeVectorTile(ctx, data, useGzip)
+			return
+		}
+	}
+
 	vt, err := tilesetServer.Get(x, y, z)
 	if err == geo.ErrEmptyTile {
+		setPublicCache(ctx, false)
 		return
 	} else if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles GetVectorTile"))
@@ -135,11 +148,18 @@ func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles Marshal"))
 	}
+	if conf.UseCache() {
+		tilesCache.Set(tileKey, vtData)
+	}
+	writeVectorTile(ctx, vtData, useGzip)
+}
 
+func writeVectorTile(ctx *webcontext.Context, data []byte, useGzip bool) {
 	ctx.ResponseHeader().Add("Content-Type", "application/vnd.mapbox-vector-tile")
-	ctx.ResponseHeader().Add("Content-Length", fmt.Sprintf("%d", len(vtData)))
+	ctx.ResponseHeader().Add("Content-Length", fmt.Sprintf("%d", len(data)))
 	if useGzip {
 		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
 	}
-	ctx.Write(vtData)
+	setPublicCache(ctx, true)
+	ctx.Write(data)
 }

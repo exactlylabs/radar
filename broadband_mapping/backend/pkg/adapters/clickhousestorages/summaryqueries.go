@@ -70,89 +70,97 @@ func summaryFilter(geospaceId *string, asnOrgId *string, filter storages.Summary
 		args = append(args, *filter.Year)
 	}
 
-	return strings.Join(filterStr, "AND "), args
+	return strings.Join(filterStr, " AND "), args
+}
+
+// summaryColumns are read from the summary tables. The filters run in a subquery on the
+// summary table itself, so ClickHouse prunes partitions and primary key ranges before any join,
+// and the joins only see the rows of the requested geospaces/ASN.
+const summaryColumns = "med_mbps, med_min_rtt, bad_count, normal_count, good_count, total_samples, upload, geospace_id"
+
+const summarySelect = `
+	SELECT s.med_mbps, s.med_min_rtt, s.bad_count, s.normal_count,
+		s.good_count, s.total_samples, s.upload,
+		g.id, g.geo_id, g.name, g.centroid_lat, g.centroid_long,
+		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id`
+
+const geospaceSummarySelect = `
+	SELECT s.med_mbps, s.med_min_rtt, s.bad_count, s.normal_count,
+		s.good_count, s.total_samples, s.upload,
+		g.id, g.geo_id, g.namespace, g.name, g.centroid_lat, g.centroid_long,
+		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id`
+
+// namespaceGeospaces only holds the geospaces of one namespace (geospaces is sorted by namespace).
+const namespaceGeospaces = "(SELECT id, geo_id, name, centroid_lat, centroid_long, parent_id FROM geospaces WHERE namespace = ?)"
+
+// filteredSummary is the summary table restricted by the filter, as a subquery aliased s.
+func filteredSummary(viewName string, columns string, conditions []string, args []any) (string, []any) {
+	return fmt.Sprintf("(SELECT %s FROM %s WHERE %s) s", columns, viewName, strings.Join(conditions, " AND ")), args
+}
+
+func summaryConditions(geospaceId *string, asnOrgId *string, filter storages.SummaryFilter) ([]string, []any) {
+	conds, args := []string{}, []any{}
+	if f, a := summaryFilter(geospaceId, asnOrgId, filter); f != "" {
+		conds, args = append(conds, f), a
+	}
+	return conds, args
 }
 
 func summaryQuery(namespace namespaces.Namespace, filter storages.SummaryFilter) (query string, args []interface{}, err error) {
-	query = `
-	SELECT med_mbps, med_min_rtt, bad_count, normal_count, 
-		good_count, total_samples, upload, 
-		g.id, g.geo_id, g.name, g.centroid_lat, g.centroid_long,
-		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id
-	`
 	viewName := viewName(nil, filter)
 	if viewName == "" {
 		return "", nil, errors.New("chSummarizer#summaryQuery wrong filter set")
 	}
-	query = fmt.Sprintf("%s FROM %s s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id", query, viewName)
-	filterStr, args := summaryFilter(nil, nil, filter)
-	if filterStr != "" {
-		query = fmt.Sprintf("%s WHERE %s AND geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?)", query, filterStr)
-		args = append(args, namespace)
-	} else {
-		query += " WHERE geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?)"
-		args = append(args, namespace)
-	}
-	return
+	conds, args := summaryConditions(nil, nil, filter)
+	conds = append(conds, "geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?)")
+	args = append(args, namespace)
+	from, args := filteredSummary(viewName, summaryColumns, conds, args)
+	query = fmt.Sprintf("%s FROM %s JOIN %s g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id", summarySelect, from, namespaceGeospaces)
+	args = append(args, namespace)
+	return query, args, nil
 }
 
 func summaryAsnQuery(namespace namespaces.Namespace, asnOrgId string, filter storages.SummaryFilter) (query string, args []interface{}, err error) {
-	query = `
-	SELECT med_mbps, med_min_rtt, bad_count, normal_count, 
-		good_count, total_samples, upload, 
-		g.id, g.geo_id, g.name, g.centroid_lat, g.centroid_long, 
-		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id,
-		a.name
-	`
 	viewName := viewName(&asnOrgId, filter)
 	if viewName == "" {
 		return "", nil, errors.New("chSummarizer#summaryQuery wrong filter set")
 	}
-	query = fmt.Sprintf("%s FROM %s s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id JOIN asn_orgs a ON s.asn_org_id = a.id", query, viewName)
-	filterStr, args := summaryFilter(nil, &asnOrgId, filter)
-	if filterStr != "" {
-		query = fmt.Sprintf("%s WHERE %s AND geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?) AND s.asn_org_id = ?", query, filterStr)
-		args = append(args, namespace, asnOrgId)
-	} else {
-		query += " WHERE geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?) AND s.asn_org_id = ?"
-		args = append(args, namespace, asnOrgId)
-	}
-	return
+	conds, args := summaryConditions(nil, &asnOrgId, filter)
+	conds = append(conds, "geospace_id IN (SELECT id FROM geospaces WHERE namespace = ?)")
+	args = append(args, namespace)
+	from, args := filteredSummary(viewName, summaryColumns+", asn_org_id", conds, args)
+	query = fmt.Sprintf(
+		"%s, a.name FROM %s JOIN %s g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id"+
+			" JOIN (SELECT id, name FROM asn_orgs WHERE id = ?) a ON s.asn_org_id = a.id",
+		summarySelect, from, namespaceGeospaces)
+	args = append(args, namespace, asnOrgId)
+	return query, args, nil
 }
 
 func geospaceSummaryQuery(geospaceId string, filter storages.SummaryFilter) (query string, args []interface{}, err error) {
-	query = `
-	SELECT med_mbps, med_min_rtt, bad_count, normal_count, 
-		good_count, total_samples, upload, 
-		g.id, g.geo_id, g.namespace, g.name, g.centroid_lat, g.centroid_long, 
-		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id
-	`
 	viewName := viewName(nil, filter)
 	if viewName == "" {
 		return "", nil, errors.New("clickhousesummarizer.geospaceSummaryQuery wrong filter set")
 	}
-	query = fmt.Sprintf("%s FROM %s s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id ", query, viewName)
-	filterStr, args := summaryFilter(&geospaceId, nil, filter)
-	query = fmt.Sprintf("%s WHERE %s", query, filterStr)
-	return
+	conds, args := summaryConditions(&geospaceId, nil, filter)
+	from, args := filteredSummary(viewName, summaryColumns, conds, args)
+	query = fmt.Sprintf("%s FROM %s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id", geospaceSummarySelect, from)
+	return query, args, nil
 }
 
 func geospaceASNSummaryQuery(geospaceId string, asnId string, filter storages.SummaryFilter) (query string, args []interface{}, err error) {
-	query = `
-	SELECT med_mbps, med_min_rtt, bad_count, normal_count, 
-		good_count, total_samples, upload, 
-		g.id, g.geo_id, g.namespace, g.name, g.centroid_lat, g.centroid_long, 
-		p.id, p.name, p.geo_id, p.namespace, p.centroid_lat, p.centroid_long, p.parent_id,
-		a.id, a.name
-	`
 	viewName := viewName(&asnId, filter)
 	if viewName == "" {
 		return "", nil, errors.New("clickhousesummarizer.geospaceAsnSummaryQuery wrong filter set")
 	}
-	query = fmt.Sprintf("%s FROM %s s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id LEFT JOIN asn_orgs a ON a.id = s.asn_org_id", query, viewName)
-	filterStr, args := summaryFilter(&geospaceId, &asnId, filter)
-	query = fmt.Sprintf("%s WHERE %s", query, filterStr)
-	return
+	conds, args := summaryConditions(&geospaceId, &asnId, filter)
+	from, args := filteredSummary(viewName, summaryColumns+", asn_org_id", conds, args)
+	query = fmt.Sprintf(
+		"%s, a.id, a.name FROM %s JOIN geospaces g ON g.id = s.geospace_id LEFT JOIN geospaces p ON g.parent_id = p.id"+
+			" LEFT JOIN (SELECT id, name FROM asn_orgs WHERE id = ?) a ON a.id = s.asn_org_id",
+		geospaceSummarySelect, from)
+	args = append(args, asnId)
+	return query, args, nil
 }
 
 func scanToSummaryResult(rows driver.Rows, res *storages.GeospaceSummaryResult, hasASN bool) (err error) {

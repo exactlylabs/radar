@@ -22,6 +22,7 @@ func HandleGetGeoJSONArcGIS(ctx *webcontext.Context, conf *config.Config, server
 	cacheKey := fmt.Sprintf("%s_%t", ctx.Request.URL.String(), useGzip)
 
 	if v, err := geojsonCache.Get(cacheKey); err == nil && conf.UseCache() {
+		setPublicCache(ctx, true)
 		if useGzip {
 			ctx.ResponseHeader().Add("Content-Encoding", "gzip")
 		}
@@ -36,7 +37,10 @@ func HandleGetGeoJSONArcGIS(ctx *webcontext.Context, conf *config.Config, server
 	}
 
 	collection := getGeoJSONCollection(ctx, servers)
-	summaryMap, err := getSummary(summaries, args.PortNamespace(), args.ASNOrgId, args.SummaryFilter, false)
+	if collection == nil {
+		return
+	}
+	summaryMap, err := getSummary(summaries, args.PortNamespace(), args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON getSummary"))
 	}

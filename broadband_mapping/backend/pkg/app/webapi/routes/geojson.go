@@ -2,10 +2,10 @@ package routes
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
@@ -19,8 +19,9 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-var summariesCache *bigcache.BigCache
+var summariesCache *summaryMemo
 var geojsonCache *bigcache.BigCache
+var tilesCache *bigcache.BigCache
 
 type GeoJSONArgs struct {
 	Namespace string  `json:"namespace" validate:"required" enums:"states,counties,tribal_tracts"`
@@ -65,6 +66,7 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 	cacheKey := fmt.Sprintf("%s_%t", ctx.Request.URL.String(), useGzip)
 
 	if v, err := geojsonCache.Get(cacheKey); err == nil && conf.UseCache() {
+		setPublicCache(ctx, true)
 		if useGzip {
 			ctx.ResponseHeader().Add("Content-Encoding", "gzip")
 		}
@@ -79,7 +81,10 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 	}
 
 	collection := getGeoJSONCollection(ctx, servers)
-	summaryMap, err := getSummary(summaries, args.PortNamespace(), args.ASNOrgId, args.SummaryFilter, false)
+	if collection == nil {
+		return
+	}
+	summaryMap, err := getSummary(summaries, args.PortNamespace(), args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON getSummary"))
 	}
@@ -152,35 +157,27 @@ func validateNamespace(ns string, c *webcontext.Context) bool {
 }
 
 func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namespace, asnOrgId *string, filter storages.SummaryFilter, useCache bool) (map[string]storages.GeospaceSummaryResult, error) {
-	summaryMap := make(map[string]storages.GeospaceSummaryResult)
-	key := cacheKey(namespace, asnOrgId, filter)
-	if v, err := summariesCache.Get(key); err == nil && useCache {
-		if err := json.Unmarshal(v, &summaryMap); err != nil {
-			panic(errors.W(err))
-		}
-	} else {
-		var err error
+	m, err := summariesCache.get(cacheKey(namespace, asnOrgId, filter), useCache, func() (summaryMap, error) {
 		var namespaceSummary []storages.GeospaceSummaryResult
+		var err error
 		if asnOrgId != nil {
 			namespaceSummary, err = summaries.SummaryForNamespaceAndASN(namespace, *asnOrgId, filter)
 		} else {
 			namespaceSummary, err = summaries.SummaryForNamespace(namespace, filter)
 		}
-
 		if err != nil {
-			err = errors.Wrap(err, "routes.nsSummary GeoNamespaceSummary")
 			return nil, err
 		}
+		summaryMap := make(summaryMap, len(namespaceSummary))
 		for _, summary := range namespaceSummary {
 			summaryMap[summary.Geospace.Id] = summary
 		}
-		summaryMapJson, err := json.Marshal(summaryMap)
-		if err != nil {
-			panic(errors.W(err))
-		}
-		summariesCache.Set(key, summaryMapJson)
+		return summaryMap, nil
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "routes.getSummary GeoNamespaceSummary")
 	}
-	return summaryMap, nil
+	return m, nil
 }
 
 func cacheKey(ns namespaces.Namespace, asn *string, filter storages.SummaryFilter) string {
@@ -204,9 +201,23 @@ func queryParamAsInt(ctx *webcontext.Context, key string) *int {
 	return &intVal
 }
 
+// gzipAllowed reports whether the client accepts a gzip body. Browsers send a list
+// ("gzip, deflate, br"), so each header value is split into its codings; "gzip;q=0" refuses it.
 func gzipAllowed(ctx *webcontext.Context) bool {
-	for _, encoding := range ctx.Request.Header.Values("Accept-Encoding") {
-		if encoding == "gzip" {
+	for _, value := range ctx.Request.Header.Values("Accept-Encoding") {
+		for _, coding := range strings.Split(value, ",") {
+			parts := strings.Split(coding, ";")
+			if !strings.EqualFold(strings.TrimSpace(parts[0]), "gzip") {
+				continue
+			}
+			for _, param := range parts[1:] {
+				param = strings.ReplaceAll(strings.TrimSpace(param), " ", "")
+				if strings.HasPrefix(param, "q=") {
+					if f, err := strconv.ParseFloat(param[2:], 64); err == nil && f == 0 {
+						return false
+					}
+				}
+			}
 			return true
 		}
 	}
@@ -265,6 +276,7 @@ func writeGeoJsonResponse(ctx *webcontext.Context, collection geo.GeoJSON, gzip 
 	if err != nil {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON MarshalJSON"))
 	}
+	setPublicCache(ctx, true)
 	if gzip {
 		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
 	}
@@ -274,17 +286,29 @@ func writeGeoJsonResponse(ctx *webcontext.Context, collection geo.GeoJSON, gzip 
 }
 
 func init() {
-	summariesCacheConf := bigcache.DefaultConfig(5 * time.Minute)
-	summariesCacheConf.HardMaxCacheSize = 100e6 // 100MB
+	// Decoded namespace summaries. A counties summary is a few MB, so keep a bounded number.
+	summariesCache = newSummaryMemo(5*time.Minute, 64)
+
+	// Note: HardMaxCacheSize is in MB (the old 100e6 meant unbounded), and an entry must fit in
+	// one shard (HardMaxCacheSize / Shards): a whole-namespace GeoJSON can be tens of MB.
+	geojsonCacheConf := bigcache.DefaultConfig(1 * time.Hour)
+	geojsonCacheConf.Shards = 4
+	geojsonCacheConf.MaxEntriesInWindow = 256
+	geojsonCacheConf.MaxEntrySize = 256 * 1024
+	geojsonCacheConf.HardMaxCacheSize = 384
 	var err error
-	summariesCache, err = bigcache.New(context.Background(), summariesCacheConf)
+	geojsonCache, err = bigcache.New(context.Background(), geojsonCacheConf)
 	if err != nil {
 		panic(err)
 	}
 
-	geojsonCacheConf := bigcache.DefaultConfig(1 * time.Hour)
-	geojsonCacheConf.HardMaxCacheSize = 100e6 // 100MB
-	geojsonCache, err = bigcache.New(context.Background(), geojsonCacheConf)
+	tilesCacheConf := bigcache.DefaultConfig(30 * time.Minute)
+	tilesCacheConf.Shards = 64
+	tilesCacheConf.MaxEntriesInWindow = 4096
+	tilesCacheConf.MaxEntrySize = 16 * 1024
+	tilesCacheConf.HardMaxCacheSize = 256
+	tilesCacheConf.Verbose = false
+	tilesCache, err = bigcache.New(context.Background(), tilesCacheConf)
 	if err != nil {
 		panic(err)
 	}
