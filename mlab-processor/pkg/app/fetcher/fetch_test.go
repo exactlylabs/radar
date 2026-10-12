@@ -453,3 +453,45 @@ func TestWeb100IDIsStable(t *testing.T) {
 		t.Fatal("collision")
 	}
 }
+
+// rangedFake is fakeSource with ListRange, so ListTarballs shards it.
+type rangedFake struct{ *fakeSource }
+
+func (f rangedFake) ListRange(ctx context.Context, prefix, start, end string) ([]string, error) {
+	all, err := f.fakeSource.List(ctx, prefix)
+	if err != nil {
+		return nil, err
+	}
+	var out []string
+	for _, n := range all {
+		if (start == "" || n >= start) && (end == "" || n < end) {
+			out = append(out, n)
+		}
+	}
+	return out, nil
+}
+
+func TestListTarballsShardsAreExact(t *testing.T) {
+	src := buildSource(3, 2, 2)
+	// names in every hour, on the cut points, and outside the "<date>T<hh>" pattern
+	for h := 0; h < 24; h++ {
+		src.objects[fmt.Sprintf("ndt/ndt7/%s/20260731T%02d0000.000000Z-ndt7-mlab1-abc01-ndt.tgz", day, h)] = tgz(map[string][]byte{"a.json.gz": gz(ndt7JSON(h))})
+		src.objects[fmt.Sprintf("ndt/ndt7/%s/20260731T%02d", day, h)] = tgz(nil)
+	}
+	src.objects["ndt/ndt7/"+day+"/zzz-odd-name.tgz"] = tgz(nil)
+	src.objects["ndt/ndt7/"+day+"/0000-before-everything.tgz"] = tgz(nil)
+	plain, err := ListTarballs(context.Background(), src, testDate, fastOpts())
+	if err != nil {
+		t.Fatal(err)
+	}
+	sharded, err := ListTarballs(context.Background(), rangedFake{src}, testDate, fastOpts())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(plain, sharded) {
+		t.Fatalf("plain %v\nsharded %v", plain, sharded)
+	}
+	if n := len(sharded[NDT7TestType]); n != 3+48+2 {
+		t.Fatalf("ndt7 listed %d", n)
+	}
+}

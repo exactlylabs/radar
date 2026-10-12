@@ -26,6 +26,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"sort"
 	"strconv"
@@ -36,8 +37,10 @@ import (
 	"testing"
 	"time"
 
+	gcpstorage "cloud.google.com/go/storage"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt5"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
+	"google.golang.org/api/option"
 )
 
 type sampleTarball struct {
@@ -411,4 +414,94 @@ func (f *filteredSource) List(ctx context.Context, prefix string) ([]string, err
 		}
 	}
 	return out, nil
+}
+
+// TestSampleLiveDownload times only the download path of the live source (no parsing):
+// the listing, then every sample object read into memory by MLAB_SAMPLE_DOWNLOAD_WORKERS
+// goroutines. Needs the network and MLAB_SAMPLE_LIVE=1.
+func TestSampleLiveDownload(t *testing.T) {
+	tarballs := sampleTarballs(t)
+	if os.Getenv("MLAB_SAMPLE_LIVE") == "" {
+		t.Skip("MLAB_SAMPLE_LIVE not set")
+	}
+	src, closer, err := NewMLabSource(t.Context())
+	if os.Getenv("MLAB_SAMPLE_H2") != "" { // the pre-fix client: default transport, HTTP/2
+		var client *gcpstorage.Client
+		client, err = gcpstorage.NewClient(t.Context(), option.WithoutAuthentication())
+		src, closer = &gcsSource{client: client, bucket: mlabBucket}, client
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer closer.Close()
+	workers := 48
+	if w, _ := strconv.Atoi(os.Getenv("MLAB_SAMPLE_DOWNLOAD_WORKERS")); w > 0 {
+		workers = w
+	}
+	date, _ := time.Parse("2006/01/02", strings.Join(strings.Split(tarballs[0].path, "/")[2:5], "/"))
+	t0 := time.Now()
+	listing, err := ListTarballs(t.Context(), src, date, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	listSecs := time.Since(t0).Seconds()
+	// If the sample dir holds full listings of the date (ndt7-all.txt, ndt5-all.txt: one
+	// name per line), the sharded listing must be exactly that.
+	for _, tt := range []testType{NDT7TestType, NDT5TestType} {
+		full, err := os.ReadFile(filepath.Join(os.Getenv("MLAB_SAMPLE_DIR"), string(tt)+"-all.txt"))
+		if err != nil {
+			continue
+		}
+		want := strings.Fields(string(full))
+		if !reflect.DeepEqual(want, listing[tt]) {
+			t.Errorf("%s: sharded listing has %d names, the full listing %d", tt, len(listing[tt]), len(want))
+		} else {
+			t.Logf("%s: sharded listing identical to the full listing (%d names)", tt, len(want))
+		}
+	}
+	var bytesTotal, maxDur, sumDur atomic.Int64
+	ch := make(chan sampleTarball)
+	var wg sync.WaitGroup
+	t1 := time.Now()
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for s := range ch {
+				start := time.Now()
+				r, err := src.Open(t.Context(), s.path)
+				if err != nil {
+					t.Error(err)
+					continue
+				}
+				b, err := readAllInto(nil, r)
+				r.Close()
+				if err != nil {
+					t.Error(err)
+					continue
+				}
+				d := int64(time.Since(start))
+				bytesTotal.Add(int64(len(b)))
+				sumDur.Add(d)
+				for {
+					m := maxDur.Load()
+					if d <= m || maxDur.CompareAndSwap(m, d) {
+						break
+					}
+				}
+			}
+		}()
+	}
+	for _, s := range tarballs {
+		ch <- s
+	}
+	close(ch)
+	wg.Wait()
+	wall := time.Since(t1).Seconds()
+	mb := float64(bytesTotal.Load()) / 1e6
+	msg := fmt.Sprintf("live download only: listing %.2fs; %d objects, %.1f MB, %d workers: %.2fs wall = %.1f MB/s; mean %.0f ms, max %.0f ms per object",
+		listSecs, len(tarballs), mb, workers, wall, mb/wall,
+		float64(sumDur.Load())/float64(len(tarballs))/1e6, float64(maxDur.Load())/1e6)
+	t.Log(msg)
+	fmt.Fprintln(os.Stderr, msg)
 }
