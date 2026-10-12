@@ -76,7 +76,20 @@ export const quartersWithRange: QuartersWithRangeObject = {
   Q4: `${Quarters.Q4} (${QuartersDateRanges.Q4})`,
 }
 
-export const years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
+// First year with M-Lab data on the map.
+export const FIRST_DATA_YEAR = 2009;
+
+/**
+ * Selectable years, newest first: from the given date's year back to FIRST_DATA_YEAR.
+ * years[0] is the current year (labels omit the year for it).
+ */
+export const getYears = (today: Date = new Date()): number[] => {
+  const result: number[] = [];
+  for (let year = today.getFullYear(); year >= FIRST_DATA_YEAR; year--) result.push(year);
+  return result;
+}
+
+export const years = getYears();
 export const months = ['All months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const quarters = ['Q1: Jan 1 - Mar 31', 'Q2: Apr 1 - Jun 30', 'Q3: Jul 1 - Sep 30', 'Q4: Oct 1 - Dec 31'];
 export const halves = ['Jan 1 - Jun 30', 'Jul 1 - Dec 31'];
@@ -147,35 +160,49 @@ export const generateFilterLabel = (dateObject: DateFilter): string => {
     filterLabel = `${getMonthName(dateObject.selectedMonth - 1)}${isCurrentYear ? '' : ` (${year})`}`;
   if(dateObject.selectedSemester)
     filterLabel = `H${dateObject.selectedSemester}${isCurrentYear ? '' : ` (${year})`}`;
-  if(dateObject.selectedWeek)
+  if(dateObject.selectedWeek !== undefined && dateObject.selectedWeek !== null)
     filterLabel = `${getWeekLimits(year, dateObject.selectedWeek + 1)}${isCurrentYear ? '' : ` (${year})`}`;
   if(dateObject.selectedQuarter)
     filterLabel = `Q${dateObject.selectedQuarter}${isCurrentYear ? '' : ` (${year})`}`;
   return filterLabel;
 }
 
-export const getDateQueryStringFromCalendarType = (calendarType: string): string => {
-  let queryString: string = '';
-  const today = new Date();
-  let thisMonth = today.getMonth();
-  let thisYear = today.getFullYear();
-  switch (calendarType) {
-    case CalendarFilters.LAST_WEEK:
-      const thisWeekNumber = getWeekNumber();
-      queryString = `&year=${new Date().getFullYear()}&week=${thisWeekNumber - 1 - 1}`; // minus 2 (1 for backend 0 indexing and 1 for one less week)
-      break;
-    case CalendarFilters.LAST_MONTH:
-      // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
-      // return 1. For our backend that's January, but as we want 'Last Month' we can keep that value as is.
-      if(thisMonth === 0) {
-        thisMonth = 11;
-        thisYear = thisYear - 1;
-      }
-      queryString = `&year=${thisYear}&month=${thisMonth}`;
-      break;
-    case CalendarFilters.THIS_YEAR:
+/**
+ * Year and 1-based month (as the backend expects) of the month before the given date.
+ * In January that is December of the previous year.
+ */
+export const getLastMonth = (today: Date = new Date()): { year: number, month: number } => {
+  // getMonth() is 0-based, so for any month but January it already is last month's 1-based number.
+  const thisMonth = today.getMonth();
+  if (thisMonth === 0) return { year: today.getFullYear() - 1, month: 12 };
+  return { year: today.getFullYear(), month: thisMonth };
+}
 
-      queryString = `&year=${thisYear}`;
+/**
+ * Year and backend week (0-based, Sunday-first) of the week before the given date.
+ * Taken from the date seven days back, so the first week of January asks for the previous year.
+ */
+export const getLastWeekFilter = (today: Date = new Date()): { year: number, week: number } => {
+  const lastWeekDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+  // getWeekNumber is 1-based, the backend is 0-based
+  return { year: lastWeekDay.getFullYear(), week: getWeekNumber(lastWeekDay) - 1 };
+}
+
+export const getDateQueryStringFromCalendarType = (calendarType: string, today: Date = new Date()): string => {
+  let queryString: string = '';
+  switch (calendarType) {
+    case CalendarFilters.LAST_WEEK: {
+      const { year, week } = getLastWeekFilter(today);
+      queryString = `&year=${year}&week=${week}`;
+      break;
+    }
+    case CalendarFilters.LAST_MONTH: {
+      const { year, month } = getLastMonth(today);
+      queryString = `&year=${year}&month=${month}`;
+      break;
+    }
+    case CalendarFilters.THIS_YEAR:
+      queryString = `&year=${today.getFullYear()}`;
       break;
     case CalendarFilters.ALL_TIME:
       break;
@@ -197,7 +224,7 @@ const decodeCustomDate = (customDate: string): string => {
       year = year.replace('(', '').replace(')', '');
       queryString += `&year=${year}`;
     } else {
-      queryString += `&year=2025`;
+      queryString += `&year=${years[0]}`;
     }
   } else if(customDate.includes('Q')) {
     const split: Array<string> = customDate.split(' ');
@@ -208,7 +235,7 @@ const decodeCustomDate = (customDate: string): string => {
       year = year.replace('(', '').replace(')', '');
       queryString += `&year=${year}`;
     } else {
-      queryString += `&year=2025`;
+      queryString += `&year=${years[0]}`;
     }
   } else if(customDate.includes('-')) {
     //Oct 11 - Oct 17 || Oct 11 - Oct 17 (2020)
@@ -224,14 +251,14 @@ const decodeCustomDate = (customDate: string): string => {
     const weekNumber = getWeekNumber(endDay);
     queryString += `&week=${weekNumber - 1}`;
     if(year) queryString += `&year=${year}`;
-    else queryString += `&year=2025`;
+    else queryString += `&year=${years[0]}`;
   } else if(isSpecificMonth(customDate)) {
     const split: Array<string> = customDate.split(' ');
     const month = getMonthNumberFromName(split[0]);
     const year = split.length > 1 ? split[1].split('(')[1].split(')')[0] : null;
     queryString += `&month=${month}`;
     if(year) queryString += `&year=${year}`;
-    else queryString += `&year=2025`;
+    else queryString += `&year=${years[0]}`;
   } else if(isSpecificYear(customDate)) {
     queryString += `&year=${customDate}`;
   } else {
