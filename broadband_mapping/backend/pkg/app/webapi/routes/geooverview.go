@@ -61,5 +61,6 @@ func GeospaceMeasurementsOverviewHandler(ctx *webcontext.Context, summaries stor
 		}
 		res.ASNOrg = a
 	}
+	setPublicCache(ctx, false)
 	ctx.JSON(http.StatusOK, res)
 }
