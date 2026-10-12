@@ -24,7 +24,7 @@ func (*summariesStorage) Open() error {
 }
 
 func (ss *summariesStorage) Connected() error {
-	return errors.Wrap(ss.conn.Ping(context.Background()), "summariesStorage#Connected")
+	return wrap(ss.conn.Ping(context.Background()), "summariesStorage#Connected")
 }
 
 // Summarize implements storages.SummariesStorage
