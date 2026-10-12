@@ -32,5 +32,6 @@ RUN chmod -R +x ./scripts
 RUN chmod +x mlab-processor
 
 ENTRYPOINT [ "./scripts/docker-entrypoint" ]
-CMD [ "./mlab-processor" ]
+# Resident container: legacy loop mode. For a systemd timer run the binary without -loop.
+CMD [ "./mlab-processor", "-loop" ]
 

@@ -4,30 +4,27 @@ import (
 	"github.com/tidwall/rtree"
 )
 
+type entry struct {
+	poly       *Polygon
+	namespace  string
+	externalId string
+}
+
 type Index struct {
-	tree                rtree.RTree
-	indexIdToPoly       map[int]*Polygon
-	indexIdToExternalId map[int]string
-	indexIdtoNamespace  map[int]string
-	nextIndexId         int
+	tree    rtree.RTree
+	entries []entry
 }
 
 func NewIndex() *Index {
-	return &Index{
-		tree:                rtree.RTree{},
-		indexIdToPoly:       map[int]*Polygon{},
-		indexIdToExternalId: map[int]string{},
-		indexIdtoNamespace:  map[int]string{},
-		nextIndexId:         0,
-	}
+	return &Index{}
 }
 
-func (i *Index) Add(namespace, externalId string, p *Polygon) {
-	id := i.nextId()
+// Len returns the number of polygons (rings) indexed.
+func (i *Index) Len() int { return len(i.entries) }
 
-	i.indexIdtoNamespace[id] = namespace
-	i.indexIdToExternalId[id] = externalId
-	i.indexIdToPoly[id] = p
+func (i *Index) Add(namespace, externalId string, p *Polygon) {
+	id := len(i.entries)
+	i.entries = append(i.entries, entry{poly: p, namespace: namespace, externalId: externalId})
 
 	points := p.BoundingBox()
 
@@ -39,39 +36,23 @@ type NamespaceAndExternalId struct {
 	ExternalId string
 }
 
+// ContainingShapeID returns the distinct (namespace, id) pairs of the polygons containing p.
 func (i *Index) ContainingShapeID(p *Point) []*NamespaceAndExternalId {
-	foundIds := map[int]bool{}
+	var results []*NamespaceAndExternalId
 
 	i.tree.Search([2]float64{p.Lat, p.Lng}, [2]float64{p.Lat, p.Lng}, func(min, max [2]float64, value interface{}) bool {
-		id := value.(int)
-		poly := i.indexIdToPoly[id]
-
-		if poly.Contains(p) {
-			foundIds[id] = true
+		e := &i.entries[value.(int)]
+		if !e.poly.Contains(p) {
+			return true
 		}
-
+		for _, r := range results {
+			if r.Namespace == e.namespace && r.ExternalId == e.externalId {
+				return true
+			}
+		}
+		results = append(results, &NamespaceAndExternalId{Namespace: e.namespace, ExternalId: e.externalId})
 		return true
 	})
 
-	results := []*NamespaceAndExternalId{}
-	recorded := map[string]bool{}
-	for id := range foundIds {
-		if !recorded[i.indexIdtoNamespace[id]+":"+i.indexIdToExternalId[id]] {
-			results = append(results, &NamespaceAndExternalId{
-				Namespace:  i.indexIdtoNamespace[id],
-				ExternalId: i.indexIdToExternalId[id],
-			})
-
-			recorded[i.indexIdtoNamespace[id]+":"+i.indexIdToExternalId[id]] = true
-		}
-	}
-
 	return results
-}
-
-func (i *Index) nextId() int {
-	id := i.nextIndexId
-	i.nextIndexId++
-
-	return id
 }

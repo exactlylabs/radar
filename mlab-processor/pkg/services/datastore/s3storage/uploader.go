@@ -1,75 +1,52 @@
 package s3storage
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-type uploadData struct {
-	reader io.ReadCloser
-	dst    string
-}
-
-// Uploader sends data to a given bucket
+// Uploader sends files to a given bucket, synchronously and with retries.
 type Uploader struct {
-	uploadCh   chan *uploadData
-	wg         *sync.WaitGroup
 	uploader   *s3manager.Uploader
 	bucketName string
+	attempts   int
+	backoff    time.Duration
 }
 
-func NewUploader(bucketName string, awsSession *session.Session, nWorkers int) *Uploader {
-	wg := &sync.WaitGroup{}
-	ch := make(chan *uploadData)
-	u := &Uploader{
-		uploadCh:   ch,
-		wg:         wg,
+func NewUploader(bucketName string, awsSession *session.Session) *Uploader {
+	return &Uploader{
 		bucketName: bucketName,
 		uploader:   s3manager.NewUploader(awsSession),
-	}
-	for i := 0; i < nWorkers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			u.uploadWorker(ch)
-		}()
-	}
-	return u
-}
-
-func (u *Uploader) Upload(src io.ReadCloser, dst string) {
-	u.uploadCh <- &uploadData{
-		reader: src,
-		dst:    dst,
+		attempts:   5,
+		backoff:    15 * time.Second,
 	}
 }
 
-func (u *Uploader) Close() {
-	close(u.uploadCh)
-	u.wg.Wait()
-}
-
-func (u *Uploader) uploadWorker(ch chan *uploadData) {
-	for work := range ch {
-	RETRY:
-		for i := 0; i < 5; i++ {
-			_, err := u.uploader.Upload(&s3manager.UploadInput{
-				Bucket: &u.bucketName,
-				Key:    &work.dst,
-				Body:   work.reader,
-			})
-			if err != nil {
-				log.Println(err)
-				time.Sleep(time.Second * 15)
-			} else {
-				break RETRY
-			}
+// Upload stores src at dst. Every attempt starts from offset 0 of src, so a retry after a
+// partial transfer can never store a truncated object.
+func (u *Uploader) Upload(src io.ReadSeeker, dst string) error {
+	var err error
+	for i := 0; i < u.attempts; i++ {
+		if i > 0 {
+			time.Sleep(u.backoff * time.Duration(i))
 		}
-		work.reader.Close()
+		if _, sErr := src.Seek(0, io.SeekStart); sErr != nil {
+			return fmt.Errorf("s3storage.Upload seek %s: %w", dst, sErr)
+		}
+		_, err = u.uploader.Upload(&s3manager.UploadInput{
+			Bucket: &u.bucketName,
+			Key:    &dst,
+			Body:   src,
+		})
+		if err == nil {
+			return nil
+		}
+		log.Printf("s3storage: upload of %s failed (attempt %d/%d): %v", dst, i+1, u.attempts, err)
 	}
+	return fmt.Errorf("s3storage.Upload %s: giving up after %d attempts: %w", dst, u.attempts, err)
 }

@@ -3,6 +3,7 @@ package gcpstorage
 import (
 	"context"
 	"io"
+	"os"
 
 	"cloud.google.com/go/storage"
 	"github.com/exactlylabs/go-errors/pkg/errors"
@@ -13,7 +14,6 @@ import (
 type gcsStorage struct {
 	bucketName string
 	cli        *storage.Client
-	uploader   *Uploader
 }
 
 func New(ctx context.Context, bucketName string) (datastore.Storage, error) {
@@ -21,13 +21,9 @@ func New(ctx context.Context, bucketName string) (datastore.Storage, error) {
 	if err != nil {
 		return nil, errors.W(err)
 	}
-	bucket := cli.Bucket(bucketName)
-	uploader := NewUploader(bucket)
-
 	return &gcsStorage{
 		bucketName: bucketName,
 		cli:        cli,
-		uploader:   uploader,
 	}, nil
 }
 
@@ -51,7 +47,7 @@ func (g *gcsStorage) List(ctx context.Context, prefix string) ([]string, error) 
 func (g *gcsStorage) Delete(ctx context.Context, filepath string) error {
 	err := g.cli.Bucket(g.bucketName).Object(filepath).Delete(ctx)
 	if err != nil {
-		errors.W(err)
+		return errors.W(err)
 	}
 	return nil
 }
@@ -70,19 +66,31 @@ func (g *gcsStorage) Exists(ctx context.Context, filepath string) (bool, error) 
 // Get implements datastore.Storage.
 func (g *gcsStorage) Get(ctx context.Context, filepath string) (io.ReadCloser, error) {
 	r, err := g.cli.Bucket(g.bucketName).Object(filepath).NewReader(ctx)
-	if err != nil {
+	if errors.Is(err, storage.ErrObjectNotExist) {
+		return nil, os.ErrNotExist
+	} else if err != nil {
 		return nil, errors.W(err)
 	}
 	return r, nil
 }
 
 // Store implements datastore.Storage.
-func (g *gcsStorage) Store(ctx context.Context, reader io.ReadCloser, filepath string) error {
-	g.uploader.Upload(ctx, reader, filepath)
+func (g *gcsStorage) Store(ctx context.Context, reader io.ReadSeeker, filepath string) error {
+	if _, err := reader.Seek(0, io.SeekStart); err != nil {
+		return errors.W(err)
+	}
+	w := g.cli.Bucket(g.bucketName).Object(filepath).NewWriter(ctx)
+	if _, err := io.Copy(w, reader); err != nil {
+		w.Close()
+		return errors.W(err)
+	}
+	// The object only becomes visible if Close succeeds
+	if err := w.Close(); err != nil {
+		return errors.W(err)
+	}
 	return nil
 }
 
 func (g *gcsStorage) Close() error {
-	g.uploader.Close()
-	return nil
+	return g.cli.Close()
 }
