@@ -351,3 +351,88 @@ func TestIPGeocodeWithoutFetchFails(t *testing.T) {
 		t.Fatal("expected an error when the fetch output is missing")
 	}
 }
+
+const prefix2 = "ndt/ndt5/2026/08/01/"
+
+var day2 = day.AddDate(0, 0, 1)
+
+func TestRunRangePrefetchesTheNextDate(t *testing.T) {
+	e := setup(t)
+	e.src.objects[prefix2+"d.tgz"] = tarball(t, "d", "10.2.2.2", "10.3.3.3", "11.1.1.1")
+	ctx := context.Background()
+	if failed := e.runner.RunRange(ctx, []time.Time{day, day2}, pipeline.AllSteps, true); len(failed) != 0 {
+		t.Fatalf("failed: %v", failed)
+	}
+	if e.runner.Prefetched != 1 {
+		t.Fatalf("prefetched %d dates, want 1", e.runner.Prefetched)
+	}
+	// uploads stay per date and in order: a prefetched fetch is uploaded with its date
+	want := []string{"fetch/2026-07-31.avro", "reversegeocode/2026-07-31.avro", "ipgeocode/2026-07-31.avro", "completeness/2026-07-31.json",
+		"fetch/2026-08-01.avro", "reversegeocode/2026-08-01.avro", "ipgeocode/2026-08-01.avro", "completeness/2026-08-01.json"}
+	if fmt.Sprint(e.storage.stored) != fmt.Sprint(want) {
+		t.Fatalf("upload order %v", e.storage.stored)
+	}
+	m, err := e.runner.LoadManifest(ctx, day2)
+	if err != nil || m == nil || m.Fetch.Tests != 6 || m.Fetch.TotalProcessed() != 1 || m.IPGeocode.Read != 6 || m.ReverseGeocode.Matched != 4 {
+		b, _ := json.Marshal(m)
+		t.Fatalf("manifest of the prefetched date %s %v", b, err)
+	}
+	if entries, _ := filepath.Glob(filepath.Join(e.dir, "output", "*", "*")); len(entries) != 0 {
+		t.Fatalf("leftover local files %v", entries)
+	}
+	// nothing is prefetched when the next date's fetch output exists and rerun is off
+	e.storage.stored = nil
+	if failed := e.runner.RunRange(ctx, []time.Time{day, day2}, pipeline.AllSteps, false); len(failed) != 0 || len(e.storage.stored) != 0 {
+		t.Fatalf("failed %v stored %v", failed, e.storage.stored)
+	}
+	if e.runner.Prefetched != 1 {
+		t.Fatalf("prefetched %d dates, want still 1", e.runner.Prefetched)
+	}
+}
+
+func TestPrefetchedFetchFailureFailsOnlyItsDate(t *testing.T) {
+	e := setup(t)
+	e.src.objects[prefix2+"d.tgz"] = tarball(t, "d", "10.2.2.2")
+	e.src.failOpen[prefix2+"d.tgz"] = true
+	failed := e.runner.RunRange(context.Background(), []time.Time{day, day2}, pipeline.AllSteps, true)
+	if len(failed) != 1 || !failed[0].Equal(day2) {
+		t.Fatalf("failed %v, want only %s", failed, day2.Format("2006-01-02"))
+	}
+	if e.runner.Prefetched != 1 {
+		t.Fatalf("prefetched %d", e.runner.Prefetched)
+	}
+	for _, p := range e.storage.stored {
+		if strings.Contains(p, "2026-08-01") {
+			t.Fatalf("the failed date uploaded %s", p)
+		}
+	}
+	if !e.exists("completeness/2026-07-31.json") {
+		t.Fatal("the first date must be complete")
+	}
+	if entries, _ := filepath.Glob(filepath.Join(e.dir, "output", "*", "*")); len(entries) != 0 {
+		t.Fatalf("leftover local files %v", entries)
+	}
+}
+
+func TestRunWindowPrefetchesTheNextDate(t *testing.T) {
+	e := setup(t)
+	e.src.objects[prefix2+"d.tgz"] = tarball(t, "d", "10.2.2.2")
+	ctx := context.Background()
+	if failed := e.runner.RunWindow(ctx, day, day2); len(failed) != 0 {
+		t.Fatalf("failed: %v", failed)
+	}
+	if e.runner.Prefetched != 1 {
+		t.Fatalf("prefetched %d dates, want 1", e.runner.Prefetched)
+	}
+	for _, d := range []time.Time{day, day2} {
+		if dec, err := e.runner.Check(ctx, d); err != nil || dec.Process {
+			t.Fatalf("%s: %+v %v", d.Format("2006-01-02"), dec, err)
+		}
+	}
+	// a cancelled run leaves no prefetch behind
+	cctx, cancel := context.WithCancel(ctx)
+	cancel()
+	e.src.objects[prefix2+"e.tgz"] = tarball(t, "e", "10.2.2.3")
+	e.runner.RunWindow(cctx, day, day2)
+	e.runner.Release()
+}
