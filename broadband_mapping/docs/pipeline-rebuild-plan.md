@@ -547,4 +547,8 @@ Rollback at any step: the old tables are untouched until step 5; the old binarie
 - Delete `fetch/` from B2 (274 GB) too?
 
 Decided: US-only `tests` (no-US tests dropped as today); own geocoder only, no M-Lab BigQuery; no PBS backup of the ClickHouse disk, a
-temporary ZFS snapshot before the cutover instead; Float64 metrics; exact medians.
+temporary ZFS snapshot before the cutover instead; Float64 metrics; exact medians
+(confirmed by the user: t-digest per-IP medians differed from exact by 11% on average and
+changed band counts in 37% of county×ISP groups on a real month; small groups are common
+at both median levels, so approximate quantiles are out — speed work targets query
+structure only).
