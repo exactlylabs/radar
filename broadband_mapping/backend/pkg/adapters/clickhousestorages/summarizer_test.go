@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"net"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -42,7 +43,7 @@ func testConn(t *testing.T) driver.Conn {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { conn.Close() })
-	for _, f := range []string{"002_asn_orgs.sql", "003_measurements.sql"} {
+	for _, f := range []string{"001_geospaces.sql", "002_asn_orgs.sql", "003_measurements.sql", "004_tests.sql"} {
 		sql, err := os.ReadFile(filepath.Join("..", "..", "..", "migrations", f))
 		if err != nil {
 			t.Fatal(err)
@@ -60,17 +61,34 @@ func mustExec(t *testing.T, conn driver.Conn, query string, args ...any) {
 }
 
 type fixture struct {
-	geospaces []string
-	asns      []string
-	ips       []string
-	rnd       *rand.Rand
+	states, counties, tribal []uuid.UUID
+	// unknown is a geospace missing from the geospaces table.
+	unknown uuid.UUID
+	asns    []string
+	ips     []string
+	rnd     *rand.Rand
+	nextID  int
 }
 
 func newFixture(t *testing.T, conn driver.Conn) *fixture {
-	f := &fixture{rnd: rand.New(rand.NewSource(1))}
-	for i := 0; i < 5; i++ {
-		f.geospaces = append(f.geospaces, uuid.NewString())
+	f := &fixture{rnd: rand.New(rand.NewSource(1)), unknown: uuid.New()}
+	for ns, n := range map[string]int{"states": 2, "counties": 4, "tribal_tracts": 2, "ZIP_CODES": 1} {
+		for i := 0; i < n; i++ {
+			id := uuid.New()
+			mustExec(t, conn, "INSERT INTO geospaces (id, namespace, geo_id, centroid_lat, centroid_long) VALUES (?, ?, ?, 0, 0)", id, ns, fmt.Sprint(i))
+			switch ns {
+			case "states":
+				f.states = append(f.states, id)
+			case "counties":
+				f.counties = append(f.counties, id)
+			case "tribal_tracts":
+				f.tribal = append(f.tribal, id)
+			}
+		}
 	}
+	sortUUIDs(f.states)
+	sortUUIDs(f.counties)
+	sortUUIDs(f.tribal)
 	for i := 0; i < 4; i++ {
 		id := uuid.NewString()
 		f.asns = append(f.asns, id)
@@ -83,13 +101,35 @@ func newFixture(t *testing.T, conn driver.Conn) *fixture {
 	for i := 0; i < 60; i++ {
 		f.ips = append(f.ips, fmt.Sprintf("10.0.%d.%d", i/250, i%250))
 	}
+	f.ips = append(f.ips, "2001:db8::1", "2001:db8::2")
 	return f
 }
 
-// insert adds n measurements spread over [from, to). Speeds repeat often so medians hit
-// ties, and most IPs test several times per bucket so per-IP medians of even counts matter.
+func sortUUIDs(ids []uuid.UUID) {
+	sort.Slice(ids, func(i, j int) bool { return ids[i].String() < ids[j].String() })
+}
+
+func (f *fixture) pick(ids []uuid.UUID, p float64) *uuid.UUID {
+	if f.rnd.Float64() >= p {
+		return nil
+	}
+	id := ids[f.rnd.Intn(len(ids))]
+	return &id
+}
+
+// insert adds n tests spread over [from, to), each as one row of tests and as one row per
+// geospace in measurements (the layout the legacy views read). Speeds repeat often so medians
+// hit ties, and most IPs test several times per bucket so per-IP medians of even counts matter.
+// Geospaces cover the edge cases of production: no state or no county, two counties (extra),
+// two tribal areas, an extra geospace of an unknown namespace, and no geospace at all.
 func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n int) {
-	batch, err := conn.PrepareBatch(context.Background(), `INSERT INTO measurements (
+	tests, err := conn.PrepareBatch(context.Background(), `INSERT INTO tests (
+		time, id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude,
+		location_accuracy_km, has_access_token, access_token_sig, asn_org_id, state_id, county_id, tribal_id, extra_geospace_ids)`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	measurements, err := conn.PrepareBatch(context.Background(), `INSERT INTO measurements (
 		id, test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude, longitude,
 		location_accuracy_km, has_access_token, access_token_sig, asn_org_id, geospace_id)`)
 	if err != nil {
@@ -97,18 +137,49 @@ func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n i
 	}
 	span := to.Sub(from)
 	for i := 0; i < n; i++ {
+		f.nextID++
+		id := fmt.Sprintf("ndt-test_%d_%016X", from.Unix(), f.nextID)
 		ts := from.Add(time.Duration(f.rnd.Int63n(int64(span)))).UTC().Truncate(time.Second)
 		mbps := float64(f.rnd.Intn(30)) * 5
 		rtt := float64(f.rnd.Intn(20)) * 3
-		if err := batch.Append(
-			uuid.NewString(), "ndt7", f.ips[f.rnd.Intn(len(f.ips))], ts, f.rnd.Intn(2) == 1, mbps,
-			0.0, rtt, 0.0, 0.0, 0.0, false, "",
-			uuid.MustParse(f.asns[f.rnd.Intn(len(f.asns))]), uuid.MustParse(f.geospaces[f.rnd.Intn(len(f.geospaces))]),
-		); err != nil {
+		ip := f.ips[f.rnd.Intn(len(f.ips))]
+		upload := f.rnd.Intn(2) == 1
+		asn := uuid.MustParse(f.asns[f.rnd.Intn(len(f.asns))])
+		state, county, tribal := f.pick(f.states, 0.9), f.pick(f.counties, 0.9), f.pick(f.tribal, 0.15)
+		extra := []uuid.UUID{}
+		if county != nil && f.rnd.Float64() < 0.05 {
+			if other := f.pick(f.counties, 1); *other != *county {
+				extra = append(extra, *other)
+			}
+		}
+		if tribal != nil && f.rnd.Float64() < 0.1 {
+			if other := f.pick(f.tribal, 1); *other != *tribal {
+				extra = append(extra, *other)
+			}
+		}
+		if f.rnd.Float64() < 0.01 {
+			extra = append(extra, f.unknown)
+		}
+		if err := tests.Append(ts, id, "ndt7", net.ParseIP(ip), upload, mbps, rtt, 0.0, 0.0, 0.0, 0.0, false, "",
+			asn, state, county, tribal, extra); err != nil {
 			t.Fatal(err)
 		}
+		geos := append([]uuid.UUID{}, extra...)
+		for _, g := range []*uuid.UUID{state, county, tribal} {
+			if g != nil {
+				geos = append(geos, *g)
+			}
+		}
+		for _, g := range geos {
+			if err := measurements.Append(id, "ndt7", ip, ts, upload, mbps, 0.0, rtt, 0.0, 0.0, 0.0, false, "", asn, g); err != nil {
+				t.Fatal(err)
+			}
+		}
 	}
-	if err := batch.Send(); err != nil {
+	if err := tests.Send(); err != nil {
+		t.Fatal(err)
+	}
+	if err := measurements.Send(); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -195,15 +266,17 @@ func assertMatchesLegacy(t *testing.T, conn driver.Conn, suffix string) {
 }
 
 func TestSummarizerMatchesLegacyViews(t *testing.T) {
+	t.Parallel()
 	conn := testConn(t)
 	f := newFixture(t, conn)
-	day := func(s string) time.Time { tm, _ := time.Parse(time.DateOnly, s); return tm }
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
 	// Crosses year ends (week 0 and 52/53), December (semester 3) and quarter boundaries.
-	f.insert(t, conn, day("2024-11-20"), day("2026-01-12"), 20000)
+	f.insert(t, conn, day("2025-11-20"), day("2026-01-12"), 8000)
 
 	// Tiny shards so most buckets span several shards.
 	opts := DefaultSummarizerOptions
-	opts.ShardTargetRows = 300
+	opts.ShardTargetRows = 1500
+	opts.Parallel = 8
 	s := NewSummarizer(conn, opts)
 
 	// Production state before the switch: unpartitioned tables built by the old views, and a
@@ -235,18 +308,82 @@ func TestSummarizerMatchesLegacyViews(t *testing.T) {
 		t.Fatal("the replaced table should be kept as summary_week_old")
 	}
 
-	// A later ingest: new days in the last, partly summarized bucket and in new buckets.
-	f.insert(t, conn, day("2026-01-10"), day("2026-03-05"), 4000)
+	if ok, _ := s.tableExists("ip_medians_old"); ok {
+		t.Fatal("ip_medians didn't exist before the first switch, there is nothing to keep")
+	}
+
+	// A later ingest: new days in the last, partly summarized bucket and in new buckets. The
+	// fixture reuses the same IPs, so the all-time update recomputes IPs with history.
+	f.insert(t, conn, day("2026-01-10"), day("2026-03-05"), 2000)
 	if err := s.Update(day("2026-01-10"), day("2026-03-04")); err != nil {
 		t.Fatal(err)
 	}
 	assertMatchesLegacy(t, conn, "")
+
+	// A repaired day in the past: one more test of every IP, in a bucket already summarized.
+	f.insert(t, conn, day("2025-12-03"), day("2025-12-04"), 300)
+	if err := s.Update(day("2025-12-03"), day("2025-12-03")); err != nil {
+		t.Fatal(err)
+	}
+	assertMatchesLegacy(t, conn, "")
+
+	// Days without tests leave everything as it is (their buckets are empty, and REPLACE
+	// PARTITION from an empty staging table is refused from ClickHouse 26.6).
+	if err := s.Update(day("2027-05-01"), day("2027-05-02")); err != nil {
+		t.Fatal(err)
+	}
+	assertMatchesLegacy(t, conn, "")
+
+	// A full rebuild after incremental updates gives the same tables, and switching keeps the
+	// replaced tables, ip_medians included, as _old.
+	if err := s.RebuildAll(); err != nil {
+		t.Fatal(err)
+	}
+	assertMatchesLegacy(t, conn, "_next")
+	if err := s.SwitchOver(); err != nil {
+		t.Fatal(err)
+	}
+	assertMatchesLegacy(t, conn, "")
+	if ok, _ := s.tableExists("ip_medians_old"); !ok {
+		t.Fatal("the replaced ip_medians should be kept as ip_medians_old")
+	}
+}
+
+// A bucket whose tests are all gone (e.g. a test day re-ingested elsewhere) must be emptied,
+// not refused: from ClickHouse 26.6 REPLACE PARTITION from an empty staging table fails.
+func TestUpdateEmptiesBucketWithoutTests(t *testing.T) {
+	t.Parallel()
+	conn := testConn(t)
+	f := newFixture(t, conn)
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
+	f.insert(t, conn, day("2026-02-01"), day("2026-03-01"), 500)
+	opts := DefaultSummarizerOptions
+	opts.Parallel = 8
+	s := NewSummarizer(conn, opts)
+	if err := s.RebuildAll(); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.SwitchOver(); err != nil {
+		t.Fatal(err)
+	}
+	mustExec(t, conn, "TRUNCATE TABLE tests")
+	if err := s.Update(day("2026-02-01"), day("2026-02-28")); err != nil {
+		t.Fatal(err)
+	}
+	var n uint64
+	if err := conn.QueryRow(context.Background(), "SELECT count() FROM summary_month WHERE year = 2026 AND month = 2").Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Fatalf("summary_month 2026-02 should be empty, has %d rows", n)
+	}
 }
 
 func TestBucketsCoverWholePeriods(t *testing.T) {
+	t.Parallel()
 	conn := testConn(t)
 	s := NewSummarizer(conn, DefaultSummarizerOptions)
-	day := func(s string) time.Time { tm, _ := time.Parse(time.DateOnly, s); return tm }
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
 	for _, tc := range []struct {
 		window   string
 		from, to string
