@@ -1,8 +1,8 @@
-// +heroku goVersion 1.18
+// +heroku goVersion 1.22
 
 module github.com/exactlylabs/mlab-mapping/backend
 
-go 1.18
+go 1.22
 
 require (
 	cloud.google.com/go/storage v1.30.1
