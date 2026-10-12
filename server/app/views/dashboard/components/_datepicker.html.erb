@@ -21,7 +21,7 @@
           <% end %>
         </div>
         <div class="dashboard--month-year-picker-column" data-type="years">
-          <% (1970..2024).each do |year| %>
+          <% (1970..Time.now.year).each do |year| %>
             <span <%= year == Time.now.year ? 'data-selected=true' : nil %>
                   data-dashboard-time-filter-target="year"
                   data-action="click->dashboard-time-filter#selectYear"

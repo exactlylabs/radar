@@ -6,6 +6,8 @@ import FooterMobileLinks from "./FooterMobileLinks.astro";
 import footerLogo from '../../../assets/logos/footer-logo.webp';
 import footerLights from '../../../assets/images/footer-lights.webp';
 import exactlyLabsLogo from '../../../assets/logos/exactly-labs.webp';
+
+const currentYear = new Date().getFullYear();
 ---
 
 <footer class={styles.footer}>
@@ -62,7 +64,7 @@ import exactlyLabsLogo from '../../../assets/logos/exactly-labs.webp';
         <li><a href="mailto:info@telehealthbroadbandproject.com">Contact Us</a></li>
       </ul>
       <div class={styles.signatureContainer}>
-        <p class={styles.footerText}>© 2025 Telehealth Broadband Project</p>
+        <p class={styles.footerText}>© {currentYear} Telehealth Broadband Project</p>
         <div class={styles.verticalDivider}></div>
         <div class={styles.poweredByContainer}>
           <p class={styles.footerText}>Powered by</p>
@@ -102,7 +104,7 @@ import exactlyLabsLogo from '../../../assets/logos/exactly-labs.webp';
         <li><a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a></li>
         <li><a href="mailto:info@telehealthbroadbandproject.com">Contact Us</a></li>
       </ul>
-      <p class={styles.footerText}>© 2025 Telehealth Broadband Project</p>
+      <p class={styles.footerText}>© {currentYear} Telehealth Broadband Project</p>
 	    <div class={styles.poweredByContainer}>
 		    <p class={styles.footerText}>Powered by</p>
 		    <a href="https://exactlylabs.com" target="_blank">

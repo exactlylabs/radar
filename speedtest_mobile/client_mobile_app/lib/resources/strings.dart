@@ -1,5 +1,5 @@
 class Strings {
-  static const String copyright = 'Copyright © 2023 Radar. All rights reserved.';
+  static String get copyright => 'Copyright © ${DateTime.now().year} Radar. All rights reserved.';
   static const String speedTestLabel = 'Speed Test';
   static const String yourResultsLabel = 'Your Results';
   static const String mapLabel = 'Map';
@@ -89,7 +89,7 @@ class Strings {
   static const String suggestionsModalSubtitle = 'Please select your address from the list below.';
   static const String confirmLocationButtonLabel = 'Confirm location';
   static const String changeAddressButtonLabel = 'Change address';
-  static const String rightsReserved = 'Copyright © 2023 ANTHC. All rights reserved.';
+  static String get rightsReserved => 'Copyright © ${DateTime.now().year} ANTHC. All rights reserved.';
   static const String devInfo =
       'This project was developed as part of the Telehealth Broadband Pilot Program. The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.';
   static const String ftueAppModalTitle = 'Test your Internet speed';
