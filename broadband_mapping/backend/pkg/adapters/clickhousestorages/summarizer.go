@@ -874,3 +874,72 @@ func wrap(err error, msg string, args ...any) error {
 	}
 	return errors.Wrap(err, msg, args...)
 }
+
+// ValidationResult compares a <table>_next built by RebuildAll with the live table.
+type ValidationResult struct {
+	Table   string
+	Buckets int
+	// Rows only in the live table, and only in the new one (a changed row counts in both).
+	OnlyLive, OnlyNext uint64
+}
+
+// Validate compares, for every bucketed window except semester (whose buckets changed by
+// design), the buckets that ended before `before` in <table>_next and the live table. Both are
+// computed from the same tests, so they must be equal.
+func (s *Summarizer) Validate(before time.Time) ([]ValidationResult, error) {
+	first, _, err := s.dataRange()
+	if err != nil {
+		return nil, err
+	}
+	if first == nil {
+		return nil, errors.New("summarizer#Validate no tests")
+	}
+	result := []ValidationResult{}
+	for _, w := range summaryWindows {
+		if w.buckets == nil || w.name == "semester" || !s.wantsWindow(w.name) {
+			continue
+		}
+		buckets, err := s.buckets(w, *first, before.AddDate(0, 0, -1))
+		if err != nil {
+			return nil, err
+		}
+		cutoff := before.UTC().Format("2006-01-02")
+		values := []string{}
+		for _, b := range buckets {
+			if b.lastDay < cutoff {
+				values = append(values, "("+strings.Join(b.values, ", ")+")")
+			}
+		}
+		if len(values) == 0 {
+			continue
+		}
+		bucketCols := []string{}
+		for _, c := range w.buckets {
+			bucketCols = append(bucketCols, c.name)
+		}
+		for _, v := range summaryVariants {
+			table := v.prefix + w.name
+			cols := "med_mbps, med_min_rtt, bad_count, normal_count, good_count, total_samples, " + strings.Join(summaryKeys(w, v), ", ")
+			where := fmt.Sprintf("(%s) IN (%s)", strings.Join(bucketCols, ", "), strings.Join(values, ", "))
+			if len(bucketCols) == 1 {
+				where = fmt.Sprintf("%s IN (%s)", bucketCols[0], strings.Join(values, ", "))
+			}
+			diff := func(a, b string) (uint64, error) {
+				var n uint64
+				err := s.conn.QueryRow(s.ctx(), fmt.Sprintf(
+					"SELECT count() FROM (SELECT %[1]s FROM `%[2]s` WHERE %[4]s EXCEPT SELECT %[1]s FROM `%[3]s` WHERE %[4]s)",
+					cols, a, b, where)).Scan(&n)
+				return n, wrap(err, "summarizer#Validate %s", table)
+			}
+			r := ValidationResult{Table: table, Buckets: len(values)}
+			if r.OnlyLive, err = diff(table, table+"_next"); err != nil {
+				return nil, err
+			}
+			if r.OnlyNext, err = diff(table+"_next", table); err != nil {
+				return nil, err
+			}
+			result = append(result, r)
+		}
+	}
+	return result, nil
+}
