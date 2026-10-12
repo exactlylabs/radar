@@ -13,7 +13,7 @@ type avroDecoder struct {
 }
 
 func NewAvroDecoder(r io.Reader) (encoders.FileDecoder, error) {
-	decoder, err := ocf.NewDecoder(r)
+	decoder, err := ocf.NewDecoder(r, ocf.WithZStandardDecoderOptions(ZstdDecoderOptions...))
 	if err != nil {
 		return nil, fmt.Errorf("avro.NewAvroDecoder NewDecoder err: %w", err)
 	}

@@ -11,6 +11,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -22,6 +23,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"sort"
 	"strings"
 	"syscall"
 	"time"
@@ -35,6 +37,8 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/localstorage"
 	"github.com/exactlylabs/mlab-processor/pkg/services/encoders/avro"
+	hamba "github.com/hamba/avro/v2"
+	"github.com/hamba/avro/v2/ocf"
 )
 
 var (
@@ -322,6 +326,10 @@ func main() {
 		case "codecs":
 			codecs("ipgeocode")
 			codecs("reversegeocode")
+		case "compare":
+			// compare <other workdir>: the step outputs here and there hold the same rows
+			compare(flag.Args()[len(flag.Args())-1])
+			return
 		default:
 			log.Fatalf("unknown command %q", cmd)
 		}
@@ -384,5 +392,52 @@ func codecs(step string) {
 			}
 		}
 		fmt.Printf("  %-10s %4d MB  encode %.2fs  decode %.2fs (single core)\n", name, size/1e6, enc.Seconds(), time.Since(start).Seconds())
+	}
+}
+
+// compare checks that the ipgeocode and reversegeocode outputs of this workdir and of
+// other hold the same rows (whatever their order, block size or codec): the rows'
+// canonical Avro encodings, sorted, are identical.
+func compare(other string) {
+	for _, step := range []string{"ipgeocode", "reversegeocode"} {
+		var sums [2][]string
+		for i, dir := range []string{".", other} {
+			f, err := os.Open(fmt.Sprintf("%s/storage/%s/%s.avro", dir, step, date))
+			if err != nil {
+				log.Fatal(err)
+			}
+			dec, err := ocf.NewDecoder(f)
+			if err != nil {
+				log.Fatal(err)
+			}
+			var buf bytes.Buffer
+			enc := hamba.NewEncoderForSchema(dec.Schema(), &buf)
+			for dec.HasNext() {
+				var row any
+				if step == "ipgeocode" {
+					row = &models.GeocodedResult{}
+				} else {
+					row = &models.RevGeoResult{}
+				}
+				if err := dec.Decode(row); err != nil {
+					log.Fatal(err)
+				}
+				buf.Reset()
+				if err := enc.Encode(row); err != nil {
+					log.Fatal(err)
+				}
+				sums[i] = append(sums[i], buf.String())
+			}
+			if err := dec.Error(); err != nil {
+				log.Fatal(err)
+			}
+			f.Close()
+			sort.Strings(sums[i])
+		}
+		same := len(sums[0]) == len(sums[1])
+		for i := 0; same && i < len(sums[0]); i++ {
+			same = sums[0][i] == sums[1][i]
+		}
+		fmt.Printf("%s: %d rows here, %d rows in %s, identical=%v\n", step, len(sums[0]), len(sums[1]), other, same)
 	}
 }

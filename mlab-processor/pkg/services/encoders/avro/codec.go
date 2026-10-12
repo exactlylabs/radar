@@ -129,12 +129,23 @@ type zstdCodec struct {
 	dec *zstd.Decoder
 }
 
+// ZstdEncoderOptions are the zstandard settings of every encoder: one goroutine per
+// codec (the callers are the parallel ones), a 1 MB window (blocks are about that size,
+// a bigger window only costs memory) and the default level.
+var ZstdEncoderOptions = []zstd.EOption{
+	zstd.WithEncoderConcurrency(1), zstd.WithEncoderLevel(zstd.SpeedDefault),
+	zstd.WithWindowSize(1 << 20), zstd.WithLowerEncoderMem(true),
+}
+
+// ZstdDecoderOptions are the zstandard settings of every decoder.
+var ZstdDecoderOptions = []zstd.DOption{zstd.WithDecoderConcurrency(1), zstd.WithDecoderLowmem(true)}
+
 func newZstdCodec() (*zstdCodec, error) {
-	enc, err := zstd.NewWriter(nil, zstd.WithEncoderConcurrency(1), zstd.WithEncoderLevel(zstd.SpeedDefault))
+	enc, err := zstd.NewWriter(nil, ZstdEncoderOptions...)
 	if err != nil {
 		return nil, err
 	}
-	dec, err := zstd.NewReader(nil, zstd.WithDecoderConcurrency(1))
+	dec, err := zstd.NewReader(nil, ZstdDecoderOptions...)
 	if err != nil {
 		return nil, err
 	}
