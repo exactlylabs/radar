@@ -167,11 +167,16 @@ class Client < ApplicationRecord
     end
 
     REDIS.zrem Client::REDIS_PING_SET_NAME, id
-    Client.transaction do
-      c = Client.lock("FOR UPDATE").find(id)
-      if c.online
-        c.online = false
-        c.save!
+    # Lock the row only when the state actually changes: a SELECT ... FOR UPDATE marks the
+    # row even when nothing is updated, and with every pod pinging that rewrote the whole
+    # clients table at each checkpoint (~6 GB/h of disk writes).
+    if Client.where(id: id).pick(:online)
+      Client.transaction do
+        c = Client.lock("FOR UPDATE").find(id)
+        if c.online
+          c.online = false
+          c.save!
+        end
       end
     end
     self.reload
@@ -179,11 +184,13 @@ class Client < ApplicationRecord
 
   def connected!
     REDIS.zadd Client::REDIS_PING_SET_NAME, Time.now.to_i, id
-    Client.transaction do
-      c = Client.lock("FOR UPDATE").find(id)
-      if !c.online
-        c.online = true
-        c.save!
+    unless Client.where(id: id).pick(:online)
+      Client.transaction do
+        c = Client.lock("FOR UPDATE").find(id)
+        if !c.online
+          c.online = true
+          c.save!
+        end
       end
     end
     self.reload
@@ -202,7 +209,9 @@ class Client < ApplicationRecord
     ).where.not(id: client_ids).distinct
 
     # Adding locks to avoid concurrency between this and disconnected!
-    Client.where(id: clients).each do |c|
+    # Only clients that are still marked online need the lock: taking it for every offline
+    # client every 5 seconds was ~116 no-op transactions a second, each forcing a WAL flush.
+    Client.where(id: clients, online: true).each do |c|
       c.with_lock do
         if c.online
           c.online = false
