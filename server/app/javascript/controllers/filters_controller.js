@@ -19,7 +19,17 @@ export default class extends Controller {
     const anchorId = this.element.getAttribute("data-anchor-id");
     const anchor = document.getElementById(anchorId);
     if(anchor) this.anchor = anchor;
-    window.addEventListener('resize', this.closeFiltersMenu.bind(this));
+    // Bind once so the same function reference can be removed again. `fn.bind(this)` returns a
+    // new function every time, so removeEventListener with a fresh bind never matched and every
+    // open leaked another capture-phase click listener on the document.
+    this.boundCloseFiltersMenu = this.closeFiltersMenu.bind(this);
+    this.boundCloseMenuIfClickedOutside = this.closeMenuIfClickedOutside.bind(this);
+    window.addEventListener('resize', this.boundCloseFiltersMenu);
+  }
+
+  disconnect() {
+    window.removeEventListener('resize', this.boundCloseFiltersMenu);
+    document.removeEventListener("click", this.boundCloseMenuIfClickedOutside, { capture: true });
   }
   
   cloneMenuAndAppendToBody() {
@@ -33,7 +43,11 @@ export default class extends Controller {
 
   toggleFiltersMenu(e) {
     if(this.element.dataset.isCalendarOpen === 'true') return;
-    if(e && e.target.tagName !== 'BUTTON') return;
+    // Only a click on the toggle button opens/closes the menu; clicks inside the menu itself
+    // (option rows, search inputs) must not toggle it. The button's children count as the
+    // button: its label is usually a <span>/<svg> and its caret an <img>, so checking
+    // `e.target.tagName === 'BUTTON'` ignored almost every real click on the label.
+    if(e && !e.target.closest('button')) return;
     if(this.menu) {
       if (this.menu.classList.contains("invisible")) {
         this.openFiltersMenu();
@@ -54,14 +68,14 @@ export default class extends Controller {
 
   closeMenuIfClickedOutside(event) {
     if(!this.element.contains(event.target) && !this.menu.contains(event.target)) {
-      document.removeEventListener("click", this.closeMenuIfClickedOutside.bind(this));
+      document.removeEventListener("click", this.boundCloseMenuIfClickedOutside, { capture: true });
       this.closeFiltersMenu();
     }
   }
 
   openFiltersMenu() {
     if(this.positionedOutsideOfParent) this.positionMenuRelativeToAnchor();
-    document.addEventListener("click", this.closeMenuIfClickedOutside.bind(this), { capture: true });
+    document.addEventListener("click", this.boundCloseMenuIfClickedOutside, { capture: true });
     this.menu.classList.remove("invisible");
     this.shiftHorizontallyIfMenuIsOffScreen();
     this.clipMenuIfOffScreenVertically();
