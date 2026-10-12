@@ -32,8 +32,9 @@ var (
 	recheckDays = flag.Int("recheck-days", 7, "How many days before -end to re-check for completeness")
 	checkOnly   = flag.Bool("check-only", false, "Only print what would be processed")
 	storageType = flag.String("storage", "", "Storage override: local, gcs, s3 (alias b2). Default: STORAGE_TYPE")
-	workers     = flag.Int("workers", 0, "Tarballs fetched in parallel (default: number of CPUs)")
-	lowMemory   = flag.Bool("low-memory", false, "Keep only one of the IP geocoder / shapes in memory at a time")
+	workers     = flag.Int("workers", 0, "Tarballs parsed in parallel (default: number of CPUs)")
+	dlWorkers   = flag.Int("download-workers", 0, "Tarballs downloaded in parallel (default: 4x the CPUs, or the CPUs with -low-memory)")
+	lowMemory   = flag.Bool("low-memory", false, "Keep only one of the IP geocoder / shapes in memory at a time and buffer fewer downloads (256 MiB instead of 1 GiB)")
 )
 
 func main() {
@@ -41,7 +42,7 @@ func main() {
 	ctx := helpers.InterruptSignalContext()
 	conf := config.GetConfig()
 
-	runner, storage, err := flavors.NewRunner(ctx, conf, *storageType, fetcher.Options{Workers: *workers})
+	runner, storage, err := flavors.NewRunner(ctx, conf, *storageType, fetcher.Options{Workers: *workers, DownloadWorkers: *dlWorkers, LowMemory: *lowMemory})
 	if err != nil {
 		log.Fatalf("Error getting storage: %v", err)
 	}

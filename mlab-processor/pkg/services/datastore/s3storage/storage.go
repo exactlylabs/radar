@@ -38,6 +38,11 @@ type s3Storage struct {
 	backoff        time.Duration
 	existsAttempts int
 	existsBackoff  time.Duration
+	// objects of at least multipartThreshold bytes are uploaded in partSize parts,
+	// concurrency at a time (B2 wants parts of 5 MB or more)
+	multipartThreshold int64
+	partSize           int64
+	concurrency        int
 }
 
 // endpointURL accepts "host[:port]" (https assumed, as aws-sdk-go v1 did) or a full URL.
@@ -73,6 +78,10 @@ func New(opts S3StorageOptions) (datastore.Storage, error) {
 		backoff:        15 * time.Second,
 		existsAttempts: 4,
 		existsBackoff:  5 * time.Second,
+
+		multipartThreshold: 64 << 20,
+		partSize:           32 << 20,
+		concurrency:        8,
 	}, nil
 }
 
@@ -168,13 +177,19 @@ func (s *s3Storage) Get(ctx context.Context, filepath string) (io.ReadCloser, er
 	return out.Body, nil
 }
 
-// Store implements datastore.Storage: a single PUT (objects are < 5 GB) retried with
-// backoff. Every attempt starts from offset 0 of reader, so a retry after a partial
-// transfer can never store a truncated object.
+// Store implements datastore.Storage. Small objects go in a single PUT retried with
+// backoff; every attempt starts from offset 0 of reader, so a retry after a partial
+// transfer can never store a truncated object. Objects of multipartThreshold bytes or
+// more (a day's files are 100-500 MB) go as a multipart upload with concurrency parts
+// in flight, each part retried on its own; the object only exists once every part is
+// in and the upload is completed, and a failed upload is aborted.
 func (s *s3Storage) Store(ctx context.Context, reader io.ReadSeeker, filepath string) error {
 	size, err := reader.Seek(0, io.SeekEnd)
 	if err != nil {
 		return fmt.Errorf("s3storage.Store %s: size: %w", filepath, err)
+	}
+	if ra, ok := reader.(io.ReaderAt); ok && size >= s.multipartThreshold {
+		return s.storeMultipart(ctx, ra, size, filepath)
 	}
 	for i := 0; i < s.attempts; i++ {
 		if i > 0 {
@@ -197,6 +212,98 @@ func (s *s3Storage) Store(ctx context.Context, reader io.ReadSeeker, filepath st
 		log.Printf("s3storage: upload of %s failed (attempt %d/%d): %v", filepath, i+1, s.attempts, err)
 	}
 	return fmt.Errorf("s3storage.Store %s: giving up after %d attempts: %w", filepath, s.attempts, err)
+}
+
+type completedPart struct {
+	n    int32
+	etag string
+}
+
+func (s *s3Storage) storeMultipart(ctx context.Context, ra io.ReaderAt, size int64, filepath string) error {
+	start := time.Now()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	create, err := s.cli.CreateMultipartUpload(ctx, &s3.CreateMultipartUploadInput{Bucket: &s.bucketName, Key: &filepath})
+	if err != nil {
+		return fmt.Errorf("s3storage.Store %s: creating multipart upload: %w", filepath, err)
+	}
+	uploadID := create.UploadId
+	nParts := int((size + s.partSize - 1) / s.partSize)
+	parts := make([]completedPart, nParts)
+	errs := make(chan error, nParts)
+	sem := make(chan struct{}, s.concurrency)
+	for i := 0; i < nParts; i++ {
+		sem <- struct{}{}
+		go func(i int) {
+			defer func() { <-sem }()
+			off := int64(i) * s.partSize
+			n := s.partSize
+			if off+n > size {
+				n = size - off
+			}
+			etag, err := s.uploadPart(ctx, uploadID, filepath, int32(i+1), io.NewSectionReader(ra, off, n), n)
+			if err != nil {
+				cancel() // stop the other parts
+			}
+			parts[i] = completedPart{int32(i + 1), etag}
+			errs <- err
+		}(i)
+	}
+	for i := 0; i < nParts; i++ {
+		if pErr := <-errs; pErr != nil && err == nil {
+			err = pErr
+		}
+	}
+	if err != nil {
+		// a fresh context: the shared one is cancelled
+		abortCtx, abortCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer abortCancel()
+		if _, aErr := s.cli.AbortMultipartUpload(abortCtx, &s3.AbortMultipartUploadInput{Bucket: &s.bucketName, Key: &filepath, UploadId: uploadID}); aErr != nil {
+			log.Printf("s3storage: aborting multipart upload of %s: %v", filepath, aErr)
+		}
+		return fmt.Errorf("s3storage.Store %s: %w", filepath, err)
+	}
+	completed := make([]types.CompletedPart, nParts)
+	for i, p := range parts {
+		completed[i] = types.CompletedPart{PartNumber: aws.Int32(p.n), ETag: aws.String(p.etag)}
+	}
+	_, err = s.cli.CompleteMultipartUpload(ctx, &s3.CompleteMultipartUploadInput{
+		Bucket: &s.bucketName, Key: &filepath, UploadId: uploadID,
+		MultipartUpload: &types.CompletedMultipartUpload{Parts: completed},
+	})
+	if err != nil {
+		return fmt.Errorf("s3storage.Store %s: completing multipart upload: %w", filepath, err)
+	}
+	log.Printf("s3storage: uploaded %s (%d MB, %d parts) in %.0fs", filepath, size>>20, nParts, time.Since(start).Seconds())
+	return nil
+}
+
+// uploadPart sends one part, retrying with backoff from the part's start.
+func (s *s3Storage) uploadPart(ctx context.Context, uploadID *string, filepath string, n int32, body *io.SectionReader, size int64) (string, error) {
+	var err error
+	for i := 0; i < s.attempts; i++ {
+		if i > 0 {
+			if sErr := sleepCtx(ctx, s.backoff*time.Duration(i)); sErr != nil {
+				return "", sErr
+			}
+		}
+		if _, sErr := body.Seek(0, io.SeekStart); sErr != nil {
+			return "", sErr
+		}
+		var out *s3.UploadPartOutput
+		out, err = s.cli.UploadPart(ctx, &s3.UploadPartInput{
+			Bucket: &s.bucketName, Key: &filepath, UploadId: uploadID, PartNumber: aws.Int32(n),
+			Body: body, ContentLength: aws.Int64(size),
+		})
+		if err == nil {
+			return aws.ToString(out.ETag), nil
+		}
+		if ctx.Err() != nil {
+			return "", err
+		}
+		log.Printf("s3storage: part %d of %s failed (attempt %d/%d): %v", n, filepath, i+1, s.attempts, err)
+	}
+	return "", fmt.Errorf("part %d: giving up after %d attempts: %w", n, s.attempts, err)
 }
 
 func (s *s3Storage) Close() error {
