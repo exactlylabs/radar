@@ -62,6 +62,8 @@ func mustExec(t *testing.T, conn driver.Conn, query string, args ...any) {
 
 type fixture struct {
 	states, counties, tribal []uuid.UUID
+	// parent is each county's state (geospaces.parent_id).
+	parent map[uuid.UUID]uuid.UUID
 	// unknown is a geospace missing from the geospaces table.
 	unknown uuid.UUID
 	asns    []string
@@ -71,12 +73,21 @@ type fixture struct {
 }
 
 func newFixture(t *testing.T, conn driver.Conn) *fixture {
-	f := &fixture{rnd: rand.New(rand.NewSource(1)), unknown: uuid.New()}
-	for ns, n := range map[string]int{"states": 2, "counties": 4, "tribal_tracts": 2, "ZIP_CODES": 1} {
-		for i := 0; i < n; i++ {
+	f := &fixture{rnd: rand.New(rand.NewSource(1)), unknown: uuid.New(), parent: map[uuid.UUID]uuid.UUID{}}
+	for _, ns := range []struct {
+		name string
+		n    int
+	}{{"states", 2}, {"counties", 4}, {"tribal_tracts", 2}, {"ZIP_CODES", 1}} {
+		for i := 0; i < ns.n; i++ {
 			id := uuid.New()
-			mustExec(t, conn, "INSERT INTO geospaces (id, namespace, geo_id, centroid_lat, centroid_long) VALUES (?, ?, ?, 0, 0)", id, ns, fmt.Sprint(i))
-			switch ns {
+			var parent any // NULL but for counties
+			if ns.name == "counties" {
+				p := f.states[i%len(f.states)]
+				parent = p
+				f.parent[id] = p
+			}
+			mustExec(t, conn, "INSERT INTO geospaces (id, namespace, geo_id, centroid_lat, centroid_long, parent_id) VALUES (?, ?, ?, 0, 0, ?)", id, ns.name, fmt.Sprint(i), parent)
+			switch ns.name {
 			case "states":
 				f.states = append(f.states, id)
 			case "counties":
@@ -121,7 +132,8 @@ func (f *fixture) pick(ids []uuid.UUID, p float64) *uuid.UUID {
 // geospace in measurements (the layout the legacy views read). Speeds repeat often so medians
 // hit ties, and most IPs test several times per bucket so per-IP medians of even counts matter.
 // Geospaces cover the edge cases of production: no state or no county, two counties (extra),
-// two tribal areas, an extra geospace of an unknown namespace, and no geospace at all.
+// two tribal areas, an extra geospace of an unknown namespace, no geospace at all, and a
+// state that isn't the county's parent (1 test in 20 of those with both).
 func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n int) {
 	tests, err := conn.PrepareBatch(context.Background(), `INSERT INTO tests (
 		time, id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude,
@@ -146,6 +158,10 @@ func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n i
 		upload := f.rnd.Intn(2) == 1
 		asn := uuid.MustParse(f.asns[f.rnd.Intn(len(f.asns))])
 		state, county, tribal := f.pick(f.states, 0.9), f.pick(f.counties, 0.9), f.pick(f.tribal, 0.15)
+		if state != nil && county != nil && f.nextID%20 != 0 {
+			p := f.parent[*county]
+			state = &p
+		}
 		extra := []uuid.UUID{}
 		if county != nil && f.rnd.Float64() < 0.05 {
 			if other := f.pick(f.counties, 1); *other != *county {

@@ -16,8 +16,26 @@ func normalizedTests(table string) string {
 		FROM %s t`, allGeospacesExpr, table)
 }
 
+// exactTests is every column of a tests table, NULLs as '-', for a byte-level comparison.
+func exactTests(table string) string {
+	return fmt.Sprintf(`
+		SELECT time, id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude, location_accuracy_km,
+			has_access_token, access_token_sig, asn_org_id, ifNull(toString(state_id), '-') AS state_id,
+			ifNull(toString(county_id), '-') AS county_id, ifNull(toString(tribal_id), '-') AS tribal_id, extra_geospace_ids
+		FROM %s`, table)
+}
+
 func TestConverterCollapsesMeasurements(t *testing.T) {
 	t.Parallel()
+	for _, strategy := range []string{StrategyJoin, StrategyGroupBy} {
+		t.Run(strategy, func(t *testing.T) {
+			t.Parallel()
+			testConverterCollapsesMeasurements(t, strategy)
+		})
+	}
+}
+
+func testConverterCollapsesMeasurements(t *testing.T, strategy string) {
 	conn := testConn(t)
 	f := newFixture(t, conn)
 	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
@@ -31,8 +49,10 @@ func TestConverterCollapsesMeasurements(t *testing.T) {
 	mustExec(t, conn, "INSERT INTO measurements SELECT * FROM measurements WHERE toYYYYMM(time) = 202601 LIMIT 1")
 
 	opts := DefaultConverterOptions
+	opts.Strategy = strategy
 	opts.ChunkMonths = 2
-	opts.Shards = 3 // every chunk collapsed in three hash shards; the result must not change
+	opts.Shards = 3              // every chunk collapsed in three hash shards; the result must not change
+	opts.ClassifyShardRows = 700 // join: a month classified in several hash shards
 	c := NewConverter(conn, opts)
 	month := func(s string) time.Time { tm, _ := time.Parse("2006-01", s); return tm }
 
@@ -52,6 +72,15 @@ func TestConverterCollapsesMeasurements(t *testing.T) {
 		t.Fatalf("tests_conversion_log should have one row per month (7), has %d", logged)
 	}
 	assertSameRows(t, conn, "tests", "SELECT * FROM ("+normalizedTests("tests_expected")+") WHERE notEmpty(geospaces)", normalizedTests("tests"))
+	if strategy == StrategyJoin {
+		// The fixture's tests mostly have one county and its parent state: those must have
+		// come from their county row, the rest (two counties, no state, a state that isn't
+		// the parent, tribal, unknown, duplicate) through the GROUP BY.
+		s := c.Stats
+		if s.ExceptionIDs == 0 || s.FastTests == 0 || s.FastTests < s.ExceptionIDs {
+			t.Fatalf("join strategy stats of the last chunk: %+v", s)
+		}
+	}
 
 	// The primary geospace of a namespace is the smallest as a string, like the ingestor's.
 	var notSmallest uint64
@@ -104,4 +133,38 @@ func TestConverterCollapsesMeasurements(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertSameRows(t, conn, "tests", "SELECT * FROM ("+normalizedTests("tests_expected")+") WHERE notEmpty(geospaces)", normalizedTests("tests"))
+}
+
+// Both strategies must give byte-identical tests rows: every column, including which
+// geospace is in which column and the order of extra_geospace_ids.
+func TestConverterStrategiesAgree(t *testing.T) {
+	t.Parallel()
+	conn := testConn(t)
+	f := newFixture(t, conn)
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
+	f.insert(t, conn, day("2025-12-20"), day("2026-02-10"), 4000)
+	mustExec(t, conn, "TRUNCATE TABLE tests")
+	mustExec(t, conn, "INSERT INTO measurements SELECT * FROM measurements WHERE toYYYYMM(time) = 202601 LIMIT 5")
+	month := func(s string) time.Time { tm, _ := time.Parse("2006-01", s); return tm }
+
+	opts := DefaultConverterOptions
+	opts.Strategy = StrategyGroupBy
+	if err := NewConverter(conn, opts).Convert(month("2025-12"), month("2026-02")); err != nil {
+		t.Fatal(err)
+	}
+	mustExec(t, conn, "CREATE TABLE tests_groupby AS tests")
+	mustExec(t, conn, "INSERT INTO tests_groupby SELECT * FROM tests")
+	mustExec(t, conn, "TRUNCATE TABLE tests")
+
+	opts.Strategy = StrategyJoin
+	opts.Redo = true
+	opts.ClassifyShardRows = 1000
+	c := NewConverter(conn, opts)
+	if err := c.Convert(month("2025-12"), month("2026-02")); err != nil {
+		t.Fatal(err)
+	}
+	if c.Stats.FastTests == 0 || c.Stats.ExceptionIDs == 0 {
+		t.Fatalf("join strategy stats: %+v", c.Stats)
+	}
+	assertSameRows(t, conn, "tests", exactTests("tests_groupby"), exactTests("tests"))
 }
