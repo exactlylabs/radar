@@ -427,25 +427,18 @@ func (s *Summarizer) replacePartition(table, partition, staging string) error {
 }
 
 func replacePartition(ctx context.Context, conn driver.Conn, table, partition, staging string) error {
+	// Rows of that partition in staging, via the _partition_id virtual column (the pipeline's
+	// database user can't read system.parts).
 	var parts uint64
 	if err := conn.QueryRow(ctx, fmt.Sprintf(
-		"SELECT count() FROM system.parts WHERE database = currentDatabase() AND table = ? AND active AND partition = toString(%s) AND rows > 0",
-		partitionLiteral(partition)), staging).Scan(&parts); err != nil {
-		return errors.Wrap(err, "replacePartition count parts")
+		"SELECT count() FROM `%s` WHERE _partition_id = partitionId(%s)",
+		staging, strings.Trim(partition, "()"))).Scan(&parts); err != nil {
+		return errors.Wrap(err, "replacePartition count rows")
 	}
 	if parts == 0 {
 		return wrap(conn.Exec(ctx, fmt.Sprintf("ALTER TABLE `%s` DROP PARTITION %s", table, partition)), "replacePartition drop %s %s", table, partition)
 	}
 	return wrap(conn.Exec(ctx, fmt.Sprintf("ALTER TABLE `%s` REPLACE PARTITION %s FROM `%s`", table, partition, staging)), "replacePartition %s %s", table, partition)
-}
-
-// partitionLiteral turns a partition expression ("2026", "(2026, 1)") into the expression whose
-// toString is system.parts.partition ("2026", "(2026,1)").
-func partitionLiteral(partition string) string {
-	if strings.HasPrefix(partition, "(") {
-		return "'" + strings.ReplaceAll(partition, " ", "") + "'"
-	}
-	return partition
 }
 
 // passSource is a subquery with one row per (test, geospace of the pass's namespace) among the
@@ -852,13 +845,12 @@ func (s *Summarizer) tableExists(name string) (bool, error) {
 	return n > 0, nil
 }
 
-// dataRange returns the first and last test time, from the parts' minmax index (no scan).
+// dataRange returns the first and last test time. count/min/max of the partition column are
+// answered from part metadata (minmax_count projection): no scan and no system.parts access.
 func (s *Summarizer) dataRange() (*time.Time, *time.Time, error) {
 	var n uint64
 	var from, to time.Time
-	if err := s.conn.QueryRow(s.ctx(), `
-		SELECT sum(rows), min(min_time), max(max_time) FROM system.parts
-		WHERE database = currentDatabase() AND table = 'tests' AND active AND rows > 0`).Scan(&n, &from, &to); err != nil {
+	if err := s.conn.QueryRow(s.ctx(), `SELECT count(), min(time), max(time) FROM tests`).Scan(&n, &from, &to); err != nil {
 		return nil, nil, errors.Wrap(err, "summarizer#dataRange")
 	}
 	if n == 0 {
