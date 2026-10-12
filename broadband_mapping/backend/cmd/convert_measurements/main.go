@@ -26,6 +26,7 @@ func main() {
 	to := flag.String("to", "", "Last month (YYYY-MM), inclusive")
 	verify := flag.Bool("verify", false, "Compare measurements and tests instead of converting")
 	redo := flag.Bool("redo", false, "Convert months already converted again")
+	repairUnknown := flag.Bool("repair-unknown-ids", false, "Replace the one ERROR_DISCOVERING_UUID test per month of an older conversion with those tests keyed by content, instead of converting (rebuild the summaries afterwards)")
 	strategy := flag.String("strategy", def.Strategy, "join: common tests from their county row, the rest with GROUP BY; groupby: everything with one GROUP BY id (same result, slower)")
 	classifyRows := flag.Uint64("classify-shard-rows", def.ClassifyShardRows, "join: source rows per classification query, hash shards of a month (0 = what fits in 60% of -max-memory)")
 	chunk := flag.Int("chunk-months", def.ChunkMonths, "Months read from measurements per pass, aligned (12 = calendar years); measurements' parts span years, so smaller chunks read more")
@@ -67,6 +68,13 @@ func main() {
 	}
 	c := clickhousestorages.NewConverter(db, opts)
 	t := time.Now()
+	if *repairUnknown {
+		if err := c.RepairUnknownIDs(start, end); err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("repaired in %v", time.Since(t))
+		return
+	}
 	if *verify {
 		checks, err := c.Verify(start, end)
 		if err != nil {

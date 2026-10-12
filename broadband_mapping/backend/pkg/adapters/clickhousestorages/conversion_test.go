@@ -168,3 +168,79 @@ func TestConverterStrategiesAgree(t *testing.T) {
 	}
 	assertSameRows(t, conn, "tests", exactTests("tests_groupby"), exactTests("tests"))
 }
+
+// Tests that lost their UUID in the first processor all have id ERROR_DISCOVERING_UUID in
+// measurements: the conversion must key them by their content, one test each, and the
+// repair must turn an older conversion's one collapsed row per month into the same tests.
+func TestConverterKeysUnknownIDsByContent(t *testing.T) {
+	t.Parallel()
+	conn := testConn(t)
+	f := newFixture(t, conn)
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
+	f.insert(t, conn, day("2026-01-05"), day("2026-01-20"), 400)
+	mustExec(t, conn, "CREATE TABLE tests_expected AS tests")
+	mustExec(t, conn, "INSERT INTO tests_expected SELECT * FROM tests")
+	mustExec(t, conn, "TRUNCATE TABLE tests")
+	// 7 tests lose their UUID: every measurements row of theirs gets the unknown id.
+	mustExec(t, conn, "CREATE TABLE lost ENGINE = Memory AS SELECT id FROM tests_expected ORDER BY id LIMIT 7")
+	// (an explicit column list: SELECT * REPLACE kept the id on ClickHouse 26.8)
+	mustExec(t, conn, `INSERT INTO measurements (id, test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude, longitude,
+		location_accuracy_km, has_access_token, access_token_sig, asn_org_id, geospace_id)
+		SELECT '`+unknownID+`', test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude, longitude,
+		location_accuracy_km, has_access_token, access_token_sig, asn_org_id, geospace_id FROM measurements WHERE id IN (SELECT id FROM lost)`)
+	mustExec(t, conn, "ALTER TABLE measurements DELETE WHERE id IN (SELECT id FROM lost) SETTINGS mutations_sync = 1")
+	// Their ids are hashes now: compare everything but those ids.
+	mustExec(t, conn, "ALTER TABLE tests_expected UPDATE id = '' WHERE id IN (SELECT id FROM lost) SETTINGS mutations_sync = 1")
+	want := "SELECT * REPLACE (if(startsWith(id, 'ERR-'), '', id) AS id) FROM (" + normalizedTests("tests_expected") + ") WHERE notEmpty(geospaces)"
+	got := "SELECT * REPLACE (if(startsWith(id, 'ERR-'), '', id) AS id) FROM (" + normalizedTests("tests") + ")"
+	assertKeyed := func(step string) {
+		t.Helper()
+		assertSameRows(t, conn, "tests ("+step+")", want, got)
+		var keyed, unknown uint64
+		if err := conn.QueryRow(context.Background(), "SELECT uniqExact(id), countIf(id = '"+unknownID+"') FROM tests WHERE startsWith(id, 'ERR-') OR id = '"+unknownID+"'").Scan(&keyed, &unknown); err != nil {
+			t.Fatal(err)
+		}
+		if keyed != 7 || unknown != 0 {
+			t.Fatalf("%s: %d tests keyed by content (want 7), %d rows still with the unknown id", step, keyed, unknown)
+		}
+	}
+	month := func(s string) time.Time { tm, _ := time.Parse("2006-01", s); return tm }
+	for _, strategy := range []string{StrategyGroupBy, StrategyJoin} {
+		opts := DefaultConverterOptions
+		opts.Strategy = strategy
+		opts.Redo = true
+		opts.Shards = 2
+		if err := NewConverter(conn, opts).Convert(month("2026-01"), month("2026-01")); err != nil {
+			t.Fatal(err)
+		}
+		assertKeyed(strategy)
+	}
+	checks, err := NewConverter(conn, DefaultConverterOptions).Verify(month("2026-01"), month("2026-01"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !checks[0].OK() {
+		t.Fatalf("verify after conversion: %s", checks[0])
+	}
+
+	// An older conversion collapsed the 7 into one row with the unknown id; the repair
+	// restores them, and verify sees the collapsed row as a difference before it.
+	mustExec(t, conn, `CREATE TABLE collapsed ENGINE = Memory AS SELECT time, '`+unknownID+`' AS id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude,
+		location_accuracy_km, has_access_token, access_token_sig, asn_org_id, state_id, county_id, tribal_id, extra_geospace_ids
+		FROM tests WHERE startsWith(id, 'ERR-') LIMIT 1`)
+	mustExec(t, conn, "INSERT INTO tests ("+testsColumns+") SELECT "+testsColumns+" FROM collapsed")
+	mustExec(t, conn, "ALTER TABLE tests DELETE WHERE startsWith(id, 'ERR-') SETTINGS mutations_sync = 1")
+	checks, err = NewConverter(conn, DefaultConverterOptions).Verify(month("2026-01"), month("2026-01"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if checks[0].OK() {
+		t.Fatalf("verify should see the collapsed row: %s", checks[0])
+	}
+	opts := DefaultConverterOptions
+	opts.Shards = 2
+	if err := NewConverter(conn, opts).RepairUnknownIDs(month("2026-01"), month("2026-01")); err != nil {
+		t.Fatal(err)
+	}
+	assertKeyed("repair")
+}

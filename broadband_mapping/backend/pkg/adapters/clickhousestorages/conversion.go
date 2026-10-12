@@ -222,6 +222,19 @@ func (c *Converter) convertedMonths() (map[month]bool, error) {
 // geospace columns take the smallest geospace of their namespace as a string (the ingestor's
 // order; ClickHouse orders UUIDs differently); the test's other geospaces
 // (a second county, a second tribal area, unknown namespaces) go to extra_geospace_ids.
+// unknownID is the id the first processor stored for every test whose UUID it could not read:
+// those rows are distinct tests sharing one id (61 rows of 49 IPs in one 2019 group alone), so
+// collapsing by id merged each month of them into one test, and the summaries lost them while
+// the original views, which never read the id, had counted them. They are keyed by their own
+// columns instead, which are the same in every row of a test.
+const unknownID = "ERROR_DISCOVERING_UUID"
+
+// testKey identifies a test among the measurements rows of alias a: its id, or for unknownID
+// a hash of the test's columns.
+func testKey(a string) string {
+	return fmt.Sprintf("if(%[1]s.id = '%[2]s', concat('ERR-', hex(cityHash64(%[1]s.time, %[1]s.ip, %[1]s.upload, %[1]s.mbps, %[1]s.min_rtt, %[1]s.loss_rate, %[1]s.asn_org_id, %[1]s.test_style))), %[1]s.id)", a, unknownID)
+}
+
 // Duplicate (id, geospace) rows collapse into one.
 func collapseQuery(filter string) string {
 	return fmt.Sprintf(`
@@ -232,7 +245,7 @@ func collapseQuery(filter string) string {
 				AND g != ifNull(c_tribal_id, toUUID('00000000-0000-0000-0000-000000000000')), c_geospaces))
 		FROM (
 			SELECT
-				m.id AS c_id,
+				%s AS c_id,
 				any(m.time) AS c_time,
 				any(m.test_style) AS c_test_style,
 				toIPv6OrDefault(any(m.ip)) AS c_ip,
@@ -252,8 +265,8 @@ func collapseQuery(filter string) string {
 				groupUniqArray(m.geospace_id) AS c_geospaces
 			FROM measurements m
 			WHERE %s
-			GROUP BY m.id
-		)`, filter)
+			GROUP BY %s
+		)`, testKey("m"), filter, testKey("m"))
 }
 
 const testsColumns = `time, id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude,
@@ -322,7 +335,7 @@ func (c *Converter) collapseShards(filter string, shards int, done func(k int)) 
 	for k := 0; k < shards; k++ {
 		shardFilter := filter
 		if shards > 1 {
-			shardFilter = fmt.Sprintf("%s AND cityHash64(m.id) %% %d = %d", filter, shards, k)
+			shardFilter = fmt.Sprintf("%s AND cityHash64(%s) %% %d = %d", filter, testKey("m"), shards, k)
 		}
 		if err := c.exec(fmt.Sprintf("INSERT INTO %s (%s) %s", conversionStaging, testsColumns, collapseQuery(shardFilter))); err != nil {
 			return errors.Wrap(err, "converter#collapseShards insert shard %d/%d", k+1, shards)
@@ -434,6 +447,42 @@ func (c *Converter) collapseJoin(months []month, filter string) error {
 	})
 }
 
+// RepairUnknownIDs replaces, month by month, the tests rows of unknownID (one per month, from
+// a conversion that collapsed by id) with the tests of those measurements rows keyed by
+// testKey, as a conversion does now. The summaries must be rebuilt afterwards.
+func (c *Converter) RepairUnknownIDs(from, to time.Time) error {
+	for m := monthOf(from); m <= monthOf(to); m = m.next() {
+		start := time.Now()
+		filter := fmt.Sprintf("m.time >= toDateTime('%s', 'UTC') AND m.time < toDateTime('%s', 'UTC') AND m.id = '%s'",
+			m.start().Format("2006-01-02"), m.next().start().Format("2006-01-02"), unknownID)
+		shards, rows, err := c.shardsFor(filter)
+		if err != nil {
+			return err
+		}
+		if rows == 0 {
+			continue
+		}
+		if err := c.exec(fmt.Sprintf("DELETE FROM tests WHERE toYYYYMM(time) = %d AND id = '%s'", int(m), unknownID)); err != nil {
+			return errors.Wrap(err, "converter#RepairUnknownIDs delete %s", m)
+		}
+		for k := 0; k < shards; k++ {
+			shardFilter := filter
+			if shards > 1 {
+				shardFilter = fmt.Sprintf("%s AND cityHash64(%s) %% %d = %d", filter, testKey("m"), shards, k)
+			}
+			if err := c.exec(fmt.Sprintf("INSERT INTO tests (%s) %s", testsColumns, collapseQuery(shardFilter))); err != nil {
+				return errors.Wrap(err, "converter#RepairUnknownIDs insert %s shard %d/%d", m, k+1, shards)
+			}
+		}
+		var tests uint64
+		if err := c.conn.QueryRow(c.ctx(), fmt.Sprintf("SELECT count() FROM tests WHERE toYYYYMM(time) = %d AND startsWith(id, 'ERR-')", int(m))).Scan(&tests); err != nil {
+			return errors.Wrap(err, "converter#RepairUnknownIDs count %s", m)
+		}
+		log.Printf("converter: %s: %d rows of %s are %d tests, %v\n", m, rows, unknownID, tests, time.Since(start))
+	}
+	return nil
+}
+
 // shardsFor returns how many shards a chunk is collapsed in, and its source row count.
 func (c *Converter) shardsFor(filter string) (int, uint64, error) {
 	var rows uint64
@@ -522,8 +571,8 @@ func (c *Converter) verifyChunk(months []month) ([]MonthCheck, error) {
 	// measurements: rows and distinct ids per month, (id, geospace) pairs per geospace.
 	if err := c.query(fmt.Sprintf(`
 		SELECT m, count(), sum(n) FROM (
-			SELECT toYYYYMM(time) AS m, cityHash64(id) AS h, count() AS n FROM measurements WHERE %s GROUP BY m, h
-		) GROUP BY m`, timeFilter("time")), func(rows driver.Rows) error {
+			SELECT toYYYYMM(m.time) AS m, cityHash64(%s) AS h, count() AS n FROM measurements m WHERE %s GROUP BY m, h
+		) GROUP BY m`, testKey("m"), timeFilter("m.time")), func(rows driver.Rows) error {
 		var m uint32
 		var ids, n uint64
 		if err := rows.Scan(&m, &ids, &n); err != nil {
@@ -539,8 +588,8 @@ func (c *Converter) verifyChunk(months []month) ([]MonthCheck, error) {
 	pairs := map[monthGeo]uint64{}
 	if err := c.query(fmt.Sprintf(`
 		SELECT m, toString(geospace_id), count(), sum(n) FROM (
-			SELECT toYYYYMM(time) AS m, geospace_id, cityHash64(id) AS h, count() AS n FROM measurements WHERE %s GROUP BY m, geospace_id, h
-		) GROUP BY m, geospace_id`, timeFilter("time")), func(rows driver.Rows) error {
+			SELECT toYYYYMM(m.time) AS m, m.geospace_id AS geospace_id, cityHash64(%s) AS h, count() AS n FROM measurements m WHERE %s GROUP BY m, geospace_id, h
+		) GROUP BY m, geospace_id`, testKey("m"), timeFilter("m.time")), func(rows driver.Rows) error {
 		var m uint32
 		var g string
 		var ids, n uint64
