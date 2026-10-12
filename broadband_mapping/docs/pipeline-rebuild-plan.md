@@ -188,40 +188,112 @@ wrong for partial months — instead: delete-by-id is impossible cheaply, so rep
 re-ingest the day's file skipping ids already present (load that day's ids: one partition,
 cheap) and then `summarize -from D -to D`. Also fix `LastDate`.
 
-### Processor v2 (`mlab-processor`)
+### Processor v2 (`mlab-processor`) — built (workstream D, branch `ws-processor`)
 
-- Fix bugs 1–3, 7: fetch errors fail the date (retry a tarball 3×, then abort the date,
-  never upload); only HEAD 404 means "not done"; seek to 0 before upload retry; close
-  files. Record per date: tarballs listed, tarballs processed, tests written; refuse to
-  mark done when listed ≠ processed. Log a one-line summary per date.
-- Remove the `measurementlink` step and the `fetch/` upload? No: keep uploading `fetch/`
-  (raw retention) unless the user says otherwise; remove `measurementlink`.
-- Drop ZCTA and tract shapes from the reverse geocoder config (`SHAPE_PATHS`,
-  `TRACTS_SHAPE_DIR`); free shapes and netmaps after a run or run as a one-shot
-  (systemd timer nightly) instead of a resident loop.
-- Replace `NetMap` with a MaxMind mmdb reader or a radix trie over the same CSVs. The
-  geocoder loads the CSVs by header name (`ipgeocoder/geocode.go:52,107`), so MaxMind's
-  CSV editions are a stable input.
-- Geo data: refreshed on 2026-10-11 to GeoLite2-City-CSV_20261009, GeoLite2-ASN-CSV_20261010
-  and CAIDA 20261001 (previous Sep-2024 files kept in `input/backup-20240925/`). MaxMind
-  account id + license key are in `/opt/broadbandmapping/processor_env`
-  (`MAXMIND_ACCOUNT_ID`, `MAXMIND_LICENSE_KEY`; file is root 0600). Add a monthly refresh
-  (systemd timer) doing: download `https://download.maxmind.com/geoip/databases/<edition>/download?suffix=zip`
-  with basic auth, verify `.sha256`, unzip, copy the four `*-Blocks-IPv{4,6}.csv`, fetch the
-  newest `publicdata.caida.org/datasets/as-organizations/YYYYMMDD.as-org2info.jsonl.gz`.
-  TIGER shapes (`tl_us_*.zip`) are from Sep 2024; refresh yearly.
-- Bug: `pkg/app/config/spec.go:15` binds `AsnIpv6DBPath` to the `ASN_IPV4_DB_PATH` key.
-- Geocoding stays ours (GeoLite/CAIDA IP geocoding + TIGER reverse geocoding); M-Lab's
-  BigQuery geolocation is not used (user decision). Completeness therefore comes from our
-  own accounting: tarballs listed vs processed per date, tests written, and a 7-day
-  re-check.
-- Decide (user): keep non-US tests (see "Decisions").
-- Daily schedule: run for `today-2` and re-check the last 7 days' completeness every run.
+What changed (all in `radar/mlab-processor`, tests green, `go vet` clean):
+
+- **Fetch fails the date instead of uploading a partial day** (bugs 1, 8). Archive listings
+  and tarballs are retried (3 attempts, 5 s backoff doubling, 30 min per attempt); a tarball
+  that still fails aborts the date and nothing is uploaded. Each tarball is parsed into
+  memory and written only when read completely, so retries never duplicate rows. A test
+  file that is itself corrupt (bad JSON/snaplog inside a healthy tarball) is counted as
+  `bad_files` and skipped, as before. Zero listed tarballs = failure. ndt7 JSON is decoded
+  keeping only the last TCPInfo (rows identical to the old parser, unit-tested).
+- **Storage** (bugs 2, 3, 7): only HEAD 404 means "not done"; other HEAD errors are retried
+  4× and then fail the date. Uploads are synchronous, seek to 0 before every attempt
+  (5 attempts) and return errors. Local storage writes atomically. Readers/writers close
+  their files; truncated avro inputs are reported. Leftover `./output` temp files no longer
+  count as done. S3 client moved from aws-sdk-go v1 (EOL) to aws-sdk-go-v2 with
+  checksums "when required" (same wire behaviour as v1 towards B2); tested with httptest
+  and a local MinIO, **not yet against B2** (no writes from dev machines).
+- **Accounting**: one log line per date and step, e.g.
+  `SUMMARY date=2026-07-31 step=fetch status=ok listed=14630 processed=14630 tests=6195321 bad_files=0 retries=0 seconds=452`
+  (steps `check`, `fetch`, `ipgeocode`, `reversegeocode`, `date`; status ok/failed/skipped).
+  When fetch + ipgeocode + reversegeocode all succeeded for a date, a manifest
+  `completeness/<date>.json` is stored in the bucket (tarballs listed/processed per test
+  type, tests, bad files, retries, per-step row counts). New B2 prefix `completeness/`
+  (tiny JSON files; the ingestor ignores it). Upload order per date: `fetch/` right after
+  the fetch, then `reversegeocode/`, then `ipgeocode/`, then the manifest (the ingestor
+  takes a day once both geocode files exist). A fetch-only rerun deletes the manifest.
+- **One-shot mode** (default of `mlab-processor`, for a systemd timer): checks dates
+  today-2 back to today-9 and (re)processes a date, all steps from scratch, when it has no
+  manifest or when M-Lab's archive now lists more tarballs than the manifest says were
+  processed (late uploads). Exit status 1 if any date failed (→ systemd unit failed →
+  alerting). Flags: `-end D`, `-from D` (catch-up start), `-recheck-days N` (default 7),
+  `-check-only`, `-storage local|gcs|s3|b2`, `-workers N`, `-low-memory`, `-loop` (the old
+  resident nightly loop over EARLIEST_DATE..today-2; the legacy unit template and the
+  Dockerfile pass `-loop`). The geo data is loaded lazily and released after a run.
+  **The current `/etc/systemd/system/mlab-processor.service` (no args, `Restart=on-failure`)
+  must not be reused with the new binary as is**: use `Type=oneshot` + a daily timer (or add
+  `-loop`). Suggested timer: daily 06:00 UTC, `TimeoutStartSec=6h`.
+- `measurementlink` removed (step, model, CLI arg prints an error). Reverse geocoding loads
+  only US_STATES, US_COUNTIES, US_AIANNH (US_TRIBAL_TRACTS allowed): ZIP_CODES and
+  `TRACTS_SHAPE_DIR` are ignored with a log line, so the production env (which sets no
+  shape paths) needs no change. Output for the kept namespaces is identical (verified).
+  Points outside the US are not pre-filtered by a territory bounding box: the R-tree already
+  rejects them at the root, so there is nothing to gain.
+- `NetMap` replaced by per-prefix-length sorted integer tables (0 allocations per lookup,
+  ~1000× faster in the micro-benchmark); a test compares it with the old implementation on
+  the real GeoLite2 City and ASN CSVs (5.7 M + 1.1 M networks, ~4 M lookups: random,
+  edges of networks, IPv4-mapped forms) — identical. Polygons store points by value.
+- `ASN_IPV6_DB_PATH` config bug fixed (no production effect: processor_env sets no paths).
+- web100 test ids are now UUIDv5(archive path + file name) instead of random v4, so a
+  refetched web100 day has stable ids (ids of already ingested web100 days were random and
+  cannot be matched; see Repairs).
+- `scripts/refresh-geodata.sh ENV_FILE INPUT_DIR` (interface documented in its header):
+  MaxMind GeoLite2-City-CSV / GeoLite2-ASN-CSV via basic auth (credentials passed to curl on
+  stdin, never printed), sha256 verified, row-count sanity checks, atomic install of the
+  four `*-Blocks-IPv{4,6}.csv` with one previous copy in `INPUT_DIR/previous/`, newest
+  CAIDA `as-org2info.jsonl`, `INPUT_DIR/VERSIONS` (edition → release, sha256, CAIDA file).
+  Idempotent: unchanged releases are skipped (only the small .sha256 is downloaded).
+  Exit ≠ 0 on any failure, installed files untouched. Tested against a fake server.
+- Build: `make -C mlab-processor binaries` → static `bin/mlab-processor`, `bin/process-mlab`
+  (linux/amd64); `make test`. Go 1.25 (go.mod), Docker images golang:1.25-alpine / alpine:3.22.
+
+Measured on jagular (16 threads, 27 GB) with 2026-07-31 (6,195,321 tests, production's
+`fetch/2026-07-31.avro` and the server's current input files), local storage:
+
+| Run | Peak RSS | Wall time |
+|---|---|---|
+| old binary, ipgeocode + reversegeocode (loads ZCTA + 56 tract files) | 6.4 GiB (6583 MiB) | 75 s (ipgeocode 32 s incl. 7 s load, reversegeocode 43 s incl. 15 s load) |
+| v2, ipgeocode + reversegeocode | **1.0 GiB** (1000 MiB) | 33 s (ipgeocode 12 s incl. 3.3 s load, reversegeocode 21 s incl. 1.2 s load) |
+| v2 one-shot end to end (fetch from M-Lab GCS + both steps) | 1.0 GiB (1008 MiB) | 487 s (fetch 452 s: 14,630 tarballs, 31 GB of ndt7 at ~65 MB/s) |
+
+Outputs compared row by row: v2 ipgeocode = old ipgeocode (6,195,321 rows, 0 differences,
+also for the freshly fetched day: same 6,195,321 tests as the file in B2); v2
+reversegeocode = old reversegeocode minus the ZIP_CODES/CENSUS_TRACTS rows (2,465,389 rows,
+0 differences; the old file had 2,456,068 more rows of dropped namespaces). The fetch is
+network-bound (ndt7 is ~31 GB/day); on mapping-db expect similar or better. The 16 GB VM
+target leaves ample room (≈1 GB peak).
+
+How to run (on mapping-db, env from `processor_env`, working dir `/opt/broadbandmapping`):
+
+- Daily: `mlab-processor` (one-shot; timer). Catch-up after the cutover:
+  `mlab-processor -from 2026-08-01` (processes every date without a manifest up to today-2;
+  ~8 min per day here, newest first). `mlab-processor -from D -check-only` lists decisions.
+- **Short-day refetch** (repairs): `process-mlab -start D -end D -rerun -storage b2 all`
+  (or a range with `-start D1 -end D2`); it refetches, regenerates both geocode files,
+  uploads and writes the manifest; exit status 1 if a date failed (rerun it). Equivalent:
+  `mlab-processor -from D1 -end D2` processes every date of the range that has no manifest
+  (all pre-v2 dates). Then repair-ingest those dates (workstream C).
+- Geo data: `scripts/refresh-geodata.sh /opt/broadbandmapping/processor_env /opt/broadbandmapping/input`
+  monthly (timer, outside the processor's run window). TIGER shapes stay yearly/manual.
+
+Open points for D:
+- Not yet run against B2 (S3 client changed): first production run should be one date
+  with `process-mlab -start D -end D -rerun -storage b2 all` and a look at the uploaded
+  objects and `completeness/D.json`.
+- The ingestor (C) should consider a day ready only when `completeness/<date>.json` exists
+  (today it takes a day when both geocode files exist) and must handle re-uploaded days
+  (repair mode).
+- Days already ingested from web100 (2009–2019, e.g. the short days 2009-11-08,
+  2010-02-01..02) have random ids; re-ingesting a refetched web100 day cannot skip "ids
+  already present" — those days need replace-by-day instead.
 
 ### Repairs
 
-Refetch the 59 short days with `process-mlab -start D -end D -rerun -storage b2` (time one
-day first), then the 2024-10..2025-06 range if the per-day cost allows, then repair-ingest
+Refetch the 59 short days with `process-mlab -start D -end D -rerun -storage b2 all` (v2
+binary; ~8 min per day measured for 2026-07-31; see "Processor v2"), then the 2024-10..2025-06 range if the per-day cost allows, then repair-ingest
 those days and run `summarize -from 2023-03-01` once.
 
 ### Ops
