@@ -10,47 +10,39 @@ import (
 	"sync"
 	"testing"
 	"time"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
-
-func TestIsNotFound(t *testing.T) {
-	cases := []struct {
-		err  error
-		want bool
-	}{
-		{awserr.NewRequestFailure(awserr.New("NotFound", "Not Found", nil), 404, "r"), true},
-		{awserr.NewRequestFailure(awserr.New("NoSuchKey", "", nil), 404, "r"), true},
-		{awserr.New("NotFound", "", nil), true},
-		{awserr.NewRequestFailure(awserr.New("InternalError", "", nil), 500, "r"), false},
-		{awserr.NewRequestFailure(awserr.New("Forbidden", "", nil), 403, "r"), false},
-		{awserr.NewRequestFailure(awserr.New("ServiceUnavailable", "", nil), 503, "r"), false},
-		{awserr.New("RequestError", "send request failed", errors.New("dial tcp: i/o timeout")), false},
-		{errors.New("context deadline exceeded"), false},
-	}
-	for _, c := range cases {
-		if got := isNotFound(c.err); got != c.want {
-			t.Errorf("isNotFound(%v) = %v, want %v", c.err, got, c.want)
-		}
-	}
-}
 
 func newTestStorage(t *testing.T, h http.HandlerFunc) *s3Storage {
 	srv := httptest.NewServer(h)
 	t.Cleanup(srv.Close)
-	st, err := New(S3StorageOptions{BucketName: "b", AccessKey: "k", SecretKey: "s", Endpoint: srv.URL, Region: "us-east-005"})
+	opts := S3StorageOptions{BucketName: "b", AccessKey: "k", SecretKey: "s", Endpoint: srv.URL, Region: "us-east-005"}
+	st, err := New(opts)
 	if err != nil {
 		t.Fatal(err)
 	}
 	s := st.(*s3Storage)
 	// no SDK-internal retries (they back off for seconds); test our own retry loop
-	s.awsSession.Config.MaxRetries = aws.Int(0)
-	s.cli = s3.New(s.awsSession)
-	s.uploader = NewUploader("b", s.awsSession)
-	s.uploader.backoff = time.Millisecond
+	s.cli = newClient(opts, 1)
+	s.backoff, s.existsBackoff = time.Millisecond, time.Millisecond
 	return s
+}
+
+func TestIsNotFound(t *testing.T) {
+	if isNotFound(errors.New("context deadline exceeded")) {
+		t.Fatal("plain error is not a 404")
+	}
+}
+
+func TestEndpointURL(t *testing.T) {
+	for in, want := range map[string]string{
+		"s3.us-east-005.backblazeb2.com":         "https://s3.us-east-005.backblazeb2.com",
+		"https://s3.us-east-005.backblazeb2.com": "https://s3.us-east-005.backblazeb2.com",
+		"http://127.0.0.1:9000":                  "http://127.0.0.1:9000",
+	} {
+		if got := endpointURL(in); got != want {
+			t.Errorf("%s: %s", in, got)
+		}
+	}
 }
 
 func TestStoreSeeksToStartOnEveryAttempt(t *testing.T) {
@@ -58,6 +50,9 @@ func TestStoreSeeksToStartOnEveryAttempt(t *testing.T) {
 	var bodies []string
 	calls := 0
 	s := newTestStorage(t, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut || r.URL.Path != "/b/fetch/2026-07-31.avro" {
+			t.Errorf("unexpected %s %s", r.Method, r.URL.Path)
+		}
 		b, _ := io.ReadAll(r.Body)
 		mu.Lock()
 		defer mu.Unlock()
@@ -75,6 +70,9 @@ func TestStoreSeeksToStartOnEveryAttempt(t *testing.T) {
 	if err := s.Store(context.Background(), r, "fetch/2026-07-31.avro"); err != nil {
 		t.Fatal(err)
 	}
+	if calls != 3 {
+		t.Fatalf("calls %d", calls)
+	}
 	if last := bodies[len(bodies)-1]; last != content {
 		t.Fatalf("stored %d bytes, want %d", len(last), len(content))
 	}
@@ -85,29 +83,42 @@ func TestStoreReturnsErrorAfterAttempts(t *testing.T) {
 		io.ReadAll(r.Body)
 		w.WriteHeader(http.StatusInternalServerError)
 	})
-	s.uploader.attempts = 2
+	s.attempts = 2
 	if err := s.Store(context.Background(), strings.NewReader("x"), "k"); err == nil {
 		t.Fatal("expected an error")
 	}
 }
 
 func TestExistsOnlyNotFoundIsFalse(t *testing.T) {
-	existsBackoff = time.Millisecond
+	var mu sync.Mutex
 	status := http.StatusNotFound
 	s := newTestStorage(t, func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		defer mu.Unlock()
 		w.WriteHeader(status)
 	})
+	set := func(v int) { mu.Lock(); status = v; mu.Unlock() }
 	if ok, err := s.Exists(context.Background(), "k"); ok || err != nil {
 		t.Fatalf("404: got %v %v", ok, err)
 	}
-	status = http.StatusOK
+	set(http.StatusOK)
 	if ok, err := s.Exists(context.Background(), "k"); !ok || err != nil {
 		t.Fatalf("200: got %v %v", ok, err)
 	}
 	for _, st := range []int{http.StatusInternalServerError, http.StatusForbidden, http.StatusServiceUnavailable} {
-		status = st
+		set(st)
 		if ok, err := s.Exists(context.Background(), "k"); ok || err == nil {
 			t.Fatalf("%d: got %v %v, want an error", st, ok, err)
 		}
+	}
+}
+
+func TestGetMissingIsErrNotExist(t *testing.T) {
+	s := newTestStorage(t, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		io.WriteString(w, `<?xml version="1.0"?><Error><Code>NoSuchKey</Code><Message>x</Message></Error>`)
+	})
+	if _, err := s.Get(context.Background(), "k"); err == nil || !strings.Contains(err.Error(), "not exist") {
+		t.Fatalf("got %v", err)
 	}
 }

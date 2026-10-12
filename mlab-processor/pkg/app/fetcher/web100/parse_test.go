@@ -59,7 +59,7 @@ func TestParseWeb100Definitions(t *testing.T) {
 	r := bytes.NewBufferString(shortTcpKisTxt)
 	actualNames, err := web100.ParseWeb100Definitions(r)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 
 	if len(actualNames) != len(expectedNames) {
