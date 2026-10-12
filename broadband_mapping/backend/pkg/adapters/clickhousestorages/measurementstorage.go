@@ -46,6 +46,8 @@ const testsTable = "tests"
 
 const batchSize = 100_000
 
+const maxInserters = 8
+
 func (ms *measurementStorage) ctx() context.Context {
 	// ClickHouse 26.3 turned async_insert on by default; batches must be synchronous so that
 	// Close means the rows are in the table.
@@ -134,28 +136,81 @@ func (ms *measurementStorage) append(batch driver.Batch, m *storages.Measurement
 	)
 }
 
+// batchIterator is implemented by iterators whose tests can be taken in batches by
+// several goroutines at once (the ingestor's reader): the inserts of one file then run
+// on nWorkers connections in parallel.
+type batchIterator interface {
+	NextBatch() ([]*storages.Measurement, error)
+}
+
 func (ms *measurementStorage) insertAll(it storages.MeasurementIterator) error {
+	bi, ok := it.(batchIterator)
+	if !ok {
+		return ms.insertFrom(func() ([]*storages.Measurement, error) {
+			m, err := it.Next()
+			if m == nil {
+				return nil, err
+			}
+			return []*storages.Measurement{m}, nil
+		}, nil)
+	}
+	// Each inserter holds a batch of batchSize rows: cap them to bound the memory.
+	inserters := ms.nWorkers
+	if inserters > maxInserters {
+		inserters = maxInserters
+	}
+	var failed atomic.Bool
+	errs := make(chan error, inserters)
+	for i := 0; i < inserters; i++ {
+		go func() { errs <- ms.insertFrom(bi.NextBatch, &failed) }()
+	}
+	var first error
+	for i := 0; i < inserters; i++ {
+		if err := <-errs; err != nil && first == nil {
+			first = err
+		}
+	}
+	return first
+}
+
+// insertFrom inserts the tests next returns in batches of batchSize rows until it
+// returns none. Once failed is set (by this or another inserter), it only drains next.
+func (ms *measurementStorage) insertFrom(next func() ([]*storages.Measurement, error), failed *atomic.Bool) (err error) {
+	defer func() {
+		if err != nil && failed != nil {
+			failed.Store(true)
+		}
+	}()
 	var batch driver.Batch
 	n := 0
-	for m, err := it.Next(); m != nil || err != nil; m, err = it.Next() {
-		if err != nil {
-			return errors.Wrap(err, "measurementStorage#insertAll Next")
+	for {
+		rows, nErr := next()
+		if nErr != nil {
+			return errors.Wrap(nErr, "measurementStorage#insertAll Next")
 		}
-		if batch == nil {
-			if batch, err = ms.prepareBatch(); err != nil {
-				return err
+		if rows == nil {
+			break
+		}
+		if failed != nil && failed.Load() {
+			continue
+		}
+		for _, m := range rows {
+			if batch == nil {
+				if batch, err = ms.prepareBatch(); err != nil {
+					return err
+				}
 			}
-		}
-		if err := ms.append(batch, m); err != nil {
-			return errors.Wrap(err, "measurementStorage#insertAll Append")
-		}
-		n++
-		if n == batchSize {
-			if err := batch.Send(); err != nil {
-				return errors.Wrap(err, "measurementStorage#insertAll Send")
+			if err := ms.append(batch, m); err != nil {
+				return errors.Wrap(err, "measurementStorage#insertAll Append")
 			}
-			atomic.AddUint64(&ms.inserted, uint64(n))
-			batch, n = nil, 0
+			n++
+			if n == batchSize {
+				if err := batch.Send(); err != nil {
+					return errors.Wrap(err, "measurementStorage#insertAll Send")
+				}
+				atomic.AddUint64(&ms.inserted, uint64(n))
+				batch, n = nil, 0
+			}
 		}
 	}
 	if batch != nil && n > 0 {
