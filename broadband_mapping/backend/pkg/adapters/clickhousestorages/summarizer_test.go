@@ -295,6 +295,28 @@ func TestSummarizerMatchesLegacyViews(t *testing.T) {
 	}
 	assertMatchesLegacy(t, conn, "_next")
 
+	// The live tables were built by the legacy views from the same data: validation finds no
+	// difference, until a live row is changed.
+	assertValid := func(wantDiff bool) {
+		t.Helper()
+		results, err := s.Validate(day("2026-01-01"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		diffs := 0
+		for _, r := range results {
+			if r.OnlyLive+r.OnlyNext > 0 {
+				diffs++
+			}
+		}
+		if len(results) != 8 || (diffs > 0) != wantDiff {
+			t.Fatalf("validation: %d tables, %d differ: %+v", len(results), diffs, results)
+		}
+	}
+	assertValid(false)
+	mustExec(t, conn, "ALTER TABLE summary_month UPDATE med_mbps = med_mbps + 1 WHERE year = 2025 AND month = 12 SETTINGS mutations_sync = 1")
+	assertValid(true)
+
 	if err := s.SwitchOver(); err != nil {
 		t.Fatal(err)
 	}

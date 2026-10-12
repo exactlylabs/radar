@@ -26,6 +26,7 @@ var (
 	spill      = flag.Uint64("spill-bytes", clickhousestorages.DefaultSummarizerOptions.MaxBytesBeforeExternalGroupBy, "ClickHouse max_bytes_before_external_group_by, bytes")
 	insertThr  = flag.Int("max-insert-threads", clickhousestorages.DefaultSummarizerOptions.MaxInsertThreads, "ClickHouse max_insert_threads of INSERT ... SELECT")
 	parallel   = flag.Int("parallel", clickhousestorages.DefaultSummarizerOptions.Parallel, "Summary tables built at the same time (memory adds up)")
+	validate   = flag.String("validate-before", "", "Compare <table>_next with the live tables for the buckets that ended before this date (YYYY-MM-DD); semester and all-time are skipped")
 	windows    = flag.String("windows", "", "Comma separated windows to build (alltime,year,semester,quarter,month,week), default all")
 )
 
@@ -62,6 +63,26 @@ func main() {
 	case *full:
 		log.Println("Rebuilding all summaries into *_next tables")
 		err = s.RebuildAll()
+	case *validate != "":
+		var before time.Time
+		if before, err = time.Parse("2006-01-02", *validate); err == nil {
+			var results []clickhousestorages.ValidationResult
+			if results, err = s.Validate(before); err == nil {
+				bad := 0
+				for _, r := range results {
+					status := "OK"
+					if r.OnlyLive+r.OnlyNext > 0 {
+						status = "DIFF"
+						bad++
+					}
+					log.Printf("%-4s %s: %d buckets, %d rows only live, %d rows only next\n", status, r.Table, r.Buckets, r.OnlyLive, r.OnlyNext)
+				}
+				if bad > 0 {
+					log.Printf("%d tables differ\n", bad)
+					os.Exit(1)
+				}
+			}
+		}
 	case *switchOver:
 		log.Println("Switching *_next tables live")
 		err = s.SwitchOver()
@@ -79,7 +100,7 @@ func main() {
 			err = s.Update(start, end)
 		}
 	default:
-		fmt.Fprintln(os.Stderr, "Pass one of -full, -switch or -from")
+		fmt.Fprintln(os.Stderr, "Pass one of -full, -validate-before, -switch or -from")
 		flag.Usage()
 		os.Exit(2)
 	}
