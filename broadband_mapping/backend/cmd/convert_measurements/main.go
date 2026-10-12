@@ -3,6 +3,7 @@
 // docs/pipeline-rebuild-plan.md, "Production runbook".
 //
 //	convert_measurements -from 2009-01 -to 2026-08            # convert the months not converted yet
+//	convert_measurements -from 2009-01 -to 2026-08 -strategy groupby   # the original one-GROUP-BY strategy
 //	convert_measurements -from 2025-03 -to 2025-03 -redo      # convert a month again
 //	convert_measurements -from 2009-01 -to 2026-08 -verify    # compare counts per month and geospace
 package main
@@ -25,6 +26,8 @@ func main() {
 	to := flag.String("to", "", "Last month (YYYY-MM), inclusive")
 	verify := flag.Bool("verify", false, "Compare measurements and tests instead of converting")
 	redo := flag.Bool("redo", false, "Convert months already converted again")
+	strategy := flag.String("strategy", def.Strategy, "join: common tests from their county row, the rest with GROUP BY; groupby: everything with one GROUP BY id (same result, slower)")
+	classifyRows := flag.Uint64("classify-shard-rows", def.ClassifyShardRows, "join: source rows per classification query, hash shards of a month (0 = what fits in 60% of -max-memory)")
 	chunk := flag.Int("chunk-months", def.ChunkMonths, "Months read from measurements per pass, aligned (12 = calendar years); measurements' parts span years, so smaller chunks read more")
 	maxThreads := flag.Int("max-threads", def.MaxThreads, "ClickHouse max_threads")
 	insertThreads := flag.Int("max-insert-threads", def.MaxInsertThreads, "ClickHouse max_insert_threads")
@@ -51,7 +54,9 @@ func main() {
 	defer db.Close()
 
 	opts := clickhousestorages.ConverterOptions{
+		Strategy:                      *strategy,
 		ChunkMonths:                   *chunk,
+		ClassifyShardRows:             *classifyRows,
 		MaxThreads:                    *maxThreads,
 		MaxInsertThreads:              *insertThreads,
 		MaxMemoryUsage:                *maxMemory,

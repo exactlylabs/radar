@@ -18,22 +18,52 @@ import (
 // measurements isn't partitioned and its parts span years, so reading one month touches
 // ~10x the month's granules (measured on production: month by month reads 15.2 M granules,
 // 13x the table; year by year 2.3 M, 1.9x). The source is therefore read in chunks of
-// ChunkMonths aligned months; each chunk is collapsed (GROUP BY id, spilling to disk past
-// MaxBytesBeforeExternalGroupBy) into a staging table partitioned like tests, and every month
-// of the chunk is then put in tests with REPLACE PARTITION. A month is recorded in
-// tests_conversion_log once it is in tests, so a run can be stopped and resumed, and running
-// a month again replaces it.
+// ChunkMonths aligned months; each chunk is collapsed into a staging table partitioned like
+// tests (see Strategy), and every month of the chunk is then put in tests with REPLACE
+// PARTITION. A month is recorded in tests_conversion_log once it is in tests, so a run can
+// be stopped and resumed, and running a month again replaces it.
 type Converter struct {
 	conn driver.Conn
 	opts ConverterOptions
+	// Stats of the last chunk converted with StrategyJoin.
+	Stats JoinStats
+}
+
+// Conversion strategies. Both give byte-identical tests rows.
+const (
+	// StrategyGroupBy collapses every row of the chunk with one GROUP BY id (40-byte string
+	// keys, ~500 B of aggregate state per test): exact and simple, but a year of production
+	// spills tens of GB and ran at ~330 k source rows/s.
+	StrategyGroupBy = "groupby"
+	// StrategyJoin handles the common test (exactly one county row and one state row, the
+	// state being the county's parent in geospaces; ~98 % of production) from its county row
+	// alone: that row is read by primary key (geospace_id IN counties), county_id is its
+	// geospace, state_id the county's parent, tribal_id NULL, extra_geospace_ids []. A
+	// classification pass (GROUP BY id with a 32-byte state, in shards that fit in memory)
+	// lists the other ids exactly; those ~2 % go through the GROUP BY of StrategyGroupBy.
+	StrategyJoin = "join"
+)
+
+// JoinStats counts what StrategyJoin did for a chunk.
+type JoinStats struct {
+	SourceRows   uint64 // measurements rows of the chunk
+	ExceptionIDs uint64 // tests collapsed with the GROUP BY
+	FastTests    uint64 // tests taken from their county row
 }
 
 type ConverterOptions struct {
+	// Strategy is StrategyJoin (default) or StrategyGroupBy.
+	Strategy    string
 	ChunkMonths int
-	// A chunk's GROUP BY id is split into shards by cityHash64(id) % n (every row of a test
-	// has the same id, so each test still collapses in one query). Shards bound the
-	// aggregation's size: a 2017 chunk (885 M rows) in one query spilled 34 GB and still
-	// exceeded a 15 GB memory limit while merging. 0 = one shard per ShardRows source rows.
+	// StrategyJoin classifies the ids of each month in shards of at most ClassifyShardRows
+	// source rows (hash shards of the month's rows) so the classification never spills:
+	// it takes classifyBytesPerRow of memory per row. 0 = 60 % of MaxMemoryUsage.
+	ClassifyShardRows uint64
+	// A chunk's GROUP BY id (StrategyGroupBy: every row; StrategyJoin: the exceptions' rows)
+	// is split into shards by cityHash64(id) % n (every row of a test has the same id, so
+	// each test still collapses in one query). Shards bound the aggregation's size: a 2017
+	// chunk (885 M rows) in one query spilled 34 GB and still exceeded a 15 GB memory limit
+	// while merging. 0 = one shard per ShardRows source rows.
 	Shards                        int
 	ShardRows                     uint64
 	MaxThreads                    int
@@ -45,6 +75,7 @@ type ConverterOptions struct {
 }
 
 var DefaultConverterOptions = ConverterOptions{
+	Strategy:                      StrategyJoin,
 	ChunkMonths:                   12,
 	ShardRows:                     250_000_000,
 	MaxThreads:                    6,
@@ -56,26 +87,51 @@ var DefaultConverterOptions = ConverterOptions{
 const (
 	conversionLog     = "tests_conversion_log"
 	conversionStaging = "tests_conv_staging"
+	// StrategyJoin's lookup of a geospace's namespace and parent (a Join engine table read
+	// with joinGet), and the ids it sends through the GROUP BY.
+	conversionGeo        = "tests_conv_geo"
+	conversionExceptions = "tests_conv_exceptions"
+	// Memory of the classification GROUP BY per source row: measured 117-132 B on ClickHouse
+	// 26.8 at 4-16 M ids of 37 bytes (two rows per id; the hash table grows in powers of two).
+	classifyBytesPerRow = 125
 )
 
 func NewConverter(conn driver.Conn, opts ConverterOptions) *Converter {
+	if opts.Strategy == "" {
+		opts.Strategy = StrategyJoin
+	}
 	if opts.ChunkMonths < 1 {
 		opts.ChunkMonths = 1
 	}
 	if opts.MaxInsertThreads < 1 {
 		opts.MaxInsertThreads = 1
 	}
+	if opts.ClassifyShardRows == 0 {
+		opts.ClassifyShardRows = opts.MaxMemoryUsage * 6 / 10 / classifyBytesPerRow
+	}
+	if opts.ClassifyShardRows < 1 {
+		opts.ClassifyShardRows = 1
+	}
 	return &Converter{conn: conn, opts: opts}
 }
 
 func (c *Converter) ctx() context.Context {
-	return clickhouse.Context(context.Background(), clickhouse.WithSettings(clickhouse.Settings{
+	return c.ctxWith(nil)
+}
+
+// ctxWith is ctx with settings overridden.
+func (c *Converter) ctxWith(override clickhouse.Settings) context.Context {
+	settings := clickhouse.Settings{
 		"max_threads":                        c.opts.MaxThreads,
 		"max_insert_threads":                 c.opts.MaxInsertThreads,
 		"max_memory_usage":                   c.opts.MaxMemoryUsage,
 		"max_bytes_before_external_group_by": c.opts.MaxBytesBeforeExternalGroupBy,
 		"async_insert":                       0,
-	}))
+	}
+	for k, v := range override {
+		settings[k] = v
+	}
+	return clickhouse.Context(context.Background(), clickhouse.WithSettings(settings))
 }
 
 func (c *Converter) exec(query string, args ...any) error {
@@ -117,6 +173,9 @@ func monthList(months []month) string {
 
 // Convert converts the months from..to (inclusive) that aren't converted yet (all of them with Redo).
 func (c *Converter) Convert(from, to time.Time) error {
+	if c.opts.Strategy != StrategyJoin && c.opts.Strategy != StrategyGroupBy {
+		return errors.New("converter#Convert: unknown strategy %q", c.opts.Strategy)
+	}
 	if err := c.exec(fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (month UInt32, tests UInt64, invalid_ips UInt64, finished DateTime('UTC'))
 		ENGINE = ReplacingMergeTree(finished) ORDER BY month`, conversionLog)); err != nil {
 		return errors.Wrap(err, "converter#Convert create log")
@@ -203,7 +262,7 @@ const testsColumns = `time, id, test_style, ip, upload, mbps, min_rtt, loss_rate
 func (c *Converter) convertChunk(months []month) error {
 	start := time.Now()
 	first, last := months[0], months[len(months)-1]
-	log.Printf("converter: reading %s..%s from measurements\n", first, last)
+	log.Printf("converter: reading %s..%s from measurements (%s)\n", first, last, c.opts.Strategy)
 	if err := c.exec("DROP TABLE IF EXISTS " + conversionStaging); err != nil {
 		return errors.Wrap(err, "converter#convertChunk drop staging")
 	}
@@ -214,22 +273,14 @@ func (c *Converter) convertChunk(months []month) error {
 	// The time range uses measurements' minmax index; the month list skips converted months.
 	filter := fmt.Sprintf("m.time >= toDateTime('%s', 'UTC') AND m.time < toDateTime('%s', 'UTC') AND toYYYYMM(m.time) IN (%s)",
 		first.start().Format("2006-01-02"), last.next().start().Format("2006-01-02"), monthList(months))
-	shards, rows, err := c.shardsFor(filter)
+	var err error
+	if c.opts.Strategy == StrategyGroupBy {
+		err = c.collapseGroupBy(months, filter)
+	} else {
+		err = c.collapseJoin(months, filter)
+	}
 	if err != nil {
 		return err
-	}
-	log.Printf("converter: %s..%s: %d source rows in %d shard(s)\n", first, last, rows, shards)
-	for k := 0; k < shards; k++ {
-		shardFilter := filter
-		if shards > 1 {
-			shardFilter = fmt.Sprintf("%s AND cityHash64(m.id) %% %d = %d", filter, shards, k)
-		}
-		if err := c.exec(fmt.Sprintf("INSERT INTO %s (%s) %s", conversionStaging, testsColumns, collapseQuery(shardFilter))); err != nil {
-			return errors.Wrap(err, "converter#convertChunk insert shard %d/%d", k+1, shards)
-		}
-		if shards > 1 {
-			log.Printf("converter: shard %d/%d of %s..%s done, %v elapsed\n", k+1, shards, first, last, time.Since(start))
-		}
 	}
 	log.Printf("converter: collapsed %s..%s in %v\n", first, last, time.Since(start))
 	for _, m := range months {
@@ -249,6 +300,138 @@ func (c *Converter) convertChunk(months []month) error {
 	}
 	log.Printf("converter: %s..%s done in %v\n", first, last, time.Since(start))
 	return nil
+}
+
+// collapseGroupBy (StrategyGroupBy) collapses the rows matching filter into the staging
+// table with collapseQuery, in hash shards.
+func (c *Converter) collapseGroupBy(months []month, filter string) error {
+	start := time.Now()
+	first, last := months[0], months[len(months)-1]
+	shards, rows, err := c.shardsFor(filter)
+	if err != nil {
+		return err
+	}
+	log.Printf("converter: %s..%s: %d source rows in %d shard(s)\n", first, last, rows, shards)
+	return c.collapseShards(filter, shards, func(k int) {
+		log.Printf("converter: shard %d/%d of %s..%s done, %v elapsed\n", k+1, shards, first, last, time.Since(start))
+	})
+}
+
+// collapseShards inserts collapseQuery(filter) into the staging table in shards hash shards.
+func (c *Converter) collapseShards(filter string, shards int, done func(k int)) error {
+	for k := 0; k < shards; k++ {
+		shardFilter := filter
+		if shards > 1 {
+			shardFilter = fmt.Sprintf("%s AND cityHash64(m.id) %% %d = %d", filter, shards, k)
+		}
+		if err := c.exec(fmt.Sprintf("INSERT INTO %s (%s) %s", conversionStaging, testsColumns, collapseQuery(shardFilter))); err != nil {
+			return errors.Wrap(err, "converter#collapseShards insert shard %d/%d", k+1, shards)
+		}
+		if shards > 1 {
+			done(k)
+		}
+	}
+	return nil
+}
+
+// collapseJoin (StrategyJoin) collapses the rows matching filter into the staging table.
+//
+// Exactness: collapseQuery's result for an id depends only on that id's rows, so collapsing
+// a subset of the ids with it gives their rows of the full result. An id is taken from its
+// county row instead only if its rows in the chunk are exactly one county row and one state
+// row whose state is the county's parent_id in geospaces (then the test has no tribal or
+// extra geospace, and its other columns are the same in both rows: the ingestor wrote them
+// from one test, checked on production). The classification over all rows is exact: the
+// GROUP BY key is the id itself, and count() = 2 AND sum(code) = 65537 holds only for one
+// county row (code 1) and one state row (code 65536): the other codes are 0 (a geospace
+// missing from geospaces) and 2^32 (other namespaces, counties without parent). sum(sv) = 0
+// compares the state's id with the county's parent as 128-bit integers (state +id, county
+// -parent_id), exact in wrapping arithmetic. Duplicate (id, geospace) rows have count() > 2
+// and go through the GROUP BY, which collapses them.
+func (c *Converter) collapseJoin(months []month, filter string) error {
+	start := time.Now()
+	first, last := months[0], months[len(months)-1]
+	c.Stats = JoinStats{}
+	for _, q := range []string{
+		"DROP TABLE IF EXISTS " + conversionGeo,
+		fmt.Sprintf("CREATE TABLE %s (id UUID, code UInt64, sv Int128, parent UUID) ENGINE = Join(ANY, LEFT, id)", conversionGeo),
+		fmt.Sprintf(`INSERT INTO %s SELECT id,
+			multiIf(namespace = 'states', 65536, namespace = 'counties' AND parent_id IS NOT NULL, 1, 4294967296) AS code,
+			multiIf(namespace = 'states', toInt128(reinterpretAsUInt128(id)),
+				namespace = 'counties', -toInt128(reinterpretAsUInt128(ifNull(parent_id, toUUID('00000000-0000-0000-0000-000000000000')))),
+				toInt128(0)) AS sv,
+			ifNull(parent_id, toUUID('00000000-0000-0000-0000-000000000000')) AS parent
+			FROM geospaces`, conversionGeo),
+		"DROP TABLE IF EXISTS " + conversionExceptions,
+		fmt.Sprintf("CREATE TABLE %s (id String) ENGINE = MergeTree ORDER BY id", conversionExceptions),
+	} {
+		if err := c.exec(q); err != nil {
+			return errors.Wrap(err, "converter#collapseJoin setup")
+		}
+	}
+	defer c.exec("DROP TABLE IF EXISTS " + conversionExceptions)
+	defer c.exec("DROP TABLE IF EXISTS " + conversionGeo)
+
+	// Classify month by month (a month's rows are a fraction of the chunk's granules), in
+	// hash shards small enough not to spill. Memory is bounded by the shard size; the spill
+	// threshold is raised to a safety net.
+	classifyCtx := c.ctxWith(clickhouse.Settings{"max_bytes_before_external_group_by": c.opts.MaxMemoryUsage * 9 / 10})
+	for _, m := range months {
+		monthFilter := fmt.Sprintf("m.time >= toDateTime('%s', 'UTC') AND m.time < toDateTime('%s', 'UTC')",
+			m.start().Format("2006-01-02"), m.next().start().Format("2006-01-02"))
+		var rows uint64
+		if err := c.conn.QueryRow(c.ctx(), "SELECT count() FROM measurements m WHERE "+monthFilter).Scan(&rows); err != nil {
+			return errors.Wrap(err, "converter#collapseJoin count")
+		}
+		c.Stats.SourceRows += rows
+		shards := int((rows + c.opts.ClassifyShardRows - 1) / c.opts.ClassifyShardRows)
+		if shards < 1 {
+			shards = 1
+		}
+		for k := 0; k < shards; k++ {
+			shardFilter := monthFilter
+			if shards > 1 {
+				shardFilter = fmt.Sprintf("%s AND cityHash64(m.id) %% %d = %d", monthFilter, shards, k)
+			}
+			if err := c.conn.Exec(classifyCtx, fmt.Sprintf(`INSERT INTO %s (id) SELECT m.id FROM measurements m WHERE %s GROUP BY m.id
+				HAVING NOT (count() = 2 AND sum(joinGet('%s', 'code', m.geospace_id)) = 65537 AND sum(joinGet('%s', 'sv', m.geospace_id)) = 0)`,
+				conversionExceptions, shardFilter, conversionGeo, conversionGeo)); err != nil {
+				return errors.Wrap(err, "converter#collapseJoin classify %s shard %d/%d", m, k+1, shards)
+			}
+		}
+		log.Printf("converter: classified %s: %d source rows in %d shard(s), %v elapsed\n", m, rows, shards, time.Since(start))
+	}
+	if err := c.conn.QueryRow(c.ctx(), "SELECT count() FROM "+conversionExceptions).Scan(&c.Stats.ExceptionIDs); err != nil {
+		return errors.Wrap(err, "converter#collapseJoin count exceptions")
+	}
+	log.Printf("converter: %s..%s: %d source rows, %d ids go through the GROUP BY\n", first, last, c.Stats.SourceRows, c.Stats.ExceptionIDs)
+
+	// The common tests, from their county row (a primary key range per upload value).
+	if err := c.exec(fmt.Sprintf(`INSERT INTO %s (%s)
+		SELECT m.time, m.id, m.test_style, toIPv6OrDefault(m.ip), m.upload, m.mbps, m.min_rtt, m.loss_rate, m.latitude, m.longitude,
+			m.location_accuracy_km, m.has_access_token, m.access_token_sig, m.asn_org_id,
+			joinGet('%s', 'parent', m.geospace_id), m.geospace_id, NULL, []
+		FROM measurements m
+		WHERE %s AND m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'counties') AND m.id NOT IN (SELECT id FROM %s)`,
+		conversionStaging, testsColumns, conversionGeo, filter, conversionExceptions)); err != nil {
+		return errors.Wrap(err, "converter#collapseJoin county rows")
+	}
+	if err := c.conn.QueryRow(c.ctx(), "SELECT count() FROM "+conversionStaging).Scan(&c.Stats.FastTests); err != nil {
+		return errors.Wrap(err, "converter#collapseJoin count staging")
+	}
+	log.Printf("converter: %s..%s: %d tests from their county row, %v elapsed\n", first, last, c.Stats.FastTests, time.Since(start))
+
+	// The exceptions, with the GROUP BY; ~3 rows per id.
+	shards := c.opts.Shards
+	if shards < 1 {
+		shards = int((c.Stats.ExceptionIDs*3 + c.opts.ShardRows - 1) / c.opts.ShardRows)
+	}
+	if shards < 1 {
+		shards = 1
+	}
+	return c.collapseShards(fmt.Sprintf("%s AND m.id IN (SELECT id FROM %s)", filter, conversionExceptions), shards, func(k int) {
+		log.Printf("converter: GROUP BY shard %d/%d of %s..%s done, %v elapsed\n", k+1, shards, first, last, time.Since(start))
+	})
 }
 
 // shardsFor returns how many shards a chunk is collapsed in, and its source row count.
