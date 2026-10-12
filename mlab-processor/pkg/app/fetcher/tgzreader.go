@@ -2,16 +2,21 @@ package fetcher
 
 import (
 	"archive/tar"
-	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"path/filepath"
+
+	"github.com/klauspost/compress/gzip"
 )
 
 type tgzReader struct {
 	r          *tar.Reader
 	extensions []string
 	gzreader   *gzip.Reader // minor improvement to avoid allocations
+	// bad counts the .gz entries whose gzip header could not be read (empty or corrupt
+	// files); they are skipped like any other unreadable test file.
+	bad int64
 }
 
 func (it *tgzReader) Next() (name string, r io.Reader, err error) {
@@ -43,9 +48,10 @@ func (it *tgzReader) Next() (name string, r io.Reader, err error) {
 						// Instead, we use a single Reader and reset it for each new item.
 						it.gzreader = new(gzip.Reader)
 					}
-					err = it.gzreader.Reset(r)
-					if err != nil {
-						return "", nil, fmt.Errorf("fetcher.itemIterator#Next NewReader: %w", err)
+					if err := it.gzreader.Reset(r); err != nil {
+						it.bad++
+						log.Printf("fetcher: skipping %s: gzip: %v", name, err)
+						continue
 					}
 					r = it.gzreader
 					name = name[:len(name)-3]
