@@ -26,7 +26,7 @@ func (*asnOrgStorage) Close() error {
 }
 
 func (as *asnOrgStorage) Connected() error {
-	return errors.Wrap(as.conn.Ping(context.Background()), "asnOrgStorage#Connected")
+	return wrap(as.conn.Ping(context.Background()), "asnOrgStorage#Connected")
 }
 
 // Create implements storages.ASNOrgStorage

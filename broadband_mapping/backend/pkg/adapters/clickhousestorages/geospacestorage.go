@@ -33,7 +33,7 @@ func (*geospaceStorage) Close() error {
 }
 
 func (gs *geospaceStorage) Connected() error {
-	return errors.Wrap(gs.conn.Ping(context.Background()), "geospaceStorage#Connected")
+	return wrap(gs.conn.Ping(context.Background()), "geospaceStorage#Connected")
 }
 
 func (gs *geospaceStorage) Create(g *storages.Geospace) error {
