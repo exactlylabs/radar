@@ -153,14 +153,15 @@ func (c *Converter) convertedMonths() (map[month]bool, error) {
 }
 
 // collapseQuery selects one tests row per id from the measurements matching filter. The
-// geospace columns take the smallest geospace of their namespace; the test's other geospaces
+// geospace columns take the smallest geospace of their namespace as a string (the ingestor's
+// order; ClickHouse orders UUIDs differently); the test's other geospaces
 // (a second county, a second tribal area, unknown namespaces) go to extra_geospace_ids.
 // Duplicate (id, geospace) rows collapse into one.
 func collapseQuery(filter string) string {
 	return fmt.Sprintf(`
 		SELECT c_time, c_id, c_test_style, c_ip, c_upload, c_mbps, c_min_rtt, c_loss_rate, c_latitude, c_longitude,
 			c_location_accuracy_km, c_has_access_token, c_access_token_sig, c_asn_org_id, c_state_id, c_county_id, c_tribal_id,
-			arraySort(arrayFilter(g -> g != ifNull(c_state_id, toUUID('00000000-0000-0000-0000-000000000000'))
+			arraySort(x -> toString(x), arrayFilter(g -> g != ifNull(c_state_id, toUUID('00000000-0000-0000-0000-000000000000'))
 				AND g != ifNull(c_county_id, toUUID('00000000-0000-0000-0000-000000000000'))
 				AND g != ifNull(c_tribal_id, toUUID('00000000-0000-0000-0000-000000000000')), c_geospaces))
 		FROM (
@@ -179,9 +180,9 @@ func collapseQuery(filter string) string {
 				any(m.has_access_token) AS c_has_access_token,
 				any(m.access_token_sig) AS c_access_token_sig,
 				any(m.asn_org_id) AS c_asn_org_id,
-				minIf(toNullable(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'states')) AS c_state_id,
-				minIf(toNullable(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'counties')) AS c_county_id,
-				minIf(toNullable(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'tribal_tracts')) AS c_tribal_id,
+				toUUIDOrNull(minIf(toString(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'states'))) AS c_state_id,
+				toUUIDOrNull(minIf(toString(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'counties'))) AS c_county_id,
+				toUUIDOrNull(minIf(toString(m.geospace_id), m.geospace_id IN (SELECT id FROM geospaces WHERE namespace = 'tribal_tracts'))) AS c_tribal_id,
 				groupUniqArray(m.geospace_id) AS c_geospaces
 			FROM measurements m
 			WHERE %s

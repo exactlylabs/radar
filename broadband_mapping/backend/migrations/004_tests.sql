@@ -6,8 +6,8 @@
 -- (NULL when it has none: e.g. no tribal area, or a county without a state). A test can match
 -- more than one geospace of a namespace: about 0.2% of tests fall in two counties (Virginia
 -- independent cities and their surrounding county, e.g. Roanoke + Salem; also Arapahoe + Denver CO), and a
--- tribal tract and an AIANNH area both map to tribal_tracts. The smallest id of each namespace is
--- the primary column, the others go to extra_geospace_ids, so every (test, geospace) pair of the
+-- tribal tract and an AIANNH area both map to tribal_tracts. The smallest id of each namespace (as a
+-- string) is the primary column, the others go to extra_geospace_ids, so every (test, geospace) pair of the
 -- old table is kept and summaries stay identical. Geospaces of an unknown namespace also go to
 -- extra_geospace_ids.
 --
