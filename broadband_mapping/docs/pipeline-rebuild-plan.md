@@ -544,6 +544,18 @@ Rollback: `summarize-v3 -switch` is reversible by exchanging `<t>_old` back
 (`EXCHANGE TABLES <t>_old AND <t>` for each of the 13 tables); the old ingestor binary
 still writes `measurements`, which is untouched by all of the above.
 
+## As run on mapping-db (2026-10-11/12)
+
+Binaries come from `roles/mlab-pipeline` releases (`/opt/broadbandmapping/releases/<sha>`,
+`current` symlink), not the step-0 scp: release 8adf40a2 ran the conversion, 3cd82325
+(summarizer v4, same processor binary) is `current` for everything after it.
+
+| Step | Result |
+|---|---|
+| Conversion, `-strategy join -chunk-months 12 -max-threads 6 -max-insert-threads 2 -max-memory 14e9 -spill-bytes 6e9` | **1 h 54 min** for 2009-01..2026-08 (the plan estimated 4–6 h for `groupby`; the first `groupby` attempt spilled 34 GB on 2017 and was stopped). Per year: 2018 7.6 min, 2019 4.7, 2020 8.4, 2021 21.2, 2022 25.6, 2023 20.5, 2024 13.2, 2025 8.8, 2026 (8 months) 4.4. 2021–2023 ran while the catch-up fetch used the same cores. 0.4–0.5 % of ids go through the GROUP BY. |
+| `tests` size | **93.4 GiB, 4.68 B rows** (21.4 B/test) vs `measurements` 379.8 GiB, 9.40 B rows. |
+| Verify | 2009-01..2017-12 (108 months) all OK, 2017 alone took ~8 min; stopped at 21:59 on the user's call: the `-validate-before` comparison of the new summaries against the live ones covers every year end to end, so the row-level pass over 2018+ was not worth ~1 h of cores. |
+
 ## Cutover runbook (after A–D are ready)
 
 1. Ingestor and processor stay stopped. `tests` converted and verified (A; steps 0–5 of

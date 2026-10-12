@@ -168,3 +168,18 @@ without ASN) take 15 s.
 5. Start the ingestor, then the processor, which catches up from 2026-08.
 
 Rollback: exchange `<name>_old` back, and redeploy the previous binaries.
+
+### Per-geospace step (2026-10-11, after the first production `-full`)
+
+The all-time window of the production rebuild put 1.23 B tests (26 % of all) through the
+per-geospace path: over 17 years most IPs are seen in several counties, so they are "split"
+and their state and county rows are recomputed per geospace. That step aggregated the work
+table in 25 hash shards of IPs, and every shard re-read the whole table once per pass (four
+passes): ~100 scans of 1.23 B rows, 28 min for the window. It is now one streaming query
+per variant: the work table is ordered by `(upload, ip)`, each test is expanded to its
+geospaces with an `ARRAY JOIN` (which keeps the read order, checked with `EXPLAIN PIPELINE`
+on 24.6 and 26.8: `AggregatingInOrderTransform` over `ArrayJoinTransform`), and the
+aggregation holds the few (geospace, ASN) keys of one IP at a time. One scan instead of 100.
+
+`-full -windows a,b` now keeps the `_next` tables of the other windows, so a rebuild can be
+resumed window by window after a stop.

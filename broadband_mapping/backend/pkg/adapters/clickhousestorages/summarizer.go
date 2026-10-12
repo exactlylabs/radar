@@ -89,23 +89,6 @@ var summaryVariants = []summaryVariant{
 
 const usASNsTable = "us_asns"
 
-// geoPass selects the tests of one namespace: those with the namespace's column set, plus those
-// listing a geospace of the namespace in extra_geospace_ids. The last pass (no namespace) takes
-// the extra geospaces of unknown namespaces, so no (test, geospace) pair is left out.
-type geoPass struct {
-	namespace string
-	column    string
-}
-
-var geoPasses = []geoPass{
-	{"states", "state_id"},
-	{"counties", "county_id"},
-	{"tribal_tracts", "tribal_id"},
-	{"", ""},
-}
-
-const knownNamespaces = "'states', 'counties', 'tribal_tracts'"
-
 // allGeospacesExpr is the array of every geospace of a test row t.
 const allGeospacesExpr = `arrayConcat(
 	if(t.state_id IS NULL, [], [assumeNotNull(t.state_id)]),
@@ -125,6 +108,28 @@ func SummaryTables() []string {
 		}
 	}
 	return append(names, usASNsTable)
+}
+
+// rebuiltTables are the tables RebuildAll builds with the configured windows: every switched
+// table without -windows; with -windows, the _next tables of the other windows are kept, so a
+// rebuild can be resumed window by window.
+func (s *Summarizer) rebuiltTables() []string {
+	names := []string{}
+	for _, w := range summaryWindows {
+		if !s.wantsWindow(w.name) {
+			continue
+		}
+		for _, v := range summaryVariants {
+			names = append(names, v.prefix+w.name)
+			if w.buckets == nil {
+				names = append(names, v.ipMedians)
+			}
+		}
+		if w.buckets == nil {
+			names = append(names, usASNsTable)
+		}
+	}
+	return names
 }
 
 // switchedTables are the tables built by RebuildAll and put live by SwitchOver.
@@ -252,7 +257,7 @@ func (s *Summarizer) RebuildAll() error {
 	if from == nil {
 		return errors.New("summarizer#RebuildAll no tests")
 	}
-	for _, name := range switchedTables() {
+	for _, name := range s.rebuiltTables() {
 		if err := s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s_next`", name)); err != nil {
 			return errors.Wrap(err, "summarizer#RebuildAll drop next")
 		}
@@ -624,34 +629,41 @@ func (s *Summarizer) computeChunk(w summaryWindow, work *workTables, c chunk) er
 	if err != nil {
 		return err
 	}
-	// Per geospace, in shards of IP hashes (exact: every key has one IP) that bound memory.
-	n := int(math.Ceil(float64(geoTests) / float64(s.opts.ShardTargetRows)))
-	if n < 1 {
-		n = 1
+	// Per geospace: one streaming aggregation per variant over the work table in its (upload, ip)
+	// order, each test expanded to the geospaces of this path (state and county of the split IPs,
+	// tribal and extra geospaces of every test). ARRAY JOIN keeps the read order, so the
+	// aggregation holds the few (geospace, ASN) keys of one IP at a time. Hash shards of IPs did
+	// this before: every shard re-read the whole table four times, 100 scans of 1.2 B rows (a
+	// quarter of all tests take this path over all time) in production.
+	geoExpr := `arrayConcat(
+				if(t.split AND t.state_id IS NOT NULL, [assumeNotNull(t.state_id)], []),
+				if(t.split AND t.county_id IS NOT NULL, [assumeNotNull(t.county_id)], []),
+				if(t.tribal_id IS NOT NULL, [assumeNotNull(t.tribal_id)], []),
+				t.extra_geospace_ids)`
+	threads := s.opts.MaxThreads / len(summaryVariants)
+	if threads < 2 {
+		threads = 2
 	}
-	for i := 0; i < n; i++ {
-		shard := fmt.Sprintf("cityHash64(t.ip) %% %d = %d", n, i)
-		source := "(" + passRows(work.tests, geoPasses[0], shard, "t.split") +
-			" UNION ALL " + passRows(work.tests, geoPasses[1], shard, "t.split") +
-			" UNION ALL " + passRows(work.tests, geoPasses[2], shard, "1") +
-			" UNION ALL " + passRows(work.tests, geoPasses[3], shard, "1") + ")"
-		for _, v := range summaryVariants {
-			variant, asn, group := 1, "asn_org_id", "upload, geospace_id, asn_org_id, ip"
-			if !v.withASN {
-				variant, asn, group = 0, noASN+" AS asn_org_id", "upload, geospace_id, ip"
-			}
-			if err := s.exec(fmt.Sprintf(`
-				INSERT INTO `+"`%s`"+` (variant, upload, geospace_id, asn_org_id, ip%s, med_mbps, med_min_rtt, samples)
-				SELECT %d, upload, geospace_id, %s, ip%s, quantileExact(0.5)(mbps), quantileExact(0.5)(min_rtt), count()
-				FROM %s m
-				GROUP BY %s%s`,
-				work.geo, work.bucketNames, variant, asn, work.bucketSelectOfTimeAliased, source, group, work.bucketNames)); err != nil {
-				return errors.Wrap(err, "summarizer#computeChunk geo")
-			}
+	geoQueries := make([]string, 0, len(summaryVariants))
+	for _, v := range summaryVariants {
+		variant, asn, group := 1, "t.asn_org_id", "t.upload, geospace_id, t.asn_org_id, t.ip"
+		if !v.withASN {
+			variant, asn, group = 0, noASN, "t.upload, geospace_id, t.ip"
 		}
+		geoQueries = append(geoQueries, fmt.Sprintf(`
+			INSERT INTO `+"`%s`"+` (variant, upload, geospace_id, asn_org_id, ip%s, med_mbps, med_min_rtt, samples)
+			SELECT %d, t.upload, geospace_id, %s, t.ip%s, quantileExact(0.5)(t.mbps), quantileExact(0.5)(t.min_rtt), count()
+			FROM `+"`%s`"+` t
+			ARRAY JOIN %s AS geospace_id
+			GROUP BY %s%s
+			SETTINGS %s, max_threads = %d`,
+			work.geo, work.bucketNames, variant, asn, work.bucketSelectOfTimeAliased, work.tests, geoExpr, group, work.bucketNames, inOrderSettings, threads))
 	}
-	log.Printf("summarizer: %s %s..%s: %d split IP buckets, %d tests aggregated per geospace in %d shards, %v\n",
-		w.name, c.firstDay, c.lastDay, splits, geoTests, n, time.Since(start))
+	if err := s.runConcurrently(geoQueries); err != nil {
+		return errors.Wrap(err, "summarizer#computeChunk geo")
+	}
+	log.Printf("summarizer: %s %s..%s: %d split IP buckets, %d tests aggregated per geospace, %v\n",
+		w.name, c.firstDay, c.lastDay, splits, geoTests, time.Since(start))
 	return nil
 }
 
@@ -804,30 +816,6 @@ func (s *Summarizer) count(table string) (uint64, error) {
 	var n uint64
 	err := s.conn.QueryRow(s.ctx(), fmt.Sprintf("SELECT count() FROM `%s`", table)).Scan(&n)
 	return n, wrap(err, "summarizer#count %s", table)
-}
-
-// passRows is a subquery with one row per (test, geospace of the pass's namespace) among the
-// tests of table (alias t) matching filter; the rows from the namespace's own column are
-// further restricted to mainFilter, the rows from extra_geospace_ids are not. Columns:
-// geospace_id, asn_org_id, upload, ip, time, mbps, min_rtt.
-func passRows(table string, p geoPass, filter, mainFilter string) string {
-	cols := "t.asn_org_id AS asn_org_id, t.upload AS upload, t.ip AS ip, t.time AS time, t.mbps AS mbps, t.min_rtt AS min_rtt"
-	var extraFilter string
-	if p.namespace != "" {
-		extraFilter = fmt.Sprintf("g IN (SELECT id FROM geospaces WHERE namespace = '%s')", p.namespace)
-	} else {
-		extraFilter = fmt.Sprintf("g NOT IN (SELECT id FROM geospaces WHERE namespace IN (%s))", knownNamespaces)
-	}
-	extras := fmt.Sprintf(`
-			SELECT g AS geospace_id, %s FROM `+"`%s`"+` t ARRAY JOIN t.extra_geospace_ids AS g
-			WHERE (%s) AND notEmpty(t.extra_geospace_ids) AND %s`, cols, table, filter, extraFilter)
-	if p.column == "" {
-		return extras
-	}
-	return fmt.Sprintf(`
-			SELECT assumeNotNull(t.%s) AS geospace_id, %s FROM `+"`%s`"+` t
-			WHERE (%s) AND (%s) AND t.%s IS NOT NULL
-			UNION ALL %s`, p.column, cols, table, filter, mainFilter, p.column, extras)
 }
 
 // perIPRows is a subquery with the per-IP rows of variant v (geospace_id, asn_org_id, upload,
