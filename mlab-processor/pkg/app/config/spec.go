@@ -17,7 +17,10 @@ type ProcessorConfig struct {
 	// SHAPE_PATHS: NAMESPACE:path;... Only the namespaces the ingestor reads are loaded
 	// (see reversegeocoder.KeptNamespaces); others (ZIP_CODES) are ignored with a warning.
 	// TRACTS_SHAPE_DIR is no longer read: census tract shapes were never ingested.
-	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_us_state.zip;US_COUNTIES:./input/tl_us_county.zip;US_AIANNH:./input/tl_us_aiannh.zip"`
+	ShapePaths string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_us_state.zip;US_COUNTIES:./input/tl_us_county.zip;US_AIANNH:./input/tl_us_aiannh.zip"`
+	// AVRO_CODEC compresses the output files: zstandard (default), snappy, deflate or null.
+	// The ingestor must be able to read it (see encoders/avro.DefaultCodec).
+	AvroCodec        string `config:"AVRO_CODEC,default=zstandard"`
 	StorageType      string `config:"STORAGE_TYPE,default=local"` // Accepts local, gcs, s3
 	UploadBucketName string `config:"UPLOAD_BUCKET_NAME,default=mlab-processed-data"`
 	S3AccessKey      string `config:"S3_ACCESS_KEY"`

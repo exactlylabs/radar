@@ -28,6 +28,14 @@ type StoreItemIterator interface {
 	Close() error
 }
 
+// FileWriterStore is implemented by data stores whose output file can be written whole
+// (see avro.Transform) instead of item by item.
+type FileWriterStore interface {
+	DataStore
+	// FileWriter returns the file to write the output to; Flush uploads it once closed.
+	FileWriter() (io.WriteCloser, error)
+}
+
 // DataStore manages storing encoded items (rows) in a specific filesystem for a single date file
 type DataStore interface {
 	// ItemWriter returns an implementation of ItemWriter interface

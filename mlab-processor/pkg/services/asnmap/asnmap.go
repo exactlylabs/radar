@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strconv"
 )
 
 var (
@@ -26,6 +27,7 @@ type ASN struct {
 type ASNMapper struct {
 	organizations map[string]*Organization
 	asns          map[string]*ASN
+	asnsByNumber  map[int]*ASN
 	asnNamesMap   map[string]*ASN
 }
 
@@ -42,6 +44,7 @@ func New(file io.Reader) (*ASNMapper, error) {
 func (am *ASNMapper) loadCAIDAJsonl(file io.Reader) error {
 	am.organizations = make(map[string]*Organization)
 	am.asns = make(map[string]*ASN)
+	am.asnsByNumber = make(map[int]*ASN)
 	am.asnNamesMap = make(map[string]*ASN)
 	decoder := json.NewDecoder(file)
 	i := 0
@@ -68,6 +71,9 @@ func (am *ASNMapper) loadCAIDAJsonl(file io.Reader) error {
 				Organization: org,
 			}
 			am.asns[row["asn"]] = obj
+			if n, err := strconv.Atoi(row["asn"]); err == nil {
+				am.asnsByNumber[n] = obj
+			}
 			am.asnNamesMap[row["name"]] = obj
 		}
 		i++
@@ -78,6 +84,14 @@ func (am *ASNMapper) loadCAIDAJsonl(file io.Reader) error {
 // Lookup an ASN object from an asn id
 func (am *ASNMapper) Lookup(asn string) (*ASN, error) {
 	if asnObj, exists := am.asns[asn]; exists {
+		return asnObj, nil
+	}
+	return nil, ErrASNNotFound
+}
+
+// LookupNumber is Lookup(strconv.Itoa(asn)) without the allocation.
+func (am *ASNMapper) LookupNumber(asn int) (*ASN, error) {
+	if asnObj, exists := am.asnsByNumber[asn]; exists {
 		return asnObj, nil
 	}
 	return nil, ErrASNNotFound

@@ -3,18 +3,18 @@ package reversegeocoder
 import (
 	"fmt"
 	"log"
-	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
-	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
+	"github.com/exactlylabs/mlab-processor/pkg/services/encoders/avro"
 	"github.com/exactlylabs/mlab-processor/pkg/services/geo"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
+	hamba "github.com/hamba/avro/v2"
 	shp "github.com/jonas-p/go-shp"
 )
 
@@ -32,10 +32,16 @@ type Stats struct {
 	Written int64 `json:"written"` // output rows (one per row and matching shape)
 }
 
-func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
+type ring struct {
+	geoid  string
+	points []geo.Point
+}
+
+// readShapes returns the rings of a shapefile in file order.
+func readShapes(shpPath string) ([]ring, error) {
 	dotPaths := strings.Split(shpPath, ".")
 	if len(dotPaths) == 0 || (dotPaths[len(dotPaths)-1] != "zip" && dotPaths[len(dotPaths)-1] != "shp") {
-		return fmt.Errorf("%s must have a .shp or .zip extension", shpPath)
+		return nil, fmt.Errorf("%s must have a .shp or .zip extension", shpPath)
 	}
 	// open a shapefile for reading
 	var shape shp.SequentialReader
@@ -47,28 +53,33 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("reversegeocoder.addShapeToIndex %s: %w", shpPath, err)
+		return nil, fmt.Errorf("reversegeocoder.readShapes %s: %w", shpPath, err)
 	}
 	defer shape.Close()
 
 	// fields from the attribute table (DBF)
 	fields := shape.Fields()
+	geoidField := -1
+	for k, f := range fields {
+		if f.String() == "GEOID" || f.String() == "GEOID20" || f.String() == "ORG_CODE" {
+			geoidField = k
+			break
+		}
+	}
 
+	var rings []ring
 	// loop through all features in the shapefile
 	for shape.Next() {
 		_, p := shape.Shape()
 
 		poly, ok := p.(*shp.Polygon)
 		if !ok {
-			return fmt.Errorf("reversegeocoder.addShapeToIndex %s: unexpected shape type %T", shpPath, p)
+			return nil, fmt.Errorf("reversegeocoder.readShapes %s: unexpected shape type %T", shpPath, p)
 		}
 
 		var geoid string
-		for k, f := range fields {
-			if f.String() == "GEOID" || f.String() == "GEOID20" || f.String() == "ORG_CODE" {
-				geoid = shape.Attribute(k)
-				break
-			}
+		if geoidField >= 0 {
+			geoid = shape.Attribute(geoidField)
 		}
 
 		for i := int32(0); i < poly.NumParts; i++ {
@@ -88,87 +99,138 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 					Lng: poly.Points[li].X,
 				}
 			}
-
-			index.Add(namespace, geoid, geo.NewPolygon(loopPoints))
+			rings = append(rings, ring{geoid: geoid, points: loopPoints})
 		}
 	}
 	if err := shape.Err(); err != nil {
-		return fmt.Errorf("reversegeocoder.addShapeToIndex %s: %w", shpPath, err)
+		return nil, fmt.Errorf("reversegeocoder.readShapes %s: %w", shpPath, err)
 	}
-	return nil
+	return rings, nil
 }
 
-// Load builds the shape index from SHAPE_PATHS (kept namespaces only).
+// Load builds the shape index from SHAPE_PATHS (kept namespaces only). The files are
+// parsed concurrently; the index is filled in SHAPE_PATHS order (sorted by namespace),
+// so the output order of a test's shapes does not depend on timing.
 func Load(conf *config.ProcessorConfig) (*ReverseGeocoder, error) {
 	defer timer.TimeIt(time.Now(), "ReverseGeocodeLoad")
-	index := geo.NewIndex()
-	for _, e := range shapePathEntries(conf) {
+	entries := shapePathEntries(conf)
+	rings := make([][]ring, len(entries))
+	errs := make([]error, len(entries))
+	var wg sync.WaitGroup
+	for i, e := range entries {
 		log.Printf("ReverseGeocoder - Loading %s from file %s\n", e.namespace, e.path)
-		if err := addShapeToIndex(index, e.namespace, e.path); err != nil {
+		wg.Add(1)
+		go func(i int, path string) {
+			defer wg.Done()
+			rings[i], errs[i] = readShapes(path)
+		}(i, e.path)
+	}
+	wg.Wait()
+	for _, err := range errs {
+		if err != nil {
 			return nil, err
+		}
+	}
+	// The polygons' edge indexes are the expensive part: build them in parallel.
+	polys := make([][]*geo.Polygon, len(entries))
+	for i := range rings {
+		polys[i] = make([]*geo.Polygon, len(rings[i]))
+	}
+	var next atomic.Int64
+	total := 0
+	for _, rs := range rings {
+		total += len(rs)
+	}
+	workers := 8
+	wg.Add(workers)
+	for w := 0; w < workers; w++ {
+		go func() {
+			defer wg.Done()
+			for {
+				n := int(next.Add(1) - 1)
+				if n >= total {
+					return
+				}
+				i := 0
+				for n >= len(rings[i]) {
+					n -= len(rings[i])
+					i++
+				}
+				polys[i][n] = geo.NewPolygon(rings[i][n].points)
+			}
+		}()
+	}
+	wg.Wait()
+	index := geo.NewIndex()
+	for i, e := range entries {
+		for j, r := range rings[i] {
+			index.Add(e.namespace, r.geoid, polys[i][j])
 		}
 	}
 	log.Printf("ReverseGeocoder - Index Initialized (%d rings)", index.Len())
 	return &ReverseGeocoder{index: index}, nil
 }
 
-// ReverseGeocode writes one row per (test, containing shape) of geocodeDS to ds.
+// ReverseGeocode writes one row per (test, containing shape) of geocodeDS to ds, in the
+// order of the input rows, using every CPU.
 func (rg *ReverseGeocoder) ReverseGeocode(ds datastore.DataStore, geocodeDS datastore.DataStore, date time.Time) (*Stats, error) {
 	defer timer.TimeIt(time.Now(), "ReverseGeocode")
 	stats := &Stats{}
-
-	iter, err := geocodeDS.ItemsReader()
+	fw, ok := ds.(datastore.FileWriterStore)
+	if !ok {
+		return stats, fmt.Errorf("reversegeocoder: %T cannot write files", ds)
+	}
+	in, err := geocodeDS.FileReader()
 	if err != nil {
 		return stats, fmt.Errorf("reversegeocoder: reading ipgeocode output: %w", err)
 	}
-	defer iter.Close()
+	defer in.Close()
+	reader, err := avro.NewBlockReader(in)
+	if err != nil {
+		return stats, fmt.Errorf("reversegeocoder: reading ipgeocode output: %w", err)
+	}
+	out, err := fw.FileWriter()
+	if err != nil {
+		return stats, fmt.Errorf("reversegeocoder: %w", err)
+	}
+	schema := hamba.MustParse(models.RevGeoResultSchema)
+	writer, err := avro.NewBlockWriter(out, schema, avro.DefaultCodec())
+	if err != nil {
+		out.Close()
+		return stats, fmt.Errorf("reversegeocoder: %w", err)
+	}
 
-	writer := datastorewriter.NewWriter(ds)
-	ch := make(chan *models.GeocodedResult, 1024)
-	var wg sync.WaitGroup
-	var matched int64
-	for i := 0; i < runtime.NumCPU(); i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for r := range ch {
-				results := rg.index.ContainingShapeID(&geo.Point{Lat: r.Latitude, Lng: r.Longitude})
+	var matched atomic.Int64
+	tStats, err := avro.Transform(reader, writer, schema, avro.TransformOptions{},
+		func(worker int, rows []models.GeocodedResult, emit func(*models.RevGeoResult)) error {
+			var results []geo.NamespaceAndExternalId
+			var n int64
+			var rr models.RevGeoResult
+			for i := range rows {
+				r := &rows[i]
+				results = rg.index.AppendContaining(results[:0], &geo.Point{Lat: r.Latitude, Lng: r.Longitude})
 				if len(results) > 0 {
-					atomic.AddInt64(&matched, 1)
+					n++
 				}
 				for _, result := range results {
-					writer.WriteItem(&models.RevGeoResult{
+					rr = models.RevGeoResult{
 						GeoNamespace: result.Namespace,
 						Id:           r.Id,
 						GeoId:        result.ExternalId,
 						StartedAt:    r.StartedAt,
-					})
+					}
+					emit(&rr)
 				}
 			}
-		}()
+			matched.Add(n)
+			return nil
+		})
+	stats.Read, stats.Written, stats.Matched = tStats.Read, tStats.Written, matched.Load()
+	if cErr := out.Close(); err == nil && cErr != nil {
+		err = fmt.Errorf("reversegeocoder: closing output: %w", cErr)
 	}
-	var readErr error
-	for iter.Next() {
-		next, err := iter.GetRow()
-		if err != nil {
-			readErr = fmt.Errorf("reversegeocoder: decoding row %d: %w", stats.Read, err)
-			break
-		}
-		stats.Read++
-		ch <- next.(*models.GeocodedResult)
+	if err != nil {
+		return stats, fmt.Errorf("reversegeocoder: %w", err)
 	}
-	if readErr == nil {
-		if err := iter.Err(); err != nil {
-			readErr = fmt.Errorf("reversegeocoder: reading ipgeocode output: %w", err)
-		}
-	}
-	close(ch)
-	wg.Wait()
-	wErr := writer.Close()
-	stats.Written = writer.Written()
-	stats.Matched = matched
-	if readErr != nil {
-		return stats, readErr
-	}
-	return stats, wErr
+	return stats, nil
 }

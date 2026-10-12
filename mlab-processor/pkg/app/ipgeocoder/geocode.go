@@ -6,19 +6,20 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/netip"
 	"os"
-	"runtime"
 	"strconv"
 	"sync"
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
-	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/asnmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
+	"github.com/exactlylabs/mlab-processor/pkg/services/encoders/avro"
 	"github.com/exactlylabs/mlab-processor/pkg/services/netmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
+	hamba "github.com/hamba/avro/v2"
 )
 
 const StepName string = "ipgeocode"
@@ -130,48 +131,73 @@ func addFileToNetmap(nm *netmap.Map[geoInfo], filename string) error {
 	return nil
 }
 
-// Load reads the four GeoLite2 CSVs and the CAIDA file named in conf.
+// Load reads the four GeoLite2 CSVs and the CAIDA file named in conf. The three
+// sources are parsed concurrently.
 func Load(conf *config.ProcessorConfig) (*Geocoder, error) {
 	defer timer.TimeIt(time.Now(), "GeocodeLoad")
 	g := &Geocoder{geo: netmap.New[geoInfo](), asn: netmap.New[asnInfo]()}
-	for _, p := range []string{conf.Ipv4DBPath, conf.Ipv6DBPath} {
-		if err := addFileToNetmap(g.geo, p); err != nil {
+	errs := make([]error, 3)
+	var wg sync.WaitGroup
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		for _, p := range []string{conf.Ipv4DBPath, conf.Ipv6DBPath} {
+			if err := addFileToNetmap(g.geo, p); err != nil {
+				errs[0] = err
+				return
+			}
+		}
+		g.geo.Build()
+	}()
+	go func() {
+		defer wg.Done()
+		intern := map[string]string{}
+		for _, p := range []string{conf.AsnIpv4DBPath, conf.AsnIpv6DBPath} {
+			if err := addAsnFileToNetmap(g.asn, p, intern); err != nil {
+				errs[1] = err
+				return
+			}
+		}
+		g.asn.Build()
+	}()
+	go func() {
+		defer wg.Done()
+		f, err := os.Open(conf.Asn2OrgDBPath)
+		if err != nil {
+			errs[2] = fmt.Errorf("ipgeocoder.Load: %w", err)
+			return
+		}
+		defer f.Close()
+		g.asnMapper, err = asnmap.New(f)
+		if err != nil {
+			errs[2] = fmt.Errorf("ipgeocoder.Load asnmap: %w", err)
+		}
+	}()
+	wg.Wait()
+	for _, err := range errs {
+		if err != nil {
 			return nil, err
 		}
-	}
-	intern := map[string]string{}
-	for _, p := range []string{conf.AsnIpv4DBPath, conf.AsnIpv6DBPath} {
-		if err := addAsnFileToNetmap(g.asn, p, intern); err != nil {
-			return nil, err
-		}
-	}
-	g.geo.Build()
-	g.asn.Build()
-
-	f, err := os.Open(conf.Asn2OrgDBPath)
-	if err != nil {
-		return nil, fmt.Errorf("ipgeocoder.Load: %w", err)
-	}
-	defer f.Close()
-	g.asnMapper, err = asnmap.New(f)
-	if err != nil {
-		return nil, fmt.Errorf("ipgeocoder.Load asnmap: %w", err)
 	}
 	log.Printf("IPGeocoder - loaded %d city networks, %d ASN networks", g.geo.Len(), g.asn.Len())
 	return g, nil
 }
 
-func (g *Geocoder) process(fr *models.FetchedResult, stats *Stats, mu *sync.Mutex) *models.GeocodedResult {
-	ip := net.ParseIP(fr.IP)
-	latlon, located := g.geo.Lookup(ip)
-	info, hasASN := g.asn.Lookup(ip)
+// process fills out from fr. It reports whether the IP was located and had an ASN.
+func (g *Geocoder) process(fr *models.FetchedResult, out *models.GeocodedResult) (located, hasASN bool) {
+	var latlon geoInfo
+	var info asnInfo
+	if ip, err := netip.ParseAddr(fr.IP); err == nil {
+		latlon, located = g.geo.LookupAddr(ip)
+		info, hasASN = g.asn.LookupAddr(ip)
+	}
 
 	var asn int
 	var org string
 	var orgId *string
 	if hasASN {
 		asn = info.asn
-		asnObj, err := g.asnMapper.Lookup(strconv.Itoa(asn))
+		asnObj, err := g.asnMapper.LookupNumber(asn)
 		if err != nil {
 			// Try checking the org name against the asnmap we have
 			// Sometimes the organization Name is actually the ASN name
@@ -186,17 +212,7 @@ func (g *Geocoder) process(fr *models.FetchedResult, stats *Stats, mu *sync.Mute
 			orgId = &asnObj.Organization.Id
 		}
 	}
-	if located || hasASN {
-		mu.Lock()
-		if located {
-			stats.Located++
-		}
-		if hasASN {
-			stats.WithASN++
-		}
-		mu.Unlock()
-	}
-	return &models.GeocodedResult{
+	*out = models.GeocodedResult{
 		Id:                 fr.Id,
 		TestStyle:          fr.TestStyle,
 		IP:                 fr.IP,
@@ -214,56 +230,65 @@ func (g *Geocoder) process(fr *models.FetchedResult, stats *Stats, mu *sync.Mute
 		HasAccessToken:     fr.HasAccessToken,
 		AccessTokenSig:     fr.AccessTokenSig,
 	}
+	return located, hasASN
 }
 
-// Geocode reads every fetched row of fetchDS and writes the geocoded row to ds.
+// Geocode reads every fetched row of fetchDS and writes the geocoded row to ds, in the
+// same order, using every CPU.
 func (g *Geocoder) Geocode(ds datastore.DataStore, fetchDS datastore.DataStore, date time.Time) (*Stats, error) {
 	defer timer.TimeIt(time.Now(), "Geocode")
 	stats := &Stats{}
-	var mu sync.Mutex
-
-	iter, err := fetchDS.ItemsReader()
+	fw, ok := ds.(datastore.FileWriterStore)
+	if !ok {
+		return stats, fmt.Errorf("ipgeocoder: %T cannot write files", ds)
+	}
+	in, err := fetchDS.FileReader()
 	if err != nil {
 		return stats, fmt.Errorf("ipgeocoder: reading fetch output: %w", err)
 	}
-	defer iter.Close()
+	defer in.Close()
+	reader, err := avro.NewBlockReader(in)
+	if err != nil {
+		return stats, fmt.Errorf("ipgeocoder: reading fetch output: %w", err)
+	}
+	out, err := fw.FileWriter()
+	if err != nil {
+		return stats, fmt.Errorf("ipgeocoder: %w", err)
+	}
+	schema := hamba.MustParse(models.GeocodedResultSchema)
+	writer, err := avro.NewBlockWriter(out, schema, avro.DefaultCodec())
+	if err != nil {
+		out.Close()
+		return stats, fmt.Errorf("ipgeocoder: %w", err)
+	}
 
-	writer := datastorewriter.NewWriter(ds)
-	ch := make(chan *models.FetchedResult, 1024)
-	var wg sync.WaitGroup
-	for i := 0; i < runtime.NumCPU(); i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for fr := range ch {
-				writer.WriteItem(g.process(fr, stats, &mu))
+	var mu sync.Mutex
+	tStats, err := avro.Transform(reader, writer, schema, avro.TransformOptions{},
+		func(worker int, rows []models.FetchedResult, emit func(*models.GeocodedResult)) error {
+			var located, withASN int64
+			var gr models.GeocodedResult
+			for i := range rows {
+				l, a := g.process(&rows[i], &gr)
+				if l {
+					located++
+				}
+				if a {
+					withASN++
+				}
+				emit(&gr)
 			}
-		}()
+			mu.Lock()
+			stats.Located += located
+			stats.WithASN += withASN
+			mu.Unlock()
+			return nil
+		})
+	stats.Read, stats.Written = tStats.Read, tStats.Written
+	if cErr := out.Close(); err == nil && cErr != nil {
+		err = fmt.Errorf("ipgeocoder: closing output: %w", cErr)
 	}
-	var readErr error
-	for iter.Next() {
-		next, err := iter.GetRow()
-		if err != nil {
-			readErr = fmt.Errorf("ipgeocoder: decoding row %d: %w", stats.Read, err)
-			break
-		}
-		stats.Read++
-		ch <- next.(*models.FetchedResult)
-	}
-	if readErr == nil {
-		if err := iter.Err(); err != nil {
-			readErr = fmt.Errorf("ipgeocoder: reading fetch output: %w", err)
-		}
-	}
-	close(ch)
-	wg.Wait()
-	wErr := writer.Close()
-	stats.Written = writer.Written()
-	if readErr != nil {
-		return stats, readErr
-	}
-	if wErr != nil {
-		return stats, wErr
+	if err != nil {
+		return stats, fmt.Errorf("ipgeocoder: %w", err)
 	}
 	if stats.Read != stats.Written {
 		return stats, fmt.Errorf("ipgeocoder: read %d rows but wrote %d", stats.Read, stats.Written)
