@@ -32,6 +32,7 @@ func TestConverterCollapsesMeasurements(t *testing.T) {
 
 	opts := DefaultConverterOptions
 	opts.ChunkMonths = 2
+	opts.Shards = 3 // every chunk collapsed in three hash shards; the result must not change
 	c := NewConverter(conn, opts)
 	month := func(s string) time.Time { tm, _ := time.Parse("2006-01", s); return tm }
 

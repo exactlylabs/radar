@@ -14,6 +14,7 @@ require (
 	github.com/jonas-p/go-shp v0.1.1
 	github.com/klauspost/compress v1.20.1
 	github.com/tidwall/rtree v1.11.1
+	golang.org/x/sync v0.22.0
 	google.golang.org/api v0.128.0
 )
 
@@ -48,7 +49,6 @@ require (
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect

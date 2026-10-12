@@ -29,7 +29,13 @@ type Converter struct {
 }
 
 type ConverterOptions struct {
-	ChunkMonths                   int
+	ChunkMonths int
+	// A chunk's GROUP BY id is split into shards by cityHash64(id) % n (every row of a test
+	// has the same id, so each test still collapses in one query). Shards bound the
+	// aggregation's size: a 2017 chunk (885 M rows) in one query spilled 34 GB and still
+	// exceeded a 15 GB memory limit while merging. 0 = one shard per ShardRows source rows.
+	Shards                        int
+	ShardRows                     uint64
 	MaxThreads                    int
 	MaxInsertThreads              int
 	MaxMemoryUsage                uint64
@@ -40,6 +46,7 @@ type ConverterOptions struct {
 
 var DefaultConverterOptions = ConverterOptions{
 	ChunkMonths:                   12,
+	ShardRows:                     250_000_000,
 	MaxThreads:                    6,
 	MaxInsertThreads:              1,
 	MaxMemoryUsage:                20_000_000_000,
@@ -207,8 +214,22 @@ func (c *Converter) convertChunk(months []month) error {
 	// The time range uses measurements' minmax index; the month list skips converted months.
 	filter := fmt.Sprintf("m.time >= toDateTime('%s', 'UTC') AND m.time < toDateTime('%s', 'UTC') AND toYYYYMM(m.time) IN (%s)",
 		first.start().Format("2006-01-02"), last.next().start().Format("2006-01-02"), monthList(months))
-	if err := c.exec(fmt.Sprintf("INSERT INTO %s (%s) %s", conversionStaging, testsColumns, collapseQuery(filter))); err != nil {
-		return errors.Wrap(err, "converter#convertChunk insert")
+	shards, rows, err := c.shardsFor(filter)
+	if err != nil {
+		return err
+	}
+	log.Printf("converter: %s..%s: %d source rows in %d shard(s)\n", first, last, rows, shards)
+	for k := 0; k < shards; k++ {
+		shardFilter := filter
+		if shards > 1 {
+			shardFilter = fmt.Sprintf("%s AND cityHash64(m.id) %% %d = %d", filter, shards, k)
+		}
+		if err := c.exec(fmt.Sprintf("INSERT INTO %s (%s) %s", conversionStaging, testsColumns, collapseQuery(shardFilter))); err != nil {
+			return errors.Wrap(err, "converter#convertChunk insert shard %d/%d", k+1, shards)
+		}
+		if shards > 1 {
+			log.Printf("converter: shard %d/%d of %s..%s done, %v elapsed\n", k+1, shards, first, last, time.Since(start))
+		}
 	}
 	log.Printf("converter: collapsed %s..%s in %v\n", first, last, time.Since(start))
 	for _, m := range months {
@@ -228,6 +249,22 @@ func (c *Converter) convertChunk(months []month) error {
 	}
 	log.Printf("converter: %s..%s done in %v\n", first, last, time.Since(start))
 	return nil
+}
+
+// shardsFor returns how many shards a chunk is collapsed in, and its source row count.
+func (c *Converter) shardsFor(filter string) (int, uint64, error) {
+	var rows uint64
+	if err := c.conn.QueryRow(c.ctx(), "SELECT count() FROM measurements m WHERE "+filter).Scan(&rows); err != nil {
+		return 0, 0, errors.Wrap(err, "converter#shardsFor count")
+	}
+	if c.opts.Shards > 0 {
+		return c.opts.Shards, rows, nil
+	}
+	shards := int((rows + c.opts.ShardRows - 1) / c.opts.ShardRows)
+	if shards < 1 {
+		shards = 1
+	}
+	return shards, rows, nil
 }
 
 // MonthCheck compares one month of measurements and tests.

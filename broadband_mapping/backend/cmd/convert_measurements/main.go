@@ -30,6 +30,8 @@ func main() {
 	insertThreads := flag.Int("max-insert-threads", def.MaxInsertThreads, "ClickHouse max_insert_threads")
 	maxMemory := flag.Uint64("max-memory", def.MaxMemoryUsage, "ClickHouse max_memory_usage per query, bytes")
 	spill := flag.Uint64("spill-bytes", def.MaxBytesBeforeExternalGroupBy, "ClickHouse max_bytes_before_external_group_by, bytes")
+	shards := flag.Int("shards", def.Shards, "Hash shards per chunk (0 = one per -shard-rows source rows)")
+	shardRows := flag.Uint64("shard-rows", def.ShardRows, "Source rows per shard when -shards is 0; bounds the GROUP BY id memory")
 	flag.Parse()
 	if *from == "" || *to == "" {
 		fmt.Fprintln(os.Stderr, "Pass -from and -to (YYYY-MM)")
@@ -54,6 +56,8 @@ func main() {
 		MaxInsertThreads:              *insertThreads,
 		MaxMemoryUsage:                *maxMemory,
 		MaxBytesBeforeExternalGroupBy: *spill,
+		Shards:                        *shards,
+		ShardRows:                     *shardRows,
 		Redo:                          *redo,
 	}
 	c := clickhousestorages.NewConverter(db, opts)

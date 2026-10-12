@@ -49,6 +49,19 @@ func (g *gcsSource) List(ctx context.Context, prefix string) ([]string, error) {
 	}
 }
 
+// sizedReader is an object reader that knows the object's size, which lets the fetch
+// reserve its memory before downloading it.
+type sizedReader struct {
+	io.ReadCloser
+	size int64
+}
+
+func (s sizedReader) Size() int64 { return s.size }
+
 func (g *gcsSource) Open(ctx context.Context, path string) (io.ReadCloser, error) {
-	return g.client.Bucket(g.bucket).Object(path).NewReader(ctx)
+	r, err := g.client.Bucket(g.bucket).Object(path).NewReader(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return sizedReader{r, r.Attrs.Size}, nil
 }
