@@ -180,9 +180,10 @@ func (ms *measurementStorage) Insert(it storages.MeasurementIterator) error {
 func (ms *measurementStorage) LastDate() (*time.Time, error) {
 	var rows uint64
 	var t time.Time
-	if err := ms.conn.QueryRow(ms.ctx(), `
-		SELECT sum(rows), max(max_time) FROM system.parts
-		WHERE database = currentDatabase() AND table = ? AND active AND rows > 0`, testsTable).Scan(&rows, &t); err != nil {
+	// count() and max(time) on the time-partitioned table are answered from part metadata
+	// (minmax_count projection): no scan, and no access to system tables needed, which the
+	// pipeline's database user doesn't have.
+	if err := ms.conn.QueryRow(ms.ctx(), fmt.Sprintf(`SELECT count(), max(time) FROM %s`, testsTable)).Scan(&rows, &t); err != nil {
 		return nil, errors.Wrap(err, "measurementStorage#LastDate")
 	}
 	if rows == 0 {
