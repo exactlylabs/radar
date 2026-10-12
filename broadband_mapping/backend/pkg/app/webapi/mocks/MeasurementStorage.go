@@ -32,6 +32,24 @@ func (_m *MeasurementStorage) Close() error {
 	return r0
 }
 
+// CommitReplace provides a mock function with no fields
+func (_m *MeasurementStorage) CommitReplace() error {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for CommitReplace")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Connected provides a mock function with no fields
 func (_m *MeasurementStorage) Connected() error {
 	ret := _m.Called()
@@ -50,6 +68,36 @@ func (_m *MeasurementStorage) Connected() error {
 	return r0
 }
 
+// IDsOn provides a mock function with given fields: day
+func (_m *MeasurementStorage) IDsOn(day time.Time) (map[string]struct{}, error) {
+	ret := _m.Called(day)
+
+	if len(ret) == 0 {
+		panic("no return value specified for IDsOn")
+	}
+
+	var r0 map[string]struct{}
+	var r1 error
+	if rf, ok := ret.Get(0).(func(time.Time) (map[string]struct{}, error)); ok {
+		return rf(day)
+	}
+	if rf, ok := ret.Get(0).(func(time.Time) map[string]struct{}); ok {
+		r0 = rf(day)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(map[string]struct{})
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(time.Time) error); ok {
+		r1 = rf(day)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Insert provides a mock function with given fields: it
 func (_m *MeasurementStorage) Insert(it storages.MeasurementIterator) error {
 	ret := _m.Called(it)
@@ -63,6 +111,24 @@ func (_m *MeasurementStorage) Insert(it storages.MeasurementIterator) error {
 		r0 = rf(it)
 	} else {
 		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Inserted provides a mock function with no fields
+func (_m *MeasurementStorage) Inserted() uint64 {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Inserted")
+	}
+
+	var r0 uint64
+	if rf, ok := ret.Get(0).(func() uint64); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(uint64)
 	}
 
 	return r0
@@ -109,6 +175,24 @@ func (_m *MeasurementStorage) Open() error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func() error); ok {
 		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// StartReplace provides a mock function with given fields: days
+func (_m *MeasurementStorage) StartReplace(days []time.Time) error {
+	ret := _m.Called(days)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StartReplace")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func([]time.Time) error); ok {
+		r0 = rf(days)
 	} else {
 		r0 = ret.Error(0)
 	}

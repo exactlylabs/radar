@@ -19,11 +19,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func runInsertions(ctx context.Context, s storages.IngestorAppStorages, storage ingestor.Storage) {
-	if err := s.MeasurementStorage.Open(); err != nil {
-		panic(err)
-	}
-	defer s.MeasurementStorage.Close()
+func runInsertions(ctx context.Context, s storages.IngestorAppStorages, storage ingestor.Storage, opts ingestor.FetchOptions) {
 	measStartTime, err := s.MeasurementStorage.LastDate()
 	if err != nil {
 		panic(err)
@@ -36,7 +32,8 @@ func runInsertions(ctx context.Context, s storages.IngestorAppStorages, storage 
 	endTime := time.Now().Truncate(time.Hour * 24)
 	start := time.Now()
 	log.Printf("Requesting insertions from %v to %v\n", measStartTime, endTime)
-	err = ingestor.Ingest(ctx, s, storage, *measStartTime, endTime, true)
+	// Tests at or before the newest ingested second were ingested with it.
+	err = ingestor.Ingest(ctx, s, storage, *measStartTime, endTime, measStartTime, true, opts)
 	if err != nil {
 		panic(err)
 	}
@@ -74,7 +71,17 @@ func main() {
 
 	db := clickhousestorages.DB(conf, nWorkers)
 	defer db.Close()
-	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers, false)
+	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers)
+	opts := ingestor.FetchOptions{ManifestDir: "completeness", StopAtMissing: true}
+	if conf.IngestManifestFrom != "" {
+		from, err := time.Parse("2006-01-02", conf.IngestManifestFrom)
+		if err != nil {
+			panic(err)
+		}
+		opts.ManifestFrom = from
+	} else {
+		log.Println("INGEST_MANIFEST_FROM is not set: dates are ingested as soon as their files exist")
+	}
 
 	storage, err := s3storage.New(
 		conf.FilesBucketName,
@@ -94,7 +101,7 @@ func main() {
 		case <-ctx.Done():
 			return
 		case <-timer.C:
-			runInsertions(ctx, s, storage)
+			runInsertions(ctx, s, storage, opts)
 			timer.Reset(time.Hour)
 		}
 	}

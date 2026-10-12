@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Measurement is one M-Lab test, stored as one row of the tests table.
 type Measurement struct {
 	Id                 string
 	TestStyle          string
@@ -16,10 +17,16 @@ type Measurement struct {
 	Latitude           float64
 	Longitude          float64
 	LocationAccuracyKM float64
-	GeospaceId         string
 	ASNId              string
-	HasAccessToken     bool
-	AccessTokenSig     *string
+	// Geospace ids of the test per namespace, "" when it has none. A test in more than one
+	// geospace of a namespace (two counties, a tribal tract and an AIANNH area) has the others
+	// in ExtraGeospaceIds.
+	StateId          string
+	CountyId         string
+	TribalId         string
+	ExtraGeospaceIds []string
+	HasAccessToken   bool
+	AccessTokenSig   *string
 }
 
 type MeasurementIterator interface {
@@ -28,8 +35,19 @@ type MeasurementIterator interface {
 
 type MeasurementStorage interface {
 	Open() error
+	// Close waits for the pending inserts and returns the first insert error.
 	Close() error
 	Connected() error
 	Insert(it MeasurementIterator) error
+	// LastDate is the time of the newest test, nil when there is none.
 	LastDate() (*time.Time, error)
+	// Inserted is the number of tests inserted since the storage was created.
+	Inserted() uint64
+	// IDsOn returns the ids of the tests of a UTC day.
+	IDsOn(day time.Time) (map[string]struct{}, error)
+	// StartReplace starts replacing every test of days, which must be in one month: until
+	// CommitReplace, inserts go to a copy of the month without those days. Call it closed.
+	StartReplace(days []time.Time) error
+	// CommitReplace puts the copy in place of the month. Call it after Close.
+	CommitReplace() error
 }

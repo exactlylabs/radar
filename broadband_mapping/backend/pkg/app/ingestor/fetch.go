@@ -44,6 +44,19 @@ func (it *itemIterator) Next() ([]io.ReadCloser, error) {
 	return readers, nil
 }
 
+// FetchOptions control which dates Fetch returns.
+type FetchOptions struct {
+	// From ManifestFrom on, a date is only returned once ManifestDir/<date>* exists: the
+	// processor writes completeness/<date>.json after all of a date's files are uploaded.
+	// Dates processed before the manifest existed are taken as soon as their files exist.
+	ManifestDir  string
+	ManifestFrom time.Time
+	// Stop at the first date that isn't ready instead of skipping it. The hourly ingest needs
+	// this: its cursor is the newest test time, so a later date ingested first would leave the
+	// missing date behind for good.
+	StopAtMissing bool
+}
+
 // Fetch retrieves AVRO files from the specified storage within the given time range.
 // It searches multiple directories and groups files by date for efficient batch processing.
 //
@@ -58,7 +71,7 @@ func (it *itemIterator) Next() ([]io.ReadCloser, error) {
 //   - An error if the listing operation fails
 //
 // The function expects files to be organized by date with the naming pattern: [directory/]YYYY-MM-DD*
-func Fetch(storage Storage, directories []string, start, end time.Time) (*itemIterator, error) {
+func Fetch(storage Storage, directories []string, start, end time.Time, opts FetchOptions) (*itemIterator, error) {
 	// Validate inputs
 	if storage == nil {
 		return nil, errors.New("storage cannot be nil")
@@ -82,8 +95,22 @@ func Fetch(storage Storage, directories []string, start, end time.Time) (*itemIt
 		dateStr := currentDate.Format("2006-01-02")
 		dateNames := make([]string, 0)
 
+		ready := true
+		if opts.ManifestDir != "" && !opts.ManifestFrom.IsZero() && !currentDate.Before(opts.ManifestFrom) {
+			manifest, err := storage.List(ctx, fmt.Sprintf("%s/%s", opts.ManifestDir, dateStr))
+			if err != nil {
+				return nil, errors.W(err)
+			}
+			if len(manifest) == 0 {
+				log.Printf("%s has no completeness manifest yet\n", dateStr)
+				ready = false
+			}
+		}
 		// Search for files in each specified directory
 		for _, directory := range directories {
+			if !ready {
+				break
+			}
 			prefix := dateStr
 			if directory != "" {
 				prefix = fmt.Sprintf("%s/%s", directory, prefix)
@@ -98,8 +125,11 @@ func Fetch(storage Storage, directories []string, start, end time.Time) (*itemIt
 			dateNames = append(dateNames, fileNames...)
 		}
 		// Only include this date if we found files in all directories
-		if len(dateNames) == len(directories) {
+		if ready && len(dateNames) == len(directories) {
 			names = append(names, dateNames)
+		} else if opts.StopAtMissing {
+			log.Printf("%s is not ready, stopping there\n", dateStr)
+			break
 		}
 
 		// Move to next day
