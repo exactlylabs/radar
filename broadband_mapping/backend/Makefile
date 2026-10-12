@@ -23,6 +23,25 @@ summarize:
 	go build -o summarize cmd/summarize/main.go
 
 
+.PHONY: ingest
+ingest:
+	go build -o ingest cmd/ingest/main.go
+
+
+.PHONY: convert-measurements
+convert-measurements:
+	go build -o convert_measurements cmd/convert_measurements/main.go
+
+
+# Linux amd64 binaries for mapping-db (/opt/broadbandmapping)
+.PHONY: pipeline-binaries
+pipeline-binaries:
+	GOOS=linux GOARCH=amd64 go build -o dist/mlab-ingestor ./cmd/ingestor_service
+	GOOS=linux GOARCH=amd64 go build -o dist/ingest ./cmd/ingest
+	GOOS=linux GOARCH=amd64 go build -o dist/summarize ./cmd/summarize
+	GOOS=linux GOARCH=amd64 go build -o dist/convert_measurements ./cmd/convert_measurements
+
+
 .PHONY: mapping-api
 mapping-api:
 	go build -o mapping-api cmd/server/main.go
