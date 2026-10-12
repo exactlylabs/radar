@@ -36,10 +36,10 @@ convert-measurements:
 # Linux amd64 binaries for mapping-db (/opt/broadbandmapping)
 .PHONY: pipeline-binaries
 pipeline-binaries:
-	GOOS=linux GOARCH=amd64 go build -o dist/mlab-ingestor ./cmd/ingestor_service
-	GOOS=linux GOARCH=amd64 go build -o dist/ingest ./cmd/ingest
-	GOOS=linux GOARCH=amd64 go build -o dist/summarize ./cmd/summarize
-	GOOS=linux GOARCH=amd64 go build -o dist/convert_measurements ./cmd/convert_measurements
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/mlab-ingestor ./cmd/ingestor_service
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/ingest ./cmd/ingest
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/summarize ./cmd/summarize
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/convert_measurements ./cmd/convert_measurements
 
 
 .PHONY: mapping-api
