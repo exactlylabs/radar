@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -254,5 +256,35 @@ func TestRowEncoderAndBlockReaderAgree(t *testing.T) {
 	}
 	if err := dec.Err(); err != nil || i != len(rows) {
 		t.Fatalf("%d rows, %v", i, err)
+	}
+}
+
+// TestWriteFixtures writes small files with every codec the processor may use, as the
+// steps write them (BlockWriter + Transform, 8192-row blocks), to AVRO_FIXTURE_DIR. The
+// ingestor's tests (broadband_mapping/backend/pkg/app/ingestor) read copies of them to
+// prove it can ingest what the processor produces.
+func TestWriteFixtures(t *testing.T) {
+	dir := os.Getenv("AVRO_FIXTURE_DIR")
+	if dir == "" {
+		t.Skip("AVRO_FIXTURE_DIR not set")
+	}
+	rows := rowsIn(3000)
+	in := writeOCF(t, rows, ocf.Null, 100)
+	for _, codec := range []CodecName{Null, Snappy, Deflate, ZStandard} {
+		br, err := NewBlockReader(bytes.NewReader(in))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var out bytes.Buffer
+		bw, err := NewBlockWriter(&out, avro.MustParse(outSchema), codec)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := Transform(br, bw, avro.MustParse(outSchema), TransformOptions{Workers: 4}, double); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, fmt.Sprintf("transform-%s.avro", codec)), out.Bytes(), 0644); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
