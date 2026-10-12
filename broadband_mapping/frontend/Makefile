@@ -23,12 +23,17 @@ push-staging: build
 
 
 .PHONY: push
+# A multi-platform build can't be loaded into the local daemon, so the image is
+# pushed straight from the builder (the old tag-then-push never pushed anything).
 push: ENVIRONMENT=prod
-push: build
-	docker tag mapping-client:$(VERSION) registry.radartoolkit.com/mapping-client:$(VERSION)
-	docker tag mapping-client:latest registry.radartoolkit.com/mapping-client:latest
-	docker push registry.radartoolkit.com/mapping-client:latest
-	docker push registry.radartoolkit.com/mapping-client:$(VERSION)
+push:
+	docker buildx build --provenance=false \
+	-f docker/Dockerfile \
+	--platform linux/arm64,linux/amd64 \
+	--build-arg "ENVIRONMENT=$(ENVIRONMENT)" \
+	-t registry.radartoolkit.com/mapping-client:$(VERSION) \
+	-t registry.radartoolkit.com/mapping-client:latest \
+	--push .
 
 deploy-staging: push-staging
 	make -C ../../../radar-infra/deploy deploy STACK=mapping-client ENVIRONMENT=staging
