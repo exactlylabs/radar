@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/exactlylabs/mlab-processor/pkg/services/encoders"
-	"github.com/hamba/avro/ocf"
+	"github.com/hamba/avro/v2/ocf"
 )
 
 type avroDecoder struct {
@@ -15,12 +15,12 @@ type avroDecoder struct {
 func NewAvroDecoder(r io.Reader) (encoders.FileDecoder, error) {
 	decoder, err := ocf.NewDecoder(r)
 	if err != nil {
-		return nil, fmt.Errorf("avro.NewAvroEncoder NewEncoder err: %w", err)
+		return nil, fmt.Errorf("avro.NewAvroDecoder NewDecoder err: %w", err)
 	}
 	return &avroDecoder{decoder}, nil
 }
 
-// Encode implements encoders.FileEncoder
+// DecodeItem implements encoders.FileDecoder
 func (ae *avroDecoder) DecodeItem(obj any) error {
 	return ae.decoder.Decode(obj)
 }

@@ -65,6 +65,16 @@ func (ds *dataStore) ItemWriter() (ItemWriter, error) {
 	return writer, nil
 }
 
+// FileWriter creates the local temporary file of the step's output and returns it; the
+// caller writes the whole encoded file and closes it. The upload happens on Flush.
+func (ds *dataStore) FileWriter() (io.WriteCloser, error) {
+	file, err := openFile(ds.localPath())
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	return file, nil
+}
+
 // ItemsReader checks if the file exists locally and returns it, otherwise, it  retrieve from storage
 func (ds *dataStore) ItemsReader() (StoreItemIterator, error) {
 	f, err := ds.FileReader()
