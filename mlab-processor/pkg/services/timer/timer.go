@@ -3,6 +3,7 @@ package timer
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -13,13 +14,17 @@ type TimerData struct {
 
 // AvgDuration returns the average duration of the timer
 func (td *TimerData) AvgDuration() time.Duration {
-	avg := td.sum / td.count
+	count := atomic.LoadInt64(&td.count)
+	if count == 0 {
+		return 0
+	}
+	avg := atomic.LoadInt64(&td.sum) / count
 	return time.Nanosecond * time.Duration(avg)
 }
 
 // TotalDuration returns the duration that this timer has been triggered
 func (td *TimerData) TotalDuration() time.Duration {
-	return time.Nanosecond * time.Duration(td.sum)
+	return time.Nanosecond * time.Duration(atomic.LoadInt64(&td.sum))
 }
 
 var timers sync.Map
@@ -33,8 +38,8 @@ func init() {
 func TimeIt(start time.Time, name string) {
 	dataInterface, _ := timers.LoadOrStore(name, &TimerData{sum: 0, count: 0})
 	data := dataInterface.(*TimerData)
-	data.sum += time.Since(start).Nanoseconds()
-	data.count++
+	atomic.AddInt64(&data.sum, time.Since(start).Nanoseconds())
+	atomic.AddInt64(&data.count, 1)
 }
 
 // GetTimer will return a TimerData instance registered for the given name
@@ -47,7 +52,7 @@ func GetTimer(name string) *TimerData {
 }
 
 func PrintTimer(name string, data *TimerData) {
-	fmt.Printf("%s :\n\t Avg: %v \n\tCount: %v\n\tSum: %v\n", name, data.AvgDuration(), data.count, time.Duration(data.sum))
+	fmt.Printf("%s :\n\t Avg: %v \n\tCount: %v\n\tSum: %v\n", name, data.AvgDuration(), atomic.LoadInt64(&data.count), data.TotalDuration())
 }
 
 func PrintAll() {

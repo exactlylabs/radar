@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM} golang:1.21.6-alpine as builder
+FROM --platform=${BUILDPLATFORM} golang:1.25-alpine as builder
 
 WORKDIR /go/src/github.com/exactlylabs/mlab-processor
 
@@ -11,7 +11,7 @@ ARG TARGETARCH
 RUN apk add git gcc g++
 
 COPY go.mod go.sum ./
-RUN go get ./...
+RUN go mod download
 
 COPY . ./
 
@@ -19,7 +19,7 @@ RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o mlab-processor ./cmd/proce
 
 #---------------------------------------------------------#
 
-FROM --platform=${TARGETPLATFORM} alpine:3.14.0
+FROM --platform=${TARGETPLATFORM} alpine:3.22
 
 WORKDIR /app
 
@@ -32,5 +32,6 @@ RUN chmod -R +x ./scripts
 RUN chmod +x mlab-processor
 
 ENTRYPOINT [ "./scripts/docker-entrypoint" ]
-CMD [ "./mlab-processor" ]
+# Resident container: legacy loop mode. For a systemd timer run the binary without -loop.
+CMD [ "./mlab-processor", "-loop" ]
 

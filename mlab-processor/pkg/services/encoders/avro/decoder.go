@@ -28,3 +28,7 @@ func (ae *avroDecoder) DecodeItem(obj any) error {
 func (ae *avroDecoder) MoveNext() bool {
 	return ae.decoder.HasNext()
 }
+
+func (ae *avroDecoder) Err() error {
+	return ae.decoder.Error()
+}

@@ -23,7 +23,7 @@ func GetStorageFromConfig(ctx context.Context, conf *config.ProcessorConfig) (da
 		}
 		return storage, nil
 
-	case "s3":
+	case "s3", "b2":
 		log.Println("Using Backblaze B2 as Storage mechanism")
 		storage, err := s3storage.New(
 			s3storage.S3StorageOptions{
@@ -32,7 +32,6 @@ func GetStorageFromConfig(ctx context.Context, conf *config.ProcessorConfig) (da
 				SecretKey:  conf.S3SecretKey,
 				Endpoint:   conf.S3Endpoint,
 				Region:     conf.S3Region,
-				Workers:    1,
 			},
 		)
 		if err != nil {

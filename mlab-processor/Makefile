@@ -1,7 +1,17 @@
 VERSION := $(shell date -u +"%Y%m%d%H%M%S")
 export VERSION
 
-.PHONY : setup build
+.PHONY : setup build binaries test
+
+# Static linux/amd64 binaries for /opt/broadbandmapping on mapping-db:
+# bin/mlab-processor (one-shot/timer or -loop) and bin/process-mlab (manual CLI).
+binaries:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o bin/mlab-processor ./cmd/processor
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o bin/process-mlab ./cmd/process
+
+test:
+	go vet ./...
+	go test ./...
 
 all: setup build
 

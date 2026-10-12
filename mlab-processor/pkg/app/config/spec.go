@@ -7,15 +7,17 @@ import (
 )
 
 type ProcessorConfig struct {
-	FileFormat       string `config:"FILE_FORMAT,default=avro"` // Accepts avro or parquet
-	EarliestDate     string `config:"EARLIEST_DATE,default=2019-05-13"`
-	Ipv4DBPath       string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
-	Ipv6DBPath       string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
-	AsnIpv4DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
-	AsnIpv6DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
-	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/as-org2info.jsonl"`
-	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_us_state.zip;US_COUNTIES:./input/tl_us_county.zip;US_AIANNH:./input/tl_us_aiannh.zip;ZIP_CODES:./input/tl_us_zcta520.zip"`
-	TractsShapeDir   string `config:"TRACTS_SHAPE_DIR,default=./input/tracts"`
+	FileFormat    string `config:"FILE_FORMAT,default=avro"` // Accepts avro or parquet
+	EarliestDate  string `config:"EARLIEST_DATE,default=2019-05-13"`
+	Ipv4DBPath    string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
+	Ipv6DBPath    string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
+	AsnIpv4DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
+	AsnIpv6DBPath string `config:"ASN_IPV6_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
+	Asn2OrgDBPath string `config:"ASN2ORG_DB_PATH,default=./input/as-org2info.jsonl"`
+	// SHAPE_PATHS: NAMESPACE:path;... Only the namespaces the ingestor reads are loaded
+	// (see reversegeocoder.KeptNamespaces); others (ZIP_CODES) are ignored with a warning.
+	// TRACTS_SHAPE_DIR is no longer read: census tract shapes were never ingested.
+	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_us_state.zip;US_COUNTIES:./input/tl_us_county.zip;US_AIANNH:./input/tl_us_aiannh.zip"`
 	StorageType      string `config:"STORAGE_TYPE,default=local"` // Accepts local, gcs, s3
 	UploadBucketName string `config:"UPLOAD_BUCKET_NAME,default=mlab-processed-data"`
 	S3AccessKey      string `config:"S3_ACCESS_KEY"`
@@ -26,6 +28,7 @@ type ProcessorConfig struct {
 
 var cachedConfig *ProcessorConfig
 
+// GetConfig returns the configuration from the environment (cached after the first call).
 func GetConfig() *ProcessorConfig {
 	if cachedConfig == nil {
 		cachedConfig = processConfig()
