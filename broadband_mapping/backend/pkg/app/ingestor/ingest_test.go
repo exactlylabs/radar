@@ -17,7 +17,7 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor/models"
 	"github.com/google/uuid"
-	"github.com/hamba/avro/ocf"
+	"github.com/hamba/avro/v2/ocf"
 )
 
 // memStorage is an in-memory bucket.
