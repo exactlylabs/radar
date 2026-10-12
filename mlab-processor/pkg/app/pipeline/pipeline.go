@@ -61,6 +61,78 @@ type Runner struct {
 	sourceCloser io.Closer
 	geocoder     *ipgeocoder.Geocoder
 	revGeocoder  *reversegeocoder.ReverseGeocoder
+
+	// upcoming is the date RunRange / RunWindow will process after the current one; its
+	// fetch is started (prefetch) as soon as the current date's fetch is done, so the
+	// download of one date overlaps the geocoding of the previous one.
+	upcoming      *time.Time
+	upcomingRerun bool
+	prefetch      *prefetch
+	// Prefetched counts the dates whose fetch output came from a prefetch.
+	Prefetched int
+}
+
+// prefetch is a fetch of a date running ahead of its RunDate.
+type prefetch struct {
+	date  time.Time
+	ds    datastore.DataStore
+	done  chan struct{}
+	stats *fetcher.Stats
+	err   error
+	secs  string
+}
+
+// startUpcoming starts the fetch of the upcoming date, if any, unless its output exists
+// (the rule RunDate applies). Errors are left to RunDate: it will run into them itself.
+func (r *Runner) startUpcoming(ctx context.Context) {
+	if r.upcoming == nil || r.prefetch != nil || ctx.Err() != nil {
+		return
+	}
+	date := *r.upcoming
+	r.upcoming = nil
+	ds, err := r.Provider(fetcher.StepName, date, models.FetchedResult{})
+	if err != nil {
+		return
+	}
+	ds.Clear()
+	if !r.upcomingRerun {
+		exists, err := ds.Exists()
+		if err != nil || exists {
+			return
+		}
+	}
+	src, err := r.source(ctx)
+	if err != nil {
+		return
+	}
+	p := &prefetch{date: date, ds: ds, done: make(chan struct{})}
+	r.prefetch = p
+	go func() {
+		defer close(p.done)
+		start := time.Now()
+		p.stats, p.err = fetcher.FetchDate(ctx, src, ds, date, r.FetchOpts)
+		p.secs = secs(start)
+	}()
+}
+
+// takePrefetch returns the prefetch of date, if there is one.
+func (r *Runner) takePrefetch(date time.Time) *prefetch {
+	p := r.prefetch
+	if p == nil || !p.date.Equal(date) {
+		return nil
+	}
+	r.prefetch = nil
+	return p
+}
+
+// waitPrefetch waits for a prefetch nobody took (an aborted run) and drops its output.
+func (r *Runner) waitPrefetch() {
+	if p := r.prefetch; p != nil {
+		<-p.done
+		p.ds.Clear()
+		r.prefetch = nil
+	}
+	r.upcoming = nil
 }
 
 func (r *Runner) source(ctx context.Context) (fetcher.ObjectSource, error) {
@@ -112,6 +184,7 @@ func freeMemory() {
 // Release drops the geo data (network maps, ASN map, shapes) and returns the memory to
 // the OS. Call it after a run when the process stays alive (loop mode).
 func (r *Runner) Release() {
+	r.waitPrefetch()
 	r.geocoder = nil
 	r.revGeocoder = nil
 	if r.sourceCloser != nil {
@@ -192,6 +265,8 @@ type stepDS struct {
 
 // RunDate runs the requested steps for one date. A step whose output already exists is
 // skipped unless rerun is set or an earlier step ran in this call (its input changed).
+// The fetch may have been started ahead by RunRange / RunWindow (see upcoming); its
+// result is then taken over as if the step ran here, accounting included.
 // Nothing of a failed step is uploaded. fetch is uploaded as soon as it succeeds (raw
 // retention; a later run resumes from it); ipgeocode and reversegeocode are uploaded
 // together after both succeeded (reversegeocode first, since the ingestor takes a day
@@ -204,7 +279,12 @@ func (r *Runner) RunDate(ctx context.Context, date time.Time, steps []string, re
 		ipgeocoder.StepName:      models.GeocodedResult{},
 		reversegeocoder.StepName: models.RevGeoResult{},
 	}
+	pre := r.takePrefetch(date)
 	for _, s := range AllSteps {
+		if pre != nil && s == fetcher.StepName {
+			ds[s] = pre.ds // produced by this runner, ahead of this call
+			continue
+		}
 		d, pErr := r.Provider(s, date, objs[s])
 		if pErr != nil {
 			return pErr
@@ -235,6 +315,10 @@ func (r *Runner) RunDate(ctx context.Context, date time.Time, steps []string, re
 		if err := ctx.Err(); err != nil {
 			return err
 		}
+		if step != fetcher.StepName {
+			// The current date's fetch is done (or skipped): download the next one meanwhile.
+			r.startUpcoming(ctx)
+		}
 		if !dirty {
 			exists, eErr := ds[step].Exists()
 			if eErr != nil {
@@ -249,13 +333,23 @@ func (r *Runner) RunDate(ctx context.Context, date time.Time, steps []string, re
 		start := time.Now()
 		switch step {
 		case fetcher.StepName:
-			src, sErr := r.source(ctx)
-			if sErr != nil {
-				return sErr
+			var stats *fetcher.Stats
+			var fErr error
+			fetchSecs := ""
+			if pre != nil {
+				<-pre.done
+				stats, fErr, fetchSecs = pre.stats, pre.err, pre.secs
+				r.Prefetched++
+			} else {
+				src, sErr := r.source(ctx)
+				if sErr != nil {
+					return sErr
+				}
+				stats, fErr = fetcher.FetchDate(ctx, src, ds[step], date, r.FetchOpts)
+				fetchSecs = secs(start)
 			}
-			stats, fErr := fetcher.FetchDate(ctx, src, ds[step], date, r.FetchOpts)
 			kv := []any{"listed", stats.TotalListed(), "processed", stats.TotalProcessed(), "tests", stats.Tests,
-				"bad_files", stats.BadFiles, "retries", stats.Retries, "seconds", secs(start)}
+				"bad_files", stats.BadFiles, "retries", stats.Retries, "seconds", fetchSecs, "prefetched", pre != nil}
 			if fErr != nil {
 				summary(date, step, "failed", append(kv, "error", fErr.Error())...)
 				return fErr
@@ -380,37 +474,56 @@ func (r *Runner) Check(ctx context.Context, date time.Time) (Decision, error) {
 // the ones Check flags, with rerun (all three steps from scratch). It returns the dates
 // that failed; one failed date does not stop the others.
 func (r *Runner) RunWindow(ctx context.Context, start, end time.Time) (failed []time.Time) {
-	for d := end; !d.Before(start); d = d.AddDate(0, 0, -1) {
-		if ctx.Err() != nil {
-			failed = append(failed, d)
-			continue
+	// next returns the first date from d down that needs processing. The date after the
+	// current one is found before the current one runs, so its fetch can start meanwhile.
+	next := func(d time.Time) (time.Time, bool) {
+		for ; !d.Before(start); d = d.AddDate(0, 0, -1) {
+			if ctx.Err() != nil {
+				failed = append(failed, d)
+				continue
+			}
+			dec, err := r.Check(ctx, d)
+			if err != nil {
+				summary(d, "check", "failed", "error", err.Error())
+				failed = append(failed, d)
+				continue
+			}
+			if !dec.Process {
+				summary(d, "check", "complete", "reason", dec.Reason)
+				continue
+			}
+			summary(d, "check", "process", "reason", dec.Reason)
+			return d, true
 		}
-		dec, err := r.Check(ctx, d)
-		if err != nil {
-			summary(d, "check", "failed", "error", err.Error())
-			failed = append(failed, d)
-			continue
-		}
-		if !dec.Process {
-			summary(d, "check", "complete", "reason", dec.Reason)
-			continue
-		}
-		summary(d, "check", "process", "reason", dec.Reason)
-		if err := r.RunDate(ctx, d, AllSteps, true); err != nil {
-			log.Printf("Date %s failed: %v", d.Format("2006-01-02"), err)
-			failed = append(failed, d)
-		}
+		return time.Time{}, false
 	}
+	cur, ok := next(end)
+	for ok {
+		nxt, nok := next(cur.AddDate(0, 0, -1))
+		if nok {
+			r.upcoming, r.upcomingRerun = &nxt, true
+		}
+		if err := r.RunDate(ctx, cur, AllSteps, true); err != nil {
+			log.Printf("Date %s failed: %v", cur.Format("2006-01-02"), err)
+			failed = append(failed, cur)
+		}
+		cur, ok = nxt, nok
+	}
+	r.waitPrefetch()
 	return failed
 }
 
 // RunRange runs steps for every date of the range in order (the classic behaviour: skip
 // steps whose output exists unless rerun). It returns the dates that failed.
 func (r *Runner) RunRange(ctx context.Context, dates []time.Time, steps []string, rerun bool) (failed []time.Time) {
-	for _, d := range dates {
+	defer r.waitPrefetch()
+	for i, d := range dates {
 		if ctx.Err() != nil {
 			failed = append(failed, d)
 			continue
+		}
+		if i+1 < len(dates) && contains(steps, fetcher.StepName) {
+			r.upcoming, r.upcomingRerun = &dates[i+1], rerun
 		}
 		if err := r.RunDate(ctx, d, steps, rerun); err != nil {
 			log.Printf("Date %s failed: %v", d.Format("2006-01-02"), err)
