@@ -1,5 +1,13 @@
 # Incremental summaries
 
+> Update (summarizer v3): summaries now read the `tests` table (one row per test, see
+> `migrations/004_tests.sql`) instead of `measurements`, in one pass per namespace
+> (states, counties, tribal_tracts, plus extra geospaces), and the all-time tables are
+> rebuilt from `ip_medians` / `ip_medians_geospace` (exact per-IP all-time medians, updated
+> only for the IPs tested in the ingested days) instead of from all history. The design
+> below still holds for the bucketed windows. Production runbook and measurements:
+> `../../docs/pipeline-rebuild-plan.md`.
+
 ## Problem (measured 2026-10-11 on mapping-db)
 
 - `Summarize` dropped and re-created all 12 `summary_*` tables with
