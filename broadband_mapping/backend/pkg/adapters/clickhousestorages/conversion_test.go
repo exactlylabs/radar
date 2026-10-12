@@ -52,6 +52,17 @@ func TestConverterCollapsesMeasurements(t *testing.T) {
 	}
 	assertSameRows(t, conn, "tests", "SELECT * FROM ("+normalizedTests("tests_expected")+") WHERE notEmpty(geospaces)", normalizedTests("tests"))
 
+	// The primary geospace of a namespace is the smallest as a string, like the ingestor's.
+	var notSmallest uint64
+	if err := conn.QueryRow(context.Background(), `
+		SELECT count() FROM tests WHERE arrayExists(g -> (g IN (SELECT id FROM geospaces WHERE namespace = 'counties') AND toString(g) < toString(county_id))
+			OR (g IN (SELECT id FROM geospaces WHERE namespace = 'tribal_tracts') AND toString(g) < toString(tribal_id)), extra_geospace_ids)`).Scan(&notSmallest); err != nil {
+		t.Fatal(err)
+	}
+	if notSmallest != 0 {
+		t.Fatalf("%d tests have an extra geospace smaller than their primary one", notSmallest)
+	}
+
 	checks, err := c.Verify(month("2025-10"), month("2026-04"))
 	if err != nil {
 		t.Fatal(err)
