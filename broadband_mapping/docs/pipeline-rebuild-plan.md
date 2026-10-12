@@ -398,6 +398,25 @@ those days and run `summarize -from 2023-03-01` once.
   `resical`/`tic-parser` containers and `/mnt/clickhouse-data/backups/1.zip` (216 GB,
   2024) on mapping-db.
 
+## Production validation of the processor (2026-10-11, release 555b5fc8)
+
+Measured on mapping-db on a full real day (2026-10-07) during the catch-up, with the
+ClickHouse conversion running on the same VM (`-workers 8 -download-workers 48`):
+
+| Per day (31 GB of tarballs, ~6 M tests) | Original | Now |
+|---|---|---|
+| Fetch | 1,953 s (4 workers) | 318 s, 92–115 MB/s sustained, 48 connections, link-bound |
+| ipgeocode | 29 s | 9 s |
+| reversegeocode | 54 s | 4 s |
+| Uploads | sequential PUTs | 38 s, multipart; B2 object sizes identical to the local files |
+| Day total | ~33 min | 370 s |
+| Peak memory (cgroup) | 6.4 GB (old geocoder) | 3.1 GB |
+| ipgeocode file | 349 MB (null codec) | 211 MB (zstd) |
+
+The earlier ~50 MB/s ceiling was Go's HTTP/2 transport multiplexing every download on
+one TCP connection (receive-window / RTT bound); the fetcher now uses HTTP/1.1 with one
+connection per download worker. CPU is no longer the limit: the 1 Gbps link is.
+
 ## Persistence rule (user requirement)
 
 Every operational change that is a long-term fix must be codified so it is repeatable and,
