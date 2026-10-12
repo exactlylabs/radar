@@ -5,7 +5,7 @@ ENVIRONMENT ?= staging
 .PHONY: build
 build:
 	@echo "Building $(ENVIRONMENT) environment"
-	docker buildx build \
+	docker buildx build --provenance=false \
 	-f docker/Dockerfile \
 	--platform linux/arm64,linux/amd64 \
 	--build-arg "ENVIRONMENT=$(ENVIRONMENT)" \

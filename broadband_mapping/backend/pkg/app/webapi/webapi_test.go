@@ -2,6 +2,7 @@ package webapi_test
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -29,18 +30,18 @@ func (s *TestSuite) SetupTest() {
 	s.context = webcontext.NewTestContext(s.response, &http.Request{})
 }
 
-func (s *TestSuite) TestHealth() {
+func (s *TestSuite) checkHealth(geoErr, asnErr, summaryErr error) routes.HealthCheckResponse {
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	q := url.Values{}
 	req.URL.RawQuery = q.Encode()
 
 	s.context.Request = req
 	geoStorage := mocks.NewGeospaceStorage(s.T())
-	geoStorage.On("Connected").Return(true)
+	geoStorage.On("Connected").Return(geoErr)
 	asOrgStorage := mocks.NewASNOrgStorage(s.T())
-	asOrgStorage.On("Connected").Return(true)
+	asOrgStorage.On("Connected").Return(asnErr)
 	summaryStorage := mocks.NewSummariesStorage(s.T())
-	summaryStorage.On("Connected").Return(true)
+	summaryStorage.On("Connected").Return(summaryErr)
 	appStorages := &storages.MappingAppStorages{
 		GeospacesStorage: geoStorage,
 		ASNOrgsStorage:   asOrgStorage,
@@ -60,7 +61,17 @@ func (s *TestSuite) TestHealth() {
 		s.FailNow("failed to unmarshal response: %w", err)
 	}
 	assert.Equal(s.T(), res.StatusCode, 200)
-	assert.Equal(s.T(), resObj, routes.HealthCheckResponse{Status: "OK"})
+	return resObj
+}
+
+func (s *TestSuite) TestHealth() {
+	resObj := s.checkHealth(nil, nil, nil)
+	assert.Equal(s.T(), resObj, routes.HealthCheckResponse{Status: "OK", Storages: "OK"})
+}
+
+func (s *TestSuite) TestHealthStorageDown() {
+	resObj := s.checkHealth(nil, errors.New("connection refused"), nil)
+	assert.Equal(s.T(), resObj, routes.HealthCheckResponse{Status: "OK", Storages: "NOT OK"})
 }
 
 func TestAPI(t *testing.T) {

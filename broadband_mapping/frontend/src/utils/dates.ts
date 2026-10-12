@@ -338,7 +338,7 @@ export const getQueryStringFromDateObject = (dateObject: DateFilter): string => 
   let dateQuery = `&year=${dateObject.selectedYear}`;
   if(dateObject.selectedMonth)
     dateQuery += `&month=${dateObject.selectedMonth}`;
-  if(dateObject.selectedWeek)
+  if(dateObject.selectedWeek !== undefined && dateObject.selectedWeek !== null) // week 0 is a valid (first) week
     dateQuery += `&week=${dateObject.selectedWeek}`;
   if(dateObject.selectedSemester)
     dateQuery += `&semester=${dateObject.selectedSemester}`;

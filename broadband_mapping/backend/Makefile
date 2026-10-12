@@ -49,7 +49,7 @@ mapping-api:
 
 .PHONY: build
 build:
-	docker buildx build \
+	docker buildx build --provenance=false \
 	  --platform linux/arm64,linux/amd64 \
 		-f docker/Dockerfile \
 		-t mapping-api:$(VERSION) .
@@ -59,7 +59,7 @@ build:
 
 .PHONY: build-setup-shapes
 build-setup-shapes:
-	docker buildx build \
+	docker buildx build --provenance=false \
 	  --platform linux/arm64,linux/amd64 \
 		-f docker/Dockerfile.setup-shapes \
 		-t mapping-setup-shapes:$(VERSION) .
@@ -69,7 +69,7 @@ build-setup-shapes:
 
 .PHONY: build-mlab-ingestor
 build-mlab-ingestor:
-	docker buildx build \
+	docker buildx build --provenance=false \
 	  --platform linux/amd64 \
 		-f docker/Dockerfile.ingestor \
 		-t mlab-ingestor:$(VERSION) .
@@ -137,5 +137,5 @@ deploy-ingestor: push-ingestor
 
 
 .PHONY: deploy
-deploy: push
+deploy: push-api
 	make -C ../../../radar-infra/deploy deploy STACK=mapping-api ENVIRONMENT=production

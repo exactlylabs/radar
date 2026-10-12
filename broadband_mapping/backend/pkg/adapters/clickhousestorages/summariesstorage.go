@@ -42,11 +42,15 @@ func (ss *summariesStorage) SummaryForGeoAndASN(geospaceId string, asnId string,
 	if err != nil {
 		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN Query")
 	}
+	defer rows.Close()
 	res := &storages.GeospaceSummaryResult{}
 	for rows.Next() {
 		if err := scanToSummaryResult(rows, res, true); err != nil {
 			return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN scanToSummaryResult")
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN rows")
 	}
 	return res, nil
 }
@@ -61,6 +65,7 @@ func (ss *summariesStorage) SummaryForGeospace(geospaceId string, filter storage
 	if err != nil {
 		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeospace Query")
 	}
+	defer rows.Close()
 	res := &storages.GeospaceSummaryResult{
 		Geospace: storages.DetailedGeospace{},
 	}
@@ -68,6 +73,9 @@ func (ss *summariesStorage) SummaryForGeospace(geospaceId string, filter storage
 		if err := scanToSummaryResult(rows, res, false); err != nil {
 			return nil, errors.Wrap(err, "summariesStorage#SummaryForGeospace scanToSummaryResult")
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeospace rows")
 	}
 	return res, nil
 }
@@ -124,6 +132,9 @@ func (ss *summariesStorage) SummaryForNamespace(namespace namespaces.Namespace, 
 			gParent.Namespace = namespaces.Namespace(parentNs)
 			res.Geospace.Parent = gParent
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "summariesStorage rows")
 	}
 
 	returnValues := make([]storages.GeospaceSummaryResult, len(geoResults))
@@ -193,6 +204,9 @@ func (ss *summariesStorage) SummaryForNamespaceAndASN(namespace namespaces.Names
 			gParent.Namespace = namespaces.Namespace(parentNs)
 			res.Geospace.Parent = gParent
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "summariesStorage rows")
 	}
 
 	returnValues := make([]storages.GeospaceSummaryResult, len(geoResults))

@@ -20,12 +20,14 @@ func HealthCheck(ctx *webcontext.Context, storages *storages.MappingAppStorages)
 		Status:   "OK",
 		Storages: "OK",
 	}
-	if errs := storages.Connected(); errs != nil {
-		response.Storages = "NOT OK"
-		for _, err := range errs {
-			log.Println(errors.W(err))
-			sentry.NotifyErrorOnce(errors.W(err), nil)
+	// Connected returns one entry per storage, nil when that storage is fine.
+	for _, err := range storages.Connected() {
+		if err == nil {
+			continue
 		}
+		response.Storages = "NOT OK"
+		log.Println(errors.W(err))
+		sentry.NotifyErrorOnce(errors.W(err), nil)
 	}
 	ctx.JSON(http.StatusOK, response)
 }

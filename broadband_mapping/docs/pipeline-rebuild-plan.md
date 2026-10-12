@@ -119,6 +119,26 @@ Backend, still open:
 Frontend: "Last month" sends `month=11` in January (`filters.ts:170-174`); year list stops
 at 2025 (`filters.ts:79`).
 
+Status (workstream F, branch `ws-api`): rows closed and `rows.Err()` checked; tiles cached as
+encoded bytes (30 min) with decoded namespace summaries shared in memory (5 min, concurrent
+loads collapsed) and `Cache-Control: public, max-age=300` on tiles/overview/geojson; `TestAPI`
+fixed (and `/health` no longer always reports storages NOT OK); frontend month/week/year fixed.
+`LastDate()` is ingestor-only and stays with C. The API image needs Go ≥ 1.20 to build
+(`summarizer.go` uses `time.DateOnly`): `docker/Dockerfile` and `Dockerfile.setup-shapes`
+now use golang 1.22; `Dockerfile.ingestor` still says 1.18 (C).
+
+Recommendation for B (summarizer DDL): the ASN tables `summary_<w>` are sorted
+`(upload, geospace_id, asn_org_id, …)`, but the API always filters them by `asn_org_id` (map
+tiles: one ASN, a whole namespace), so ClickHouse reads the whole period partition. On a
+synthetic month of 1.98 M rows (3 300 counties × 300 ASNs × 2), the tile query read 1.98 M rows
+of `summary_month`; sorting by `(asn_org_id, upload, geospace_id, …)`, or adding
+`PROJECTION by_asn (SELECT * ORDER BY asn_org_id, geospace_id, upload)`, cut that to 8 192 rows
+(one granule) and the query time about in half (the remainder is the `geospaces` joins).
+`us_asns` is built by full aggregation, so it doesn't care. The sort key is the cheaper option
+(a projection doubles storage and must be materialized on `REPLACE PARTITION` sources too);
+change it in `createSummaryTable` before the `-full` rebuild, as `EXCHANGE TABLES` doesn't
+need equal sort keys but `REPLACE PARTITION` does.
+
 ## Target design
 
 ### `tests` table (ClickHouse, replaces `measurements`) — built (A)
