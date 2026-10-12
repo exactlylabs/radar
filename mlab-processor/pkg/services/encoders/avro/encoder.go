@@ -48,6 +48,7 @@ func NewAvroEncoder(w io.Writer, schema string) (encoders.FileEncoder, error) {
 		schemaObj, w,
 		ocf.WithCodec(ocf.CodecName(DefaultCodec())),
 		ocf.WithBlockLength(DefaultBlockRows),
+		ocf.WithZStandardEncoderOptions(ZstdEncoderOptions...),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("avro.NewAvroEncoder NewEncoder err: %w", err)
