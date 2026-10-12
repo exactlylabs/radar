@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.2
 
-FROM --platform=${BUILDPLATFORM} golang:1.18.2-alpine3.15 as setup
+FROM --platform=${BUILDPLATFORM} golang:1.22.12-alpine3.21 as setup
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -13,14 +13,14 @@ RUN apk add git gcc g++
 
 COPY go.mod go.sum ./
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
 RUN go get ./...
 
 COPY .  ./
 
 RUN go generate ./pkg/app/webapi/webapi.go
 
-FROM --platform=${TARGETPLATFORM} golang:1.18.2-alpine3.15 as builder
+FROM --platform=${TARGETPLATFORM} golang:1.22.12-alpine3.21 as builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -33,7 +33,7 @@ RUN apk add git gcc g++
 
 COPY go.mod go.sum ./
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
 RUN go get ./...
 
 COPY .  ./
@@ -42,6 +42,8 @@ COPY --from=setup /go/src/github.com/exactlylabs/mlab-mapping/backend/pkg/app/we
 COPY --from=setup /go/src/github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/swagger.json /go/src/github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/swagger.json
 COPY --from=setup /go/src/github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/swagger.yaml /go/src/github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/swagger.yaml
 
+# go-sqlite3 (mbtiles) predates musl 1.2.4, which dropped the *64 file functions
+ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o start_server ./cmd/server/main.go
 
 #---------------------------------------------------------#
