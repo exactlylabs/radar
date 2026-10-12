@@ -9,15 +9,8 @@ import (
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor/models"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/hamba/avro/ocf"
 )
-
-type geodata struct {
-	namespace string
-	geoId     string
-}
 
 var fileDirectories = []string{"ipgeocode", "reversegeocode"}
 
@@ -37,12 +30,12 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 		return errors.W(err)
 	}
 	defer s.CloseAll()
-	defer clearCache()
-	if err := loadCache(s.GeospaceStorage, s.ASNOrgStorage); err != nil {
+	c, err := loadCache(s.GeospaceStorage, s.ASNOrgStorage)
+	if err != nil {
 		return errors.W(err)
 	}
 	before := s.MeasurementStorage.Inserted()
-	if err := ingestFetchedData(ctx, after, nil, s, it); err != nil {
+	if err := ingestFetchedData(ctx, after, nil, s, c, it); err != nil {
 		return errors.W(err)
 	}
 	// Wait for the inserts.
@@ -98,12 +91,12 @@ func Repair(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 		return errors.W(err)
 	}
 	defer s.CloseAll()
-	defer clearCache()
-	if err := loadCache(s.GeospaceStorage, s.ASNOrgStorage); err != nil {
+	c, err := loadCache(s.GeospaceStorage, s.ASNOrgStorage)
+	if err != nil {
 		return errors.W(err)
 	}
 	for _, monthDays := range months {
-		if err := repairMonth(ctx, s, storage, monthDays, replace); err != nil {
+		if err := repairMonth(ctx, s, c, storage, monthDays, replace); err != nil {
 			return err
 		}
 	}
@@ -113,7 +106,7 @@ func Repair(ctx context.Context, s storages.IngestorAppStorages, storage Storage
 	return wrapNil(s.Summarize(sorted[0], sorted[len(sorted)-1]))
 }
 
-func repairMonth(ctx context.Context, s storages.IngestorAppStorages, storage Storage, days []time.Time, replace bool) error {
+func repairMonth(ctx context.Context, s storages.IngestorAppStorages, c *cache, storage Storage, days []time.Time, replace bool) error {
 	ms := s.MeasurementStorage
 	// Every day's files must exist before anything is replaced.
 	its := make([]*itemIterator, len(days))
@@ -148,7 +141,7 @@ func repairMonth(ctx context.Context, s storages.IngestorAppStorages, storage St
 			}
 		}
 		log.Printf("ingestor.Repair: %s (%d tests already there to keep)\n", d.Format("2006-01-02"), len(skip))
-		if err := ingestFetchedData(ctx, nil, skip, s, its[i]); err != nil {
+		if err := ingestFetchedData(ctx, nil, skip, s, c, its[i]); err != nil {
 			return errors.W(err)
 		}
 	}
@@ -165,7 +158,7 @@ func repairMonth(ctx context.Context, s storages.IngestorAppStorages, storage St
 	return nil
 }
 
-func ingestFetchedData(ctx context.Context, after *time.Time, skip map[string]struct{}, s storages.IngestorAppStorages, it *itemIterator) error {
+func ingestFetchedData(ctx context.Context, after *time.Time, skip map[string]struct{}, s storages.IngestorAppStorages, c *cache, it *itemIterator) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -178,44 +171,24 @@ func ingestFetchedData(ctx context.Context, after *time.Time, skip map[string]st
 			if readers == nil {
 				return nil
 			}
-			if err := processDate(readers, after, skip, s); err != nil {
+			if err := processDate(readers, after, skip, s, c); err != nil {
 				return errors.Wrap(err, "ingestor.Ingest processDate")
 			}
 		}
 	}
 }
 
-func processDate(readers []io.ReadCloser, after *time.Time, skip map[string]struct{}, s storages.IngestorAppStorages) error {
+func processDate(readers []io.ReadCloser, after *time.Time, skip map[string]struct{}, s storages.IngestorAppStorages, c *cache) error {
 	measReader, revReader := readers[0], readers[1]
-	measDecoder, err := ocf.NewDecoder(measReader)
-	if err != nil {
-		return err
-	}
 	// Load the whole file
-	revDecoder, err := ocf.NewDecoder(revReader)
-	if err != nil {
-		return err
-	}
-	index, err := indexGeospaces(revDecoder)
-	if err != nil {
-		return err
-	}
+	index, err := indexGeospaces(revReader, c)
 	revReader.Close()
-	return s.MeasurementStorage.Insert(
-		newMeasurementReader(measDecoder, index, after, skip, s.GeospaceStorage, s.ASNOrgStorage),
-	)
-}
-
-func indexGeospaces(dec *ocf.Decoder) (map[string][]geodata, error) {
-	index := make(map[string][]geodata)
-	for dec.HasNext() {
-		m := &models.RevGeoResult{}
-		if err := dec.Decode(m); err != nil {
-			return nil, fmt.Errorf("ingestor.indexGeospaces HasNext: %w", err)
-		}
-		index[m.Id] = append(index[m.Id], geodata{m.GeoNamespace, m.GeoId})
+	if err != nil {
+		return err
 	}
-	return index, nil
+	return s.MeasurementStorage.Insert(
+		newMeasurementReader(measReader, index, after, skip, c),
+	)
 }
 
 // wrapNil is errors.W that keeps nil as nil (errors.W(nil) is a non-nil error).
