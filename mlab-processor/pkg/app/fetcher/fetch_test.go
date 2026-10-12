@@ -385,28 +385,62 @@ func legacyInnerNdt7(emit emitFunc, reader io.Reader) error {
 	return nil
 }
 
+// parseNdt7File runs the production ndt7 path over one gzipped test file.
+func parseNdt7File(emit emitFunc, gzipped []byte) error {
+	p := new(tarballParser)
+	return p.ndt7(emit, &tar.Header{Name: "t.json.gz", Size: int64(len(gzipped))}, bytes.NewReader(gzipped))
+}
+
 func TestNdt7LeanParserMatchesLegacy(t *testing.T) {
 	inputs := [][]byte{
 		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"x","StartTime":"2026-07-31T00:00:00Z","ServerMeasurements":null}}`),
 		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"x","StartTime":"2026-07-31T00:00:00Z","ServerMeasurements":[]}}`),
 		[]byte(`{"clientip":"1.2.3.4","download":{"uuid":"y","starttime":"2026-07-31T00:00:00Z","servermeasurements":[{"tcpinfo":{"BytesAcked":10,"ElapsedTime":5,"BytesSent":4,"MinRTT":7}}]}}`),
 		[]byte(`{"ClientIP":"1.2.3.4","Upload":{"UUID":"z","ServerMeasurements":[{"TCPInfo":null}]}}`),
+		// escapes, non-ASCII, whitespace, duplicate keys, nulls, type errors
+		[]byte(`{"ClientIP":"1.2.3.4\u0041\"x","Download":{"UUID":"a\\b","StartTime":"2026-07-31T00:00:00.5Z","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}]}}`),
+		[]byte(`{"ClientIP":"Ã©ÿ","Download":{"UUID":"â¬","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}]}}`),
+		[]byte(" {\n\"ClientIP\" : \"1.2.3.4\" ,\n \"Download\" : { \"UUID\" : \"w\" , \"ServerMeasurements\" : [ { \"TCPInfo\" : { \"BytesAcked\" : 1 , \"ElapsedTime\" : 2 } } ] } }\n"),
+		[]byte(`{"ClientIP":"1.2.3.4","ClientIP":"5.6.7.8","Download":{"UUID":"d1","UUID":"d2","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1}},{"TCPInfo":{"BytesAcked":2,"ElapsedTime":3,"MinRTT":4,"MinRTT":5}}]}}`),
+		[]byte(`{"ClientIP":null,"Download":{"UUID":null,"StartTime":null,"ServerMeasurements":[null,{"TCPInfo":{}}],"ClientMetadata":null}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"AppInfo":{"NumBytes":1},"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}},{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2},"BBRInfo":{"BW":1}}],"ClientMetadata":[{"Name":"x","Value":"y"},{"Name":"access_token","Value":"a.b"},{"Name":"access_token","Value":"a.b.c"}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}],"ClientMetadata":[{"Name":"access_token","Value":"a.b.c"}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}],"ClientMetadata":[{"Name":"access_token","Value":"a.b.c.d"}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1.5,"ElapsedTime":2}}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2,"MinRTT":-1}}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2,"MinRTT":4294967296}}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":"1","ElapsedTime":2}}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","StartTime":"yesterday","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}]}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}`),
+		[]byte(`{"ClientIP":"1.2.3.4","Download":{"UUID":"n","ServerMeasurements":[{"TCPInfo":{"BytesAcked":1,"ElapsedTime":2}}]},"Upload":null,"Download":null}`),
+		[]byte(`null`),
+		[]byte(`[]`),
+		[]byte(``),
 	}
 	for i := 0; i < 50; i++ {
 		inputs = append(inputs, ndt7JSON(i))
 	}
+	errs := 0
 	for i, in := range inputs {
 		var a, b []*models.FetchedResult
 		errA := legacyInnerNdt7(func(r *models.FetchedResult) { a = append(a, r) }, bytes.NewReader(gz(in)))
-		errB := innerNdt7GzipReader(func(r *models.FetchedResult) { b = append(b, r) }, bytes.NewReader(gz(in)), new(gzip.Reader))
+		errB := parseNdt7File(func(r *models.FetchedResult) { b = append(b, r) }, gz(in))
 		if (errA == nil) != (errB == nil) {
 			t.Fatalf("input %d: legacy err %v, new err %v", i, errA, errB)
 		}
-		if !reflect.DeepEqual(a, b) {
-			ja, _ := json.Marshal(a)
-			jb, _ := json.Marshal(b)
-			t.Fatalf("input %d differs:\nlegacy %s\nnew    %s", i, ja, jb)
+		if errA != nil {
+			errs++
 		}
+		same := len(a) == len(b)
+		for j := 0; same && j < len(a); j++ {
+			same = sameRow(a[j], b[j]) // NaN-aware: 0/0 loss rates are legitimate output
+		}
+		if !same {
+			t.Fatalf("input %d differs:\nlegacy %+v\nnew    %+v", i, a, b)
+		}
+	}
+	if errs != 8 {
+		t.Fatalf("%d inputs were rejected, expected the 8 malformed ones", errs)
 	}
 }
 

@@ -29,8 +29,9 @@ var endPtr = flag.String("end", yesterday.Format("2006-01-02"), "Last date to ru
 var rerunPtr = flag.Bool("rerun", false, "Ignore previously collected data and force reprocessing")
 var debug = flag.Bool("debug", false, "Print some debugging information")
 var storageType = flag.String("storage", "", "Storage type to store the files (local, gcs, s3 or its alias b2). Default: STORAGE_TYPE env")
-var workers = flag.Int("workers", 0, "Tarballs fetched in parallel (default: number of CPUs)")
-var lowMemory = flag.Bool("low-memory", false, "Keep only one of the IP geocoder / shapes in memory at a time")
+var workers = flag.Int("workers", 0, "Tarballs parsed in parallel (default: number of CPUs)")
+var dlWorkers = flag.Int("download-workers", 0, "Tarballs downloaded in parallel (default: 4x the CPUs, or the CPUs with -low-memory)")
+var lowMemory = flag.Bool("low-memory", false, "Keep only one of the IP geocoder / shapes in memory at a time and buffer fewer downloads (256 MiB instead of 1 GiB)")
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
@@ -84,7 +85,7 @@ func main() {
 
 	ctx := helpers.InterruptSignalContext()
 	conf := config.GetConfig()
-	runner, storage, err := flavors.NewRunner(ctx, conf, *storageType, fetcher.Options{Workers: *workers})
+	runner, storage, err := flavors.NewRunner(ctx, conf, *storageType, fetcher.Options{Workers: *workers, DownloadWorkers: *dlWorkers, LowMemory: *lowMemory})
 	if err != nil {
 		log.Fatalf("Error getting storage: %v", err)
 	}

@@ -3,7 +3,6 @@ package fetcher
 import (
 	"archive/tar"
 	"bytes"
-	"compress/gzip"
 	"context"
 	"encoding/json"
 	"errors"
@@ -20,10 +19,12 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt5"
-	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt7"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/web100"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/gofrs/uuid"
+	"github.com/klauspost/compress/gzip"
+	"golang.org/x/sync/errgroup"
+	"golang.org/x/sync/semaphore"
 
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
@@ -47,13 +48,24 @@ const (
 
 // Options tune the fetch. The zero value means the defaults.
 type Options struct {
-	// Workers is the number of tarballs processed in parallel (default NumCPU).
+	// Workers is the number of tarballs parsed in parallel (default NumCPU). Parsing is
+	// CPU bound, so more than the number of cores does not help.
 	Workers int
+	// DownloadWorkers is the number of tarballs downloaded in parallel (default
+	// 4×NumCPU, at least 16). Downloads are latency bound: the archive objects are a few
+	// MB each, so many have to be in flight to fill the link.
+	DownloadWorkers int
+	// MaxBufferedBytes bounds the downloaded-but-not-yet-parsed data held in memory
+	// (default 1 GiB). A download does not start until its size fits.
+	MaxBufferedBytes int64
+	// LowMemory shrinks the defaults of DownloadWorkers (NumCPU) and MaxBufferedBytes
+	// (256 MiB).
+	LowMemory bool
 	// Attempts is how often a tarball (or a listing) is tried before the date fails (default 3).
 	Attempts int
 	// Backoff is the wait before the 2nd attempt; it doubles for each further one (default 5s).
 	Backoff time.Duration
-	// TarballTimeout bounds one attempt at one tarball, so a stalled download is retried
+	// TarballTimeout bounds one download of one tarball, so a stalled download is retried
 	// instead of hanging the run (default 30m).
 	TarballTimeout time.Duration
 }
@@ -61,6 +73,18 @@ type Options struct {
 func (o Options) withDefaults() Options {
 	if o.Workers <= 0 {
 		o.Workers = runtime.NumCPU()
+	}
+	if o.DownloadWorkers <= 0 {
+		o.DownloadWorkers = max(4*runtime.NumCPU(), 16)
+		if o.LowMemory {
+			o.DownloadWorkers = runtime.NumCPU()
+		}
+	}
+	if o.MaxBufferedBytes <= 0 {
+		o.MaxBufferedBytes = 1 << 30
+		if o.LowMemory {
+			o.MaxBufferedBytes = 256 << 20
+		}
 	}
 	if o.Attempts <= 0 {
 		o.Attempts = 3
@@ -124,115 +148,147 @@ func accessSigFromClientMetadata(clientMetadata []ndt.NameValue) *string {
 
 type emitFunc func(*models.FetchedResult)
 
-// lastMeasurement decodes a JSON array of ndt7 measurements keeping only the TCPInfo of
-// the last element, which is all the fetcher uses.
-type lastMeasurement struct {
-	n       int
-	tcpInfo *ndt7.TCPInfo
+// fetchedRow is a FetchedResult with the storage of its pointer fields, so a row is one
+// allocation instead of three.
+type fetchedRow struct {
+	models.FetchedResult
+	lossRate, minRTT float32
 }
 
-func (l *lastMeasurement) UnmarshalJSON(b []byte) error {
-	l.n, l.tcpInfo = 0, nil
-	if bytes.Equal(bytes.TrimSpace(b), []byte("null")) {
-		return nil
+// readAllInto appends r until EOF to buf (reusing its capacity) and returns it.
+func readAllInto(buf []byte, r io.Reader) ([]byte, error) {
+	if cap(buf) == 0 {
+		buf = make([]byte, 0, 64<<10)
 	}
-	dec := json.NewDecoder(bytes.NewReader(b))
-	if _, err := dec.Token(); err != nil { // '['
+	for {
+		if len(buf) == cap(buf) {
+			buf = append(buf, 0)[:len(buf)]
+		}
+		n, err := r.Read(buf[len(buf):cap(buf)])
+		buf = buf[:len(buf)+n]
+		if err == io.EOF {
+			return buf, nil
+		}
+		if err != nil {
+			return buf, err
+		}
+	}
+}
+
+// maxTestFile is the largest test file (a tar entry) read into memory. Real ndt7 and
+// ndt5 records are tens of KB; anything beyond this is a corrupt header.
+const maxTestFile = 256 << 20
+
+// tarballParser holds the per-worker buffers of the ndt7/ndt5 paths. Every test file is
+// read from the tar into raw, inflated into buf and decoded from there, so a tarball of a
+// few hundred tests costs a handful of allocations instead of a few per test.
+type tarballParser struct {
+	gz   *gzip.Reader
+	raw  []byte
+	rawR bytes.Reader
+	buf  []byte
+	rec  ndt7Record
+}
+
+// entry reads the tar entry (a gzipped file when gzipped is set) into p.buf.
+func (p *tarballParser) entry(hdr *tar.Header, r io.Reader, gzipped bool) error {
+	if hdr.Size < 0 || hdr.Size > maxTestFile {
+		return fmt.Errorf("tar entry of %d bytes", hdr.Size)
+	}
+	if !gzipped {
+		p.buf = p.buf[:0]
+		var err error
+		p.buf, err = readAllInto(p.buf, io.LimitReader(r, hdr.Size))
 		return err
 	}
-	for dec.More() {
-		var m struct {
-			TCPInfo *ndt7.TCPInfo
-		}
-		if err := dec.Decode(&m); err != nil {
-			return err
-		}
-		l.n++
-		l.tcpInfo = m.TCPInfo
+	n := int(hdr.Size)
+	if cap(p.raw) < n {
+		p.raw = make([]byte, n, n+n/4)
 	}
-	_, err := dec.Token() // ']'
-	return err
-}
-
-type ndt7Archival struct {
-	UUID               string
-	StartTime          time.Time
-	ServerMeasurements lastMeasurement
-	ClientMetadata     []ndt.NameValue `json:",omitempty"`
-}
-
-// ndt7Lean is the subset of ndt7.NDT7Result the fetcher reads.
-type ndt7Lean struct {
-	ClientIP string
-	Upload   *ndt7Archival
-	Download *ndt7Archival
-}
-
-func innerNdt7GzipReader(emit emitFunc, reader io.Reader, gz *gzip.Reader) error {
-	if err := gz.Reset(reader); err != nil {
-		return fmt.Errorf("fetcher.innerNdt7GzipReader err: %v", err)
+	p.raw = p.raw[:n]
+	if _, err := io.ReadFull(r, p.raw); err != nil {
+		return fmt.Errorf("read: %w", err)
 	}
-
-	var m ndt7Lean
-	if jErr := json.NewDecoder(gz).Decode(&m); jErr != nil {
-		return fmt.Errorf("fetcher.innerNdt7GzipReader jErr: %v", jErr)
+	p.rawR.Reset(p.raw)
+	if p.gz == nil {
+		p.gz = new(gzip.Reader)
 	}
-	if _, err := io.Copy(io.Discard, gz); err != nil { // verify the gzip checksum
-		return fmt.Errorf("fetcher.innerNdt7GzipReader rErr: %v", err)
+	if err := p.gz.Reset(&p.rawR); err != nil {
+		return fmt.Errorf("gzip: %w", err)
 	}
-
-	if m.Download != nil && m.Download.ServerMeasurements.n > 0 {
-		if tcp := m.Download.ServerMeasurements.tcpInfo; tcp != nil {
-			mbps := 8 * float32(tcp.BytesAcked) / float32(tcp.ElapsedTime)
-			lossRate := float32(tcp.BytesRetrans) / float32(tcp.BytesSent)
-			rtt := float32(tcp.MinRTT) / 1000
-
-			emit(&models.FetchedResult{
-				Id:             m.Download.UUID,
-				TestStyle:      "ndt7",
-				IP:             m.ClientIP,
-				StartedAt:      m.Download.StartTime.Unix(),
-				Upload:         false,
-				MBPS:           mbps,
-				LossRate:       &lossRate,
-				MinRTT:         &rtt,
-				HasAccessToken: accessSigFromClientMetadata(m.Download.ClientMetadata) != nil,
-			})
-		}
+	var err error
+	p.buf, err = readAllInto(p.buf[:0], p.gz) // reads to EOF: the gzip checksum is verified
+	if err != nil {
+		return fmt.Errorf("gunzip: %w", err)
 	}
-
-	if m.Upload != nil && m.Upload.ServerMeasurements.n > 0 {
-		if tcp := m.Upload.ServerMeasurements.tcpInfo; tcp != nil {
-			mbps := 8 * float32(tcp.BytesReceived) / float32(tcp.ElapsedTime)
-			rtt := float32(tcp.MinRTT) / 1000
-
-			emit(&models.FetchedResult{
-				Id:             m.Upload.UUID,
-				TestStyle:      "ndt7",
-				IP:             m.ClientIP,
-				StartedAt:      m.Upload.StartTime.Unix(),
-				Upload:         true,
-				MBPS:           mbps,
-				LossRate:       nil, // Not able to calculate loss rate for upload
-				MinRTT:         &rtt,
-				HasAccessToken: accessSigFromClientMetadata(m.Upload.ClientMetadata) != nil,
-			})
-		}
-	}
-
 	return nil
+}
+
+func (p *tarballParser) ndt7(emit emitFunc, hdr *tar.Header, r io.Reader) error {
+	if err := p.entry(hdr, r, true); err != nil {
+		return fmt.Errorf("fetcher.ndt7 %s: %w", hdr.Name, err)
+	}
+	if err := parseNdt7(p.buf, &p.rec); err != nil {
+		return fmt.Errorf("fetcher.ndt7 %s: %w", hdr.Name, err)
+	}
+	emitNdt7(emit, &p.rec)
+	return nil
+}
+
+func emitNdt7(emit emitFunc, m *ndt7Record) {
+	if d := m.Download; d != nil && d.Measurements > 0 && d.TCP != nil {
+		tcp := d.TCP
+		row := &fetchedRow{
+			lossRate: float32(tcp.BytesRetrans) / float32(tcp.BytesSent),
+			minRTT:   float32(tcp.MinRTT) / 1000,
+		}
+		row.FetchedResult = models.FetchedResult{
+			Id:             d.UUID,
+			TestStyle:      "ndt7",
+			IP:             m.ClientIP,
+			StartedAt:      d.StartTime.Unix(),
+			Upload:         false,
+			MBPS:           8 * float32(tcp.BytesAcked) / float32(tcp.ElapsedTime),
+			LossRate:       &row.lossRate,
+			MinRTT:         &row.minRTT,
+			HasAccessToken: d.HasAccessToken,
+		}
+		emit(&row.FetchedResult)
+	}
+
+	if u := m.Upload; u != nil && u.Measurements > 0 && u.TCP != nil {
+		tcp := u.TCP
+		row := &fetchedRow{minRTT: float32(tcp.MinRTT) / 1000}
+		row.FetchedResult = models.FetchedResult{
+			Id:             u.UUID,
+			TestStyle:      "ndt7",
+			IP:             m.ClientIP,
+			StartedAt:      u.StartTime.Unix(),
+			Upload:         true,
+			MBPS:           8 * float32(tcp.BytesReceived) / float32(tcp.ElapsedTime),
+			LossRate:       nil, // Not able to calculate loss rate for upload
+			MinRTT:         &row.minRTT,
+			HasAccessToken: u.HasAccessToken,
+		}
+		emit(&row.FetchedResult)
+	}
 }
 
 // walkTar calls fn for each regular file of a .tgz stream. Errors returned by fn are
 // per-test-file problems: they are counted in badFiles and the walk continues. If the
 // error was really caused by the outer stream, the next tar.Next fails (tar and gzip
 // readers keep their error) and the whole tarball fails, to be retried.
-func walkTar(r io.Reader, badFiles *int64, fn func(name string, r io.Reader) error) error {
+func walkTar(r io.Reader, badFiles *int64, fn func(hdr *tar.Header, r io.Reader) error) error {
 	gzf, err := gzip.NewReader(r)
 	if err != nil {
 		return fmt.Errorf("gzip: %w", err)
 	}
 	defer gzf.Close()
+	return walkTarReader(gzf, badFiles, fn)
+}
+
+// walkTarReader is walkTar over an already decompressed tar stream.
+func walkTarReader(gzf io.Reader, badFiles *int64, fn func(hdr *tar.Header, r io.Reader) error) error {
 	tarReader := tar.NewReader(gzf)
 	for {
 		header, tErr := tarReader.Next()
@@ -246,7 +302,7 @@ func walkTar(r io.Reader, badFiles *int64, fn func(name string, r io.Reader) err
 		case tar.TypeDir:
 			continue
 		case tar.TypeReg:
-			if innerErr := fn(header.Name, tarReader); innerErr != nil {
+			if innerErr := fn(header, tarReader); innerErr != nil {
 				atomic.AddInt64(badFiles, 1)
 				log.Printf("fetcher: skipping %s: %v", header.Name, innerErr)
 			}
@@ -262,36 +318,36 @@ func walkTar(r io.Reader, badFiles *int64, fn func(name string, r io.Reader) err
 }
 
 func processNdt7Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
-	gz := new(gzip.Reader)
-	return walkTar(r, badFiles, func(name string, r io.Reader) error {
-		return innerNdt7GzipReader(emit, r, gz)
+	p := new(tarballParser)
+	return walkTar(r, badFiles, func(hdr *tar.Header, r io.Reader) error {
+		return p.ndt7(emit, hdr, r)
 	})
 }
 
-// innerNdt5Reader parses the NDT5 format and pushes two rows into the storage
-// one for upload and another for download data
-func innerNdt5Reader(emit emitFunc, reader io.Reader) error {
-	b, rErr := io.ReadAll(reader)
-	if rErr != nil {
-		return fmt.Errorf("fetcher.innerNdt5Reader rErr: %v", rErr)
+// ndt5 parses the NDT5 format and pushes two rows into the storage, one for upload and
+// another for download data.
+func (p *tarballParser) ndt5(emit emitFunc, hdr *tar.Header, r io.Reader) error {
+	if err := p.entry(hdr, r, false); err != nil {
+		return fmt.Errorf("fetcher.innerNdt5Reader rErr: %v", err)
 	}
 
 	var m ndt5.NDT5Result
-	jErr := json.Unmarshal(b, &m)
+	jErr := json.Unmarshal(p.buf, &m)
 	if jErr != nil {
 		return fmt.Errorf("fetcher.innerNdt5Reader jErr: %v", jErr)
 	}
 
 	// Check if Upload Data is recorded
 	if m.C2S != nil && m.C2S.Error == "" {
+		row := &fetchedRow{}
 		var ptrMinRTT *float32
 		if m.S2C != nil {
 			// C2S doesn't have RTT information. We use S2C instead
-			minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
-			ptrMinRTT = &minRtt
+			row.minRTT = float32(m.S2C.MinRTT.Milliseconds()) / 1000
+			ptrMinRTT = &row.minRTT
 		}
 
-		emit(&models.FetchedResult{
+		row.FetchedResult = models.FetchedResult{
 			Id:             m.C2S.UUID,
 			TestStyle:      "ndt5",
 			IP:             m.ClientIP,
@@ -302,19 +358,21 @@ func innerNdt5Reader(emit emitFunc, reader io.Reader) error {
 			MinRTT:         ptrMinRTT,
 			HasAccessToken: false,
 			AccessTokenSig: nil,
-		})
+		}
+		emit(&row.FetchedResult)
 	}
 
 	// Check if Download Data is recorded
 	if m.S2C != nil && m.S2C.Error == "" {
+		row := &fetchedRow{}
 		var ptrLossRate *float32
 		if m.S2C.TCPInfo != nil {
-			lossRate := float32(m.S2C.TCPInfo.BytesRetrans) / float32(m.S2C.TCPInfo.BytesSent)
-			ptrLossRate = &lossRate
+			row.lossRate = float32(m.S2C.TCPInfo.BytesRetrans) / float32(m.S2C.TCPInfo.BytesSent)
+			ptrLossRate = &row.lossRate
 		}
 
-		minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
-		emit(&models.FetchedResult{
+		row.minRTT = float32(m.S2C.MinRTT.Milliseconds()) / 1000
+		row.FetchedResult = models.FetchedResult{
 			Id:             m.S2C.UUID,
 			TestStyle:      "ndt5",
 			IP:             m.ClientIP,
@@ -322,18 +380,20 @@ func innerNdt5Reader(emit emitFunc, reader io.Reader) error {
 			Upload:         false,
 			MBPS:           float32(m.S2C.MeanThroughputMbps),
 			LossRate:       ptrLossRate,
-			MinRTT:         &minRtt,
+			MinRTT:         &row.minRTT,
 			HasAccessToken: false,
 			AccessTokenSig: nil,
-		})
+		}
+		emit(&row.FetchedResult)
 	}
 
 	return nil
 }
 
 func processNdt5Reader(emit emitFunc, r io.Reader, badFiles *int64) error {
-	return walkTar(r, badFiles, func(name string, r io.Reader) error {
-		return innerNdt5Reader(emit, r)
+	p := new(tarballParser)
+	return walkTar(r, badFiles, func(hdr *tar.Header, r io.Reader) error {
+		return p.ndt5(emit, hdr, r)
 	})
 }
 
@@ -350,6 +410,7 @@ func processWeb100Reader(emit emitFunc, tarballPath string, r io.Reader, badFile
 		return fmt.Errorf("fetcher.processWeb100Reader readTgz: %w", err)
 	}
 
+	defer func() { atomic.AddInt64(badFiles, iterator.bad) }()
 	for filename, fReader, err := iterator.Next(); fReader != nil || err != nil; filename, fReader, err = iterator.Next() {
 		if err != nil {
 			return fmt.Errorf("fetcher.processWeb100Reader Next: %w", err)
@@ -451,8 +512,15 @@ func sleepCtx(ctx context.Context, d time.Duration) error {
 }
 
 func withRetries(ctx context.Context, opts Options, what string, retries *int64, fn func() error) error {
-	var err error
-	for i := 0; i < opts.Attempts; i++ {
+	return retryFrom(ctx, opts, 1, nil, what, retries, fn)
+}
+
+// retryFrom runs fn as attempt number first (1-based; prevErr is the error of the
+// attempts already made) and retries it with backoff until it succeeds or opts.Attempts
+// attempts were made in total.
+func retryFrom(ctx context.Context, opts Options, first int, prevErr error, what string, retries *int64, fn func() error) error {
+	err := prevErr
+	for i := first - 1; i < opts.Attempts; i++ {
 		if i > 0 {
 			atomic.AddInt64(retries, 1)
 			if sErr := sleepCtx(ctx, opts.Backoff<<(i-1)); sErr != nil {
@@ -470,7 +538,8 @@ func withRetries(ctx context.Context, opts Options, what string, retries *int64,
 	return fmt.Errorf("%s: giving up after %d attempts: %w", what, opts.Attempts, err)
 }
 
-// ListTarballs lists the archive tarballs of date, per test type, retrying failed listings.
+// ListTarballs lists the archive tarballs of date, per test type, retrying failed
+// listings. The prefixes are listed concurrently.
 func ListTarballs(ctx context.Context, src ObjectSource, date time.Time, opts Options) (map[testType][]string, error) {
 	opts = opts.withDefaults()
 	prefixes := map[testType][]string{
@@ -478,19 +547,36 @@ func ListTarballs(ctx context.Context, src ObjectSource, date time.Time, opts Op
 		NDT5TestType:   {ndt5SearchPrefix(date)},
 		NDT7TestType:   ndt7SearchPrefixes(date),
 	}
-	out := map[testType][]string{}
+	listed := map[testType][][]string{}
+	for tt, p := range prefixes {
+		listed[tt] = make([][]string, len(p))
+	}
 	var retries int64
+	g, gctx := errgroup.WithContext(ctx)
 	for _, tt := range []testType{Web100TestType, NDT5TestType, NDT7TestType} {
-		for _, prefix := range prefixes[tt] {
-			var names []string
-			err := withRetries(ctx, opts, "list "+prefix, &retries, func() error {
-				var lErr error
-				names, lErr = src.List(ctx, prefix)
-				return lErr
+		for i, prefix := range prefixes[tt] {
+			slot := &listed[tt][i]
+			g.Go(func() error {
+				var names []string
+				err := withRetries(gctx, opts, "list "+prefix, &retries, func() error {
+					var lErr error
+					names, lErr = src.List(gctx, prefix)
+					return lErr
+				})
+				if err != nil {
+					return err
+				}
+				*slot = names
+				return nil
 			})
-			if err != nil {
-				return nil, err
-			}
+		}
+	}
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+	out := map[testType][]string{}
+	for tt, parts := range listed {
+		for _, names := range parts {
 			out[tt] = append(out[tt], names...)
 		}
 	}
@@ -510,9 +596,23 @@ func CountTarballs(ctx context.Context, src ObjectSource, date time.Time, opts O
 	return n, nil
 }
 
+// downloaded is a tarball held in memory between the download and the parse pool.
+type downloaded struct {
+	tarball
+	data   []byte
+	weight int64 // what it holds of the MaxBufferedBytes budget
+}
+
 // FetchDate downloads every tarball of date from the archive, flattens the tests and
-// writes them to ds. Each tarball is parsed into memory first and only written once it
-// was read completely, so a retry never duplicates rows. If a tarball still fails after
+// writes them to ds.
+//
+// Downloads and parsing are decoupled: opts.DownloadWorkers goroutines download tarballs
+// into memory (bounded by opts.MaxBufferedBytes) and opts.Workers goroutines parse them,
+// so a slow link does not idle the cores and slow parsing does not idle the link. Each
+// tarball is parsed completely before its rows are written, so a retry never duplicates
+// rows: a download that fails is retried by the download pool; a tarball that downloaded
+// but does not parse (corrupt transfer) is downloaded and parsed again by the parse
+// worker, within the same opts.Attempts budget. If a tarball still fails after
 // opts.Attempts tries the date fails: an error is returned and ds must not be stored.
 func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, date time.Time, opts Options) (*Stats, error) {
 	defer timer.TimeIt(time.Now(), "Fetch")
@@ -541,13 +641,11 @@ func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, da
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	writer := datastorewriter.NewWriter(ds)
-	ch := make(chan tarball)
 	var (
-		wg        sync.WaitGroup
 		mu        sync.Mutex
 		firstErr  error
 		completed int64
+		budget    = semaphore.NewWeighted(opts.MaxBufferedBytes)
 	)
 	fail := func(err error) {
 		mu.Lock()
@@ -557,25 +655,109 @@ func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, da
 		mu.Unlock()
 		cancel()
 	}
-	for i := 0; i < opts.Workers; i++ {
-		wg.Add(1)
+
+	// download reads one tarball into memory, holding its size of the buffer budget
+	// (the whole budget at most) from before the first byte until release.
+	download := func(item tarball) (*downloaded, error) {
+		actx, acancel := context.WithTimeout(ctx, opts.TarballTimeout)
+		defer acancel()
+		r, err := src.Open(actx, item.path)
+		if err != nil {
+			return nil, err
+		}
+		defer r.Close()
+		d := &downloaded{tarball: item}
+		size := int64(-1)
+		if s, ok := r.(interface{ Size() int64 }); ok {
+			size = s.Size()
+		}
+		if size >= 0 {
+			d.weight = min(size, opts.MaxBufferedBytes)
+			if err := budget.Acquire(ctx, d.weight); err != nil {
+				return nil, err
+			}
+			d.data = make([]byte, 0, size)
+		}
+		d.data, err = readAllInto(d.data, r)
+		if err != nil {
+			budget.Release(d.weight)
+			return nil, err
+		}
+		if size < 0 {
+			d.weight = min(int64(len(d.data)), opts.MaxBufferedBytes)
+			if err := budget.Acquire(ctx, d.weight); err != nil {
+				return nil, err
+			}
+		}
+		return d, nil
+	}
+	release := func(d *downloaded) {
+		budget.Release(d.weight)
+		d.data = nil
+	}
+
+	writer := datastorewriter.NewWriter(ds)
+	parse := func(d *downloaded) ([]*models.FetchedResult, int64, error) {
+		var rows []*models.FetchedResult
+		var badFiles int64
+		err := parseTarball(d.testType, d.path, func(fr *models.FetchedResult) { rows = append(rows, fr) }, bytes.NewReader(d.data), &badFiles)
+		return rows, badFiles, err
+	}
+
+	dlCh := make(chan tarball)
+	parseCh := make(chan *downloaded, opts.Workers)
+	var dlWG, parseWG sync.WaitGroup
+	for i := 0; i < opts.DownloadWorkers; i++ {
+		dlWG.Add(1)
 		go func() {
-			defer wg.Done()
-			for item := range ch {
-				var rows []*models.FetchedResult
-				var badFiles int64
+			defer dlWG.Done()
+			for item := range dlCh {
+				var d *downloaded
 				err := withRetries(ctx, opts, item.path, &stats.Retries, func() error {
-					rows = rows[:0]
-					badFiles = 0
-					actx, acancel := context.WithTimeout(ctx, opts.TarballTimeout)
-					defer acancel()
-					r, oErr := src.Open(actx, item.path)
-					if oErr != nil {
-						return oErr
-					}
-					defer r.Close()
-					return parseTarball(item.testType, item.path, func(fr *models.FetchedResult) { rows = append(rows, fr) }, r, &badFiles)
+					var dErr error
+					d, dErr = download(item)
+					return dErr
 				})
+				if err != nil {
+					if !errors.Is(err, context.Canceled) {
+						fail(err)
+					}
+					continue
+				}
+				select {
+				case parseCh <- d:
+				case <-ctx.Done():
+					release(d)
+				}
+			}
+		}()
+	}
+	for i := 0; i < opts.Workers; i++ {
+		parseWG.Add(1)
+		go func() {
+			defer parseWG.Done()
+			for d := range parseCh {
+				if ctx.Err() != nil {
+					release(d)
+					continue
+				}
+				rows, badFiles, err := parse(d)
+				release(d)
+				if err != nil {
+					if ctx.Err() != nil {
+						continue
+					}
+					log.Printf("Fetch - %s failed (attempt 1/%d): %v", d.path, opts.Attempts, err)
+					err = retryFrom(ctx, opts, 2, err, d.path, &stats.Retries, func() error {
+						nd, dErr := download(d.tarball)
+						if dErr != nil {
+							return dErr
+						}
+						rows, badFiles, dErr = parse(nd)
+						release(nd)
+						return dErr
+					})
+				}
 				if err != nil {
 					if !errors.Is(err, context.Canceled) {
 						fail(err)
@@ -587,7 +769,7 @@ func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, da
 				}
 				atomic.AddInt64(&stats.BadFiles, badFiles)
 				mu.Lock()
-				stats.Processed[string(item.testType)]++
+				stats.Processed[string(d.testType)]++
 				mu.Unlock()
 				if n := atomic.AddInt64(&completed, 1); n%500 == 0 {
 					log.Printf("Fetch - %s: %d of %d tarballs", date.Format("2006-01-02"), n, total)
@@ -598,13 +780,15 @@ func FetchDate(ctx context.Context, src ObjectSource, ds datastore.DataStore, da
 FEED:
 	for _, item := range work {
 		select {
-		case ch <- item:
+		case dlCh <- item:
 		case <-ctx.Done():
 			break FEED
 		}
 	}
-	close(ch)
-	wg.Wait()
+	close(dlCh)
+	dlWG.Wait()
+	close(parseCh)
+	parseWG.Wait()
 	wErr := writer.Close()
 	stats.Tests = writer.Written()
 
