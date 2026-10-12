@@ -16,9 +16,13 @@ func NewItemWriter(file *os.File, encoder encoders.FileEncoder) ItemWriter {
 	return &itemWriter{file: file, encoder: encoder}
 }
 
-// Close implements datastore.ItemWriter
+// Close flushes the encoder and closes the file (implements datastore.ItemWriter)
 func (lw *itemWriter) Close() error {
 	if err := lw.encoder.Flush(); err != nil {
+		lw.file.Close()
+		return errors.W(err)
+	}
+	if err := lw.file.Close(); err != nil {
 		return errors.W(err)
 	}
 	return nil

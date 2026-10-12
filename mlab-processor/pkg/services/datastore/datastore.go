@@ -12,10 +12,16 @@ import (
 
 // Storage has the logic to which storaging mechanism the data should be recorded to.
 type Storage interface {
-	Store(ctx context.Context, reader io.ReadCloser, filepath string) error
+	// Store uploads the whole content of reader to filepath. It must be synchronous and
+	// return an error unless the object was stored completely; implementations may seek
+	// reader back to the start to retry. The caller closes reader.
+	Store(ctx context.Context, reader io.ReadSeeker, filepath string) error
 	Get(ctx context.Context, filepath string) (io.ReadCloser, error)
 	List(ctx context.Context, prefix string) ([]string, error)
 	Delete(ctx context.Context, filepath string) error
+	// Exists reports whether filepath exists. It returns (false, nil) only when the
+	// storage positively says the object does not exist (e.g. HTTP 404); any other
+	// failure is an error, never "not found".
 	Exists(ctx context.Context, filepath string) (bool, error)
 	Close() error
 }
@@ -67,34 +73,31 @@ func (ds *dataStore) ItemsReader() (StoreItemIterator, error) {
 	}
 	decoder, err := ds.decoderProvider(f)
 	if err != nil {
+		f.Close()
 		return nil, errors.W(err)
 	}
-	it := NewIterator(decoder, ds.obj)
+	it := NewIterator(decoder, ds.obj, f)
 	return it, nil
 }
 
-// FileReader obtains the object either from a temporary local file or from the storage
+// FileReader obtains the object either from a temporary local file or from the storage.
+// The caller must close it.
 func (ds *dataStore) FileReader() (io.ReadCloser, error) {
-	if _, err := os.Open(ds.localPath()); errors.Is(err, os.ErrNotExist) {
-		// No local file found, check the storage
-		ctx := context.Background()
-
-		// r, err := ds.uploader.bucket.Object(ds.path).NewReader(ctx)
-		r, err := ds.storage.Get(ctx, ds.path)
-		if err != nil && errors.Is(err, os.ErrNotExist) {
-			return nil, os.ErrNotExist
-		} else if err != nil {
-			return nil, errors.W(err)
-		}
-		return r, nil
+	f, err := os.Open(ds.localPath())
+	if err == nil {
+		return f, nil
+	}
+	if !errors.Is(err, os.ErrNotExist) {
+		return nil, errors.W(err)
+	}
+	// No local file found, read from the storage
+	r, err := ds.storage.Get(context.Background(), ds.path)
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return nil, os.ErrNotExist
 	} else if err != nil {
 		return nil, errors.W(err)
 	}
-	f, err := os.Open(ds.localPath())
-	if err != nil {
-		return nil, errors.W(err)
-	}
-	return f, nil
+	return r, nil
 }
 
 func (ds *dataStore) FileName() string {
@@ -103,7 +106,7 @@ func (ds *dataStore) FileName() string {
 
 func (ds *dataStore) Delete() error {
 	ctx := context.Background()
-	if err := ds.storage.Delete(ctx, ds.path); err != nil && errors.Is(err, os.ErrNotExist) {
+	if err := ds.storage.Delete(ctx, ds.path); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return errors.W(err)
 	}
 	// Also try to remove locally, not caring if failed
@@ -116,16 +119,14 @@ func (ds *dataStore) existsLocally() bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-func (ds *dataStore) Exists() bool {
-	if ds.existsLocally() {
-		return true
-	}
-	ctx := context.Background()
-	exists, err := ds.storage.Exists(ctx, ds.path)
+// Exists reports whether the step's output was stored. Only the storage counts: a
+// local temporary file may be a leftover of an interrupted run.
+func (ds *dataStore) Exists() (bool, error) {
+	exists, err := ds.storage.Exists(context.Background(), ds.path)
 	if err != nil {
-		return false
+		return false, errors.W(err)
 	}
-	return exists
+	return exists, nil
 }
 
 // Flush sends the local temporary file to storage
@@ -134,6 +135,7 @@ func (ds *dataStore) Flush() error {
 	if err != nil {
 		return errors.W(err)
 	}
+	defer f.Close()
 	err = ds.storage.Store(context.Background(), f, ds.path)
 	if err != nil {
 		return errors.W(err)

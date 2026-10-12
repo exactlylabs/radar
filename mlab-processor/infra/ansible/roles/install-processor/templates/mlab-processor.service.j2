@@ -5,7 +5,7 @@ Wants = network-online.target
 
 [Service]
 User=root
-ExecStart = /usr/local/bin/mlab-processor
+ExecStart = /usr/local/bin/mlab-processor -loop
 WorkingDirectory = /var/mlab-processor
 Restart = on-failure
 RestartSec = 10s

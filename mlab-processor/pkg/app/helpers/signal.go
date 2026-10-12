@@ -8,10 +8,11 @@ import (
 	"syscall"
 )
 
-// InterruptSignalContext returns a context that is cancelled when an interrupt signal is sent
+// InterruptSignalContext returns a context that is cancelled on SIGINT or SIGTERM; a
+// second signal exits immediately.
 func InterruptSignalContext() context.Context {
-	sigs := make(chan os.Signal)
-	signal.Notify(sigs, syscall.SIGINT)
+	sigs := make(chan os.Signal, 2)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	ctx, cancel := context.WithCancel(context.Background())
 	interrupts := 0
 	go func() {
@@ -23,7 +24,7 @@ func InterruptSignalContext() context.Context {
 				interrupts++
 			} else {
 				log.Println("Forcing Shutdown")
-				os.Exit(0)
+				os.Exit(1)
 			}
 		}
 	}()

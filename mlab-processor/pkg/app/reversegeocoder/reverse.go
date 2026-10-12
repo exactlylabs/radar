@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
@@ -19,65 +20,16 @@ import (
 
 const StepName string = "reversegeocode"
 
-var index *geo.Index
-var indexInitialized bool
-
-type geocodeWorkItem struct {
-	geocodedResult *models.GeocodedResult
-	date           time.Time
+// ReverseGeocoder holds the shape index.
+type ReverseGeocoder struct {
+	index *geo.Index
 }
 
-type geocodingPool struct {
-	wg *sync.WaitGroup
-	ch chan *geocodeWorkItem
-}
-
-func geocodingWorker(wg *sync.WaitGroup, writer *datastorewriter.DataStoreWriter, ch chan *geocodeWorkItem) {
-	defer wg.Done()
-
-	for toProcess := range ch {
-		// Save
-		results := index.ContainingShapeID(&geo.Point{
-			Lat: toProcess.geocodedResult.Latitude,
-			Lng: toProcess.geocodedResult.Longitude,
-		})
-
-		for _, result := range results {
-			writer.WriteItem(&models.RevGeoResult{
-				GeoNamespace: result.Namespace,
-				Id:           toProcess.geocodedResult.Id,
-				GeoId:        result.ExternalId,
-				StartedAt:    toProcess.geocodedResult.StartedAt,
-			})
-		}
-	}
-}
-
-func newGeocodingPool(writer *datastorewriter.DataStoreWriter) *geocodingPool {
-	ch := make(chan *geocodeWorkItem)
-	wg := &sync.WaitGroup{}
-
-	for i := 0; i < runtime.NumCPU(); i++ {
-		wg.Add(1)
-		go geocodingWorker(wg, writer, ch)
-	}
-
-	return &geocodingPool{
-		wg: wg,
-		ch: ch,
-	}
-}
-
-func (p *geocodingPool) Queue(date time.Time, toProcess *models.GeocodedResult) {
-	p.ch <- &geocodeWorkItem{
-		geocodedResult: toProcess,
-		date:           date,
-	}
-}
-
-func (p *geocodingPool) Close() {
-	close(p.ch)
-	p.wg.Wait()
+// Stats is the per-date accounting of the reversegeocode step.
+type Stats struct {
+	Read    int64 `json:"read"`
+	Matched int64 `json:"matched"` // rows inside at least one shape
+	Written int64 `json:"written"` // output rows (one per row and matching shape)
 }
 
 func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
@@ -95,7 +47,7 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("reversegeocoder.initIndex err: %w", err)
+		return fmt.Errorf("reversegeocoder.addShapeToIndex %s: %w", shpPath, err)
 	}
 	defer shape.Close()
 
@@ -106,7 +58,10 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 	for shape.Next() {
 		_, p := shape.Shape()
 
-		poly := p.(*shp.Polygon)
+		poly, ok := p.(*shp.Polygon)
+		if !ok {
+			return fmt.Errorf("reversegeocoder.addShapeToIndex %s: unexpected shape type %T", shpPath, p)
+		}
 
 		var geoid string
 		for k, f := range fields {
@@ -126,76 +81,94 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 			} else {
 				endIndex = int32(len(poly.Points))
 			}
-			loopPoints := make([]*geo.Point, endIndex-startIndex)
+			loopPoints := make([]geo.Point, endIndex-startIndex)
 			for li := startIndex; li < endIndex; li++ {
-				loopPoints[li-startIndex] = &geo.Point{
+				loopPoints[li-startIndex] = geo.Point{
 					Lat: poly.Points[li].Y,
 					Lng: poly.Points[li].X,
 				}
 			}
 
-			geoPoly := geo.NewPolygon(loopPoints)
-
-			index.Add(namespace, geoid, geoPoly)
+			index.Add(namespace, geoid, geo.NewPolygon(loopPoints))
 		}
+	}
+	if err := shape.Err(); err != nil {
+		return fmt.Errorf("reversegeocoder.addShapeToIndex %s: %w", shpPath, err)
 	}
 	return nil
 }
 
-func initIndex() {
-	if !indexInitialized {
-		log.Println("ReverseGeocoder - Loading Index")
-		index = geo.NewIndex()
-		conf := config.GetConfig()
-		files := shapePathEntries(conf)
-		for namespace, path := range files {
-			log.Printf("ReverseGeocoder - Loading %s from file %s\n", namespace, path)
-			err := addShapeToIndex(index, namespace, path)
-			if err != nil {
-				panic(err)
-			}
+// Load builds the shape index from SHAPE_PATHS (kept namespaces only).
+func Load(conf *config.ProcessorConfig) (*ReverseGeocoder, error) {
+	defer timer.TimeIt(time.Now(), "ReverseGeocodeLoad")
+	index := geo.NewIndex()
+	for _, e := range shapePathEntries(conf) {
+		log.Printf("ReverseGeocoder - Loading %s from file %s\n", e.namespace, e.path)
+		if err := addShapeToIndex(index, e.namespace, e.path); err != nil {
+			return nil, err
 		}
-
-		for _, path := range tractShapesByStateId(conf) {
-			err := addShapeToIndex(index, "CENSUS_TRACTS", path)
-			if err != nil {
-				panic(err)
-			}
-		}
-
-		indexInitialized = true
-		log.Println("ReverseGeocoder - Index Initialized")
 	}
+	log.Printf("ReverseGeocoder - Index Initialized (%d rings)", index.Len())
+	return &ReverseGeocoder{index: index}, nil
 }
 
-func processDate(ds datastore.DataStore, geocodeDS datastore.DataStore, date time.Time) error {
-	writer := datastorewriter.NewWriter(ds)
-	defer writer.Close()
-	pool := newGeocodingPool(writer)
+// ReverseGeocode writes one row per (test, containing shape) of geocodeDS to ds.
+func (rg *ReverseGeocoder) ReverseGeocode(ds datastore.DataStore, geocodeDS datastore.DataStore, date time.Time) (*Stats, error) {
+	defer timer.TimeIt(time.Now(), "ReverseGeocode")
+	stats := &Stats{}
 
 	iter, err := geocodeDS.ItemsReader()
 	if err != nil {
-		return fmt.Errorf("reversegeocoder.processDate dsProvider.Read error: %w", err)
+		return stats, fmt.Errorf("reversegeocoder: reading ipgeocode output: %w", err)
 	}
-	log.Printf("ReverseGeocoder - Getting Rows for %v\n", date)
+	defer iter.Close()
+
+	writer := datastorewriter.NewWriter(ds)
+	ch := make(chan *models.GeocodedResult, 1024)
+	var wg sync.WaitGroup
+	var matched int64
+	for i := 0; i < runtime.NumCPU(); i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for r := range ch {
+				results := rg.index.ContainingShapeID(&geo.Point{Lat: r.Latitude, Lng: r.Longitude})
+				if len(results) > 0 {
+					atomic.AddInt64(&matched, 1)
+				}
+				for _, result := range results {
+					writer.WriteItem(&models.RevGeoResult{
+						GeoNamespace: result.Namespace,
+						Id:           r.Id,
+						GeoId:        result.ExternalId,
+						StartedAt:    r.StartedAt,
+					})
+				}
+			}
+		}()
+	}
+	var readErr error
 	for iter.Next() {
 		next, err := iter.GetRow()
 		if err != nil {
-			return fmt.Errorf("reversegeocoder.processDate Next error: %w", err)
+			readErr = fmt.Errorf("reversegeocoder: decoding row %d: %w", stats.Read, err)
+			break
 		}
-		pool.Queue(date, next.(*models.GeocodedResult))
+		stats.Read++
+		ch <- next.(*models.GeocodedResult)
 	}
-
-	pool.Close() // Wait until all jobs are done
-	log.Printf("ReverseGeocoder - Finished processing for %v\n", date)
-	return nil
-}
-
-func ReverseGeocode(ds datastore.DataStore, geocodeDS datastore.DataStore, date time.Time) {
-	defer timer.TimeIt(time.Now(), "ReverseGeocode")
-	initIndex()
-
-	if err := processDate(ds, geocodeDS, date); err != nil {
-		panic(err)
+	if readErr == nil {
+		if err := iter.Err(); err != nil {
+			readErr = fmt.Errorf("reversegeocoder: reading ipgeocode output: %w", err)
+		}
 	}
+	close(ch)
+	wg.Wait()
+	wErr := writer.Close()
+	stats.Written = writer.Written()
+	stats.Matched = matched
+	if readErr != nil {
+		return stats, readErr
+	}
+	return stats, wErr
 }

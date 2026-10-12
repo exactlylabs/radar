@@ -22,6 +22,10 @@ type StoreItemIterator interface {
 	Next() bool
 	// GetRow retrieves the item of the current cursor's row
 	GetRow() (any, error)
+	// Err returns the error that made Next return false early (corrupt/truncated input)
+	Err() error
+	// Close releases the underlying file or network stream
+	Close() error
 }
 
 // DataStore manages storing encoded items (rows) in a specific filesystem for a single date file
@@ -36,8 +40,9 @@ type DataStore interface {
 	FileName() string
 	// Delete the file in the filesystem
 	Delete() error
-	// Exists returns whether the file exists in the filesystem
-	Exists() bool
+	// Exists returns whether the file exists in the storage. An error means "unknown",
+	// never "does not exist".
+	Exists() (bool, error)
 	// Flush should be called after you finish writing to the file.
 	// Things such as moving from a temporary location to a final destination should be placed here
 	Flush() error

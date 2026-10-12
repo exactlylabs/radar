@@ -12,3 +12,8 @@ func DateRange(start, end time.Time) (dates []time.Time) {
 	}
 	return dates
 }
+
+// DaysAgo returns the UTC date (midnight) n days before now.
+func DaysAgo(now time.Time, n int) time.Time {
+	return now.UTC().Truncate(24*time.Hour).AddDate(0, 0, -n)
+}

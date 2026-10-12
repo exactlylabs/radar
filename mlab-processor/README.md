@@ -8,11 +8,12 @@ ETL service that processes the raw data from M-Lab's web-100, NDT5 and NDT7 spee
 
 `./scripts/download_shapes.sh`
 
-2. Download the ASN Maps:
+2. Download the GeoLite2 CSVs and the CAIDA AS-organization map (idempotent; also the
+   monthly refresh on the server):
 
-`./scripts/download_asn_maps.sh`
+`./scripts/refresh-geodata.sh /path/to/env_file ./input`
 
->Note: For downloading IPV4/IPV6 to ASN map you must have a [Maxmind](https://www.maxmind.com/) License Key and set it as an environment variable named `MAXMIND_KEY`
+>Note: the env file must define `MAXMIND_ACCOUNT_ID` and `MAXMIND_LICENSE_KEY` ([Maxmind](https://www.maxmind.com/) account). See the header of the script.
 
 
 Bellow are some details about the setup data and where you can get it manually.
@@ -47,4 +48,19 @@ Complements the Fetch data by obtaining the Latitude, Longitude and ISP name bas
 
 ### Reverse Geocode
 
-Locate the tests against shapes files by using the Latitude/Logitude found from the previous step
+Locate the tests against shapes files by using the Latitude/Logitude found from the previous step.
+Only the namespaces the ingestor reads are loaded (US_STATES, US_COUNTIES, US_AIANNH).
+
+## Running
+
+- `mlab-processor` (cmd/processor): one-shot, meant for a daily systemd timer. Processes
+  today-2 and re-checks the 7 days before it: a date is (re)processed when it has no
+  `completeness/<date>.json` record in the storage or when M-Lab's archive now lists more
+  tarballs than were processed. Exit status 1 if any date failed. `-from D` for a catch-up,
+  `-check-only` to see the decisions, `-loop` for the old resident nightly loop.
+- `process-mlab` (cmd/process): manual runs, e.g.
+  `process-mlab -start 2025-02-05 -end 2025-02-05 -rerun -storage b2 all`.
+
+Every step logs one `SUMMARY date=... step=... status=...` line per date. A fetch fails the
+date (nothing uploaded) when a tarball still fails after 3 attempts.
+
