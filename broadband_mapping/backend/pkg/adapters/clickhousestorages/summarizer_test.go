@@ -68,8 +68,17 @@ type fixture struct {
 	unknown uuid.UUID
 	asns    []string
 	ips     []string
-	rnd     *rand.Rand
-	nextID  int
+	// home is the county and ASN org most tests of an IP use, so most IPs have one
+	// (state, county, ASN) per bucket, as in production, and the summarizer derives their
+	// state and county rows from one aggregation; the other tests make an IP span several.
+	home   map[string]ipHome
+	rnd    *rand.Rand
+	nextID int
+}
+
+type ipHome struct {
+	county uuid.UUID
+	asn    uuid.UUID
 }
 
 func newFixture(t *testing.T, conn driver.Conn) *fixture {
@@ -113,6 +122,10 @@ func newFixture(t *testing.T, conn driver.Conn) *fixture {
 		f.ips = append(f.ips, fmt.Sprintf("10.0.%d.%d", i/250, i%250))
 	}
 	f.ips = append(f.ips, "2001:db8::1", "2001:db8::2")
+	f.home = map[string]ipHome{}
+	for _, ip := range f.ips {
+		f.home[ip] = ipHome{f.counties[f.rnd.Intn(len(f.counties))], uuid.MustParse(f.asns[f.rnd.Intn(len(f.asns))])}
+	}
 	return f
 }
 
@@ -131,9 +144,11 @@ func (f *fixture) pick(ids []uuid.UUID, p float64) *uuid.UUID {
 // insert adds n tests spread over [from, to), each as one row of tests and as one row per
 // geospace in measurements (the layout the legacy views read). Speeds repeat often so medians
 // hit ties, and most IPs test several times per bucket so per-IP medians of even counts matter.
-// Geospaces cover the edge cases of production: no state or no county, two counties (extra),
-// two tribal areas, an extra geospace of an unknown namespace, no geospace at all, and a
-// state that isn't the county's parent (1 test in 20 of those with both).
+// Most tests of an IP are in its home county (and state) with its home ASN org; the others
+// cover the edge cases of production: no state or no county, another county or state or ASN
+// (an IP spanning several in one bucket), two counties (extra), two tribal areas, an extra
+// geospace of an unknown namespace, no geospace at all, and a state that isn't the county's
+// parent (1 test in 20 of those with both).
 func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n int) {
 	tests, err := conn.PrepareBatch(context.Background(), `INSERT INTO tests (
 		time, id, test_style, ip, upload, mbps, min_rtt, loss_rate, latitude, longitude,
@@ -161,6 +176,11 @@ func (f *fixture) insert(t *testing.T, conn driver.Conn, from, to time.Time, n i
 		if state != nil && county != nil && f.nextID%20 != 0 {
 			p := f.parent[*county]
 			state = &p
+		}
+		if f.rnd.Float64() < 0.8 {
+			home := f.home[ip]
+			c, p := home.county, f.parent[home.county]
+			county, state, asn = &c, &p, home.asn
 		}
 		extra := []uuid.UUID{}
 		if county != nil && f.rnd.Float64() < 0.05 {

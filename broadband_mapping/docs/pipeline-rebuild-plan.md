@@ -478,9 +478,9 @@ Why year chunks: `measurements` is unpartitioned and its 15 parts span years (tw
 | Conversion, `-strategy join` (2026-10-11) | 32.1 M synthetic rows (16 M tests, 1.8 % exceptions) in 17.9 s vs 38.1 s with `groupby` (`-max-threads 6 -max-memory 5e9 -spill-bytes 7e8`, 1 insert thread); 11.8 s vs 33.1 s with `-max-insert-threads 2`. Of the 17.9 s, ~12 s is the INSERT into `tests` (sort + ZSTD(3)); the county-row read takes 0.6 s, classification 0.5 s per month, the exceptions' GROUP BY 1.8 s. Production ran `groupby` at ~0.33 M rows/s (2009–2017). | 2.1–2.8× faster than `groupby`; classification memory = 125 B per source row of a shard (≤ 60 % of `-max-memory`), the exceptions' GROUP BY ~2 % of the old one's |
 | `tests` size | 23.6–30.8 B/test | **~105 GiB** (4.65 B tests) |
 | Verify | 27.7 M rows in 2 s (no spill) | two `GROUP BY` scans of `measurements` (`time, id, geospace_id`) per chunk + `tests`: **1–2 h** |
-| `summarize -full` ip_medians | 28 M (test, geospace) rows in 3.4 s ≈ 8 M rows/s | 9.4 B rows: **30–60 min** |
-| `summarize -full` buckets | (old table on prod: one month, both variants, 15 s) | 5 bucketed windows ≈ 5 table reads + ~1,300 buckets × 2 variants of overhead: **1.5–2.5 h** with `-parallel 1`, about half with `-parallel 2` (memory ×2) |
-| Daily update (one new day) | 6 s on the sample | one scan of `tests(upload, ip)` + ip_medians rebuild of summary_*alltime + the touched year/semester/quarter/month/week buckets: **15–25 min** |
+| `summarize -full` v3 (measured on production 2019 after the fact) | one month bucket, both variants: 25 s / 42 CPU-s / 2.2 GiB; week buckets read 83 % of their month | month ~70 min, week ~140 min, year/semester/quarter ~60 min each, all-time ~45 min: **5–7 h** |
+| `summarize -full` v4 (2026-10-11, `backend/docs/incremental-summaries.md`) | 2019 month window: per-IP rows of every pass and variant in 31 s wall / 56 CPU-s (6 streaming shard queries, 4 at a time, ≤ 1.4 GiB each) vs 300 s / 500 CPU-s for v3; local 24 M synthetic tests: 2 min 37 s vs 4 min 36 s, identical tables | 6 streaming passes of ~11 min at `-parallel 4` plus scans, outer aggregations and ip_medians: **1.5–2 h**; memory ≤ `-parallel` × 1.3 GiB (shards) |
+| Daily update (one new day) | 6 s on the sample | the current year's chunk (~1 min per 400 M tests) + smaller windows + the unchanged all-time update: **10–15 min** |
 
 Unknown until the first `-full`: the size of `ip_medians` (one row per geospace × ASN ×
 upload × IP over all history; the plan guessed 100–300 M rows, it may be over 1 B). Check

@@ -20,14 +20,23 @@ import (
 //
 // Tests are stored once (table tests, see migrations/004_tests.sql) with their geospaces in
 // state_id, county_id, tribal_id and extra_geospace_ids. Summaries are computed as if each test
-// were repeated once per geospace (the old measurements layout), in one pass per namespace, so
-// the numbers are those of the original materialized views.
+// were repeated once per geospace (the old measurements layout), so the numbers are those of
+// the original materialized views.
 //
-// A row only depends on the tests of its own geospace and bucket, so after an ingest only the
-// buckets containing the ingested dates are recomputed, in shards of geospaces, into a staging
-// table that is swapped in with REPLACE PARTITION. The all-time tables are rebuilt from
-// ip_medians (per-IP all-time medians), which is updated only for the IPs of the ingested days.
-// See docs/incremental-summaries.md.
+// Per-IP medians are computed once per window, in the order of tests' sort key
+// (upload, state_id, county_id, asn_org_id, ip, time): one streaming aggregation per
+// (upload, state) shard, with the bucket as a monotonic function of time, so memory stays
+// flat whatever the chunk size (a calendar year at a time). An IP whose tests of a bucket all
+// share one (state, county, ASN) has, for its state and its county, with or without ASN, the
+// median of the same tests, so those per-IP rows are derived from that single aggregation.
+// The few IPs that span several states, counties or ASNs in a bucket (none in a whole year of
+// 2019), and the tests with a tribal or extra geospace, are aggregated exactly per geospace
+// from a small work table, as the views did. See docs/incremental-summaries.md.
+//
+// A summary row only depends on the tests of its own geospace and bucket, so after an ingest
+// only the buckets containing the ingested dates are recomputed, into a staging table that is
+// swapped in with REPLACE PARTITION. The all-time tables are rebuilt from ip_medians (per-IP
+// all-time medians), which is updated only for the IPs of the ingested days.
 
 type bucketColumn struct {
 	name string
@@ -40,20 +49,29 @@ type bucketColumn struct {
 type summaryWindow struct {
 	name    string
 	buckets []bucketColumn
+	// keyExpr, a monotonic function of a DateTime column given as %[1]s, identifies the bucket
+	// of a test within a calendar year, so GROUP BY keyExpr runs in the order of tests' sort key
+	// (ClickHouse only matches a monotonic function of the next key column). The bucket columns
+	// are then computed from min(time) of the group, which gives the same values as computing
+	// them per test because every test of the group is in the same bucket.
+	keyExpr string
 }
 
 var (
 	yearColumn = bucketColumn{"year", "UInt16", "YEAR(%[1]s)"}
 
 	summaryWindows = []summaryWindow{
-		{"alltime", nil},
-		{"year", []bucketColumn{yearColumn}},
+		{"alltime", nil, ""},
+		{"year", []bucketColumn{yearColumn}, "toYear(%[1]s)"},
 		// The map sends semester 1 for Jan-Jun and 2 for Jul-Dec. The original views computed
 		// (MONTH / 6) + 1, which put June in 2 and December in a semester 3 the map never asks for.
-		{"semester", []bucketColumn{yearColumn, {"semester", "Int64", "intDiv(MONTH(%[1]s) - 1, 6) + 1"}}},
-		{"quarter", []bucketColumn{yearColumn, {"quarter", "UInt8", "toQuarter(%[1]s)"}}},
-		{"month", []bucketColumn{yearColumn, {"month", "UInt8", "MONTH(%[1]s)"}}},
-		{"week", []bucketColumn{yearColumn, {"week", "UInt8", "WEEK(%[1]s)"}}},
+		{"semester", []bucketColumn{yearColumn, {"semester", "Int64", "intDiv(MONTH(%[1]s) - 1, 6) + 1"}}, "toStartOfInterval(%[1]s, INTERVAL 6 MONTH)"},
+		{"quarter", []bucketColumn{yearColumn, {"quarter", "UInt8", "toQuarter(%[1]s)"}}, "toStartOfQuarter(%[1]s)"},
+		{"month", []bucketColumn{yearColumn, {"month", "UInt8", "MONTH(%[1]s)"}}, "toYYYYMM(%[1]s)"},
+		// WEEK() mode 0: weeks start on Sunday, and the days of the first and last week that fall
+		// in the neighbouring year belong to that year's week 0 or 52/53. Within one calendar year
+		// (chunks never cross one) a Sunday-started week is one bucket.
+		{"week", []bucketColumn{yearColumn, {"week", "UInt8", "WEEK(%[1]s)"}}, "toStartOfWeek(%[1]s, 0)"},
 	}
 )
 
@@ -95,6 +113,9 @@ const allGeospacesExpr = `arrayConcat(
 	if(t.tribal_id IS NULL, [], [assumeNotNull(t.tribal_id)]),
 	t.extra_geospace_ids)`
 
+// noASN is the asn_org_id of the per-geospace (no ASN) rows of the work tables.
+const noASN = "toUUID('00000000-0000-0000-0000-000000000000')"
+
 // SummaryTables lists every table the map reads, in rebuild order.
 func SummaryTables() []string {
 	names := []string{}
@@ -118,26 +139,31 @@ func switchedTables() []string {
 type SummarizerOptions struct {
 	// Only build these windows (alltime, year, semester, quarter, month, week); nil means all.
 	Windows []string
-	// Test-geospace rows of a shard, at most. A single geospace bigger than this is still one shard.
+	// Tests per shard query (whole states; a state bigger than this is still one shard), and
+	// per-IP rows per outer aggregation query (shards of geospaces). Memory of the per-IP
+	// aggregation doesn't depend on it (it streams in key order); it sets the query granularity
+	// that Parallel spreads over the cores.
 	ShardTargetRows uint64
-	MaxThreads      int
+	// max_threads of the queries that run alone. Shard queries that run side by side get
+	// MaxThreads / Parallel each, at least 2.
+	MaxThreads int
 	// max_insert_threads of INSERT ... SELECT. ClickHouse 26.8 defaults it to the core count,
 	// which multiplies memory, so it is always set.
 	MaxInsertThreads int
 	MaxMemoryUsage   uint64
 	// Spill GROUP BY to disk past this many bytes, well below MaxMemoryUsage.
 	MaxBytesBeforeExternalGroupBy uint64
-	// Summary tables built at the same time (each runs its own queries, so memory adds up).
+	// Shard queries run at the same time (each is a streaming aggregation of under 1 GiB).
 	Parallel int
 }
 
 var DefaultSummarizerOptions = SummarizerOptions{
-	ShardTargetRows:               150_000_000,
+	ShardTargetRows:               50_000_000,
 	MaxThreads:                    8,
 	MaxInsertThreads:              1,
 	MaxMemoryUsage:                20_000_000_000,
 	MaxBytesBeforeExternalGroupBy: 8_000_000_000,
-	Parallel:                      1,
+	Parallel:                      4,
 }
 
 type Summarizer struct {
@@ -148,6 +174,15 @@ type Summarizer struct {
 func NewSummarizer(conn driver.Conn, opts SummarizerOptions) *Summarizer {
 	if opts.MaxInsertThreads <= 0 {
 		opts.MaxInsertThreads = 1
+	}
+	if opts.Parallel < 1 {
+		opts.Parallel = 1
+	}
+	if opts.MaxThreads < 1 {
+		opts.MaxThreads = 1
+	}
+	if opts.ShardTargetRows < 1 {
+		opts.ShardTargetRows = 1
 	}
 	return &Summarizer{conn: conn, opts: opts}
 }
@@ -164,6 +199,15 @@ func (s *Summarizer) ctx() context.Context {
 
 func (s *Summarizer) exec(query string, args ...any) error {
 	return s.conn.Exec(s.ctx(), query, args...)
+}
+
+// shardThreads is max_threads of the shard queries that run side by side.
+func (s *Summarizer) shardThreads() int {
+	n := s.opts.MaxThreads / s.opts.Parallel
+	if n < 2 {
+		n = 2
+	}
+	return n
 }
 
 // Update recomputes, in the live tables, every bucket that contains a day in [from, to], and
@@ -262,11 +306,6 @@ func (s *Summarizer) SwitchOver() error {
 
 func (s *Summarizer) build(suffix string, from, to time.Time, full bool) error {
 	start := time.Now()
-	type job struct {
-		w summaryWindow
-		v summaryVariant
-	}
-	jobs := []job{}
 	for _, w := range summaryWindows {
 		if !s.wantsWindow(w.name) {
 			continue
@@ -277,34 +316,9 @@ func (s *Summarizer) build(suffix string, from, to time.Time, full bool) error {
 			}
 			continue
 		}
-		for _, v := range summaryVariants {
-			jobs = append(jobs, job{w, v})
+		if err := s.buildWindow(w, suffix, from, to); err != nil {
+			return errors.Wrap(err, "summarizer#build %s", w.name)
 		}
-	}
-	// Each table has its own staging table, so tables can be built side by side.
-	parallel := s.opts.Parallel
-	if parallel < 1 {
-		parallel = 1
-	}
-	sem := make(chan struct{}, parallel)
-	errs := make(chan error, len(jobs))
-	var wg sync.WaitGroup
-	for _, j := range jobs {
-		wg.Add(1)
-		sem <- struct{}{}
-		go func(j job) {
-			defer wg.Done()
-			defer func() { <-sem }()
-			table := j.v.prefix + j.w.name + suffix
-			if err := s.buildBuckets(table, j.w, j.v, from, to); err != nil {
-				errs <- errors.Wrap(err, "summarizer#build %s", table)
-			}
-		}(j)
-	}
-	wg.Wait()
-	close(errs)
-	if err := <-errs; err != nil {
-		return err
 	}
 	log.Printf("summarizer: built %s to %s in %v\n", from.Format("2006-01-02"), to.Format("2006-01-02"), time.Since(start))
 	return nil
@@ -379,42 +393,76 @@ func (s *Summarizer) buckets(w summaryWindow, from, to time.Time) ([]bucket, err
 	return result, rows.Err()
 }
 
-func (s *Summarizer) buildBuckets(table string, w summaryWindow, v summaryVariant, from, to time.Time) error {
+// chunk is the span of tests computed by one pass: whole buckets of one calendar year.
+type chunk struct {
+	firstDay, lastDay string
+	buckets           []bucket
+}
+
+// filter selects the chunk's tests of table alias t. The time range prunes tests' monthly
+// partitions.
+func (c chunk) filter() string {
+	return fmt.Sprintf("t.time >= toDateTime('%s', 'UTC') AND t.time < toDateTime('%s', 'UTC') + INTERVAL 1 DAY", c.firstDay, c.lastDay)
+}
+
+// chunksByYear groups buckets (ordered by first day) by the calendar year they're in.
+func chunksByYear(buckets []bucket) []chunk {
+	chunks := []chunk{}
+	for _, b := range buckets {
+		if n := len(chunks); n > 0 && chunks[n-1].firstDay[:4] == b.firstDay[:4] {
+			chunks[n-1].lastDay = b.lastDay
+			chunks[n-1].buckets = append(chunks[n-1].buckets, b)
+			continue
+		}
+		chunks = append(chunks, chunk{b.firstDay, b.lastDay, []bucket{b}})
+	}
+	return chunks
+}
+
+// buildWindow computes the buckets of w containing a day in [from, to], chunk by chunk, into
+// staging tables that replace the buckets' partitions of the window's two tables.
+func (s *Summarizer) buildWindow(w summaryWindow, suffix string, from, to time.Time) error {
 	buckets, err := s.buckets(w, from, to)
 	if err != nil {
 		return err
 	}
-	staging := table + "_staging"
-	if err := s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`", staging)); err != nil {
-		return errors.Wrap(err, "summarizer#buildBuckets drop staging")
-	}
-	if err := s.createSummaryTable(staging, w, v); err != nil {
-		return err
-	}
-	defer s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`", staging))
-	for _, b := range buckets {
-		start := time.Now()
-		// The time range prunes tests' monthly partitions; the bucket expressions keep the
-		// days of a week that belong to the neighbouring year out, as the views did.
-		filter := fmt.Sprintf("t.time >= toDateTime('%s', 'UTC') AND t.time < toDateTime('%s', 'UTC') + INTERVAL 1 DAY", b.firstDay, b.lastDay)
-		for i, c := range w.buckets {
-			filter += fmt.Sprintf(" AND %s = %s", fmt.Sprintf(c.expr, "t.time"), b.values[i])
+	staging := map[string]string{} // variant prefix -> staging table
+	for _, v := range summaryVariants {
+		table := v.prefix + w.name + suffix + "_staging"
+		if err := s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`", table)); err != nil {
+			return errors.Wrap(err, "summarizer#buildWindow drop staging")
 		}
-		if err := s.exec(fmt.Sprintf("TRUNCATE TABLE `%s`", staging)); err != nil {
-			return errors.Wrap(err, "summarizer#buildBuckets truncate")
-		}
-		shards := 0
-		for _, p := range geoPasses {
-			n, err := s.fillPass(staging, w, v, p, filter)
-			if err != nil {
-				return err
-			}
-			shards += n
-		}
-		if err := s.replacePartition(table, b.partition(), staging); err != nil {
+		if err := s.createSummaryTable(table, w, v); err != nil {
 			return err
 		}
-		log.Printf("summarizer: %s %s in %d shards, %v\n", table, b.partition(), shards, time.Since(start))
+		defer s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`", table))
+		staging[v.prefix] = table
+	}
+	work := newWorkTables(w, suffix)
+	defer work.drop(s)
+	for _, c := range chunksByYear(buckets) {
+		start := time.Now()
+		if err := s.computeChunk(w, work, c); err != nil {
+			return err
+		}
+		for _, v := range summaryVariants {
+			if err := s.outer(w, v, work, staging[v.prefix]); err != nil {
+				return err
+			}
+		}
+		for _, b := range c.buckets {
+			for _, v := range summaryVariants {
+				if err := s.replacePartition(v.prefix+w.name+suffix, b.partition(), staging[v.prefix]); err != nil {
+					return err
+				}
+			}
+		}
+		for _, table := range staging {
+			if err := s.exec(fmt.Sprintf("TRUNCATE TABLE `%s`", table)); err != nil {
+				return errors.Wrap(err, "summarizer#buildWindow truncate")
+			}
+		}
+		log.Printf("summarizer: %s %s..%s (%d buckets) in %v\n", w.name, c.firstDay, c.lastDay, len(c.buckets), time.Since(start))
 	}
 	return nil
 }
@@ -441,91 +489,409 @@ func replacePartition(ctx context.Context, conn driver.Conn, table, partition, s
 	return wrap(conn.Exec(ctx, fmt.Sprintf("ALTER TABLE `%s` REPLACE PARTITION %s FROM `%s`", table, partition, staging)), "replacePartition %s %s", table, partition)
 }
 
-// passSource is a subquery with one row per (test, geospace of the pass's namespace) among the
-// tests matching filter (on t), restricted to the geospaces in only if given. Columns:
-// geospace_id, asn_org_id, upload, ip, time, mbps, min_rtt.
-func passSource(p geoPass, filter string, only []string) string {
-	cols := "t.asn_org_id AS asn_org_id, t.upload AS upload, t.ip AS ip, t.time AS time, t.mbps AS mbps, t.min_rtt AS min_rtt"
-	in := ""
-	if only != nil {
-		in = "('" + strings.Join(only, "', '") + "')"
+// --- per-IP medians of a chunk ---
+
+// workTables hold the per-IP medians of one chunk of a window:
+//   - fine: one row per (upload, state, county, ASN, IP, bucket), the per-IP medians over
+//     those tests, from the streaming aggregation of tests in key order;
+//   - splits: the (upload, IP, bucket) with more than one fine row, whose state and county
+//     rows must be recomputed per geospace;
+//   - tests: the tests of the split IPs and every test with a tribal or extra geospace;
+//   - geo: per-IP medians per geospace of the tests in `tests` (state and county of the split
+//     IPs, tribal and extra geospaces of every IP), for each variant.
+//
+// The fine rows of the IPs not in splits, for their state and county, plus the geo rows, are
+// exactly the per-IP rows of the original views.
+type workTables struct {
+	w                         summaryWindow
+	fine, splits, tests, geo  string
+	bucketNames               string // ", year, week" (with a leading comma) or ""
+	bucketDefs                string // ", year UInt16, week UInt8" or ""
+	bucketKey                 string // the window's bucket columns of the work tables' keys
+	bucketExprsOfTime         string // ", YEAR(t.time), WEEK(t.time)" or ""
+	bucketSelectOfMinTime     string // ", YEAR(min(t.time)) AS year, ..." or ""
+	bucketSelectOfTimeAliased string // ", YEAR(time) AS year, ..." or ""
+}
+
+func newWorkTables(w summaryWindow, suffix string) *workTables {
+	prefix := "summary_work_" + w.name + suffix
+	wt := &workTables{w: w, fine: prefix + "_fine", splits: prefix + "_splits", tests: prefix + "_tests", geo: prefix + "_geo"}
+	names, defs, ofTime, ofMin, aliased := []string{}, []string{}, []string{}, []string{}, []string{}
+	for _, c := range w.buckets {
+		names = append(names, c.name)
+		defs = append(defs, c.name+" "+c.typ)
+		ofTime = append(ofTime, fmt.Sprintf(c.expr, "t.time"))
+		ofMin = append(ofMin, fmt.Sprintf(c.expr, "min(t.time)")+" AS "+c.name)
+		aliased = append(aliased, fmt.Sprintf(c.expr, "time")+" AS "+c.name)
 	}
+	if len(w.buckets) > 0 {
+		wt.bucketNames = ", " + strings.Join(names, ", ")
+		wt.bucketDefs = ", " + strings.Join(defs, ", ")
+		wt.bucketKey = ", " + strings.Join(names, ", ")
+		wt.bucketExprsOfTime = ", " + strings.Join(ofTime, ", ")
+		wt.bucketSelectOfMinTime = ", " + strings.Join(ofMin, ", ")
+		wt.bucketSelectOfTimeAliased = ", " + strings.Join(aliased, ", ")
+	}
+	return wt
+}
+
+func (wt *workTables) all() []string {
+	return []string{wt.fine, wt.splits, wt.tests, wt.geo}
+}
+
+func (wt *workTables) drop(s *Summarizer) {
+	for _, t := range wt.all() {
+		s.exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`", t))
+	}
+}
+
+func (wt *workTables) create(s *Summarizer) error {
+	wt.drop(s)
+	for _, q := range []string{
+		fmt.Sprintf("CREATE TABLE `%s` (upload Bool, state_id Nullable(UUID), county_id Nullable(UUID), asn_org_id UUID, ip IPv6%s, med_mbps Float64, med_min_rtt Float64, samples UInt64) ENGINE = MergeTree ORDER BY (upload, ip%s)",
+			wt.fine, wt.bucketDefs, wt.bucketKey),
+		fmt.Sprintf("CREATE TABLE `%s` (upload Bool, ip IPv6%s) ENGINE = MergeTree ORDER BY (upload, ip%s)", wt.splits, wt.bucketDefs, wt.bucketKey),
+		fmt.Sprintf("CREATE TABLE `%s` (variant UInt8, upload Bool, geospace_id UUID, asn_org_id UUID, ip IPv6%s, med_mbps Float64, med_min_rtt Float64, samples UInt64) ENGINE = MergeTree ORDER BY (variant, upload, geospace_id, asn_org_id, ip%s)",
+			wt.geo, wt.bucketDefs, wt.bucketKey),
+	} {
+		if err := s.exec(q); err != nil {
+			return errors.Wrap(err, "summarizer#workTables create")
+		}
+	}
+	return nil
+}
+
+// splitsTuple is the tuple that identifies an IP's rows of a bucket, with the bucket computed
+// from table alias t's time.
+func (wt *workTables) splitsTupleOfTests() string {
+	return fmt.Sprintf("(t.upload, t.ip%s)", wt.bucketExprsOfTime)
+}
+
+func (wt *workTables) splitsSelect() string {
+	return fmt.Sprintf("SELECT upload, ip%s FROM `%s`", wt.bucketNames, wt.splits)
+}
+
+// computeChunk fills the work tables with the per-IP medians of the chunk.
+func (s *Summarizer) computeChunk(w summaryWindow, work *workTables, c chunk) error {
+	if err := work.create(s); err != nil {
+		return err
+	}
+	start := time.Now()
+	shards, err := s.stateShards(c.filter())
+	if err != nil {
+		return err
+	}
+	queries := make([]string, len(shards))
+	for i, sh := range shards {
+		queries[i] = s.fineInsert(w, work, c.filter()+" AND "+sh)
+	}
+	if err := s.runConcurrently(queries); err != nil {
+		return errors.Wrap(err, "summarizer#computeChunk fine")
+	}
+	fineRows, err := s.count(work.fine)
+	if err != nil {
+		return err
+	}
+	log.Printf("summarizer: %s %s..%s: %d per-IP rows in %d shards, %v\n", w.name, c.firstDay, c.lastDay, fineRows, len(shards), time.Since(start))
+
+	// IPs with several (state, county, ASN) in a bucket. fine is ordered by (upload, ip, bucket),
+	// so this streams too.
+	if err := s.exec(fmt.Sprintf(`
+		INSERT INTO `+"`%[1]s`"+` (upload, ip%[2]s)
+		SELECT upload, ip%[2]s FROM `+"`%[3]s`"+`
+		GROUP BY upload, ip%[2]s HAVING count() > 1
+		SETTINGS %[4]s`, work.splits, work.bucketNames, work.fine, inOrderSettings)); err != nil {
+		return errors.Wrap(err, "summarizer#computeChunk splits")
+	}
+	splits, err := s.count(work.splits)
+	if err != nil {
+		return err
+	}
+
+	// One scan of the chunk for the tests that are aggregated per geospace: those of the split
+	// IPs, and those with a tribal or extra geospace.
+	if err := s.exec(fmt.Sprintf(`
+		CREATE TABLE `+"`%s`"+` ENGINE = MergeTree ORDER BY (upload, ip) AS
+		SELECT t.time AS time, t.ip AS ip, t.upload AS upload, t.mbps AS mbps, t.min_rtt AS min_rtt, t.asn_org_id AS asn_org_id,
+			t.state_id AS state_id, t.county_id AS county_id, t.tribal_id AS tribal_id, t.extra_geospace_ids AS extra_geospace_ids,
+			%s IN (%s) AS split
+		FROM tests t
+		WHERE %s AND (split OR t.tribal_id IS NOT NULL OR notEmpty(t.extra_geospace_ids))`,
+		work.tests, work.splitsTupleOfTests(), work.splitsSelect(), c.filter())); err != nil {
+		return errors.Wrap(err, "summarizer#computeChunk tests")
+	}
+	geoTests, err := s.count(work.tests)
+	if err != nil {
+		return err
+	}
+	// Per geospace, in shards of IP hashes (exact: every key has one IP) that bound memory.
+	n := int(math.Ceil(float64(geoTests) / float64(s.opts.ShardTargetRows)))
+	if n < 1 {
+		n = 1
+	}
+	for i := 0; i < n; i++ {
+		shard := fmt.Sprintf("cityHash64(t.ip) %% %d = %d", n, i)
+		source := "(" + passRows(work.tests, geoPasses[0], shard, "t.split") +
+			" UNION ALL " + passRows(work.tests, geoPasses[1], shard, "t.split") +
+			" UNION ALL " + passRows(work.tests, geoPasses[2], shard, "1") +
+			" UNION ALL " + passRows(work.tests, geoPasses[3], shard, "1") + ")"
+		for _, v := range summaryVariants {
+			variant, asn, group := 1, "asn_org_id", "upload, geospace_id, asn_org_id, ip"
+			if !v.withASN {
+				variant, asn, group = 0, noASN+" AS asn_org_id", "upload, geospace_id, ip"
+			}
+			if err := s.exec(fmt.Sprintf(`
+				INSERT INTO `+"`%s`"+` (variant, upload, geospace_id, asn_org_id, ip%s, med_mbps, med_min_rtt, samples)
+				SELECT %d, upload, geospace_id, %s, ip%s, quantileExact(0.5)(mbps), quantileExact(0.5)(min_rtt), count()
+				FROM %s m
+				GROUP BY %s%s`,
+				work.geo, work.bucketNames, variant, asn, work.bucketSelectOfTimeAliased, source, group, work.bucketNames)); err != nil {
+				return errors.Wrap(err, "summarizer#computeChunk geo")
+			}
+		}
+	}
+	log.Printf("summarizer: %s %s..%s: %d split IP buckets, %d tests aggregated per geospace in %d shards, %v\n",
+		w.name, c.firstDay, c.lastDay, splits, geoTests, n, time.Since(start))
+	return nil
+}
+
+// inOrderSettings run a GROUP BY on a prefix of the table's sort key as a streaming
+// aggregation. Memory then comes from the parts being read at the same time: without the
+// preliminary merge (which ClickHouse only adds from 100 parts) every part of the range is its
+// own aggregating stream with its own result block (50 MB by default) and read buffers, 9 MB
+// per part with max_block_size 8192 (measured: a 84-part range took 1.21 GiB, 180 MiB with
+// these settings; the whole 2019 of production, 81 parts, 4.77 GiB -> see below), and the
+// all-time chunk reads every part of the table.
+const inOrderSettings = "optimize_aggregation_in_order = 1, read_in_order_two_level_merge_threshold = 0, max_block_size = 8192, aggregation_in_order_max_block_bytes = 4000000"
+
+// fineInsert aggregates the tests matching filter per (upload, state, county, ASN, IP, bucket)
+// in the order of the table's sort key: memory holds a few groups at a time whatever the span.
+func (s *Summarizer) fineInsert(w summaryWindow, work *workTables, filter string) string {
+	key := ""
+	if w.keyExpr != "" {
+		key = ", " + fmt.Sprintf(w.keyExpr, "t.time")
+	}
+	return fmt.Sprintf(`
+		INSERT INTO `+"`%s`"+` (upload, state_id, county_id, asn_org_id, ip%s, med_mbps, med_min_rtt, samples)
+		SELECT t.upload, t.state_id, t.county_id, t.asn_org_id, t.ip%s, quantileExact(0.5)(t.mbps), quantileExact(0.5)(t.min_rtt), count()
+		FROM tests t
+		WHERE %s
+		GROUP BY t.upload, t.state_id, t.county_id, t.asn_org_id, t.ip%s
+		SETTINGS %s, max_threads = %d`,
+		work.fine, work.bucketNames, work.bucketSelectOfMinTime, filter, key, inOrderSettings, s.shardThreads())
+}
+
+// stateShards splits the tests matching filter into shards of about ShardTargetRows tests, as
+// filters on table alias t that the sort key prunes: whole (upload, state) groups packed
+// together, and the states bigger than that split into groups of whole counties. A streaming
+// aggregation keeps its arena until the query ends, so its memory is about 25 bytes per test
+// of the shard (4.8 GiB for the 216 M tests of 2019 in one query), which this bounds.
+func (s *Summarizer) stateShards(filter string) ([]string, error) {
+	rows, err := s.conn.Query(s.ctx(), fmt.Sprintf(`
+		SELECT t.upload, toString(t.state_id), toString(t.county_id), count()
+		FROM tests t WHERE %s
+		GROUP BY t.upload, t.state_id, t.county_id ORDER BY t.upload, t.state_id, t.county_id`, filter))
+	if err != nil {
+		return nil, errors.Wrap(err, "summarizer#stateShards Query")
+	}
+	defer rows.Close()
+	type county struct {
+		id   *string
+		rows uint64
+	}
+	type state struct {
+		upload   bool
+		id       *string
+		counties []county
+		rows     uint64
+	}
+	states := []state{}
+	for rows.Next() {
+		var upload bool
+		var st, co *string
+		var n uint64
+		if err := rows.Scan(&upload, &st, &co, &n); err != nil {
+			return nil, errors.Wrap(err, "summarizer#stateShards Scan")
+		}
+		if k := len(states); k == 0 || states[k-1].upload != upload || !sameID(states[k-1].id, st) {
+			states = append(states, state{upload: upload, id: st})
+		}
+		cur := &states[len(states)-1]
+		cur.counties = append(cur.counties, county{co, n})
+		cur.rows += n
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	result := []string{}
+	var packed []string // whole states of one upload, under ShardTargetRows together
+	var packedUpload bool
+	var packedRows uint64
+	flush := func() {
+		if len(packed) > 0 {
+			result = append(result, fmt.Sprintf("t.upload = %t AND t.state_id IN ('%s')", packedUpload, strings.Join(packed, "', '")))
+		}
+		packed, packedRows = nil, 0
+	}
+	for _, st := range states {
+		switch {
+		case st.id == nil:
+			result = append(result, fmt.Sprintf("t.upload = %t AND t.state_id IS NULL", st.upload))
+		case st.rows > s.opts.ShardTargetRows:
+			// Shards of whole counties; a county over the target is a shard on its own.
+			var counties []string
+			var n uint64
+			flushCounties := func() {
+				if len(counties) > 0 {
+					result = append(result, fmt.Sprintf("t.upload = %t AND t.state_id = '%s' AND t.county_id IN ('%s')", st.upload, *st.id, strings.Join(counties, "', '")))
+				}
+				counties, n = nil, 0
+			}
+			for _, c := range st.counties {
+				if c.id == nil {
+					result = append(result, fmt.Sprintf("t.upload = %t AND t.state_id = '%s' AND t.county_id IS NULL", st.upload, *st.id))
+					continue
+				}
+				if len(counties) > 0 && n+c.rows > s.opts.ShardTargetRows {
+					flushCounties()
+				}
+				counties = append(counties, *c.id)
+				n += c.rows
+			}
+			flushCounties()
+		default:
+			if len(packed) > 0 && (packedUpload != st.upload || packedRows+st.rows > s.opts.ShardTargetRows) {
+				flush()
+			}
+			packedUpload = st.upload
+			packed = append(packed, *st.id)
+			packedRows += st.rows
+		}
+	}
+	flush()
+	return result, nil
+}
+
+func sameID(a, b *string) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+	return *a == *b
+}
+
+// runConcurrently executes queries with Parallel workers.
+func (s *Summarizer) runConcurrently(queries []string) error {
+	sem := make(chan struct{}, s.opts.Parallel)
+	errs := make(chan error, len(queries))
+	var wg sync.WaitGroup
+	for _, q := range queries {
+		wg.Add(1)
+		sem <- struct{}{}
+		go func(q string) {
+			defer wg.Done()
+			defer func() { <-sem }()
+			if err := s.exec(q); err != nil {
+				errs <- err
+			}
+		}(q)
+	}
+	wg.Wait()
+	close(errs)
+	return <-errs
+}
+
+func (s *Summarizer) count(table string) (uint64, error) {
+	var n uint64
+	err := s.conn.QueryRow(s.ctx(), fmt.Sprintf("SELECT count() FROM `%s`", table)).Scan(&n)
+	return n, wrap(err, "summarizer#count %s", table)
+}
+
+// passRows is a subquery with one row per (test, geospace of the pass's namespace) among the
+// tests of table (alias t) matching filter; the rows from the namespace's own column are
+// further restricted to mainFilter, the rows from extra_geospace_ids are not. Columns:
+// geospace_id, asn_org_id, upload, ip, time, mbps, min_rtt.
+func passRows(table string, p geoPass, filter, mainFilter string) string {
+	cols := "t.asn_org_id AS asn_org_id, t.upload AS upload, t.ip AS ip, t.time AS time, t.mbps AS mbps, t.min_rtt AS min_rtt"
 	var extraFilter string
 	if p.namespace != "" {
 		extraFilter = fmt.Sprintf("g IN (SELECT id FROM geospaces WHERE namespace = '%s')", p.namespace)
 	} else {
 		extraFilter = fmt.Sprintf("g NOT IN (SELECT id FROM geospaces WHERE namespace IN (%s))", knownNamespaces)
 	}
-	if in != "" {
-		extraFilter += " AND g IN " + in
-	}
 	extras := fmt.Sprintf(`
-			SELECT g AS geospace_id, %s FROM tests t ARRAY JOIN t.extra_geospace_ids AS g
-			WHERE (%s) AND notEmpty(t.extra_geospace_ids) AND %s`, cols, filter, extraFilter)
+			SELECT g AS geospace_id, %s FROM `+"`%s`"+` t ARRAY JOIN t.extra_geospace_ids AS g
+			WHERE (%s) AND notEmpty(t.extra_geospace_ids) AND %s`, cols, table, filter, extraFilter)
 	if p.column == "" {
-		return "(" + extras + ")"
+		return extras
 	}
-	mainFilter := fmt.Sprintf("t.%s IS NOT NULL", p.column)
-	if in != "" {
-		mainFilter += fmt.Sprintf(" AND t.%s IN %s", p.column, in)
-	}
-	return fmt.Sprintf(`(
-			SELECT assumeNotNull(t.%s) AS geospace_id, %s FROM tests t
-			WHERE (%s) AND %s
-			UNION ALL %s)`, p.column, cols, filter, mainFilter, extras)
+	return fmt.Sprintf(`
+			SELECT assumeNotNull(t.%s) AS geospace_id, %s FROM `+"`%s`"+` t
+			WHERE (%s) AND (%s) AND t.%s IS NOT NULL
+			UNION ALL %s`, p.column, cols, table, filter, mainFilter, p.column, extras)
 }
 
-type shard struct {
-	upload    bool
-	geospaces []string
-	rows      uint64
+// perIPRows is a subquery with the per-IP rows of variant v (geospace_id, asn_org_id, upload,
+// ip, bucket columns, med_mbps, med_min_rtt, samples) of the chunk in the work tables: the
+// state and county of the fine rows of the IPs that aren't split, and the geo rows. filter
+// applies to every part, on geospace_id and upload.
+func perIPRows(v summaryVariant, work *workTables, filter string) string {
+	variant := 1
+	if !v.withASN {
+		variant = 0
+	}
+	parts := []string{}
+	for _, col := range []string{"state_id", "county_id"} {
+		parts = append(parts, fmt.Sprintf(`
+			SELECT geospace_id, asn_org_id, upload, ip%s, med_mbps, med_min_rtt, samples
+			FROM (SELECT assumeNotNull(%s) AS geospace_id, asn_org_id, upload, ip%s, med_mbps, med_min_rtt, samples FROM `+"`%s`"+`
+			      WHERE %s IS NOT NULL AND (upload, ip%s) NOT IN (%s))
+			WHERE %s`, work.bucketNames, col, work.bucketNames, work.fine, col, work.bucketNames, work.splitsSelect(), filter))
+	}
+	parts = append(parts, fmt.Sprintf(`
+			SELECT geospace_id, asn_org_id, upload, ip%s, med_mbps, med_min_rtt, samples FROM `+"`%s`"+`
+			WHERE variant = %d AND %s`, work.bucketNames, work.geo, variant, filter))
+	return "(" + strings.Join(parts, " UNION ALL ") + ")"
 }
 
-// shards splits the rows of source (with geospace_id, upload) into groups of whole geospaces of
-// about ShardTargetRows each. Every summary row belongs to a single geospace and upload, so each
-// shard can be aggregated on its own.
-func (s *Summarizer) shards(source string) ([]shard, error) {
-	rows, err := s.conn.Query(s.ctx(), fmt.Sprintf(`
-		SELECT upload, toString(geospace_id), count()
-		FROM %s
-		GROUP BY upload, geospace_id
-		ORDER BY upload, geospace_id`, source))
+// outer inserts the summaries of variant v of the chunk in the work tables into staging, in
+// shards of geospaces sized from the per-IP row count (a shard holds its per-IP medians in
+// memory: ShardTargetRows x 16 bytes plus the hash table), Parallel at a time.
+func (s *Summarizer) outer(w summaryWindow, v summaryVariant, work *workTables, staging string) error {
+	fineRows, err := s.count(work.fine)
 	if err != nil {
-		return nil, errors.Wrap(err, "summarizer#shards Query")
+		return err
 	}
-	defer rows.Close()
-	result := []shard{}
-	var cur *shard
-	for rows.Next() {
-		var upload bool
-		var geo string
-		var n uint64
-		if err := rows.Scan(&upload, &geo, &n); err != nil {
-			return nil, errors.Wrap(err, "summarizer#shards Scan")
-		}
-		if cur == nil || cur.upload != upload || (cur.rows > 0 && cur.rows+n > s.opts.ShardTargetRows) {
-			result = append(result, shard{upload: upload})
-			cur = &result[len(result)-1]
-		}
-		cur.geospaces = append(cur.geospaces, geo)
-		cur.rows += n
-	}
-	return result, rows.Err()
-}
-
-// fillPass inserts the summaries of the geospaces of pass p, for the tests matching filter, into table.
-func (s *Summarizer) fillPass(table string, w summaryWindow, v summaryVariant, p geoPass, filter string) (int, error) {
-	shards, err := s.shards(passSource(p, filter, nil))
+	geoRows, err := s.count(work.geo)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	for _, sh := range shards {
-		f := fmt.Sprintf("%s AND t.upload = %t", filter, sh.upload)
-		if err := s.exec(insertSummaryQuery(table, w, v, passSource(p, f, sh.geospaces))); err != nil {
-			return 0, errors.Wrap(err, "summarizer#fillPass insert")
+	n := int(math.Ceil(float64(2*fineRows+geoRows) / float64(s.opts.ShardTargetRows)))
+	if n < 1 {
+		n = 1
+	}
+	keys := []string{"geospace_id"}
+	if v.withASN {
+		keys = append(keys, "asn_org_id")
+	}
+	keys = append(keys, "upload")
+	for _, c := range w.buckets {
+		keys = append(keys, c.name)
+	}
+	queries := []string{}
+	for _, upload := range []bool{false, true} {
+		for i := 0; i < n; i++ {
+			filter := fmt.Sprintf("upload = %t AND cityHash64(geospace_id) %% %d = %d", upload, n, i)
+			queries = append(queries, fmt.Sprintf(`
+				INSERT INTO `+"`%s`"+` (med_mbps, med_min_rtt, bad_count, normal_count, good_count, total_samples, %s)
+				SELECT %s
+				FROM (SELECT geospace_id, asn_org_id, upload%s, med_mbps AS med_ip_mbps, med_min_rtt AS med_ip_rtt FROM %s) m_ip
+				GROUP BY %s
+				SETTINGS max_threads = %d`,
+				staging, strings.Join(keys, ", "), outerSummaryColumns(keys), work.bucketNames,
+				perIPRows(v, work, filter), strings.Join(keys, ", "), s.shardThreads()))
 		}
 	}
-	return len(shards), nil
+	return wrap(s.runConcurrently(queries), "summarizer#outer insert")
 }
 
 func summaryKeys(w summaryWindow, v summaryVariant) []string {
@@ -564,39 +930,6 @@ func (s *Summarizer) createSummaryTable(name string, w summaryWindow, v summaryV
 	}
 	query += fmt.Sprintf(" ORDER BY (%s)", strings.Join(order, ", "))
 	return wrap(s.exec(query), "summarizer#createSummaryTable")
-}
-
-// insertSummaryQuery is the original view definition, over the (test, geospace) rows of source.
-func insertSummaryQuery(table string, w summaryWindow, v summaryVariant, source string) string {
-	inner := []string{"m.geospace_id"}
-	innerGroup := []string{"m.geospace_id"}
-	outer := []string{"m_ip.geospace_id"}
-	if v.withASN {
-		inner = append(inner, "m.asn_org_id")
-		innerGroup = append(innerGroup, "m.asn_org_id")
-		outer = append(outer, "m_ip.asn_org_id")
-	}
-	inner = append(inner, "m.upload")
-	innerGroup = append(innerGroup, "m.upload", "m.ip")
-	outer = append(outer, "m_ip.upload")
-	for _, c := range w.buckets {
-		inner = append(inner, fmt.Sprintf("%s AS %s", fmt.Sprintf(c.expr, "m.time"), c.name))
-		innerGroup = append(innerGroup, c.name)
-		outer = append(outer, "m_ip."+c.name)
-	}
-	return fmt.Sprintf(`
-		INSERT INTO `+"`%s`"+` (med_mbps, med_min_rtt, bad_count, normal_count, good_count, total_samples, %[2]s)
-		SELECT %[3]s
-		FROM (
-			SELECT %[4]s,
-				quantileExact(0.5)(m.mbps) AS med_ip_mbps,
-				quantileExact(0.5)(m.min_rtt) AS med_ip_rtt
-			FROM %[5]s m
-			GROUP BY %[6]s
-		) m_ip
-		GROUP BY %[7]s`,
-		table, strings.Join(summaryKeys(w, v), ", "), outerSummaryColumns(outer),
-		strings.Join(inner, ", "), source, strings.Join(innerGroup, ", "), strings.Join(outer, ", "))
 }
 
 // outerSummaryColumns is the outer SELECT of the original views, over per-IP medians
@@ -646,7 +979,7 @@ func (s *Summarizer) buildAllTime(suffix string, from, to time.Time, full bool) 
 	start := time.Now()
 	var err error
 	if full {
-		err = s.rebuildIPMedians(suffix)
+		err = s.rebuildIPMedians(suffix, from, to)
 	} else {
 		err = s.updateIPMedians(suffix, from, to)
 	}
@@ -664,30 +997,34 @@ func (s *Summarizer) buildAllTime(suffix string, from, to time.Time, full bool) 
 	return s.buildUSASNs(suffix)
 }
 
-// rebuildIPMedians computes the per-IP all-time medians of every geospace from all tests, in
-// shards of geospaces (the key of tests prunes state and county shards).
-func (s *Summarizer) rebuildIPMedians(suffix string) error {
+// rebuildIPMedians computes the per-IP all-time medians of every geospace from all tests, as
+// one chunk of the all-time window (no bucket).
+func (s *Summarizer) rebuildIPMedians(suffix string, from, to time.Time) error {
 	version := time.Now().UnixNano()
 	for _, v := range summaryVariants {
 		if err := s.exec(fmt.Sprintf("TRUNCATE TABLE `%s%s`", v.ipMedians, suffix)); err != nil {
 			return errors.Wrap(err, "summarizer#rebuildIPMedians truncate")
 		}
 	}
-	for _, p := range geoPasses {
-		start := time.Now()
-		shards, err := s.shards(passSource(p, "1", nil))
-		if err != nil {
-			return err
+	w := summaryWindows[0]
+	work := newWorkTables(w, suffix)
+	defer work.drop(s)
+	c := chunk{firstDay: from.UTC().Format("2006-01-02"), lastDay: to.UTC().Format("2006-01-02")}
+	if err := s.computeChunk(w, work, c); err != nil {
+		return err
+	}
+	for _, v := range summaryVariants {
+		keys := "upload, geospace_id, "
+		if v.withASN {
+			keys += "asn_org_id, "
 		}
-		for _, sh := range shards {
-			source := passSource(p, fmt.Sprintf("t.upload = %t", sh.upload), sh.geospaces)
-			for _, v := range summaryVariants {
-				if err := s.exec(ipMediansInsert(v.ipMedians+suffix, v, source, version)); err != nil {
-					return errors.Wrap(err, "summarizer#rebuildIPMedians insert")
-				}
-			}
+		keys += "ip"
+		if err := s.exec(fmt.Sprintf(`
+			INSERT INTO `+"`%s%s`"+` (%[3]s, med_mbps, med_min_rtt, samples, version)
+			SELECT %[3]s, med_mbps, med_min_rtt, samples, %[4]d FROM %[5]s`,
+			v.ipMedians, suffix, keys, version, perIPRows(v, work, "1"))); err != nil {
+			return errors.Wrap(err, "summarizer#rebuildIPMedians insert")
 		}
-		log.Printf("summarizer: ip medians of %q in %d shards, %v\n", p.namespace, len(shards), time.Since(start))
 	}
 	return nil
 }
@@ -744,6 +1081,44 @@ func (s *Summarizer) updateIPMedians(suffix string, from, to time.Time) error {
 	log.Printf("summarizer: ip medians of %d (test, geospace) rows of the IPs tested from %s to %s, %d shards\n",
 		rows, from.Format("2006-01-02"), to.Format("2006-01-02"), n)
 	return nil
+}
+
+type shard struct {
+	upload    bool
+	geospaces []string
+	rows      uint64
+}
+
+// shards splits the rows of source (with geospace_id, upload) into groups of whole geospaces of
+// about ShardTargetRows each. Every summary row belongs to a single geospace and upload, so each
+// shard can be aggregated on its own.
+func (s *Summarizer) shards(source string) ([]shard, error) {
+	rows, err := s.conn.Query(s.ctx(), fmt.Sprintf(`
+		SELECT upload, toString(geospace_id), count()
+		FROM %s
+		GROUP BY upload, geospace_id
+		ORDER BY upload, geospace_id`, source))
+	if err != nil {
+		return nil, errors.Wrap(err, "summarizer#shards Query")
+	}
+	defer rows.Close()
+	result := []shard{}
+	var cur *shard
+	for rows.Next() {
+		var upload bool
+		var geo string
+		var n uint64
+		if err := rows.Scan(&upload, &geo, &n); err != nil {
+			return nil, errors.Wrap(err, "summarizer#shards Scan")
+		}
+		if cur == nil || cur.upload != upload || (cur.rows > 0 && cur.rows+n > s.opts.ShardTargetRows) {
+			result = append(result, shard{upload: upload})
+			cur = &result[len(result)-1]
+		}
+		cur.geospaces = append(cur.geospaces, geo)
+		cur.rows += n
+	}
+	return result, rows.Err()
 }
 
 // allTimeFromIPMedians rebuilds an all-time summary from its per-IP medians, in shards of
