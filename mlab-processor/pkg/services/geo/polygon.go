@@ -16,16 +16,33 @@ type Point struct {
 
 // A Polygon is carved out of a 2D plane by a set of (possibly disjoint) contours.
 // It can thus contain holes, and can be self-intersecting.
+//
+// Contains casts a ray along the latitude axis, so only the edges whose longitude span
+// covers the point can intersect it. The polygon keeps its edges bucketed by longitude
+// (built by NewPolygon, or on the first Contains after Add) so that a query evaluates a
+// handful of edges instead of all of them; the per-edge test is unchanged, so the answer
+// is exactly the one of the full scan.
 type Polygon struct {
 	points []Point
+
+	minLng, maxLng float64
+	invBinWidth    float64
+	// binStart[b]:binStart[b+1] indexes binEdges; edge e is points[e-1]→points[e],
+	// edge 0 being points[n-1]→points[0].
+	binStart []int32
+	binEdges []int32
 }
+
+const maxBins = 1 << 15
 
 // NewPolygon: Creates and returns a new pointer to a Polygon
 // composed of the passed in points.  Points are
 // considered to be in order such that the last point
 // forms an edge with the first point.
 func NewPolygon(points []Point) *Polygon {
-	return &Polygon{points: points}
+	p := &Polygon{points: points}
+	p.buildIndex()
+	return p
 }
 
 // Points returns the points of the current Polygon.
@@ -36,6 +53,7 @@ func (p *Polygon) Points() []Point {
 // Add: Appends the passed in contour to the current Polygon.
 func (p *Polygon) Add(point Point) {
 	p.points = append(p.points, point)
+	p.binStart = nil // rebuilt by the next Contains
 }
 
 // IsClosed returns whether or not the polygon is closed.
@@ -51,19 +69,90 @@ func (p *Polygon) IsClosed() bool {
 	return true
 }
 
+func (p *Polygon) bin(lng float64) int {
+	b := int((lng - p.minLng) * p.invBinWidth)
+	if b < 0 {
+		return 0
+	}
+	if n := len(p.binStart) - 1; b >= n {
+		return n - 1
+	}
+	return b
+}
+
+// buildIndex buckets the edges by longitude. bin() is monotonic in lng, so an edge
+// spanning [a, c] in longitude is in every bin of a point with lng in [a, c].
+func (p *Polygon) buildIndex() {
+	n := len(p.points)
+	if n < 3 {
+		p.binStart = nil
+		return
+	}
+	p.minLng, p.maxLng = math.Inf(1), math.Inf(-1)
+	for i := range p.points {
+		p.minLng = math.Min(p.minLng, p.points[i].Lng)
+		p.maxLng = math.Max(p.maxLng, p.points[i].Lng)
+	}
+	nbins := n / 4
+	if nbins < 1 {
+		nbins = 1
+	}
+	if nbins > maxBins {
+		nbins = maxBins
+	}
+	if p.maxLng > p.minLng {
+		p.invBinWidth = float64(nbins) / (p.maxLng - p.minLng)
+	} else {
+		nbins, p.invBinWidth = 1, 0
+	}
+	p.binStart = make([]int32, nbins+1)
+	edgeBins := func(e int, f func(b int)) {
+		s, t := p.points[(e+n-1)%n].Lng, p.points[e].Lng
+		if s > t {
+			s, t = t, s
+		}
+		for b, last := p.bin(s), p.bin(t); b <= last; b++ {
+			f(b)
+		}
+	}
+	// counting sort of the edges into bins
+	for e := 0; e < n; e++ {
+		edgeBins(e, func(b int) { p.binStart[b+1]++ })
+	}
+	for b := 0; b < nbins; b++ {
+		p.binStart[b+1] += p.binStart[b]
+	}
+	p.binEdges = make([]int32, p.binStart[nbins])
+	fill := make([]int32, nbins)
+	copy(fill, p.binStart[:nbins])
+	for e := 0; e < n; e++ {
+		edgeBins(e, func(b int) {
+			p.binEdges[fill[b]] = int32(e)
+			fill[b]++
+		})
+	}
+}
+
 // Contains returns whether or not the current Polygon contains the passed in Point.
 func (p *Polygon) Contains(point *Point) bool {
 	if !p.IsClosed() {
 		return false
 	}
+	if p.binStart == nil {
+		p.buildIndex()
+	}
+	// No edge spans the point's longitude: every edge test is false.
+	if point.Lng < p.minLng || point.Lng > p.maxLng {
+		return false
+	}
 
-	start := len(p.points) - 1
-	end := 0
-
-	contains := p.intersectsWithRaycast(point, &p.points[start], &p.points[end])
-
-	for i := 1; i < len(p.points); i++ {
-		if p.intersectsWithRaycast(point, &p.points[i-1], &p.points[i]) {
+	n := len(p.points)
+	contains := false
+	b := p.bin(point.Lng)
+	for _, e := range p.binEdges[p.binStart[b]:p.binStart[b+1]] {
+		start := &p.points[(int(e)+n-1)%n]
+		end := &p.points[e]
+		if p.intersectsWithRaycast(point, start, end) {
 			contains = !contains
 		}
 	}

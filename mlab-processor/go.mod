@@ -10,9 +10,10 @@ require (
 	github.com/aws/smithy-go v1.28.5
 	github.com/exactlylabs/go-errors v0.1.2
 	github.com/gofrs/uuid v4.3.0+incompatible
-	github.com/hamba/avro v1.6.6
+	github.com/hamba/avro/v2 v2.31.0
 	github.com/jonas-p/go-shp v0.1.1
-	github.com/tidwall/rtree v1.3.1
+	github.com/klauspost/compress v1.20.1
+	github.com/tidwall/rtree v1.11.1
 	google.golang.org/api v0.128.0
 )
 
@@ -29,9 +30,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
+	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/s2a-go v0.1.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -41,7 +43,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
-	github.com/tidwall/geoindex v1.4.4 // indirect
+	github.com/tidwall/geoindex v1.7.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
