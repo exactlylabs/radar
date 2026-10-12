@@ -538,8 +538,35 @@ func retryFrom(ctx context.Context, opts Options, first int, prevErr error, what
 	return fmt.Errorf("%s: giving up after %d attempts: %w", what, opts.Attempts, err)
 }
 
+// rangeLister can list a prefix restricted to a lexicographic range of object names
+// [start, end) (an empty bound is unbounded). The GCS source implements it, which lets
+// ListTarballs split a day into shards listed concurrently; a plain ObjectSource is
+// listed in one request per prefix.
+type rangeLister interface {
+	ListRange(ctx context.Context, prefix, start, end string) ([]string, error)
+}
+
+// listRanges splits the names under prefix into hourly ranges [start, end): the cut
+// points are the hour marks of the archive's "<date>T<hh>" file names, but the ranges
+// partition the whole key space under the prefix, so every object lands in exactly one
+// of them whatever its name and the shards together are exactly the full listing.
+func listRanges(prefix string, date time.Time) [][2]string {
+	cut := func(h int) string { return fmt.Sprintf("%s/%sT%02d", prefix, date.Format("20060102"), h) }
+	ranges := make([][2]string, 24)
+	for h := 0; h < 24; h++ {
+		if h > 0 {
+			ranges[h][0] = cut(h)
+		}
+		if h < 23 {
+			ranges[h][1] = cut(h + 1)
+		}
+	}
+	return ranges
+}
+
 // ListTarballs lists the archive tarballs of date, per test type, retrying failed
-// listings. The prefixes are listed concurrently.
+// listings. The prefixes (and, on a rangeLister, hourly shards of them) are listed
+// concurrently: a day of ndt7 is ~10 sequential pages otherwise.
 func ListTarballs(ctx context.Context, src ObjectSource, date time.Time, opts Options) (map[testType][]string, error) {
 	opts = opts.withDefaults()
 	prefixes := map[testType][]string{
@@ -547,37 +574,57 @@ func ListTarballs(ctx context.Context, src ObjectSource, date time.Time, opts Op
 		NDT5TestType:   {ndt5SearchPrefix(date)},
 		NDT7TestType:   ndt7SearchPrefixes(date),
 	}
-	listed := map[testType][][]string{}
+	ranged, _ := src.(rangeLister)
+	listed := map[testType][][][]string{} // per test type, prefix, shard
 	for tt, p := range prefixes {
-		listed[tt] = make([][]string, len(p))
+		listed[tt] = make([][][]string, len(p))
+		for i := range p {
+			n := 1
+			if ranged != nil {
+				n = 24
+			}
+			listed[tt][i] = make([][]string, n)
+		}
 	}
 	var retries int64
 	g, gctx := errgroup.WithContext(ctx)
 	for _, tt := range []testType{Web100TestType, NDT5TestType, NDT7TestType} {
 		for i, prefix := range prefixes[tt] {
-			slot := &listed[tt][i]
-			g.Go(func() error {
-				var names []string
-				err := withRetries(gctx, opts, "list "+prefix, &retries, func() error {
-					var lErr error
-					names, lErr = src.List(gctx, prefix)
-					return lErr
+			ranges := [][2]string{{"", ""}}
+			if ranged != nil {
+				ranges = listRanges(prefix, date)
+			}
+			for j, rg := range ranges {
+				slot := &listed[tt][i][j]
+				g.Go(func() error {
+					var names []string
+					err := withRetries(gctx, opts, "list "+prefix, &retries, func() error {
+						var lErr error
+						if ranged != nil {
+							names, lErr = ranged.ListRange(gctx, prefix, rg[0], rg[1])
+						} else {
+							names, lErr = src.List(gctx, prefix)
+						}
+						return lErr
+					})
+					if err != nil {
+						return err
+					}
+					*slot = names
+					return nil
 				})
-				if err != nil {
-					return err
-				}
-				*slot = names
-				return nil
-			})
+			}
 		}
 	}
 	if err := g.Wait(); err != nil {
 		return nil, err
 	}
 	out := map[testType][]string{}
-	for tt, parts := range listed {
-		for _, names := range parts {
-			out[tt] = append(out[tt], names...)
+	for tt, perPrefix := range listed {
+		for _, shards := range perPrefix {
+			for _, names := range shards {
+				out[tt] = append(out[tt], names...)
+			}
 		}
 	}
 	return out, nil
