@@ -568,7 +568,7 @@ Binaries come from `roles/mlab-pipeline` releases (`/opt/broadbandmapping/releas
 | `ingest -repair <59 days> -replace` (22:22) | 35 min 43 s; the days now hold 0.8 k (2009-11-08) to 2.99 M (2023-03-01) US tests. |
 | `summarize -full`, third run (22:58, nothing else on the box) | **2 h 42 min** through 2026-10-11 (the all-time pass now covers 4.9 B tests). |
 | `summarize -validate-before 2026-10-01` | unchanged years identical (2015, 2021 checked row for row); 2023 and the other repaired years gained rows (2023: 29 k new per-ASN rows, 36 k sample counts changed). |
-| `summarize -switch` | 2026-10-13 01:43. API: Roanoke 2024 29,155 samples (28,293 before the 2024 short days), 2023-03 and 2026-09 populated. Processor timer re-enabled through the role (`Persistent=true` fired the missed 06:00 UTC run at once, for 2026-10-11). |
+| `summarize -switch` | 2026-10-13 01:43. API: Roanoke 2024 29,155 samples (28,293 before the 2024 short days), 2023-03 and 2026-09 populated. Processor timer re-enabled through the role (`Persistent=true` fired the missed 06:00 UTC run at once, for 2026-10-11). First unattended cycle: processor 297 s for the day, ingestor's hourly run inserted 961,481 tests and updated the summaries in **9 min 23 s** (ip_medians 3 min, idle box). |
 | Verify | 2009-01..2017-12 (108 months) all OK, 2017 alone took ~8 min; stopped at 21:59 on the user's call: the `-validate-before` comparison of the new summaries against the live ones covers every year end to end, so the row-level pass over 2018+ was not worth ~1 h of cores. |
 
 ## Cutover runbook (after A–D are ready)
