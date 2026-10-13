@@ -41,7 +41,7 @@ func main() {
 		}
 		nWorkers = n
 	}
-	db := clickhousestorages.DB(conf, nWorkers)
+	db := clickhousestorages.DB(conf, clickhousestorages.IngestorConnections(nWorkers))
 	defer db.Close()
 	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers)
 	storage, err := s3storage.New(conf.FilesBucketName, conf.S3AccessKey, conf.S3SecretKey, conf.S3Endpoint, conf.S3Region)

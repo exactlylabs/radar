@@ -69,7 +69,7 @@ func main() {
 		nWorkers = n
 	}
 
-	db := clickhousestorages.DB(conf, nWorkers)
+	db := clickhousestorages.DB(conf, clickhousestorages.IngestorConnections(nWorkers))
 	defer db.Close()
 	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers)
 	opts := ingestor.FetchOptions{ManifestDir: "completeness", StopAtMissing: true}

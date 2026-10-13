@@ -49,6 +49,18 @@ const batchSize = 100_000
 
 const maxInserters = 8
 
+// IngestorConnections is the ClickHouse connections an ingestor with nWorkers store workers
+// can hold at once: every worker's day runs up to maxInserters batch inserts, and its reader
+// looks geospaces and ASN orgs up while they run. A pool of nWorkers + 5 timed out acquiring
+// connections ("acquire conn timeout") on 2026-10-12 as soon as several days were inserting.
+func IngestorConnections(nWorkers int) int {
+	inserters := nWorkers
+	if inserters > maxInserters {
+		inserters = maxInserters
+	}
+	return nWorkers * (inserters + 1)
+}
+
 func (ms *measurementStorage) ctx() context.Context {
 	// ClickHouse 26.3 turned async_insert on by default; batches must be synchronous so that
 	// Close means the rows are in the table.
