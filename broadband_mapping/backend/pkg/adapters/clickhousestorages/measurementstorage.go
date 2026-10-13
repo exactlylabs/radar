@@ -27,10 +27,12 @@ type measurementStorage struct {
 	jobCh    chan storages.MeasurementIterator
 	wg       *sync.WaitGroup
 	nWorkers int
-	started  bool
-	inserted uint64
-	errMu    sync.Mutex
-	err      error
+	// insertSlots bounds the batch inserts running at once over all the days.
+	insertSlots chan struct{}
+	started     bool
+	inserted    uint64
+	errMu       sync.Mutex
+	err         error
 	// table inserts go to: tests, or the month copy of a replace.
 	table   string
 	replace *monthReplace
@@ -49,14 +51,22 @@ const batchSize = 100_000
 
 const maxInserters = 8
 
+// maxConcurrentInserts bounds the batch inserts of all days together: nWorkers days with
+// maxInserters each would be 80 on a 10-core host, which hit the server's limit of
+// simultaneous queries (code 202) once the pool allowed it.
+const maxConcurrentInserts = 16
+
 // IngestorConnections is the ClickHouse connections an ingestor with nWorkers store workers
-// can hold at once: every worker's day runs up to maxInserters batch inserts, and its reader
-// looks geospaces and ASN orgs up while they run. A pool of nWorkers + 5 timed out acquiring
-// connections ("acquire conn timeout") on 2026-10-12 as soon as several days were inserting.
+// can hold at once: the concurrent batch inserts, and a lookup of geospaces or ASN orgs per
+// worker's reader while they run. A pool of nWorkers + 5 timed out acquiring connections
+// ("acquire conn timeout") on 2026-10-12 as soon as several days were inserting.
 func IngestorConnections(nWorkers int) int {
 	inserters := nWorkers
 	if inserters > maxInserters {
 		inserters = maxInserters
+	}
+	if nWorkers*inserters > maxConcurrentInserts {
+		return maxConcurrentInserts + nWorkers
 	}
 	return nWorkers * (inserters + 1)
 }
@@ -175,7 +185,11 @@ func (ms *measurementStorage) insertAll(it storages.MeasurementIterator) error {
 	var failed atomic.Bool
 	errs := make(chan error, inserters)
 	for i := 0; i < inserters; i++ {
-		go func() { errs <- ms.insertFrom(bi.NextBatch, &failed) }()
+		go func() {
+			ms.insertSlots <- struct{}{}
+			defer func() { <-ms.insertSlots }()
+			errs <- ms.insertFrom(bi.NextBatch, &failed)
+		}()
 	}
 	var first error
 	for i := 0; i < inserters; i++ {
@@ -392,9 +406,10 @@ type MeasurementStorageOpts struct {
 
 func NewMeasurementStorage(conn driver.Conn, opts *MeasurementStorageOpts) storages.MeasurementStorage {
 	return &measurementStorage{
-		conn:     conn,
-		wg:       &sync.WaitGroup{},
-		nWorkers: opts.NWorkers,
-		table:    testsTable,
+		conn:        conn,
+		wg:          &sync.WaitGroup{},
+		nWorkers:    opts.NWorkers,
+		insertSlots: make(chan struct{}, maxConcurrentInserts),
+		table:       testsTable,
 	}
 }
