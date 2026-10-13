@@ -2,7 +2,10 @@ package s3storage
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"log"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -59,14 +62,75 @@ func (s *s3Storage) List(ctx context.Context, prefix string) ([]string, error) {
 	return files, nil
 }
 
-// Read implements ingestor.Storage.
+// Read implements ingestor.Storage. The object is streamed; a read that fails, or ends before
+// the object's size, is resumed with a Range request from the bytes already delivered, up to
+// readResumes times. Connections do get cut on a busy link: on 2026-10-12 the ingestor died 15
+// times in an hour with "avro: truncated block: unexpected EOF" while a fetch saturated it.
 func (s *s3Storage) Read(ctx context.Context, path string) (io.ReadCloser, error) {
-	r, err := s.cli.GetObjectWithContext(ctx, &s3.GetObjectInput{
-		Bucket: &s.bucketName,
-		Key:    &path,
-	})
-	if err != nil {
-		return nil, errors.W(err)
+	r := &resumingReader{ctx: ctx, s: s, key: path, size: -1}
+	if err := r.open(); err != nil {
+		return nil, err
 	}
-	return r.Body, nil
+	return r, nil
+}
+
+const readResumes = 10
+
+type resumingReader struct {
+	ctx     context.Context
+	s       *s3Storage
+	key     string
+	body    io.ReadCloser
+	offset  int64 // bytes delivered to the caller
+	size    int64 // the object's size, -1 until the first response
+	resumes int
+}
+
+func (r *resumingReader) open() error {
+	in := &s3.GetObjectInput{Bucket: &r.s.bucketName, Key: &r.key}
+	if r.offset > 0 {
+		in.Range = aws.String(fmt.Sprintf("bytes=%d-", r.offset))
+	}
+	out, err := r.s.cli.GetObjectWithContext(r.ctx, in)
+	if err != nil {
+		return errors.W(err)
+	}
+	if r.size < 0 && out.ContentLength != nil {
+		r.size = *out.ContentLength
+	}
+	r.body = out.Body
+	return nil
+}
+
+func (r *resumingReader) Read(p []byte) (int, error) {
+	for {
+		n, err := r.body.Read(p)
+		r.offset += int64(n)
+		if err == nil {
+			return n, nil
+		}
+		if err == io.EOF && (r.size < 0 || r.offset >= r.size) {
+			return n, io.EOF
+		}
+		if r.ctx.Err() != nil {
+			return n, err
+		}
+		if r.resumes >= readResumes {
+			return n, errors.Wrap(err, "s3storage.Read %s: gave up after %d resumes at byte %d of %d", r.key, r.resumes, r.offset, r.size)
+		}
+		r.resumes++
+		r.body.Close()
+		log.Printf("s3storage.Read %s: %v at byte %d of %d, resume %d/%d\n", r.key, err, r.offset, r.size, r.resumes, readResumes)
+		time.Sleep(time.Duration(r.resumes) * 2 * time.Second)
+		if err := r.open(); err != nil {
+			return n, err
+		}
+		if n > 0 {
+			return n, nil
+		}
+	}
+}
+
+func (r *resumingReader) Close() error {
+	return r.body.Close()
 }
