@@ -3,6 +3,7 @@ package clickhousestorages
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"sort"
 	"strings"
@@ -349,13 +350,17 @@ func (ms *measurementStorage) Open() error {
 func (ms *measurementStorage) storeWorker() {
 	for it := range ms.jobCh {
 		if err := ms.insertAll(it); err != nil {
+			log.Printf("measurementStorage: insert failed, draining the rest of the day: %v\n", err)
 			ms.errMu.Lock()
 			if ms.err == nil {
 				ms.err = err
 			}
 			ms.errMu.Unlock()
-			// Drain the iterator so its producer doesn't block forever.
-			for m, err := it.Next(); m != nil || err != nil; m, err = it.Next() {
+			// Drain the iterator so its producer doesn't block forever. A nil item is the end
+			// whatever the error: an iterator that failed returns its error for good, and
+			// looping while err != nil spun every worker at 100 % CPU for an hour on
+			// 2026-10-12, with the error never reported.
+			for m, _ := it.Next(); m != nil; m, _ = it.Next() {
 			}
 		}
 	}

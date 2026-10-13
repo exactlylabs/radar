@@ -2,6 +2,7 @@ package clickhousestorages
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -85,5 +86,33 @@ func TestMeasurementStorageReplaceRefusesConcurrentWrites(t *testing.T) {
 	}
 	if ms.Inserted() != 4 {
 		t.Fatalf("Inserted = %d, want 4", ms.Inserted())
+	}
+}
+
+// failingIterator fails on its first Next and keeps returning that error, as the ingestor's
+// measurementReader does once its file is broken.
+type failingIterator struct{ err error }
+
+func (it *failingIterator) Next() (*storages.Measurement, error) { return nil, it.err }
+
+func TestMeasurementStorageReportsAFailedIterator(t *testing.T) {
+	t.Parallel()
+	conn := testConn(t)
+	ms := NewMeasurementStorage(conn, &MeasurementStorageOpts{NWorkers: 2})
+	if err := ms.Open(); err != nil {
+		t.Fatal(err)
+	}
+	if err := ms.Insert(&failingIterator{err: errors.New("avro: truncated block")}); err != nil {
+		t.Fatal(err)
+	}
+	done := make(chan error, 1)
+	go func() { done <- ms.Close() }()
+	select {
+	case err := <-done:
+		if err == nil || !strings.Contains(err.Error(), "truncated block") {
+			t.Fatalf("Close should return the iterator's error, got %v", err)
+		}
+	case <-time.After(20 * time.Second):
+		t.Fatal("Close did not return: a worker is spinning on the failed iterator")
 	}
 }
