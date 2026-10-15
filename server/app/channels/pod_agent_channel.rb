@@ -63,17 +63,7 @@ class PodAgentChannel < ApplicationCable::Channel
     version_id = ClientVersion.where(version: data["version"]).pluck(:id).first
     watchdog_version_id = WatchdogVersion.where(version: data["watchdog_version"]).pluck(:id).first
 
-    data["net_interfaces"].each do |interface|
-      self.client.pod_network_interfaces.upsert({
-        name: interface["name"],
-        mac_address: interface["mac"],
-        ips: interface["ips"],
-        wireless: interface["is_wlan"],
-        default: interface["default"],
-      }, unique_by: [:client_id, :name], returning: nil)
-    end
-    net_names = data["net_interfaces"].map {|n| n["name"]}
-    self.client.pod_network_interfaces.where.not(name: net_names).delete_all
+    self.client.sync_network_interfaces(data["net_interfaces"])
 
     self.client.update(
       raw_version:  data["version"],

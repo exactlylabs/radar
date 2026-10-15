@@ -60,3 +60,33 @@ class ClientLatestMeasurementPreloadTest < ActiveSupport::TestCase
     assert_equal [], Client.preload_latest_measurements(Client.none)
   end
 end
+
+class ClientSyncNetworkInterfacesTest < ActiveSupport::TestCase
+  test "sync_network_interfaces writes only the interfaces that changed" do
+    client = clients(:online_with_autonomous_system_and_location)
+    reported = [
+      { "name" => "eth0", "mac" => "aa:bb", "ips" => ["10.0.0.2"], "is_wlan" => false, "default" => true },
+      { "name" => "wlan0", "mac" => "cc:dd", "ips" => ["10.0.0.3"], "is_wlan" => true, "default" => false },
+    ]
+    client.sync_network_interfaces(reported)
+    assert_equal %w[eth0 wlan0], client.pod_network_interfaces.order(:name).pluck(:name)
+    assert_equal true, client.pod_network_interfaces.find_by(name: "wlan0").wireless
+
+    # The same report again: no write at all.
+    writes = 0
+    ActiveSupport::Notifications.subscribed(->(_, _, _, _, payload) { writes += 1 if payload[:sql] =~ /\A(INSERT|UPDATE|DELETE)/i }, "sql.active_record") do
+      client.sync_network_interfaces(reported)
+    end
+    assert_equal 0, writes
+
+    # One interface changes its IP, one disappears: one upsert and one delete.
+    changed = [{ "name" => "eth0", "mac" => "aa:bb", "ips" => ["10.0.0.9"], "is_wlan" => false, "default" => true }]
+    writes = 0
+    ActiveSupport::Notifications.subscribed(->(_, _, _, _, payload) { writes += 1 if payload[:sql] =~ /\A(INSERT|UPDATE|DELETE)/i }, "sql.active_record") do
+      client.sync_network_interfaces(changed)
+    end
+    assert_equal 2, writes
+    assert_equal ["eth0"], client.pod_network_interfaces.reload.pluck(:name) # reload: a loaded association answers pluck from memory
+    assert_equal ["10.0.0.9"], client.pod_network_interfaces.find_by(name: "eth0").ips
+  end
+end

@@ -959,6 +959,22 @@ class Client < ApplicationRecord
     measurements.where(account_id: account_id)
   end
 
+  # Stores the interfaces a pod reports in sync, writing only what changed: pods reconnect
+  # about eleven times a minute fleet-wide and nearly always report the same interfaces, and
+  # an unconditional upsert writes a new row version (and WAL) every time.
+  def sync_network_interfaces(interfaces)
+    interfaces = Array(interfaces)
+    current = pod_network_interfaces.reload.index_by(&:name) # not the association cache: upserts bypass it
+    interfaces.each do |i|
+      attrs = { mac_address: i["mac"], ips: i["ips"], wireless: !!i["is_wlan"], default: !!i["default"] }
+      row = current[i["name"]]
+      next if row && attrs.all? { |k, v| row[k] == v }
+      pod_network_interfaces.upsert(attrs.merge(name: i["name"]), unique_by: [:client_id, :name], returning: nil)
+    end
+    stale = current.keys - interfaces.map { |i| i["name"] }
+    pod_network_interfaces.where(name: stale).delete_all if stale.any?
+  end
+
   def wlan_interface
     pod_network_interfaces.where(wireless: true).first
   end
