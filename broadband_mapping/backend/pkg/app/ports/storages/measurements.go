@@ -50,4 +50,8 @@ type MeasurementStorage interface {
 	StartReplace(days []time.Time) error
 	// CommitReplace puts the copy in place of the month. Call it after Close.
 	CommitReplace() error
+	// IngestedManifest is the finished_at of the completeness manifest recorded for a UTC
+	// day by RecordManifest, and whether one was recorded.
+	IngestedManifest(day time.Time) (time.Time, bool, error)
+	RecordManifest(day time.Time, finishedAt time.Time) error
 }

@@ -37,8 +37,22 @@ func runInsertions(ctx context.Context, s storages.IngestorAppStorages, storage 
 	if err != nil {
 		panic(err)
 	}
+	// Days of the last week the processor has processed again since they were ingested.
+	cursor, err := s.MeasurementStorage.LastDate()
+	if err != nil {
+		panic(err)
+	}
+	if cursor != nil {
+		if _, err := ingestor.RecheckReprocessed(ctx, s, storage, opts, *cursor, recheckDays, true); err != nil {
+			panic(err)
+		}
+	}
 	log.Println("Finished in", time.Since(start))
 }
+
+// recheckDays is how far back the hourly run looks for days processed again (the processor's
+// daily run re-checks the previous 7 days).
+const recheckDays = 8
 
 func main() {
 	sigs := make(chan os.Signal, 1)

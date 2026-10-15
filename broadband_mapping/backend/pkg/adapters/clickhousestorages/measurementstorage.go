@@ -36,6 +36,50 @@ type measurementStorage struct {
 	// table inserts go to: tests, or the month copy of a replace.
 	table   string
 	replace *monthReplace
+	// ingestedDays creates the ingested_days table once.
+	ingestedDays sync.Once
+	ingestedErr  error
+}
+
+// ingestedDaysTable records, per ingested UTC day, the finished_at of the processor's
+// completeness manifest its tests came from (migrations/005_ingested_days.sql; also created
+// here so a deployed ingestor needs no migration run).
+const ingestedDaysTable = "ingested_days"
+
+func (ms *measurementStorage) ensureIngestedDays() error {
+	ms.ingestedDays.Do(func() {
+		ms.ingestedErr = ms.conn.Exec(ms.ctx(), fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
+			day Date, finished_at DateTime('UTC'), recorded_at DateTime('UTC')
+		) ENGINE = ReplacingMergeTree(recorded_at) ORDER BY day`, ingestedDaysTable))
+	})
+	return wrap(ms.ingestedErr, "measurementStorage#ensureIngestedDays")
+}
+
+func (ms *measurementStorage) IngestedManifest(day time.Time) (time.Time, bool, error) {
+	if err := ms.ensureIngestedDays(); err != nil {
+		return time.Time{}, false, err
+	}
+	rows, err := ms.conn.Query(ms.ctx(), fmt.Sprintf("SELECT finished_at FROM %s FINAL WHERE day = toDate('%s')", ingestedDaysTable, dayString(day)))
+	if err != nil {
+		return time.Time{}, false, errors.Wrap(err, "measurementStorage#IngestedManifest")
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return time.Time{}, false, rows.Err()
+	}
+	var at time.Time
+	if err := rows.Scan(&at); err != nil {
+		return time.Time{}, false, errors.Wrap(err, "measurementStorage#IngestedManifest scan")
+	}
+	return at, true, nil
+}
+
+func (ms *measurementStorage) RecordManifest(day time.Time, finishedAt time.Time) error {
+	if err := ms.ensureIngestedDays(); err != nil {
+		return err
+	}
+	return wrap(ms.conn.Exec(ms.ctx(), fmt.Sprintf("INSERT INTO %s (day, finished_at, recorded_at) VALUES (toDate('%s'), toDateTime(%d, 'UTC'), now('UTC'))",
+		ingestedDaysTable, dayString(day), finishedAt.Unix())), "measurementStorage#RecordManifest")
 }
 
 type monthReplace struct {

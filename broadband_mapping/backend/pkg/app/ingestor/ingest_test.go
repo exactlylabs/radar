@@ -335,3 +335,67 @@ func TestIngestAndRepair(t *testing.T) {
 		t.Fatal("repairing a day without files must fail")
 	}
 }
+
+// A day the processor processed again after it was ingested (its manifest's finished_at
+// moved) is repaired by the recheck; days whose manifest did not change are left alone.
+func TestRecheckRepairsReprocessedDays(t *testing.T) {
+	conn := testConn(t)
+	ctx := context.Background()
+	if err := conn.Exec(ctx, "INSERT INTO geospaces (id, namespace, geo_id, centroid_lat, centroid_long) VALUES (?, 'states', '51', 0, 0)", uuid.NewString()); err != nil {
+		t.Fatal(err)
+	}
+	m := &memStorage{files: map[string][]byte{}}
+	va := [2]string{"US_STATES", "51"}
+	putDay(t, m, "2026-08-01", []fileTest{{id: "a", at: "01:00:00", geos: [][2]string{va}, mbps: 10}})
+	putDay(t, m, "2026-08-02", []fileTest{{id: "b", at: "01:00:00", geos: [][2]string{va}, mbps: 20}})
+	manifest := func(day, finishedAt string) {
+		m.files["completeness/"+day+".json"] = []byte(fmt.Sprintf(`{"date":%q,"finished_at":%q,"fetch":{"listed":1}}`, day, finishedAt))
+	}
+	manifest("2026-08-01", "2026-08-02T06:05:00Z")
+	manifest("2026-08-02", "2026-08-03T06:05:00Z")
+	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
+	opts := FetchOptions{ManifestDir: "completeness", ManifestFrom: day("2026-08-01"), StopAtMissing: true}
+	s := clickhousestorages.NewIngestorAppStorages(conn, 2)
+	if err := Ingest(ctx, s, m, day("2026-08-01"), day("2026-08-04"), nil, false, opts); err != nil {
+		t.Fatal(err)
+	}
+	count := func() uint64 {
+		var n uint64
+		if err := conn.QueryRow(ctx, "SELECT count() FROM tests").Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	if count() != 2 {
+		t.Fatalf("ingested %d tests, want 2", count())
+	}
+	cursor := day("2026-08-02").Add(time.Hour)
+	// First recheck: the days get their records, nothing to repair.
+	repaired, err := RecheckReprocessed(ctx, s, m, opts, cursor, 8, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(repaired) != 0 {
+		t.Fatalf("first recheck repaired %v", repaired)
+	}
+	// The processor processes 2026-08-01 again with a late tarball: a new test, a new manifest.
+	putDay(t, m, "2026-08-01", []fileTest{
+		{id: "a", at: "01:00:00", geos: [][2]string{va}, mbps: 10},
+		{id: "late", at: "23:00:00", geos: [][2]string{va}, mbps: 30},
+	})
+	manifest("2026-08-01", "2026-08-04T06:07:00Z")
+	repaired, err = RecheckReprocessed(ctx, s, m, opts, cursor, 8, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(repaired) != 1 || repaired[0] != day("2026-08-01") {
+		t.Fatalf("repaired %v, want 2026-08-01 only", repaired)
+	}
+	if count() != 3 {
+		t.Fatalf("%d tests after the repair, want 3", count())
+	}
+	// Recorded: a third recheck has nothing to do.
+	if repaired, err = RecheckReprocessed(ctx, s, m, opts, cursor, 8, false); err != nil || len(repaired) != 0 {
+		t.Fatalf("third recheck: %v %v", repaired, err)
+	}
+}
