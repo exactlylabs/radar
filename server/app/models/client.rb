@@ -510,8 +510,35 @@ class Client < ApplicationRecord
   end
 
   def latest_measurement
+    return @latest_measurement if defined?(@latest_measurement)
     # Extra condition for download/upload not being null just in case there is some bad state
     account_measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
+  end
+
+  # Loads the latest measurement of each client with one query (DISTINCT ON over the
+  # (account_id, client_id, created_at DESC) index) and memoizes it on the instances, so a
+  # page of clients doesn't run one query per row. Only objects given here are memoized; a
+  # plain latest_measurement call still queries, so long-lived objects never go stale.
+  def self.preload_latest_measurements(clients)
+    clients = clients.to_a
+    return clients if clients.empty?
+    with_account, without = clients.partition { |c| c.account_id.present? }
+    conditions = []
+    if with_account.any?
+      pairs = with_account.map { |c| "(#{c.account_id.to_i}, #{c.id.to_i})" }.join(', ') # integers only
+      conditions << "(account_id, client_id) IN (#{pairs})"
+    end
+    if without.any?
+      conditions << "(account_id IS NULL AND client_id IN (#{without.map { |c| c.id.to_i }.join(', ')}))"
+    end
+    latest = Measurement
+      .select('DISTINCT ON (account_id, client_id) *')
+      .where(conditions.join(' OR '))
+      .where('download IS NOT NULL AND upload IS NOT NULL')
+      .order('account_id, client_id, created_at DESC')
+      .index_by { |m| [m.account_id, m.client_id] }
+    clients.each { |c| c.instance_variable_set(:@latest_measurement, latest[[c.account_id, c.id]]) }
+    clients
   end
 
   def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)

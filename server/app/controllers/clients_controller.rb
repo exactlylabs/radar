@@ -40,7 +40,10 @@ class ClientsController < ApplicationController
     @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
     @total = @clients.count
     @clients = @clients.order("location_id NULLS FIRST")
-    @clients = paginate(@clients, params[:page], params[:page_size])
+    # One page: its rows' account, location and update group in three queries instead of
+    # one each per row, and the latest measurements in one.
+    @clients = paginate(@clients, params[:page], params[:page_size]).includes(:account, :location, :update_group)
+    @clients = Client.preload_latest_measurements(@clients)
   end
 
   # GET /clients/1 or /clients/1.json
