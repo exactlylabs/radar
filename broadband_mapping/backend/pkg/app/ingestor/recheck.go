@@ -42,6 +42,9 @@ func readManifest(ctx context.Context, storage Storage, dir string, day time.Tim
 	if err := json.Unmarshal(data, m); err != nil {
 		return nil, errors.Wrap(err, "ingestor.readManifest %s", path)
 	}
+	// The record holds seconds; with the nanoseconds every manifest read as newer than its
+	// record and the first live run repaired all seven days of the window.
+	m.FinishedAt = m.FinishedAt.Truncate(time.Second)
 	return m, nil
 }
 

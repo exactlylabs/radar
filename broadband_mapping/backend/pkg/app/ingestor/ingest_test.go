@@ -351,8 +351,8 @@ func TestRecheckRepairsReprocessedDays(t *testing.T) {
 	manifest := func(day, finishedAt string) {
 		m.files["completeness/"+day+".json"] = []byte(fmt.Sprintf(`{"date":%q,"finished_at":%q,"fetch":{"listed":1}}`, day, finishedAt))
 	}
-	manifest("2026-08-01", "2026-08-02T06:05:00Z")
-	manifest("2026-08-02", "2026-08-03T06:05:00Z")
+	manifest("2026-08-01", "2026-08-02T06:05:00.123456789Z") // the processor writes nanoseconds
+	manifest("2026-08-02", "2026-08-03T06:05:00.987654321Z")
 	day := func(s string) time.Time { tm, _ := time.Parse("2006-01-02", s); return tm }
 	opts := FetchOptions{ManifestDir: "completeness", ManifestFrom: day("2026-08-01"), StopAtMissing: true}
 	s := clickhousestorages.NewIngestorAppStorages(conn, 2)
@@ -383,7 +383,7 @@ func TestRecheckRepairsReprocessedDays(t *testing.T) {
 		{id: "a", at: "01:00:00", geos: [][2]string{va}, mbps: 10},
 		{id: "late", at: "23:00:00", geos: [][2]string{va}, mbps: 30},
 	})
-	manifest("2026-08-01", "2026-08-04T06:07:00Z")
+	manifest("2026-08-01", "2026-08-04T06:07:00.5Z")
 	repaired, err = RecheckReprocessed(ctx, s, m, opts, cursor, 8, false)
 	if err != nil {
 		t.Fatal(err)
