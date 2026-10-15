@@ -20,7 +20,7 @@ parallel with no other context. Read all of it before starting a workstream.
   `processor_env` on mapping-db; source them in a subshell on the server.
 - Don't delete server/application logs to free space; move them instead.
 - Commits: authored as the user, no Co-Authored-By or Claude trailers. Branch:
-  `mapping-incremental-summaries` in the `radar` repo (commits 66f98a5e, 60d2b01a so far),
+  `mapping-incremental-summaries` in the `radar` repo (commits 4ef340b5, 945ae4d0 so far),
   `mlab-processor` changes go on the same branch. Commit and push when a piece is done.
 - Poll long jobs with short checks (≤ 60 s) and real progress signals; never blind waits.
 - Keep Float64 for speeds and RTTs (user decision). Medians stay `quantileExact`.
@@ -398,7 +398,7 @@ those days and run `summarize -from 2023-03-01` once.
   `resical`/`tic-parser` containers and `/mnt/clickhouse-data/backups/1.zip` (216 GB,
   2024) on mapping-db.
 
-## Production validation of the processor (2026-10-11, release 555b5fc8)
+## Production validation of the processor (2026-10-11, release b2f9df1e)
 
 Measured on mapping-db on a full real day (2026-10-07) during the catch-up, with the
 ClickHouse conversion running on the same VM (`-workers 8 -download-workers 48`):
@@ -547,23 +547,23 @@ still writes `measurements`, which is untouched by all of the above.
 ## As run on mapping-db (2026-10-11/12)
 
 Binaries come from `roles/mlab-pipeline` releases (`/opt/broadbandmapping/releases/<sha>`,
-`current` symlink), not the step-0 scp: release 8adf40a2 ran the conversion, 3cd82325
+`current` symlink), not the step-0 scp: release d8194c29 ran the conversion, acdb418d
 (summarizer v4, same processor binary) is `current` for everything after it.
 
 | Step | Result |
 |---|---|
 | Conversion, `-strategy join -chunk-months 12 -max-threads 6 -max-insert-threads 2 -max-memory 14e9 -spill-bytes 6e9` | **1 h 54 min** for 2009-01..2026-08 (the plan estimated 4–6 h for `groupby`; the first `groupby` attempt spilled 34 GB on 2017 and was stopped). Per year: 2018 7.6 min, 2019 4.7, 2020 8.4, 2021 21.2, 2022 25.6, 2023 20.5, 2024 13.2, 2025 8.8, 2026 (8 months) 4.4. 2021–2023 ran while the catch-up fetch used the same cores. 0.4–0.5 % of ids go through the GROUP BY. |
 | `tests` size | **93.4 GiB, 4.68 B rows** (21.4 B/test) vs `measurements` 379.8 GiB, 9.40 B rows. |
-| `summarize -full` v4, first run (21:57) | all-time window 1 h 1 min: per-IP pass 23 min (135 shards, catch-up fetch on the same cores), 1.23 B tests (26 %) on the per-geospace path: 56 min for the chunk with the hash-sharded geo step (~100 scans), ip_medians 1.50 B / 1.49 B rows. Stopped at the year window, geo step rewritten as one streaming ARRAY JOIN query per variant (763d7fed). |
-| `summarize -full -windows year,semester,quarter,month,week`, release 763d7fed (23:17, catch-up stopped) | **1 h 26 min** for the five windows; per-year chunks have almost no split IPs (2015: 27 k tests on the geo path). |
-| `summarize -validate-before 2025-06-01` | 8 tables DIFF. 2018: identical. 2022: 0.3 % of rows with small median/band changes (duplicate (id, geospace) rows of the old ingest cursor, collapsed in `tests`). 2019: 40 k per-ASN rows only live: every one made of measurements rows with id `ERROR_DISCOVERING_UUID` (the first processor's id for tests whose UUID it could not read; 181,959 rows, 2,073 IPs, all in 2019), which the conversion collapsed into one test per month. Verify did not see it: it counted distinct ids on both sides. Fix: `testKey` (content hash for that id) in the conversion and verify, `convert_measurements -repair-unknown-ids` (release after 763d7fed), then a second `-full`. |
-| `convert_measurements -repair-unknown-ids -from 2019-01 -to 2019-12` (release dbf9c1b7) | 2 min 9 s: 181,959 rows are 2,166 tests (each spread over ~70 geospaces: 127.0.0.1-style IPs, 0 Mbps, junk the old views counted too). Verify of 2019 with the content key: 12 months OK. |
+| `summarize -full` v4, first run (21:57) | all-time window 1 h 1 min: per-IP pass 23 min (135 shards, catch-up fetch on the same cores), 1.23 B tests (26 %) on the per-geospace path: 56 min for the chunk with the hash-sharded geo step (~100 scans), ip_medians 1.50 B / 1.49 B rows. Stopped at the year window, geo step rewritten as one streaming ARRAY JOIN query per variant (a1a0775a). |
+| `summarize -full -windows year,semester,quarter,month,week`, release a1a0775a (23:17, catch-up stopped) | **1 h 26 min** for the five windows; per-year chunks have almost no split IPs (2015: 27 k tests on the geo path). |
+| `summarize -validate-before 2025-06-01` | 8 tables DIFF. 2018: identical. 2022: 0.3 % of rows with small median/band changes (duplicate (id, geospace) rows of the old ingest cursor, collapsed in `tests`). 2019: 40 k per-ASN rows only live: every one made of measurements rows with id `ERROR_DISCOVERING_UUID` (the first processor's id for tests whose UUID it could not read; 181,959 rows, 2,073 IPs, all in 2019), which the conversion collapsed into one test per month. Verify did not see it: it counted distinct ids on both sides. Fix: `testKey` (content hash for that id) in the conversion and verify, `convert_measurements -repair-unknown-ids` (release after a1a0775a), then a second `-full`. |
+| `convert_measurements -repair-unknown-ids -from 2019-01 -to 2019-12` (release 411c4d84) | 2 min 9 s: 181,959 rows are 2,166 tests (each spread over ~70 geospaces: 127.0.0.1-style IPs, 0 Mbps, junk the old views counted too). Verify of 2019 with the content key: 12 months OK. |
 | `summarize -full`, second run (07:23, no catch-up, geo fix) | **2 h 16 min** all windows: all-time per-IP pass 14 min (was 23), ip_medians 49 min, the five windows ~1 h 28 min. |
 | `summarize -validate-before 2025-06-01`, second run | DIFF in the 8 windowed tables, symmetric (same groups, changed values): year 6,405 of 1.96 M rows (0.3 %), from the old table's duplicate rows; 2018 identical. Accepted. |
 | `summarize -switch` | 09:42:22, 78 ms. API: Roanoke 2024 / 2024-06 and Virginia 2024 identical to the pre-cutover baselines; 2026 and all-time now through 2026-08. |
 | Ingestor enabled (role, `INGEST_MANIFEST_FROM=2026-08-01`, processor timer off during the catch-up) | 09:43: first run inserted 1,062,090 tests (the rest of 2026-08-01), then the incremental summaries: **12 min 20 s** for the day (ingest 11 s; all-time per-IP update of the day's IPs 420 M (test, geospace) rows in 4 min 43 s, the two all-time summaries 2 min 22 s + 2 min 4 s, year 2 min 7 s, semester and quarter 20 s each, month 1 s, week 8 s), with the catch-up fetch sharing the cores. Within the 10–15 min acceptance. Catch-up `mlab-catchup` relaunched 09:44 for 2026-08-02..09-08, newest first. |
-| Ingestor range run over the 70 catch-up days (2026-10-12 afternoon) | Three bugs, all fixed on master and deployed through the role: cut B2 downloads crashed the run (avro truncated block; 15 restarts) → `s3storage` resumes with a Range request (d6586892); store workers spun forever draining a failed iterator (c9a670b1); the ClickHouse pool of nWorkers + 5 timed out ("acquire conn timeout") with 10 days × 8 inserters, which silently truncated every day 2026-08-02..10-05 to 10–500 k tests → inserts of all days share 16 slots, pool sized from that (088bc66f; the first fix, a pool of 95, hit the server's simultaneous-query limit, code 202). |
-| `ingest -repair <65 days> -summarize` (release 088bc66f, 20:08) | 50 min 36 s: 28 min of reading and additive inserts, then the summaries of 2026-08-02..10-05 in 29 min 20 s (all-time per-IP update of 1.47 B (test, geospace) rows in 17 min). Every day 2026-08-01..10-10 is now 0.99–1.34 M tests (weekends ~1.0 M). API: Roanoke 2026-09 and 2026-10, Virginia 2026-09 populated. |
+| Ingestor range run over the 70 catch-up days (2026-10-12 afternoon) | Three bugs, all fixed on master and deployed through the role: cut B2 downloads crashed the run (avro truncated block; 15 restarts) → `s3storage` resumes with a Range request (fd94a952); store workers spun forever draining a failed iterator (564c4fe1); the ClickHouse pool of nWorkers + 5 timed out ("acquire conn timeout") with 10 days × 8 inserters, which silently truncated every day 2026-08-02..10-05 to 10–500 k tests → inserts of all days share 16 slots, pool sized from that (2d02396c; the first fix, a pool of 95, hit the server's simultaneous-query limit, code 202). |
+| `ingest -repair <65 days> -summarize` (release 2d02396c, 20:08) | 50 min 36 s: 28 min of reading and additive inserts, then the summaries of 2026-08-02..10-05 in 29 min 20 s (all-time per-IP update of 1.47 B (test, geospace) rows in 17 min). Every day 2026-08-01..10-10 is now 0.99–1.34 M tests (weekends ~1.0 M). API: Roanoke 2026-09 and 2026-10, Virginia 2026-09 populated. |
 | Short days: `/root/mlab-short-days.sh 8` (unit `mlab-short-days`, 15:42–22:21) | 59 of 59 refetched, listed = processed for every day (2023-03-01: 30,142 tarballs, 9.0 M tests; 2025-02-05: 16,150, 10.3 M); 5–9 min per day at the link's ~114 MB/s. |
 | `ingest -repair <59 days> -replace` (22:22) | 35 min 43 s; the days now hold 0.8 k (2009-11-08) to 2.99 M (2023-03-01) US tests. |
 | `summarize -full`, third run (22:58, nothing else on the box) | **2 h 42 min** through 2026-10-11 (the all-time pass now covers 4.9 B tests). |
