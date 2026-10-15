@@ -166,8 +166,8 @@ var DefaultSummarizerOptions = SummarizerOptions{
 	ShardTargetRows:               50_000_000,
 	MaxThreads:                    8,
 	MaxInsertThreads:              1,
-	MaxMemoryUsage:                20_000_000_000,
-	MaxBytesBeforeExternalGroupBy: 8_000_000_000,
+	MaxMemoryUsage:                10_000_000_000,
+	MaxBytesBeforeExternalGroupBy: 4_000_000_000,
 	Parallel:                      4,
 }
 
