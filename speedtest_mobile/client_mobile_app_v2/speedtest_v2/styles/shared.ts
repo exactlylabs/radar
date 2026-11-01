@@ -12,6 +12,7 @@ export const colors = {
     bgGradientSecondary: '#0B0B1A',
     red400: '#E54B4B',
     bgPrimary: '#15152E',
+    borderColor: '#3F3C70',
 }
 
 export const fonts = {
@@ -20,6 +21,10 @@ export const fonts = {
 }
 
 export const sharedStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: colors.bgPrimary,
+    },
     colors: {
         white: colors.white,
         gray400: colors.gray400,
